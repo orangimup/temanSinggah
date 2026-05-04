@@ -127,7 +127,7 @@
           </div>
 
           <section class="table-section">
-            <div class="data-table">
+            <div class="table-container">
               <table>
                 <thead>
                   <tr>
@@ -143,80 +143,9 @@
                 <tbody>
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">BS</div>
-                        <span>Budi Santoso</span>
-                      </div>
-                    </td>
-                    <td>Villa Sunset Tepi Pantai</td>
-                    <td>
-                      <div class="star-rating">
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                        <i class="ri-star-fill"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Pelayanan sangat baik, pemandangan sunsetnya luar biasa
-                        indah. Sangat recommended untuk liburan keluarga!
-                      </div>
-                    </td>
-                    <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Approved
-                      </span>
-                    </td>
-                    <td>2 Mei 2026</td>
-                    <td>
-                      <div class="action-group">
-                        <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
-                          <i class="ph-bold ph-check"></i>
-                        </button>
-                        <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
-                          <i class="ph-bold ph-x"></i>
-                        </button>
-                        <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
-                          <i class="ph-bold ph-flag"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">SA</div>
-                        <span>Siti Aminah</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
                       </div>
                     </td>
                     <td>Homestay Malioboro</td>
@@ -230,22 +159,14 @@
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
+                      <div class="table-description">
                         Lokasi strategis dekat Malioboro, tapi kebersihan kamar
                         perlu ditingkatkan dan AC agak berisik di malam hari.
                       </div>
                     </td>
                     <td>
-                      <span class="badge badge-warning">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-warning)"></span>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
                         Flagged
                       </span>
                     </td>
@@ -253,420 +174,399 @@
                     <td>
                       <div class="action-group">
                         <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
                           <i class="ph-bold ph-check"></i>
                         </button>
                         <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
                           <i class="ph-bold ph-x"></i>
                         </button>
                         <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
                           <i class="ph-bold ph-flag"></i>
                         </button>
                       </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AW</div>
-                        <span>Agus Wijaya</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
                       </div>
                     </td>
-                    <td>Villa Ubud Hijau</td>
+                    <td>Homestay Malioboro</td>
                     <td>
                       <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Villa yang sangat nyaman dengan kolam renang pribadi.
-                        Staff ramah dan sarapan lokalnya enak sekali.
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
                       </div>
                     </td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Approved
-                      </span>
-                    </td>
-                    <td>30 Apr 2026</td>
-                    <td>
-                      <div class="action-group">
-                        <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
-                          <i class="ph-bold ph-check"></i>
-                        </button>
-                        <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
-                          <i class="ph-bold ph-x"></i>
-                        </button>
-                        <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
-                          <i class="ph-bold ph-flag"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">DK</div>
-                        <span>Dewi Kusuma</span>
-                      </div>
-                    </td>
-                    <td>Apartemen Jakarta Selatan</td>
-                    <td>
-                      <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        PENIPUAN!!! Saya transfer tapi tidak bisa check-in. Host
-                        tidak respons sama sekali. Jangan pernah booking di
-                        sini!
-                      </div>
-                    </td>
-                    <td>
-                      <span class="badge badge-error">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-error)"></span>
-                        Rejected
-                      </span>
-                    </td>
-                    <td>29 Apr 2026</td>
-                    <td>
-                      <div class="action-group">
-                        <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
-                          <i class="ph-bold ph-check"></i>
-                        </button>
-                        <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
-                          <i class="ph-bold ph-x"></i>
-                        </button>
-                        <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
-                          <i class="ph-bold ph-flag"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">RH</div>
-                        <span>Rudi Hartono</span>
-                      </div>
-                    </td>
-                    <td>Glamping Lembang</td>
-                    <td>
-                      <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star-half"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Pengalaman glamping yang unik, api unggun di malam hari
-                        sangat romantis. Hanya saja toilet portablenya kurang
-                        nyaman.
-                      </div>
-                    </td>
-                    <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Approved
-                      </span>
-                    </td>
-                    <td>28 Apr 2026</td>
-                    <td>
-                      <div class="action-group">
-                        <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
-                          <i class="ph-bold ph-check"></i>
-                        </button>
-                        <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
-                          <i class="ph-bold ph-x"></i>
-                        </button>
-                        <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
-                          <i class="ph-bold ph-flag"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">NS</div>
-                        <span>Nina Safitri</span>
-                      </div>
-                    </td>
-                    <td>Villa Sunset Tepi Pantai</td>
-                    <td>
-                      <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Kami merayakan anniversary di sini dan host sangat
-                        perhatian. Ada complimentary wine dan dekorasi bunga di
-                        kamar.
-                      </div>
-                    </td>
-                    <td>
-                      <span class="badge badge-warning">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-warning)"></span>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
                         Flagged
                       </span>
                     </td>
-                    <td>27 Apr 2026</td>
+                    <td>1 Mei 2026</td>
                     <td>
                       <div class="action-group">
                         <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
                           <i class="ph-bold ph-check"></i>
                         </button>
                         <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
                           <i class="ph-bold ph-x"></i>
                         </button>
                         <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
                           <i class="ph-bold ph-flag"></i>
                         </button>
                       </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AF</div>
-                        <span>Ahmad Fauzi</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
                       </div>
                     </td>
-                    <td>Rumah Kayu Bandung</td>
+                    <td>Homestay Malioboro</td>
                     <td>
                       <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
-                        <i class="ph-bold ph-star"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Suasana pedesaan yang tenang, tapi akses jalan agak
-                        sulit untuk mobil kecil dan parkir terbatas.
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
                       </div>
                     </td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Approved
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
                       </span>
                     </td>
-                    <td>26 Apr 2026</td>
+                    <td>1 Mei 2026</td>
                     <td>
                       <div class="action-group">
                         <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
                           <i class="ph-bold ph-check"></i>
                         </button>
                         <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
                           <i class="ph-bold ph-x"></i>
                         </button>
                         <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
                           <i class="ph-bold ph-flag"></i>
                         </button>
                       </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">LD</div>
-                        <span>Lestari Dewi</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
                       </div>
                     </td>
-                    <td>Resort Bintan</td>
+                    <td>Homestay Malioboro</td>
                     <td>
                       <div class="star-rating">
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
-                        <i class="ph-fill ph-star"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          max-width: 280px;
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                        ">
-                        Resort bintang lima dengan harga terjangkau. Private
-                        beach-nya bersih dan spa-nya sangat profesional.
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
                       </div>
                     </td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Approved
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
                       </span>
                     </td>
-                    <td>25 Apr 2026</td>
+                    <td>1 Mei 2026</td>
                     <td>
                       <div class="action-group">
                         <button
-                          class="action-group-btn edit"
-                          aria-label="Approve"
-                          title="Approve">
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
                           <i class="ph-bold ph-check"></i>
                         </button>
                         <button
-                          class="action-group-btn delete"
-                          aria-label="Reject"
-                          title="Reject">
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
                           <i class="ph-bold ph-x"></i>
                         </button>
                         <button
-                          class="action-group-btn view"
-                          aria-label="Flag"
-                          title="Flag">
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-flag"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
+                      </div>
+                    </td>
+                    <td>Homestay Malioboro</td>
+                    <td>
+                      <div class="star-rating">
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
+                      </div>
+                    </td>
+                    <td>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
+                      </span>
+                    </td>
+                    <td>1 Mei 2026</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-check"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-x"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-flag"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                 <tr>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
+                      </div>
+                    </td>
+                    <td>Homestay Malioboro</td>
+                    <td>
+                      <div class="star-rating">
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
+                      </div>
+                    </td>
+                    <td>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
+                      </span>
+                    </td>
+                    <td>1 Mei 2026</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-check"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-x"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-flag"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                 <tr>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
+                      </div>
+                    </td>
+                    <td>Homestay Malioboro</td>
+                    <td>
+                      <div class="star-rating">
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
+                      </div>
+                    </td>
+                    <td>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
+                      </span>
+                    </td>
+                    <td>1 Mei 2026</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-check"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-x"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-flag"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                 <tr>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <h3 class="table-name">Budi Santoso</h3>
+                      </div>
+                    </td>
+                    <td>Homestay Malioboro</td>
+                    <td>
+                      <div class="star-rating">
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-fill"></i>
+                        <i class="ri-star-line"></i>
+                        <i class="ri-star-line"></i>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-description">
+                        Lokasi strategis dekat Malioboro, tapi kebersihan kamar
+                        perlu ditingkatkan dan AC agak berisik di malam hari.
+                      </div>
+                    </td>
+                    <td>
+                      <span class="table-badge warning">
+                        <span class="badge-dot"></span>
+                        Flagged
+                      </span>
+                    </td>
+                    <td>1 Mei 2026</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button success"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-check"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-x"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Hapus listing"
+                          title="Hapus">
                           <i class="ph-bold ph-flag"></i>
                         </button>
                       </div>

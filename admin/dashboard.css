@@ -497,6 +497,13 @@
   background: var(--color-primary);
 }
 
+.table-description {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .action-group {
   display: inline-flex;
   align-items: center;
