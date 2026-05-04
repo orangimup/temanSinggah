@@ -29,7 +29,7 @@
   /* Background */
   --color-bg: #fffaf5;
   --color-bg-card: #ffffff;
- --color-bg-section: #f5e6d8;
+  --color-bg-section: #f5e6d8;
   --color-bg-overlay: rgba(26, 10, 0, 0.5);
   --color-bg-skeleton: #f0e4d8;
 
@@ -47,14 +47,37 @@
   );
 
   /* Status */
+  /* ── Success ── */
   --color-success: #2d7d4f;
   --color-success-light: #e8f5ee;
+  --color-success-hover: #256642;
+  --color-success-light-hover: #d4ecdf;
+  --color-success-active: #1d5035;
+  --color-success-light-active: #bde0cc;
+
+  /* ── Warning ── */
   --color-warning: #e09b2d;
   --color-warning-light: #fef4e0;
+  --color-warning-hover: #c8841a;
+  --color-warning-light-hover: #fdecc8;
+  --color-warning-active: #a86d0f;
+  --color-warning-light-active: #fbe0a8;
+
+  /* ── Error ── */
   --color-error: #cc2b2b;
   --color-error-light: #fdeaea;
+  --color-error-hover: #b02222;
+  --color-error-light-hover: #fad4d4;
+  --color-error-active: #8f1a1a;
+  --color-error-light-active: #f5b8b8;
+
+  /* ── Info ── */
   --color-info: #2b6ecc;
   --color-info-light: #eaf1fd;
+  --color-info-hover: #2159a8;
+  --color-info-light-hover: #d4e5fa;
+  --color-info-active: #184585;
+  --color-info-light-active: #b8d2f7;
 
   /* Typography */
   --font-family: "inter", sans-serif;

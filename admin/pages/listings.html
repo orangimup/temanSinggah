@@ -112,18 +112,10 @@
         <main class="content-area">
           <div class="filter-container">
             <div class="filter-group">
-              <button class="filter-item active">
-                Semua
-              </button>
-              <button class="filter-item">
-                Aktif
-              </button>
-              <button class="filter-item">
-                Nonaktif
-              </button>
-              <button class="filter-item">
-                Pending Review
-              </button>
+              <button class="filter-item active">Semua</button>
+              <button class="filter-item">Aktif</button>
+              <button class="filter-item">Nonaktif</button>
+              <button class="filter-item">Pending Review</button>
             </div>
             <div class="sort-dropdown">
               <button class="sort-button">
@@ -135,7 +127,7 @@
           </div>
 
           <section class="table-section">
-            <div class="data-table">
+            <div class="table-container">
               <table>
                 <thead>
                   <tr>
@@ -151,522 +143,390 @@
                 <tbody>
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-home-4-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Villa Sunset Tepi Pantai
-                          </div>
-                        </div>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">BS</div>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
                         <span>Budi Santoso</span>
                       </div>
                     </td>
                     <td>Kecamatan Blimbing, Indonesia</td>
                     <td>Rp399.344</td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
                         Aktif
                       </span>
                     </td>
                     <td>15 Jan 2025</td>
                     <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-hotel-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Homestay Malioboro
-                          </div>
-                        </div>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AW</div>
-                        <span>Agus Wijaya</span>
-                      </div>
-                    </td>
-                    <td>Yogyakarta, Indonesia</td>
-                    <td>Rp285.000</td>
-                    <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
-                        Aktif
-                      </span>
-                    </td>
-                    <td>22 Feb 2025</td>
-                    <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-home-5-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Villa Ubud Hijau
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">RH</div>
-                        <span>Rudi Hartono</span>
-                      </div>
-                    </td>
-                    <td>Ubud, Bali</td>
-                    <td>Rp1.200.000</td>
-                    <td>
-                      <span class="badge badge-warning">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-warning)"></span>
-                        Pending Review
-                      </span>
-                    </td>
-                    <td>10 Mar 2025</td>
-                    <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-building-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Apartemen Jakarta Selatan
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AF</div>
-                        <span>Ahmad Fauzi</span>
-                      </div>
-                    </td>
-                    <td>Jakarta Selatan, DKI Jakarta</td>
-                    <td>Rp550.000</td>
-                    <td>
-                      <span class="badge badge-error">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-error)"></span>
-                        Nonaktif
-                      </span>
-                    </td>
-                    <td>5 Apr 2025</td>
-                    <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-tent-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Glamping Lembang
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">BS</div>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
                         <span>Budi Santoso</span>
                       </div>
                     </td>
-                    <td>Lembang, Bandung</td>
-                    <td>Rp875.000</td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
                         Aktif
                       </span>
                     </td>
-                    <td>18 Jan 2025</td>
+                    <td>15 Jan 2025</td>
                     <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-home-smile-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Rumah Kayu Bandung
-                          </div>
-                        </div>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AW</div>
-                        <span>Agus Wijaya</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
                       </div>
                     </td>
-                    <td>Dago, Bandung</td>
-                    <td>Rp490.000</td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
                     <td>
-                      <span class="badge badge-success">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-success)"></span>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
                         Aktif
                       </span>
                     </td>
-                    <td>3 Mar 2025</td>
+                    <td>15 Jan 2025</td>
                     <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-umbrella-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Resort Bintan
-                          </div>
-                        </div>
+                      <div class="table-cell">
+                        <div class="table-thumbnail"></div>
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">RH</div>
-                        <span>Rudi Hartono</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
                       </div>
                     </td>
-                    <td>Lagoi, Bintan</td>
-                    <td>Rp2.250.000</td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
                     <td>
-                      <span class="badge badge-warning">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-warning)"></span>
-                        Pending Review
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
+                        Aktif
                       </span>
                     </td>
-                    <td>25 Apr 2025</td>
+                    <td>15 Jan 2025</td>
                     <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
+
                   <tr>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-12);
-                        ">
-                        <div
-                          style="
-                            width: 48px;
-                            height: 48px;
-                            background: var(--color-primary-light);
-                            border-radius: var(--radius-md);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            flex-shrink: 0;
-                          ">
-                          <i
-                            class="ri-home-gear-line"
-                            style="
-                              color: var(--color-primary);
-                              font-size: var(--text-xl);
-                            "></i>
-                        </div>
-                        <div>
-                          <div
-                            style="
-                              font-weight: var(--font-semibold);
-                              color: var(--color-text-primary);
-                            ">
-                            Villa Gunung Bromo
-                          </div>
-                        </div>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
                       </div>
                     </td>
                     <td>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-8);
-                        ">
-                        <div class="avatar avatar-sm avatar-primary">AF</div>
-                        <span>Ahmad Fauzi</span>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
                       </div>
                     </td>
-                    <td>Probolinggo, Jawa Timur</td>
-                    <td>Rp650.000</td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
                     <td>
-                      <span class="badge badge-error">
-                        <span
-                          class="badge-dot"
-                          style="background: var(--color-error)"></span>
-                        Nonaktif
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
+                        Aktif
                       </span>
                     </td>
-                    <td>12 Feb 2025</td>
+                    <td>15 Jan 2025</td>
                     <td>
-                      <button class="action-btn" aria-label="Lihat detail">
-                        <i class="ph-bold ph-eye"></i>
-                      </button>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
+                      </div>
+                    </td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
+                    <td>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
+                        Aktif
+                      </span>
+                    </td>
+                    <td>15 Jan 2025</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
+                      </div>
+                    </td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
+                    <td>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
+                        Aktif
+                      </span>
+                    </td>
+                    <td>15 Jan 2025</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="table-cell">
+                        <img
+                          src="/assets/images/apurva_kempinski_bali.jpg"
+                          class="table-thumbnail"
+                          alt="" />
+                        <h3 class="table-name">Villa Sunset Tepi Pantai</h3>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="table-cell">
+                        <div class="table-avatar">BS</div>
+                        <span>Budi Santoso</span>
+                      </div>
+                    </td>
+                    <td>Kecamatan Blimbing, Indonesia</td>
+                    <td>Rp399.344</td>
+                    <td>
+                      <span class="table-badge success">
+                        <span class="badge-dot"></span>
+                        Aktif
+                      </span>
+                    </td>
+                    <td>15 Jan 2025</td>
+                    <td>
+                      <div class="action-group">
+                        <button
+                          class="action-button warning"
+                          aria-label="Edit listing"
+                          title="Edit">
+                          <i class="ph-bold ph-pencil"></i>
+                        </button>
+                        <button
+                          class="action-button info"
+                          aria-label="Lihat detail"
+                          title="Lihat">
+                          <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button
+                          class="action-button error"
+                          aria-label="Hapus listing"
+                          title="Hapus">
+                          <i class="ph-bold ph-trash"></i>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

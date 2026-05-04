@@ -133,6 +133,7 @@ tbody::before {
   object-fit: cover;
   border-radius: var(--radius-md);
   flex-shrink: 0;
+  background: var(--color-bg-skeleton);
 }
 
 .listing-name {

@@ -284,6 +284,8 @@
   font-weight: var(--font-medium);
 }
 
+/* // */
+
 .table-section {
   margin-bottom: var(--space-32);
 }
@@ -374,23 +376,23 @@
   flex-shrink: 0;
 }
 
-.badge-dot.success {
+.table-badge.success .badge-dot {
   background: var(--color-success);
 }
 
-.badge-dot.warning {
+.table-badge.warning .badge-dot {
   background: var(--color-warning);
 }
 
-.badge-dot.error {
+.table-badge.error .badge-dot {
   background: var(--color-error);
 }
 
-.badge-dot.info {
+.table-badge.info .badge-dot {
   background: var(--color-info);
 }
 
-.badge-dot.neutral {
+.table-badge.neutral .badge-dot {
   background: var(--color-text-secondary);
 }
 
@@ -457,6 +459,128 @@
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
+
+.table-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.table-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-skeleton);
+  flex-shrink: 0;
+}
+
+.table-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.table-avatar {
+  position: relative;
+  border: none;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  font-weight: var(--font-semibold);
+  color: var(--color-text-inverse);
+  font-size: var(--text-sm);
+  background: var(--color-primary);
+}
+
+.action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.action-button {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: var(--text-base);
+}
+
+.action-button.success {
+  color: var(--color-success);
+  background: var(--color-success-light);
+}
+
+.action-button.warning {
+  color: var(--color-warning);
+  background: var(--color-warning-light);
+}
+
+.action-button.error {
+  color: var(--color-error);
+  background: var(--color-error-light);
+}
+
+.action-button.info {
+  color: var(--color-info);
+  background: var(--color-info-light);
+}
+
+.action-button.success:hover {
+  color: var(--color-success-hover);
+  background: var(--color-success-light-hover);
+}
+
+.action-button.warning:hover {
+  color: var(--color-warning-hover);
+  background: var(--color-warning-light-hover);
+}
+
+.action-button.error:hover {
+  color: var(--color-error-hover);
+  background: var(--color-error-light-hover);
+}
+
+.action-button.info:hover {
+  color: var(--color-info-hover);
+  background: var(--color-info-light-hover);
+}
+
+.action-button.success:active {
+  color: var(--color-success-active);
+  background: var(--color-success-light-active);
+  transform: scale(0.99);
+}
+
+.action-button.warning:active {
+  color: var(--color-warning-active);
+  background: var(--color-warning-light-active);
+  transform: scale(0.99);
+}
+
+.action-button.error:active {
+  color: var(--color-error-active);
+  background: var(--color-error-light-active);
+  transform: scale(0.99);
+}
+
+.action-button.info:active {
+  color: var(--color-info-active);
+  background: var(--color-info-light-active);
+  transform: scale(0.99);
+}
+
+/* // */
 
 .empty-state {
   background: var(--color-bg-card);
@@ -528,27 +652,45 @@
   transform: scale(0.99);
 }
 
-/* ========================================
-   Action Buttons
-   ======================================== */
-
-.action-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-md);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all var(--transition-fast);
+.action-group-btn.edit {
+  border-color: var(--color-success);
+  color: var(--color-success);
 }
 
-.action-btn:hover {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+.action-group-btn.edit:hover {
+  background: var(--color-success-light);
+}
+
+.action-group-btn.edit:active {
+  transform: scale(0.96);
+}
+
+/* View Button */
+.action-group-btn.view {
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+.action-group-btn.view:hover {
+  background: var(--color-info-light);
+}
+
+.action-group-btn.view:active {
+  transform: scale(0.96);
+}
+
+/* Delete Button */
+.action-group-btn.delete {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.action-group-btn.delete:hover {
+  background: var(--color-error-light);
+}
+
+.action-group-btn.delete:active {
+  transform: scale(0.96);
 }
 
 /* ========================================
