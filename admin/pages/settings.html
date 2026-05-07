@@ -25,13 +25,13 @@
 
   <body>
     <div class="admin-layout">
-    <aside class="sidebar">
+      <aside class="sidebar">
         <div class="sidebar-header">
           <a href="/admin/pages/dashboard.html" class="sidebar-logo">
             <img
-            src="/assets/logo/logo_temansinggah.svg"
-            alt="Logo Teman Singgah"
-            class="logo-icon" />
+              src="/assets/logo/logo_temansinggah.svg"
+              alt="Logo Teman Singgah"
+              class="logo-icon" />
           </a>
         </div>
 
@@ -114,15 +114,19 @@
             <h2 class="settings-card-title">Informasi Umum</h2>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label" for="support-email">Email Support</label>
+                <label class="form-label" for="support-email">
+                  Email Support
+                </label>
                 <input
                   type="email"
                   id="support-email"
                   class="form-input"
-                  value="support@temansinggah.id" />
+                  value="halotemansinggah@gmail.com" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="instagram-name">Nama Instagram</label>
+                <label class="form-label" for="instagram-name">
+                  Nama Instagram
+                </label>
                 <input
                   type="text"
                   id="instagram-name"
@@ -130,7 +134,9 @@
                   value="" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="facebook-name">Nama Facebook</label>
+                <label class="form-label" for="facebook-name">
+                  Nama Facebook
+                </label>
                 <input
                   type="text"
                   id="facebook-name"
@@ -138,7 +144,9 @@
                   value="" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="youtube-name">Nama Youtube</label>
+                <label class="form-label" for="youtube-name">
+                  Nama Youtube
+                </label>
                 <input
                   type="text"
                   id="youtube-name"
@@ -146,7 +154,9 @@
                   value="" />
               </div>
               <div class="form-group">
-                <label class="form-label" for="twitter-name">Nama Twitter</label>
+                <label class="form-label" for="twitter-name">
+                  Nama Twitter
+                </label>
                 <input
                   type="text"
                   id="twitter-name"
@@ -156,12 +166,13 @@
             </div>
           </div>
 
-          <!-- Keuangan -->
           <div class="settings-card">
             <h2 class="settings-card-title">Keuangan</h2>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label" for="commission-rate">Persentase Komisi Platform (%)</label>
+                <label class="form-label" for="commission-rate">
+                  Persentase Komisi Platform (%)
+                </label>
                 <input
                   type="number"
                   id="commission-rate"
@@ -169,35 +180,43 @@
                   value="10"
                   min="0"
                   max="100" />
-                <span class="form-hint">Persentase yang dipotong dari setiap transaksi</span>
+                <span class="form-hint">
+                  Persentase yang dipotong dari setiap transaksi
+                </span>
               </div>
               <div class="form-group">
-                <label class="form-label" for="min-payout">Batas Minimum Payout (Rp)</label>
+                <label class="form-label" for="min-payout">
+                  Batas Minimum Payout (Rp)
+                </label>
                 <input
                   type="number"
                   id="min-payout"
                   class="form-input"
                   value="500000"
                   min="0" />
-                <span class="form-hint">Jumlah minimum sebelum host dapat mencairkan dana</span>
+                <span class="form-hint">
+                  Jumlah minimum sebelum host dapat mencairkan dana
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- Kebijakan -->
           <div class="settings-card">
             <h2 class="settings-card-title">Kebijakan Pembatalan</h2>
             <div class="form-group">
-              <label class="form-label" for="cancellation-policy">Kebijakan Default</label>
-              <textarea
-                id="cancellation-policy"
-                class="form-textarea"
-                rows="4">Pembatalan dilakukan oleh tamu minimal 48 jam sebelum check-in untuk mendapatkan pengembalian dana penuh. Pembatalan dalam waktu 48 jam akan dikenakan biaya sebesar 1 malam menginap. No-show akan dikenakan biaya penuh.</textarea>
-              <span class="form-hint">Kebijakan ini akan ditampilkan sebagai default untuk listing baru</span>
+              <label class="form-label" for="cancellation-policy">
+                Kebijakan Default
+              </label>
+              <textarea id="cancellation-policy" class="form-textarea" rows="4">
+Pembatalan dilakukan oleh tamu minimal 48 jam sebelum check-in untuk mendapatkan pengembalian dana penuh. Pembatalan dalam waktu 48 jam akan dikenakan biaya sebesar 1 malam menginap. No-show akan dikenakan biaya penuh.
+              </textarea>
+              <span class="form-hint">
+                Kebijakan ini akan ditampilkan sebagai default untuk listing
+                baru
+              </span>
             </div>
           </div>
 
-          <!-- Notifikasi Email -->
           <div class="settings-card">
             <h2 class="settings-card-title">Pengaturan Notifikasi Email</h2>
             <div class="toggle-row">
@@ -237,8 +256,13 @@
             </div>
           </div>
 
-          <!-- Actions -->
-          <div style="display: flex; justify-content: flex-end; gap: var(--space-12); margin-top: var(--space-8);">
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              gap: var(--space-12);
+              margin-top: var(--space-8);
+            ">
             <button class="back-button" type="button">Batal</button>
             <button class="save-button" type="button">
               <i class="ph-bold ph-file"></i>

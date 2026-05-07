@@ -14,7 +14,8 @@
   padding: var(--space-32) var(--space-40);
   width: fit-content;
 }
-z .calendar-months-container {
+
+.calendar-months-container {
   display: flex;
   gap: var(--space-64);
 }

@@ -594,123 +594,6 @@
   transform: scale(0.99);
 }
 
-/* // */
-
-.empty-state {
-  background: var(--color-bg-card);
-  border-radius: var(--radius-3xl);
-  padding: var(--space-80) var(--space-48);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border: 1.5px solid var(--color-border-subtle);
-  box-shadow: var(--shadow-card);
-}
-
-.empty-icon {
-  width: 80px;
-  height: 80px;
-  background: var(--color-primary-light);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-24);
-}
-
-.empty-icon i {
-  font-size: var(--text-3xl);
-  color: var(--color-primary);
-}
-
-.empty-title {
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-8);
-}
-
-.empty-desc {
-  font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  margin-bottom: var(--space-24);
-  max-width: 400px;
-}
-
-.empty-button {
-  padding: var(--space-14) var(--space-24);
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  border: none;
-  border-radius: var(--radius-xl);
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  letter-spacing: var(--space-letter);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-8);
-  text-decoration: none;
-  font-family: var(--font-family);
-}
-
-.empty-button:hover {
-  background: var(--color-primary-hover);
-}
-
-.empty-button:active {
-  background: var(--color-primary-active);
-  transform: scale(0.99);
-}
-
-.action-group-btn.edit {
-  border-color: var(--color-success);
-  color: var(--color-success);
-}
-
-.action-group-btn.edit:hover {
-  background: var(--color-success-light);
-}
-
-.action-group-btn.edit:active {
-  transform: scale(0.96);
-}
-
-/* View Button */
-.action-group-btn.view {
-  border-color: var(--color-info);
-  color: var(--color-info);
-}
-
-.action-group-btn.view:hover {
-  background: var(--color-info-light);
-}
-
-.action-group-btn.view:active {
-  transform: scale(0.96);
-}
-
-/* Delete Button */
-.action-group-btn.delete {
-  border-color: var(--color-error);
-  color: var(--color-error);
-}
-
-.action-group-btn.delete:hover {
-  background: var(--color-error-light);
-}
-
-.action-group-btn.delete:active {
-  transform: scale(0.96);
-}
-
-/* ========================================
-   Tabs
-   ======================================== */
-
 .tab-group {
   display: flex;
   gap: var(--space-8);
@@ -727,14 +610,16 @@
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   cursor: pointer;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
   transition: all var(--transition-base);
-  font-family: var(--font-family);
   position: relative;
 }
 
 .tab-item:hover {
   color: var(--color-primary);
+}
+
+.tab-item:active {
+  color: var(--color-primary-active);
 }
 
 .tab-item.active {
@@ -752,10 +637,6 @@
   border-radius: var(--radius-full);
 }
 
-/* ========================================
-   Forms
-   ======================================== */
-
 .form-group {
   margin-bottom: var(--space-24);
 }
@@ -772,15 +653,14 @@
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: var(--space-12) var(--space-16);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-xl);
   font-size: var(--text-base);
-  font-family: var(--font-family);
   color: var(--color-text-primary);
   background: var(--color-bg-card);
   outline: none;
   transition: all var(--transition-fast);
+  padding:var(--space-16);
 }
 
 .form-input:focus,
@@ -832,15 +712,14 @@
   color: var(--color-text-secondary);
 }
 
-/* Toggle Switch */
 .toggle-switch {
   position: relative;
-  width: 44px;
+  width: 48px;
   height: 24px;
   background: var(--color-border-strong);
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: background var(--transition-base);
+  transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
@@ -851,8 +730,8 @@
   height: 20px;
   background: white;
   border-radius: var(--radius-full);
-  top: 2px;
-  left: 2px;
+  top:var(--space-2);
+  left:var(--space-2);
   transition: transform var(--transition-base);
   box-shadow: var(--shadow-card);
 }
@@ -862,12 +741,8 @@
 }
 
 .toggle-switch.active::after {
-  transform: translateX(20px);
+  transform: translateX(24px);
 }
-
-/* ========================================
-   Settings Card
-   ======================================== */
 
 .settings-card {
   background: var(--color-bg-card);
@@ -884,10 +759,6 @@
   color: var(--color-text-primary);
   margin-bottom: var(--space-24);
 }
-
-/* ========================================
-   Buttons
-   ======================================== */
 
 .save-button,
 .next-button,
@@ -926,9 +797,10 @@
   font-weight: var(--font-semibold);
   color: var(--color-text-secondary);
   background: transparent;
-  padding: var(--space-12) var(--space-16);
+  padding: var(--space-16) var(--space-24);
   border: 1.5px solid transparent;
   cursor: pointer;
+  padding: var(--space-12) var(--space-16);
   font-family: var(--font-family);
   transition: all var(--transition-base);
   border-radius: var(--radius-md);
@@ -943,6 +815,8 @@
   background: var(--color-bg-skeleton);
   color: var(--color-primary-active);
 }
+
+/*  */
 
 .chart-row {
   display: grid;
