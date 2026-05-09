@@ -36,9 +36,10 @@
 }
 
 .logo-name {
-  width: 190px;
+  width: 140px;
   z-index: 1;
-  margin-left: -25px;
+  margin-bottom: var(--space-48);
+  margin-left: var(--space-4);
   margin-top: var(--space-10);
   cursor: pointer;
 }

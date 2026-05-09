@@ -28,6 +28,17 @@ sortButton.forEach((sortItem) => {
   });
 });
 
+// Copy Button
+const copyButton = document.querySelectorAll(".copy-button");
+copyButton.forEach((copyItem) => {
+  copyItem.addEventListener("click", () => {
+    const voucherCode = copyItem
+      .closest(".voucher-card")
+      .querySelector(".voucher-code").textContent;
+    navigator.clipboard.writeText(voucherCode);
+  });
+});
+
 // Save Button
 const saveButton = document.querySelectorAll(".save-button");
 
