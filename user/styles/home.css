@@ -426,10 +426,6 @@
   flex-shrink: 0;
 }
 
-.save-button:hover {
-  transform: var(--button-transform-hover);
-}
-
 .save-button:active {
   transform: scale(0.99);
 }
