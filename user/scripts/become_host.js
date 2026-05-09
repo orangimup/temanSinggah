@@ -1,3 +1,4 @@
+// FAQ Question
 const faqItem = document.querySelectorAll(".faq-item");
 
 faqItem.forEach((item) => {

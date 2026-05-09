@@ -47,36 +47,36 @@
       </div>
 
       <div class="counter-list">
-        <div class="counter-row">
+        <div class="counter-row" data-min="1" data-max="16">
           <h3 class="counter-label">Tamu</h3>
           <div class="counter-control">
-            <button type="button" class="counter-button">-</button>
+            <button type="button" class="counter-button minus">-</button>
             <span class="counter-value">4</span>
-            <button type="button" class="counter-button">+</button>
+            <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row">
+        <div class="counter-row" data-min="1" data-max="8">
           <h3 class="counter-label">Kamar tidur</h3>
           <div class="counter-control">
-            <button type="button" class="counter-button">−</button>
-            <span class="counter-value">2</span>
-            <button type="button" class="counter-button">+</button>
+            <button type="button" class="counter-button minus disabled">−</button>
+            <span class="counter-value">1</span>
+            <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row">
+        <div class="counter-row" data-min="1" data-max="8">
           <h3 class="counter-label">Tempat tidur</h3>
           <div class="counter-control">
-            <button type="button" class="counter-button">−</button>
+            <button type="button" class="counter-button minus disabled">−</button>
             <span class="counter-value">2</span>
-            <button type="button" class="counter-button">+</button>
+            <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row">
+        <div class="counter-row" data-min="1" data-max="8">
           <h3 class="counter-label">Kamar mandi</h3>
           <div class="counter-control">
-            <button type="button" class="counter-button">−</button>
+            <button type="button" class="counter-button minus disabled">−</button>
             <span class="counter-value">1</span>
-            <button type="button" class="counter-button">+</button>
+            <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
       </div>
@@ -93,5 +93,7 @@
         <a href="stand_out.html" class="next-button">Selanjutnya</a>
       </div>
     </footer>
+
+    <script src="/host/onboarding/onboarding.js"></script>
   </body>
 </html>

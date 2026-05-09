@@ -45,9 +45,10 @@
 }
 
 .logo-name {
-  width: 190px;
+  width: 140px;
   z-index: 1;
-  margin-left: -25px;
+  margin-bottom: var(--space-48);
+  margin-left: var(--space-4);
   margin-top: var(--space-10);
   cursor: pointer;
 }
@@ -459,6 +460,15 @@
   border-color: var(--color-border-strong);
   background: var(--color-bg-section);
   transform: var(--button-transform-hover);
+}
+
+.counter-button.disabled,
+.counter-button.disabled:hover,
+.counter-button.disabled:active {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: transparent;
 }
 
 .counter-button:active {
