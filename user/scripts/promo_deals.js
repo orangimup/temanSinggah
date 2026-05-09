@@ -32,11 +32,13 @@ sortButton.forEach((sortItem) => {
 const saveButton = document.querySelectorAll(".save-button");
 
 saveButton.forEach((saveItem) => {
-  saveItem.addEventListener("click", () => {
+  saveItem.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const isActive = saveItem.classList.toggle("active");
 
     saveItem.src = isActive
-      ? "/assets/icons/save.svg"
-      : "/assets/icons/save_fill.svg";
+      ? "/assets/icons/save_fill.svg"
+      : "/assets/icons/save.svg";
   });
 });

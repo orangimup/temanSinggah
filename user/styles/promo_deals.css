@@ -500,7 +500,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-base);
   flex-shrink: 0;
 }
 
