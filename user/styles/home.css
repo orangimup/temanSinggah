@@ -348,9 +348,13 @@
   transform: scale(0.99);
 }
 
-.control-button.prev-button {
-  opacity: 0.3;
+.control-button.disabled,
+.control-button.disabled:hover,
+.control-button.disabled:active {
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  background: var(--color-primary);
 }
 
 .control-button i {
