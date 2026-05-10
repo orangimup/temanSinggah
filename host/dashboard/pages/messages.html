@@ -136,9 +136,32 @@
           <div class="bubble me">
             <p>Halo! Ya, masih tersedia. Silakan lanjutkan pemesanan.</p>
           </div>
+
+          <template id="bubbleImageTemplate">
+            <div class="bubble me bubble-image-only">
+              <div class="bubble-image-grid"></div>
+            </div>
+          </template>
+
+          <template id="bubbleTextTemplate">
+            <div class="bubble me">
+              <p class="bubble-text"></p>
+            </div>
+          </template>
         </div>
 
         <div class="chat-input-container">
+          <div class="image-preview-container" id="imagePreview"></div>
+
+          <template id="previewItemTemplate">
+            <div class="preview-item">
+              <img class="preview-image" src="/" alt="preview" />
+              <button class="remove-preview">
+                <i class="ph-bold ph-x"></i>
+              </button>
+            </div>
+          </template>
+
           <div class="chat-input-box">
             <textarea
               class="chat-input"

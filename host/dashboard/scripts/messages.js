@@ -36,3 +36,88 @@ threadContact.forEach((threadItem) => {
     threadItem.classList.add("active");
   });
 });
+
+// Send Messages
+const chatInput = document.querySelector(".chat-input");
+const sendButton = document.querySelector(".send-button");
+const fileInput = document.querySelector(".attach-button input");
+const imagePreview = document.querySelector("#imagePreview");
+const chatArea = document.querySelector(".chat-messages");
+const previewTemplate = document.querySelector("#previewItemTemplate");
+const bubbleTemplate = document.querySelector("#bubbleImageTemplate");
+
+let selectedFiles = [];
+
+chatInput.addEventListener("input", () => {
+  chatInput.style.height = "auto";
+  chatInput.style.height = chatInput.scrollHeight + "px";
+});
+
+fileInput.addEventListener("change", () => {
+  Array.from(fileInput.files).forEach((file) => {
+    selectedFiles.push(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const clone = previewTemplate.content.cloneNode(true);
+      const image = clone.querySelector(".preview-image");
+      const removeButton = clone.querySelector(".remove-preview");
+
+      image.src = e.target.result;
+
+      removeButton.addEventListener("click", () => {
+        selectedFiles = selectedFiles.filter((f) => f !== file);
+        image.closest(".preview-item").remove();
+      });
+
+      imagePreview.appendChild(clone);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  fileInput.value = "";
+});
+
+function sendMessage() {
+  const text = chatInput.value.trim();
+  if (!text && selectedFiles.length === 0) return;
+
+  if (selectedFiles.length > 0) {
+    const imageClone = bubbleTemplate.content.cloneNode(true);
+    const imageGrid = imageClone.querySelector(".bubble-image-grid");
+
+    selectedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const image = document.createElement("img");
+        image.src = e.target.result;
+        image.className = "bubble-image";
+        imageGrid.appendChild(image);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    chatArea.appendChild(imageClone);
+  }
+
+  if (text) {
+    const textClone = bubbleTextTemplate.content.cloneNode(true);
+    textClone.querySelector(".bubble-text").textContent = text;
+    chatArea.appendChild(textClone);
+  }
+
+  chatArea.scrollTop = chatArea.scrollHeight;
+  chatInput.value = "";
+  chatInput.style.height = "auto";
+  selectedFiles = [];
+  imagePreview.innerHTML = "";
+}
+
+sendButton.addEventListener("click", sendMessage);
+
+chatInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});

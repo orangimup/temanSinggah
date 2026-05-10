@@ -306,9 +306,86 @@ body {
   border-bottom-right-radius: var(--radius-sm);
 }
 
+.bubble.me:has(.bubble-image),
+.bubble.me:has(.bubble-image-grid) {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  padding: 0;
+}
+
+.bubble.you:has(.bubble-image),
+.bubble.you:has(.bubble-image-grid) {
+  border: 1.5px solid var(--color-border);
+  background: none;
+  padding: 0;
+}
+
+.bubble.bubble-image-only {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.bubble-image-grid {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.bubble-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-2xl);
+  border: 1.5px solid var(--color-border);
+}
+
 .chat-input-container {
   padding: var(--space-20);
   flex-shrink: 0;
+}
+
+.image-preview-container {
+  display: flex;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+  padding: var(--space-12) 0;
+}
+
+.image-preview-container:empty {
+  display: none;
+}
+
+.preview-item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1.5px solid var(--color-border);
+}
+
+.remove-preview {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
 }
 
 .chat-input-box {
