@@ -1,3 +1,4 @@
+//Counter Input
 const counterItem = document.querySelectorAll(".counter-row");
 
 counterItem.forEach((item) => {
@@ -30,4 +31,54 @@ counterItem.forEach((item) => {
   });
 
   updateCounter();
+});
+
+// Slider Input
+const priceSlider = document.querySelector(".price-slider");
+const priceValue = document.querySelector(".price-display-value");
+const priceInput = document.querySelector(".price-input");
+
+// Fungsi format angka ke Rupiah
+function rupiahFormatting(angka) {
+  return angka.toLocaleString("id-ID");
+}
+
+function clearNonNumeric(teks) {
+  return teks.replace(/[^0-9]/g, "");
+}
+
+priceSlider.addEventListener("input", function () {
+  const currentValue = parseInt(priceSlider.value) || 0;
+  const formatResult = rupiahFormatting(currentValue);
+
+  priceValue.textContent = formatResult;
+  priceInput.value = formatResult;
+});
+
+priceInput.addEventListener("keydown", function (event) {
+  const allowedKeys = [
+    "Backspace",
+    "Tab",
+    "ArrowLeft",
+    "ArrowRight",
+    "Delete",
+    "Enter",
+  ];
+
+  if (
+    !allowedKeys.includes(event.key) &&
+    (event.key < "0" || event.key > "9")
+  ) {
+    event.preventDefault();
+  }
+});
+
+priceInput.addEventListener("input", function () {
+  const cleanedValue = clearNonNumeric(priceInput.value);
+  const parsedNumber = parseInt(cleanedValue) || 0;
+
+  priceSlider.value = parsedNumber;
+  priceValue.textContent = rupiahFormatting(parsedNumber);
+
+  priceInput.value = rupiahFormatting(parsedNumber);
 });
