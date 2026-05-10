@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Listing | Teman Singgah</title>
+    <title>Kalender | Teman Singgah</title>
     <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/components/footer.css" />
     <link rel="stylesheet" href="/host/dashboard/styles/calendar_router.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -81,371 +80,6 @@
         </div>
 
         <div class="calendar-container">
-          <div class="weekday-header">
-            <div class="weekday-label">Min</div>
-            <div class="weekday-label">Sen</div>
-            <div class="weekday-label">Sel</div>
-            <div class="weekday-label">Rab</div>
-            <div class="weekday-label">Kam</div>
-            <div class="weekday-label">Jum</div>
-            <div class="weekday-label">Sab</div>
-          </div>
-
-          <!-- ── MEI 2025 ── -->
-          <!-- 1 Mei = Kamis = kolom ke-5 (index 4), jadi 4 empty cell -->
-          <div class="month-section">
-            <div class="month-label">Mei 2025</div>
-            <div class="day-grid">
-              <div class="day-card day-empty"></div>
-              <div class="day-card day-empty"></div>
-              <div class="day-card day-empty"></div>
-              <div class="day-card day-empty"></div>
-
-              <!-- 1 -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">1</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 2 -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">2</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 3 Sab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">3</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 4 Min -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">4</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 5 Sen -->
-              <div class="day-card day-selected">
-                <div class="day-status-dot"></div>
-                <span class="day-number">5</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 6 Sel -->
-              <div class="day-card day-today">
-                <div class="day-status-dot"></div>
-                <span class="day-number">6</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 7 Rab -->
-              <div class="day-card">
-                <span class="day-number">7</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 8 Kam -->
-              <div class="day-card">
-                <span class="day-number">8</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 9 Jum -->
-              <div class="day-card">
-                <span class="day-number">9</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 10 Sab -->
-              <div class="day-card">
-                <span class="day-number">10</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 11 Min -->
-              <div class="day-card">
-                <span class="day-number">11</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 12 Sen -->
-              <div class="day-card">
-                <span class="day-number">12</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 13 Sel -->
-              <div class="day-card">
-                <span class="day-number">13</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 14 Rab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">14</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 15 Kam -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">15</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 16 Jum -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">16</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 17 Sab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">17</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 18 Min -->
-              <div class="day-card">
-                <span class="day-number">18</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 19 Sen -->
-              <div class="day-card">
-                <span class="day-number">19</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 20 Sel -->
-              <div class="day-card">
-                <span class="day-number">20</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 21 Rab -->
-              <div class="day-card">
-                <span class="day-number">21</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 22 Kam -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">22</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 23 Jum -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">23</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 24 Sab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">24</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 25 Min -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">25</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 26 Sen -->
-              <div class="day-card">
-                <span class="day-number">26</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 27 Sel -->
-              <div class="day-card">
-                <span class="day-number">27</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 28 Rab -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">28</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 29 Kam -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">29</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 30 Jum -->
-              <div class="day-card">
-                <span class="day-number">30</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 31 Sab -->
-              <div class="day-card">
-                <span class="day-number">31</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── JUNI 2025 ── -->
-          <!-- 1 Juni = Minggu = kolom ke-1 (index 0), tidak ada empty cell -->
-          <div class="month-section">
-            <div class="month-label">Juni 2025</div>
-            <div class="day-grid">
-              <!-- 1 Min -->
-              <div class="day-card">
-                <span class="day-number">1</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 2 Sen -->
-              <div class="day-card">
-                <span class="day-number">2</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 3 Sel — booked -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">3</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 4 Rab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">4</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 5 Kam -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">5</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 6 Jum -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">6</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 7 Sab -->
-              <div class="day-card">
-                <span class="day-number">7</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 8 Min -->
-              <div class="day-card">
-                <span class="day-number">8</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 9 Sen -->
-              <div class="day-card">
-                <span class="day-number">9</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 10 Sel -->
-              <div class="day-card">
-                <span class="day-number">10</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 11 Rab -->
-              <div class="day-card">
-                <span class="day-number">11</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 12 Kam -->
-              <div class="day-card">
-                <span class="day-number">12</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 13 Jum -->
-              <div class="day-card">
-                <span class="day-number">13</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 14 Sab — booked -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">14</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 15 Min -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">15</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 16 Sen -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">16</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 17 Sel -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">17</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 18 Rab -->
-              <div class="day-card">
-                <span class="day-number">18</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 19 Kam -->
-              <div class="day-card">
-                <span class="day-number">19</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 20 Jum -->
-              <div class="day-card">
-                <span class="day-number">20</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 21 Sab -->
-              <div class="day-card">
-                <span class="day-number">21</span>
-                <span class="day-price">Rp423rb</span>
-              </div>
-              <!-- 22 Min — booked -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">22</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 23 Sen -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">23</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 24 Sel -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">24</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 25 Rab -->
-              <div class="day-card day-booked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">25</span>
-                <span class="day-price">Dipesan</span>
-              </div>
-              <!-- 26 Kam -->
-              <div class="day-card">
-                <span class="day-number">26</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 27 Jum -->
-              <div class="day-card">
-                <span class="day-number">27</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-              <!-- 28 Sab — blocked -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">28</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 29 Min — blocked -->
-              <div class="day-card day-blocked">
-                <div class="day-status-dot"></div>
-                <span class="day-number">29</span>
-                <span class="day-price">Diblokir</span>
-              </div>
-              <!-- 30 Sen -->
-              <div class="day-card">
-                <span class="day-number">30</span>
-                <span class="day-price">Rp399rb</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -512,6 +146,76 @@
           </div>
         </div>
       </aside>
+
+      <aside class="listing-sidebar" id="listingSidebar">
+        <div class="listing-sidebar-header">
+          <span class="listing-sidebar-title">Listing</span>
+          <button class="listing-sidebar-close">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+        <div class="listing-sidebar-list">
+          <div class="listing-sidebar-item active">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              class="listing-sidebar-img"
+              alt="Apurva Kempinski" />
+            <span class="listing-sidebar-name">Apurva Kempinski</span>
+          </div>
+          <div class="listing-sidebar-item">
+            <img
+              src="/assets/images/nihi_sumba.webp"
+              class="listing-sidebar-img"
+              alt="Nihi Sumba" />
+            <span class="listing-sidebar-name">Nihi Sumba</span>
+          </div>
+          <div class="listing-sidebar-item">
+            <img
+              src="/assets/images/padma_resort_ubud_bali.jpg"
+              class="listing-sidebar-img"
+              alt="Padma Resort" />
+            <span class="listing-sidebar-name">Padma Resort</span>
+          </div>
+        </div>
+      </aside>
+
+      <template id="weekdayHeaderTemplate">
+        <div class="weekday-header">
+          <div class="weekday-label">Min</div>
+          <div class="weekday-label">Sen</div>
+          <div class="weekday-label">Sel</div>
+          <div class="weekday-label">Rab</div>
+          <div class="weekday-label">Kam</div>
+          <div class="weekday-label">Jum</div>
+          <div class="weekday-label">Sab</div>
+        </div>
+      </template>
+
+      <template id="monthSectionTemplate">
+        <div class="month-section">
+          <div class="month-label"></div>
+          <div class="day-grid"></div>
+        </div>
+      </template>
+
+      <template id="dayCardTemplate">
+        <div class="day-card">
+          <span class="day-number"></span>
+          <span class="day-price"></span>
+        </div>
+      </template>
+
+      <template id="dayCardStatusTemplate">
+        <div class="day-card">
+          <div class="day-status-dot"></div>
+          <span class="day-number"></span>
+          <span class="day-price"></span>
+        </div>
+      </template>
+
+      <template id="dayCardEmptyTemplate">
+        <div class="day-card day-empty"></div>
+      </template>
     </main>
 
     <script src="/host/dashboard/scripts/calendar_router.js"></script>

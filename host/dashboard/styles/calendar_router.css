@@ -414,3 +414,123 @@ body {
   border-color: var(--color-primary);
   border-width: 2px;
 }
+
+.listing-sidebar {
+  position: fixed;
+  left: -280px;
+  top: var(--navbar-height);
+  width: 260px;
+  height: calc(100vh - var(--navbar-height));
+  background: var(--color-bg-card);
+  border-right: 1.5px solid var(--color-border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-24);
+  gap: var(--space-16);
+  transition: left var(--transition-base);
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-card);
+}
+
+.listing-sidebar.open {
+  left: 0;
+}
+
+.listing-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.listing-sidebar-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.listing-sidebar-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
+}
+
+.listing-sidebar-close:hover {
+  background: var(--color-primary-light-hover);
+}
+
+.listing-sidebar-close:active {
+  background: var(--color-primary-light-active);
+  transform: scale(0.99);
+}
+
+.listing-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.listing-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1.5px solid transparent;
+}
+
+.listing-sidebar-item:hover {
+  background: var(--color-primary-light);
+}
+
+.listing-sidebar-item:active {
+  transform: scale(0.99);
+}
+
+.listing-sidebar-item.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.listing-sidebar-img {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.listing-sidebar-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.calendar-container.year-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-32);
+  align-items: start;
+}
+
+.calendar-container.year-view .weekday-header {
+  grid-column: 1 / -1;
+}
+
+.calendar-container.year-view .month-section {
+  margin-bottom: 0;
+}
