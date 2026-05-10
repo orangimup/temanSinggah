@@ -73,10 +73,7 @@
       <section class="content-header">
         <h2 class="content-title">Listing Saya</h2>
         <div class="header-buttons">
-          <button class="header-button" id="btn-grid" title="Tampilan grid">
-            <i class="ph-bold ph-squares-four"></i>
-          </button>
-          <button class="header-button" id="btn-list" title="Tampilan list">
+          <button class="header-button list-button" title="Tampilan list">
             <i class="ph-bold ph-rows"></i>
           </button>
           <a
@@ -88,7 +85,7 @@
         </div>
       </section>
 
-      <section class="list-section flex">
+      <section class="list-section list-view">
         <table>
           <thead>
             <tr>
@@ -169,64 +166,62 @@
         </table>
       </section>
 
-      <section class="list-section grid">
-        <div class="listing-grid">
-          <a href="#" class="listing-card">
-            <div class="listing-card-image-container">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                class="listing-card-image"
-                alt="Villa Sunset" />
-              <div class="listing-card-badge">
-                <span class="badge-dot error"></span>
-                Butuh aksi
-              </div>
+      <section class="list-section grid-view" style="display: none">
+        <a href="#" class="listing-card">
+          <div class="listing-card-image-container">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              class="listing-card-image"
+              alt="Villa Sunset" />
+            <div class="listing-card-badge">
+              <span class="badge-dot error"></span>
+              Butuh aksi
             </div>
-            <div class="listing-card-body">
-              <span class="listing-card-name">a</span>
-              <span class="listing-card-location">
-                Rumah di Kecamatan Blimbing, Indonesia
-              </span>
-            </div>
-          </a>
+          </div>
+          <div class="listing-card-body">
+            <span class="listing-card-name">a</span>
+            <span class="listing-card-location">
+              Rumah di Kecamatan Blimbing, Indonesia
+            </span>
+          </div>
+        </a>
 
-          <a href="#" class="listing-card">
-            <div class="listing-card-image-container">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                class="listing-card-image"
-                alt="Villa Sunset" />
-              <div class="listing-card-badge">
-                <span class="badge-dot error"></span>
-                Butuh aksi
-              </div>
+        <a href="#" class="listing-card">
+          <div class="listing-card-image-container">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              class="listing-card-image"
+              alt="Villa Sunset" />
+            <div class="listing-card-badge">
+              <span class="badge-dot error"></span>
+              Butuh aksi
             </div>
-            <div class="listing-card-body">
-              <span class="listing-card-name">a</span>
-              <span class="listing-card-location">
-                Rumah di Kecamatan Blimbing, Indonesia
-              </span>
-            </div>
-          </a>
+          </div>
+          <div class="listing-card-body">
+            <span class="listing-card-name">a</span>
+            <span class="listing-card-location">
+              Rumah di Kecamatan Blimbing, Indonesia
+            </span>
+          </div>
+        </a>
 
-          <a href="#" class="listing-card">
-            <div class="listing-card-image-container">
-              <div class="listing-card-placeholder">
-                <i class="ph-bold ph-house-simple"></i>
-              </div>
-              <div class="listing-card-badge">
-                <span class="badge-dot warning"></span>
-                Dalam proses
-              </div>
+        <a href="#" class="listing-card">
+          <div class="listing-card-image-container">
+            <div class="listing-card-placeholder">
+              <i class="ph-bold ph-house-simple"></i>
             </div>
-            <div class="listing-card-body">
-              <span class="listing-card-name">a</span>
-              <span class="listing-card-location">
-                Rumah di Kecamatan Blimbing, Indonesia
-              </span>
+            <div class="listing-card-badge">
+              <span class="badge-dot warning"></span>
+              Dalam proses
             </div>
-          </a>
-        </div>
+          </div>
+          <div class="listing-card-body">
+            <span class="listing-card-name">a</span>
+            <span class="listing-card-location">
+              Rumah di Kecamatan Blimbing, Indonesia
+            </span>
+          </div>
+        </a>
       </section>
     </main>
 
@@ -280,5 +275,7 @@
         </div>
       </div>
     </footer>
+
+    <script src="/host/dashboard/scripts/listing.js"></script>
   </body>
 </html>
