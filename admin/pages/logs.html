@@ -101,7 +101,7 @@
       <div class="main-container">
         <header class="topbar">
           <div class="topbar-left">
-            <h1 class="page-title">Activity & Error Log</h1>
+            <h1 class="page-title">Catatan Aktivitas & Error</h1>
           </div>
           <div class="topbar-right">
             <span class="user-name">Admin utama</span>
@@ -111,11 +111,14 @@
 
         <main class="content-area">
           <div class="tab-group">
-            <button class="tab-item active">Activity Log</button>
-            <button class="tab-item">Error Log</button>
+            <button class="tab-item active" data-target="#activityLog">
+              Catatan Aktivitas
+            </button>
+            <button class="tab-item" data-target="#errorLog">Catatan Error</button>
+            <div class="tab-indicator"></div>
           </div>
 
-          <section class="table-section">
+          <section class="table-section" id="activityLog">
             <div class="table-container">
               <table>
                 <thead>
@@ -258,7 +261,7 @@
             </div>
           </section>
 
-          <section class="table-section">
+          <section class="table-section" id="errorLog">
             <div class="table-container">
               <table>
                 <thead>
@@ -346,5 +349,7 @@
         </main>
       </div>
     </div>
+
+    <script src="/admin/dashboard.js"></script>
   </body>
 </html>
