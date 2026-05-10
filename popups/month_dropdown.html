@@ -1,0 +1,48 @@
+<style>
+  .dropdown-popup {
+    position: absolute;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-dropdown);
+    z-index: var(--z-dropdown);
+    display: none;
+    top: 100%;
+    left: 0;
+    transform: translateX(-64px);
+    margin-top: var(--space-10);
+  }
+
+  .dropdown-popup.open {
+    display: block;
+  }
+
+  .dropdown-option {
+    width: 100%;
+    padding: var(--space-14) var(--space-20);
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: var(--text-base);
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-border-subtle);
+    transition: var(--transition-base);
+  }
+
+  .dropdown-option:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-option:hover {
+    background: var(--color-primary-subtle);
+  }
+
+  .dropdown-option:active {
+    background: var(--color-primary-light);
+  }
+</style>
+<body>
+  <div class="dropdown-popup">
+    <button class="dropdown-option">Month</button>
+    <button class="dropdown-option">Year</button>
+  </div>
+</body>
