@@ -132,6 +132,15 @@
   border-radius: var(--radius-full);
   transition: all var(--transition-fast);
   position: relative;
+  cursor: pointer;
+}
+
+.search-field:hover {
+  background: var(--color-primary-light);
+}
+
+.search-field.active {
+  background: var(--color-bg-section);
 }
 
 .search-field:not(:last-child)::after {
@@ -162,6 +171,11 @@
 }
 
 .field-value {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-medium);
+}
+
+.field-value.input {
   font-size: var(--text-base);
   border: none;
   background: none;
@@ -193,7 +207,8 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
+  transform:translateX(var(--space-10))
 }
 
 .search-button:hover {
