@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/admin/dashboard.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,8 +16,12 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet" />
 
-    <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   </head>
 
   <body>
@@ -24,7 +29,10 @@
       <aside class="sidebar">
         <div class="sidebar-header">
           <a href="/admin/pages/dashboard.html" class="sidebar-logo">
-            <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+            <img
+              src="/assets/logo/logo_temansinggah.svg"
+              alt="Logo Teman Singgah"
+              class="logo-icon" />
           </a>
         </div>
 
@@ -103,8 +111,6 @@
         </header>
 
         <main class="content-area">
-
-          <!-- ===== METRIC CARDS ===== -->
           <section class="metric-grid">
             <div class="metric-card">
               <div class="metric-icon">
@@ -147,75 +153,234 @@
             </div>
           </section>
 
-          <!-- ===== MAIN CHART: Tren ===== -->
           <section class="chart-section">
-            <div class="section-header">
-              <h2 class="section-title">Tren Reservasi & Pendapatan</h2>
+            <div class="chart-card-header">
+              <span class="chart-card-title">Aktivitas Guest</span>
+              <span
+                class="chart-card-subtitle">
+                Check-in & Check-out minggu ini
+              </span>
             </div>
-            <div class="chart-placeholder">
-              <i class="ri-bar-chart-box-line"></i>
-              <span>Area chart akan ditampilkan di sini</span>
+            <div id="chartWrap">
+              <canvas
+                id="revenueTrendChart"
+                role="img"
+                aria-label="Grafik tren pendapatan dan reservasi"></canvas>
+
+              <div id="revTooltip">
+                <div id="revTt-title"></div>
+                <div class="tt-row">
+                  <div class="tt-box" style="background: #378add"></div>
+                  <span>Pendapatan</span>
+                  <span class="tt-val" id="revTt-val1"></span>
+                </div>
+                <div class="tt-row">
+                  <div class="tt-box" style="background: #e05b7a"></div>
+                  <span>Reservasi</span>
+                  <span class="tt-val" id="revTt-val2"></span>
+                </div>
+              </div>
             </div>
           </section>
 
           <!-- ===== 3 CHARTS ROW ===== -->
           <div class="chart-row">
-
             <!-- 1. Aktivitas Guest — Line Chart (2fr, lebih besar) -->
             <div class="chart-card">
-              <div class="chart-card-header" style="flex-direction: row; align-items: flex-start; justify-content: space-between;">
+              <div
+                class="chart-card-header"
+                style="
+                  flex-direction: row;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                ">
                 <div>
                   <span class="chart-card-title">Aktivitas Guest</span>
-                  <span class="chart-card-subtitle" style="display:block; margin-top: var(--space-4);">Check-in & Check-out minggu ini</span>
+                  <span
+                    class="chart-card-subtitle"
+                    style="display: block; margin-top: var(--space-4)"
+                    >Check-in & Check-out minggu ini</span
+                  >
                 </div>
                 <!-- Tab: Month / Weekly / Day -->
-                <div style="display:flex; gap: var(--space-4); background: var(--color-bg-section); border-radius: var(--radius-full); padding: 3px;">
-                  <button style="padding: var(--space-6) var(--space-12); border:none; background:transparent; border-radius:var(--radius-full); font-size:var(--text-xs); font-weight:var(--font-semibold); color:var(--color-text-hint); cursor:pointer; font-family:var(--font-family);">Bulanan</button>
-                  <button style="padding: var(--space-6) var(--space-12); border:none; background:var(--color-bg-card); border-radius:var(--radius-full); font-size:var(--text-xs); font-weight:var(--font-bold); color:var(--color-text-primary); cursor:pointer; box-shadow:var(--shadow-card); font-family:var(--font-family);">Mingguan</button>
-                  <button style="padding: var(--space-6) var(--space-12); border:none; background:transparent; border-radius:var(--radius-full); font-size:var(--text-xs); font-weight:var(--font-semibold); color:var(--color-text-hint); cursor:pointer; font-family:var(--font-family);">Harian</button>
+                <div
+                  style="
+                    display: flex;
+                    gap: var(--space-4);
+                    background: var(--color-bg-section);
+                    border-radius: var(--radius-full);
+                    padding: 3px;
+                  ">
+                  <button
+                    style="
+                      padding: var(--space-6) var(--space-12);
+                      border: none;
+                      background: transparent;
+                      border-radius: var(--radius-full);
+                      font-size: var(--text-xs);
+                      font-weight: var(--font-semibold);
+                      color: var(--color-text-hint);
+                      cursor: pointer;
+                      font-family: var(--font-family);
+                    ">
+                    Bulanan
+                  </button>
+                  <button
+                    style="
+                      padding: var(--space-6) var(--space-12);
+                      border: none;
+                      background: var(--color-bg-card);
+                      border-radius: var(--radius-full);
+                      font-size: var(--text-xs);
+                      font-weight: var(--font-bold);
+                      color: var(--color-text-primary);
+                      cursor: pointer;
+                      box-shadow: var(--shadow-card);
+                      font-family: var(--font-family);
+                    ">
+                    Mingguan
+                  </button>
+                  <button
+                    style="
+                      padding: var(--space-6) var(--space-12);
+                      border: none;
+                      background: transparent;
+                      border-radius: var(--radius-full);
+                      font-size: var(--text-xs);
+                      font-weight: var(--font-semibold);
+                      color: var(--color-text-hint);
+                      cursor: pointer;
+                      font-family: var(--font-family);
+                    ">
+                    Harian
+                  </button>
                 </div>
               </div>
 
               <!-- Stats row -->
-              <div style="display:flex; gap: var(--space-24);">
-                <div class="legend-item" style="gap:var(--space-8);">
-                  <span class="legend-dot" style="background:var(--color-primary); width:10px; height:10px;"></span>
-                  <span style="font-size:var(--text-sm); color:var(--color-text-secondary);">Check-in</span>
-                  <span style="font-size:var(--text-base); font-weight:var(--font-bold); color:var(--color-text-primary); margin-left:var(--space-4);">245 Tamu</span>
+              <div style="display: flex; gap: var(--space-24)">
+                <div class="legend-item" style="gap: var(--space-8)">
+                  <span
+                    class="legend-dot"
+                    style="
+                      background: var(--color-primary);
+                      width: 10px;
+                      height: 10px;
+                    "></span>
+                  <span
+                    style="
+                      font-size: var(--text-sm);
+                      color: var(--color-text-secondary);
+                    "
+                    >Check-in</span
+                  >
+                  <span
+                    style="
+                      font-size: var(--text-base);
+                      font-weight: var(--font-bold);
+                      color: var(--color-text-primary);
+                      margin-left: var(--space-4);
+                    "
+                    >245 Tamu</span
+                  >
                 </div>
-                <div class="legend-item" style="gap:var(--space-8);">
-                  <span class="legend-dot" style="background:var(--color-accent); width:10px; height:10px;"></span>
-                  <span style="font-size:var(--text-sm); color:var(--color-text-secondary);">Check-out</span>
-                  <span style="font-size:var(--text-base); font-weight:var(--font-bold); color:var(--color-text-primary); margin-left:var(--space-4);">157 Tamu</span>
+                <div class="legend-item" style="gap: var(--space-8)">
+                  <span
+                    class="legend-dot"
+                    style="
+                      background: var(--color-accent);
+                      width: 10px;
+                      height: 10px;
+                    "></span>
+                  <span
+                    style="
+                      font-size: var(--text-sm);
+                      color: var(--color-text-secondary);
+                    "
+                    >Check-out</span
+                  >
+                  <span
+                    style="
+                      font-size: var(--text-base);
+                      font-weight: var(--font-bold);
+                      color: var(--color-text-primary);
+                      margin-left: var(--space-4);
+                    "
+                    >157 Tamu</span
+                  >
                 </div>
               </div>
 
-              <div class="chart-placeholder-sm" style="min-height: 220px;">
-                <svg class="placeholder-line-svg" width="260" height="100" viewBox="0 0 260 100" fill="none">
+              <div class="chart-placeholder-sm" style="min-height: 220px">
+                <svg
+                  class="placeholder-line-svg"
+                  width="260"
+                  height="100"
+                  viewBox="0 0 260 100"
+                  fill="none">
                   <!-- Area fill primary -->
-                  <path d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35 L260,100 L0,100 Z"
-                    fill="var(--color-primary)" opacity="0.12"/>
+                  <path
+                    d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35 L260,100 L0,100 Z"
+                    fill="var(--color-primary)"
+                    opacity="0.12" />
                   <!-- Line primary (Check-in) -->
-                  <path d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35"
-                    stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path
+                    d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35"
+                    stroke="var(--color-primary)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none" />
                   <!-- Area fill accent -->
-                  <path d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68 L260,100 L0,100 Z"
-                    fill="var(--color-accent)" opacity="0.12"/>
+                  <path
+                    d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68 L260,100 L0,100 Z"
+                    fill="var(--color-accent)"
+                    opacity="0.12" />
                   <!-- Line accent (Check-out) -->
-                  <path d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68"
-                    stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path
+                    d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68"
+                    stroke="var(--color-accent)"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none" />
                   <!-- Tooltip dot -->
-                  <circle cx="90" cy="18" r="5" fill="var(--color-primary)"/>
+                  <circle cx="90" cy="18" r="5" fill="var(--color-primary)" />
                 </svg>
                 <!-- X-axis labels -->
-                <div style="display:flex; justify-content:space-between; width:260px; margin-top:var(--space-4);">
-                  <span style="font-size:10px; color:var(--color-text-hint);">Min</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Sen</span>
-                  <span style="font-size:10px; color:var(--color-text-primary); font-weight:var(--font-bold);">Sel</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Rab</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Kam</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Jum</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Sab</span>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    width: 260px;
+                    margin-top: var(--space-4);
+                  ">
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Min</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Sen</span
+                  >
+                  <span
+                    style="
+                      font-size: 10px;
+                      color: var(--color-text-primary);
+                      font-weight: var(--font-bold);
+                    "
+                    >Sel</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Rab</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Kam</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Jum</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Sab</span
+                  >
                 </div>
               </div>
             </div>
@@ -224,42 +389,94 @@
             <div class="chart-card">
               <div class="chart-card-header">
                 <span class="chart-card-title">Properti Tersedia</span>
-                <span class="chart-card-subtitle">Status ketersediaan saat ini</span>
+                <span class="chart-card-subtitle"
+                  >Status ketersediaan saat ini</span
+                >
               </div>
 
-              <div class="chart-placeholder-sm" style="min-height: 220px;">
+              <div class="chart-placeholder-sm" style="min-height: 220px">
                 <!-- Donut ilustrasi lebih detail -->
-                <svg width="100" height="100" viewBox="0 0 100 100" style="opacity:0.75;">
+                <svg
+                  width="100"
+                  height="100"
+                  viewBox="0 0 100 100"
+                  style="opacity: 0.75">
                   <!-- Background circle -->
-                  <circle cx="50" cy="50" r="38" fill="none" stroke="var(--color-accent-light)" stroke-width="16"/>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
+                    stroke="var(--color-accent-light)"
+                    stroke-width="16" />
                   <!-- Available arc (hijau, ~55%) -->
-                  <circle cx="50" cy="50" r="38" fill="none"
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
                     stroke="var(--color-success)"
                     stroke-width="16"
                     stroke-dasharray="131 107"
                     stroke-dashoffset="0"
                     stroke-linecap="butt"
-                    transform="rotate(-90 50 50)"/>
+                    transform="rotate(-90 50 50)" />
                   <!-- Center hole -->
-                  <circle cx="50" cy="50" r="26" fill="var(--color-bg-section)"/>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="26"
+                    fill="var(--color-bg-section)" />
                 </svg>
                 <span>Donut chart akan ditampilkan di sini</span>
               </div>
 
-              <div class="chart-legend" style="flex-direction:column; gap:var(--space-8);">
-                <div class="legend-item" style="justify-content:space-between; width:100%;">
-                  <div style="display:flex; align-items:center; gap:var(--space-6);">
-                    <span class="legend-dot" style="background:var(--color-success);"></span>
+              <div
+                class="chart-legend"
+                style="flex-direction: column; gap: var(--space-8)">
+                <div
+                  class="legend-item"
+                  style="justify-content: space-between; width: 100%">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: var(--space-6);
+                    ">
+                    <span
+                      class="legend-dot"
+                      style="background: var(--color-success)"></span>
                     <span>Tersedia</span>
                   </div>
-                  <span style="font-weight:var(--font-bold); color:var(--color-text-primary);">66 Properti</span>
+                  <span
+                    style="
+                      font-weight: var(--font-bold);
+                      color: var(--color-text-primary);
+                    "
+                    >66 Properti</span
+                  >
                 </div>
-                <div class="legend-item" style="justify-content:space-between; width:100%;">
-                  <div style="display:flex; align-items:center; gap:var(--space-6);">
-                    <span class="legend-dot" style="background:var(--color-accent-light);"></span>
+                <div
+                  class="legend-item"
+                  style="justify-content: space-between; width: 100%">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: var(--space-6);
+                    ">
+                    <span
+                      class="legend-dot"
+                      style="background: var(--color-accent-light)"></span>
                     <span>Penuh</span>
                   </div>
-                  <span style="font-weight:var(--font-bold); color:var(--color-text-primary);">129 Properti</span>
+                  <span
+                    style="
+                      font-weight: var(--font-bold);
+                      color: var(--color-text-primary);
+                    "
+                    >129 Properti</span
+                  >
                 </div>
               </div>
             </div>
@@ -272,41 +489,116 @@
               </div>
 
               <!-- Big number -->
-              <div style="font-size: var(--text-3xl); font-weight: var(--font-bold); color: var(--color-text-primary); letter-spacing: -0.02em; line-height: 1;">
+              <div
+                style="
+                  font-size: var(--text-3xl);
+                  font-weight: var(--font-bold);
+                  color: var(--color-text-primary);
+                  letter-spacing: -0.02em;
+                  line-height: 1;
+                ">
                 12.456
               </div>
 
-              <div class="chart-placeholder-sm" style="min-height: 160px;">
+              <div class="chart-placeholder-sm" style="min-height: 160px">
                 <!-- Bar chart ilustrasi — grouped bars per minggu -->
-                <div style="display:flex; align-items:flex-end; gap:var(--space-10); height:80px; opacity:0.7;">
+                <div
+                  style="
+                    display: flex;
+                    align-items: flex-end;
+                    gap: var(--space-10);
+                    height: 80px;
+                    opacity: 0.7;
+                  ">
                   <!-- Week 1 -->
-                  <div style="display:flex; align-items:flex-end; gap:3px;">
-                    <div class="placeholder-bar" style="height:50px; background:var(--color-primary-light-active);"></div>
-                    <div class="placeholder-bar" style="height:38px; background:var(--color-accent-light);"></div>
-                    <div class="placeholder-bar" style="height:30px; background:var(--color-primary-light-active);"></div>
+                  <div style="display: flex; align-items: flex-end; gap: 3px">
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 50px;
+                        background: var(--color-primary-light-active);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 38px;
+                        background: var(--color-accent-light);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 30px;
+                        background: var(--color-primary-light-active);
+                      "></div>
                   </div>
                   <!-- Week 2 — aktif -->
-                  <div style="display:flex; align-items:flex-end; gap:3px;">
-                    <div class="placeholder-bar" style="height:55px; background:var(--color-primary-light-active);"></div>
-                    <div class="placeholder-bar" style="height:72px; background:var(--color-primary);"></div>
-                    <div class="placeholder-bar" style="height:45px; background:var(--color-primary-light-active);"></div>
+                  <div style="display: flex; align-items: flex-end; gap: 3px">
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 55px;
+                        background: var(--color-primary-light-active);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 72px;
+                        background: var(--color-primary);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 45px;
+                        background: var(--color-primary-light-active);
+                      "></div>
                   </div>
                   <!-- Week 3 -->
-                  <div style="display:flex; align-items:flex-end; gap:3px;">
-                    <div class="placeholder-bar" style="height:40px; background:var(--color-primary-light-active);"></div>
-                    <div class="placeholder-bar" style="height:52px; background:var(--color-accent-light);"></div>
-                    <div class="placeholder-bar" style="height:35px; background:var(--color-primary-light-active);"></div>
+                  <div style="display: flex; align-items: flex-end; gap: 3px">
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 40px;
+                        background: var(--color-primary-light-active);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 52px;
+                        background: var(--color-accent-light);
+                      "></div>
+                    <div
+                      class="placeholder-bar"
+                      style="
+                        height: 35px;
+                        background: var(--color-primary-light-active);
+                      "></div>
                   </div>
                 </div>
                 <!-- X-axis labels -->
-                <div style="display:flex; justify-content:space-around; width:100%; margin-top:var(--space-4);">
-                  <span style="font-size:10px; color:var(--color-text-hint);">Minggu 1</span>
-                  <span style="font-size:10px; color:var(--color-text-primary); font-weight:var(--font-bold);">Minggu 2</span>
-                  <span style="font-size:10px; color:var(--color-text-hint);">Minggu 3</span>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-around;
+                    width: 100%;
+                    margin-top: var(--space-4);
+                  ">
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Minggu 1</span
+                  >
+                  <span
+                    style="
+                      font-size: 10px;
+                      color: var(--color-text-primary);
+                      font-weight: var(--font-bold);
+                    "
+                    >Minggu 2</span
+                  >
+                  <span style="font-size: 10px; color: var(--color-text-hint)"
+                    >Minggu 3</span
+                  >
                 </div>
               </div>
             </div>
-
           </div>
 
           <section class="table-section">
