@@ -3,7 +3,6 @@
   top: 0;
   background: var(--color-bg-card);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--color-border-subtle);
   display: flex;
   align-items: center;
   height: var(--navbar-height);
@@ -49,6 +48,8 @@
   align-items: center;
   list-style: none;
   gap: var(--space-40);
+  position: relative;
+  padding:var(--space-8) 0;
 }
 
 .nav-item {
@@ -61,21 +62,18 @@
   font-weight: var(--font-semibold);
   letter-spacing: var(--space-letter);
   position: relative;
-  padding-bottom: var(--space-8);
   font-size: var(--text-sm);
   transition: color var(--transition-base);
 }
 
-.nav-link::after {
-  content: "";
+.nav-indicator {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2.6px;
-  background: var(--color-text-secondary);
-  transition: width var(--transition-base);
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-primary);
   border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+  margin-top: var(--space-8);
 }
 
 .nav-link:hover {
