@@ -1,12 +1,15 @@
-const listViewButton = document.querySelector(".header-button");
+const listToggleButton = document.querySelector(".header-button");
 const listContainer = document.querySelector(".list-section");
-const icon = listViewButton.querySelector("i");
+const icon = listToggleButton.querySelector("i");
 
-listViewButton.addEventListener("click", () => {
-  const isGrid = listContainer.classList.toggle("grid-view");
+const listView = document.querySelector(".list-view");
+const gridView = document.querySelector(".grid-view");
+
+listToggleButton.addEventListener("click", () => {
+  const isGrid = listToggleButton.classList.toggle("active");
+
+  listView.style.display = isGrid ? "none" : "flex";
+  gridView.style.display = isGrid ? "grid" : "none";
 
   icon.className = isGrid ? "ph-bold ph-squares-four" : "ph-bold ph-rows";
 });
-
-const listView = document.querySelector(".list-view")
-const gridView = document.querySelector(".grid-view")
