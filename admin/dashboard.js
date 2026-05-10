@@ -8,6 +8,24 @@ filterButton.forEach((filterItem) => {
   });
 });
 
+// Sort Button
+const sortButtons = document.querySelectorAll(".sort-button");
+
+sortButtons.forEach((sortItem) => {
+  sortItem.addEventListener("click", () => {
+    const isActive = sortItem.classList.toggle("active");
+
+    const textSpan = sortItem.querySelector("span");
+
+    const textActive = sortItem.dataset.active;
+    const textInactive = sortItem.dataset.inactive;
+
+    if (textSpan && textActive && textInactive) {
+      textSpan.textContent = isActive ? textActive : textInactive;
+    }
+  });
+});
+
 // Tab Group
 const tabItems = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
@@ -34,7 +52,9 @@ tabItems.forEach((tab) => {
     tab.classList.add("active");
     moveIndicator(tab);
 
-    document.querySelectorAll(".table-section").forEach((c) => c.style.display = "none");
+    document
+      .querySelectorAll(".table-section")
+      .forEach((c) => (c.style.display = "none"));
 
     document.querySelector(tab.dataset.target).style.display = "block";
   });
