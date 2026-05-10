@@ -1,14 +1,3 @@
-// Revenue Chart
-const commonOptions = {
-  scales: {
-    y: {
-      ticks: {
-        callback: (v) => v,
-      },
-    },
-  },
-};
-
 const months = [
   "Jan",
   "Feb",
@@ -60,6 +49,7 @@ function createGradients(ctx, chartHeight) {
   return { blueGrad, pinkGrad };
 }
 
+// ── Spring physics ───────────────────────────────────────
 const RADIUS_TARGET = 6.5;
 const STIFFNESS = 0.18;
 const DAMPING = 0.72;
@@ -97,6 +87,7 @@ function startSpring(chart) {
   if (!rafId) rafId = requestAnimationFrame(() => springStep(chart));
 }
 
+// ── Spring dot plugin ─────────────────────────────────────
 const springDotPlugin = {
   id: "springDot",
   afterDraw(chart) {
@@ -120,6 +111,7 @@ const springDotPlugin = {
 
 Chart.register(springDotPlugin);
 
+// ── Inisialisasi Revenue Chart ────────────────────────────
 const canvas = document.getElementById("revenueTrendChart");
 const ctx = canvas.getContext("2d");
 const { blueGrad, pinkGrad } = createGradients(ctx, 300);
@@ -159,12 +151,7 @@ const chart = new Chart(canvas, {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 900, easing: "easeInOutQuart" },
-
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-
+    interaction: { mode: "index", intersect: false },
     plugins: {
       legend: {
         display: true,
@@ -182,7 +169,6 @@ const chart = new Chart(canvas, {
       },
       tooltip: { enabled: false },
     },
-
     scales: {
       x: {
         display: true,
@@ -205,6 +191,7 @@ const chart = new Chart(canvas, {
   },
 });
 
+// ── Revenue Tooltip ───────────────────────────────────────
 const tooltip = document.getElementById("revTooltip");
 const ttTitle = document.getElementById("revTt-title");
 const ttVal1 = document.getElementById("revTt-val1");
@@ -278,18 +265,131 @@ canvas.addEventListener("mousemove", (e) => {
     { intersect: false },
     true,
   );
-
   if (!pts.length) {
     scheduleHide();
     return;
   }
-
   showTooltip(pts[0].index);
 });
 
 canvas.addEventListener("mouseleave", scheduleHide);
 
-// Filter Button
+// ----------------------------------------------------------
+// DONUT CHART — Status Properti
+// ----------------------------------------------------------
+const donutData = {
+  labels: ["Tersedia", "Penuh"],
+  values: [66, 129], // ← ganti dengan data aslimu
+  colors: ["#4ade80", "#fde68a"],
+};
+
+const donutTotal = donutData.values.reduce((a, b) => a + b, 0);
+
+const donutCanvas = document.getElementById("donutChart");
+const donutCtx = donutCanvas.getContext("2d");
+
+const donutChart = new Chart(donutCtx, {
+  type: "doughnut",
+  data: {
+    labels: donutData.labels,
+    datasets: [
+      {
+        data: donutData.values,
+        backgroundColor: donutData.colors,
+        borderColor: "transparent",
+        borderWidth: 0,
+        hoverOffset: 6,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    cutout: "68%",
+    animation: { duration: 900, easing: "easeInOutQuart" },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+    },
+  },
+});
+
+// ── Donut Tooltip (pola sama dengan revenue tooltip) ──────
+const dTooltip = document.getElementById("donutTooltip");
+const dttTitle = document.getElementById("dtt-title");
+const dttBox = document.getElementById("dtt-box");
+const dttLabel = document.getElementById("dtt-label");
+const dttVal = document.getElementById("dtt-val");
+const dWrap = document.getElementById("donutChartBox");
+
+let dHideTimer = null;
+let dVisible = false;
+
+function showDonutTooltip(e) {
+  const pts = donutChart.getElementsAtEventForMode(
+    e,
+    "nearest",
+    { intersect: true },
+    true,
+  );
+  if (!pts.length) {
+    hideDonutTooltip();
+    return;
+  }
+
+  clearTimeout(dHideTimer);
+
+  const idx = pts[0].index;
+  const label = donutData.labels[idx];
+  const value = donutData.values[idx];
+  const color = donutData.colors[idx];
+  const pct = ((value / donutTotal) * 100).toFixed(1);
+
+  dttTitle.textContent = label;
+  dttBox.style.background = color;
+  dttLabel.textContent = `${value} Rooms`;
+  dttVal.textContent = `${pct}%`;
+
+  const wrapRect = dWrap.getBoundingClientRect();
+  const mouseX = e.clientX - wrapRect.left;
+  const mouseY = e.clientY - wrapRect.top;
+
+  if (!dVisible) {
+    dTooltip.style.transition = "opacity 0.22s ease";
+    dTooltip.classList.add("visible");
+    dVisible = true;
+  } else {
+    dTooltip.style.transition =
+      "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
+  }
+
+  const tw = dTooltip.offsetWidth || 170;
+  const th = dTooltip.offsetHeight || 70;
+  let left = mouseX - tw / 2;
+  let top = mouseY - th - 14;
+
+  if (left < 4) left = 4;
+  if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
+  if (top < 4) top = mouseY + 14;
+
+  dTooltip.style.left = `${Math.round(left)}px`;
+  dTooltip.style.top = `${Math.round(top)}px`;
+}
+
+function hideDonutTooltip() {
+  dHideTimer = setTimeout(() => {
+    dTooltip.style.transition = "opacity 0.3s ease";
+    dTooltip.classList.remove("visible");
+    dVisible = false;
+  }, 120);
+}
+
+donutCanvas.addEventListener("mousemove", showDonutTooltip);
+donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
+
+// ----------------------------------------------------------
+// FILTER BUTTON
+// ----------------------------------------------------------
 const filterButton = document.querySelectorAll(".filter-item");
 
 filterButton.forEach((filterItem) => {
@@ -299,12 +399,14 @@ filterButton.forEach((filterItem) => {
   });
 });
 
+// ----------------------------------------------------------
+// SORT BUTTON
+// ----------------------------------------------------------
 const sortButtons = document.querySelectorAll(".sort-button");
 
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
     const isActive = sortItem.classList.toggle("active");
-
     const textSpan = sortItem.querySelector("span");
     const textActive = sortItem.dataset.active;
     const textInactive = sortItem.dataset.inactive;
@@ -315,12 +417,13 @@ sortButtons.forEach((sortItem) => {
   });
 });
 
-// Tab Group
+// ----------------------------------------------------------
+// TAB GROUP
+// ----------------------------------------------------------
 const tabItems = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
 
 function moveIndicator(tab) {
-  if (!tabIndicator) return;
   tabIndicator.style.left = `${tab.offsetLeft}px`;
   tabIndicator.style.width = `${tab.offsetWidth}px`;
 }
@@ -335,8 +438,7 @@ tabItems.forEach((tab) => {
       .querySelectorAll(".table-section")
       .forEach((c) => (c.style.display = "none"));
 
-    const target = document.querySelector(tab.dataset.target);
-    if (target) target.style.display = "block";
+    document.querySelector(tab.dataset.target).style.display = "block";
   });
 });
 

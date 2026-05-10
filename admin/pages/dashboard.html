@@ -156,8 +156,7 @@
           <section class="chart-section">
             <div class="chart-card-header">
               <span class="chart-card-title">Aktivitas Guest</span>
-              <span
-                class="chart-card-subtitle">
+              <span class="chart-card-subtitle">
                 Check-in & Check-out minggu ini
               </span>
             </div>
@@ -385,101 +384,27 @@
               </div>
             </div>
 
-            <!-- 2. Properti Tersedia — Donut Chart -->
-            <div class="chart-card">
+            <section class="chart-section">
               <div class="chart-card-header">
-                <span class="chart-card-title">Properti Tersedia</span>
-                <span class="chart-card-subtitle"
-                  >Status ketersediaan saat ini</span
-                >
+                <span class="chart-card-title">Aktivitas Guest</span>
+                <span class="chart-card-subtitle">
+                  Check-in & Check-out minggu ini
+                </span>
               </div>
-
-              <div class="chart-placeholder-sm" style="min-height: 220px">
-                <!-- Donut ilustrasi lebih detail -->
-                <svg
-                  width="100"
-                  height="100"
-                  viewBox="0 0 100 100"
-                  style="opacity: 0.75">
-                  <!-- Background circle -->
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="38"
-                    fill="none"
-                    stroke="var(--color-accent-light)"
-                    stroke-width="16" />
-                  <!-- Available arc (hijau, ~55%) -->
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="38"
-                    fill="none"
-                    stroke="var(--color-success)"
-                    stroke-width="16"
-                    stroke-dasharray="131 107"
-                    stroke-dashoffset="0"
-                    stroke-linecap="butt"
-                    transform="rotate(-90 50 50)" />
-                  <!-- Center hole -->
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="26"
-                    fill="var(--color-bg-section)" />
-                </svg>
-                <span>Donut chart akan ditampilkan di sini</span>
-              </div>
-
               <div
-                class="chart-legend"
-                style="flex-direction: column; gap: var(--space-8)">
-                <div
-                  class="legend-item"
-                  style="justify-content: space-between; width: 100%">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: var(--space-6);
-                    ">
-                    <span
-                      class="legend-dot"
-                      style="background: var(--color-success)"></span>
-                    <span>Tersedia</span>
+                id="donutChartBox"
+                style="position: relative; width: 200px; height: 200px">
+                <canvas id="donutChart"></canvas>
+                <div id="donutTooltip">
+                  <div class="dtt-title" id="dtt-title"></div>
+                  <div class="dtt-row">
+                    <div class="dtt-box" id="dtt-box"></div>
+                    <span id="dtt-label"></span>
+                    <span class="dtt-val" id="dtt-val"></span>
                   </div>
-                  <span
-                    style="
-                      font-weight: var(--font-bold);
-                      color: var(--color-text-primary);
-                    "
-                    >66 Properti</span
-                  >
-                </div>
-                <div
-                  class="legend-item"
-                  style="justify-content: space-between; width: 100%">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: var(--space-6);
-                    ">
-                    <span
-                      class="legend-dot"
-                      style="background: var(--color-accent-light)"></span>
-                    <span>Penuh</span>
-                  </div>
-                  <span
-                    style="
-                      font-weight: var(--font-bold);
-                      color: var(--color-text-primary);
-                    "
-                    >129 Properti</span
-                  >
                 </div>
               </div>
-            </div>
+            </section>
 
             <!-- 3. Pengunjung Web — Bar Chart -->
             <div class="chart-card">
