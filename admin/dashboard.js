@@ -1,17 +1,27 @@
 // Revenue Chart
 const months = [
-  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-  "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
 ];
 
 const revData = [
-  38000000, 34000000, 44000000, 52000000, 61000000, 75000000,
-  88000000, 95000000, 79000000, 58000000, 51000000, 70000000,
+  38000000, 34000000, 44000000, 52000000, 61000000, 75000000, 88000000,
+  95000000, 79000000, 58000000, 51000000, 70000000,
 ];
 
 const resData = [
-  28000000, 25000000, 33000000, 40000000, 48000000, 60000000,
-  71000000, 78000000, 64000000, 45000000, 38000000, 55000000,
+  28000000, 25000000, 33000000, 40000000, 48000000, 60000000, 71000000,
+  78000000, 64000000, 45000000, 38000000, 55000000,
 ];
 
 const fmtIDR = (v) =>
@@ -41,8 +51,8 @@ function createGradients(ctx, chartHeight) {
 }
 
 const RADIUS_TARGET = 6.5;
-const STIFFNESS     = 0.18;
-const DAMPING       = 0.72;
+const STIFFNESS = 0.18;
+const DAMPING = 0.72;
 
 const dots = [
   { color: "#378ADD", x: 0, y: 0, r: 0, tr: 0 },
@@ -55,9 +65,9 @@ function springStep(chart) {
   let stillMoving = false;
 
   dots.forEach((d, i) => {
-    const force      = (d.tr - d.r) * STIFFNESS;
+    const force = (d.tr - d.r) * STIFFNESS;
     dotVelocities[i] = (dotVelocities[i] + force) * DAMPING;
-    d.r             += dotVelocities[i];
+    d.r += dotVelocities[i];
 
     if (Math.abs(dotVelocities[i]) > 0.01 || Math.abs(d.tr - d.r) > 0.01) {
       stillMoving = true;
@@ -86,9 +96,9 @@ const springDotPlugin = {
       c.save();
       c.beginPath();
       c.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      c.fillStyle   = d.color;
+      c.fillStyle = d.color;
       c.fill();
-      c.lineWidth   = 2.5;
+      c.lineWidth = 2.5;
       c.strokeStyle = "#ffffff";
       c.stroke();
       c.restore();
@@ -99,7 +109,7 @@ const springDotPlugin = {
 Chart.register(springDotPlugin);
 
 const canvas = document.getElementById("revenueTrendChart");
-const ctx    = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 const { blueGrad, pinkGrad } = createGradients(ctx, 300);
 
 const chart = new Chart(canvas, {
@@ -179,9 +189,9 @@ const chart = new Chart(canvas, {
 
 const tooltip = document.getElementById("revTooltip");
 const ttTitle = document.getElementById("revTt-title");
-const ttVal1  = document.getElementById("revTt-val1");
-const ttVal2  = document.getElementById("revTt-val2");
-const wrap    = document.getElementById("chartWrap");
+const ttVal1 = document.getElementById("revTt-val1");
+const ttVal2 = document.getElementById("revTt-val2");
+const wrap = document.getElementById("chartWrap");
 
 let hideTimer = null;
 let isVisible = false;
@@ -190,23 +200,23 @@ function showTooltip(i) {
   clearTimeout(hideTimer);
 
   [0, 1].forEach((di) => {
-    const meta  = chart.getDatasetMeta(di);
+    const meta = chart.getDatasetMeta(di);
     const point = meta.data[i];
-    dots[di].x  = point.x;
-    dots[di].y  = point.y;
+    dots[di].x = point.x;
+    dots[di].y = point.y;
     dots[di].tr = RADIUS_TARGET;
   });
 
   startSpring(chart);
 
   const canvasRect = canvas.getBoundingClientRect();
-  const wrapRect   = wrap.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
   const relX = canvasRect.left - wrapRect.left + dots[0].x;
-  const relY = canvasRect.top  - wrapRect.top  + dots[0].y;
+  const relY = canvasRect.top - wrapRect.top + dots[0].y;
 
   ttTitle.textContent = months[i] + " 2024";
-  ttVal1.textContent  = fmtIDR(revData[i]);
-  ttVal2.textContent  = fmtIDR(resData[i]);
+  ttVal1.textContent = fmtIDR(revData[i]);
+  ttVal2.textContent = fmtIDR(resData[i]);
 
   if (!isVisible) {
     tooltip.style.transition = "opacity 0.22s ease";
@@ -217,21 +227,23 @@ function showTooltip(i) {
       "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
   }
 
-  const tw = tooltip.offsetWidth  || 215;
+  const tw = tooltip.offsetWidth || 215;
   const th = tooltip.offsetHeight || 82;
   let left = relX - tw / 2;
-  let top  = relY - th - 16;
+  let top = relY - th - 16;
 
   if (left < 4) left = 4;
   if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top  < 4) top = relY + 20;
+  if (top < 4) top = relY + 20;
 
   tooltip.style.left = `${Math.round(left)}px`;
-  tooltip.style.top  = `${Math.round(top)}px`;
+  tooltip.style.top = `${Math.round(top)}px`;
 }
 
 function scheduleHide() {
-  dots.forEach((d) => { d.tr = 0; });
+  dots.forEach((d) => {
+    d.tr = 0;
+  });
   startSpring(chart);
   hideTimer = setTimeout(() => {
     tooltip.style.transition = "opacity 0.3s ease";
@@ -241,8 +253,16 @@ function scheduleHide() {
 }
 
 canvas.addEventListener("mousemove", (e) => {
-  const pts = chart.getElementsAtEventForMode(e, "index", { intersect: false }, true);
-  if (!pts.length) { scheduleHide(); return; }
+  const pts = chart.getElementsAtEventForMode(
+    e,
+    "index",
+    { intersect: false },
+    true,
+  );
+  if (!pts.length) {
+    scheduleHide();
+    return;
+  }
   showTooltip(pts[0].index);
 });
 
@@ -255,21 +275,23 @@ const donutData = {
   colors: ["#4ade80", "#fde68a"],
 };
 
-const donutTotal  = donutData.values.reduce((a, b) => a + b, 0);
+const donutTotal = donutData.values.reduce((a, b) => a + b, 0);
 const donutCanvas = document.getElementById("donutChart");
-const donutCtx    = donutCanvas.getContext("2d");
+const donutCtx = donutCanvas.getContext("2d");
 
 const donutChart = new Chart(donutCtx, {
   type: "doughnut",
   data: {
     labels: donutData.labels,
-    datasets: [{
-      data: donutData.values,
-      backgroundColor: donutData.colors,
-      borderColor: "transparent",
-      borderWidth: 0,
-      hoverOffset: 6,
-    }],
+    datasets: [
+      {
+        data: donutData.values,
+        backgroundColor: donutData.colors,
+        borderColor: "transparent",
+        borderWidth: 0,
+        hoverOffset: 6,
+      },
+    ],
   },
   options: {
     responsive: true,
@@ -284,38 +306,47 @@ const donutChart = new Chart(donutCtx, {
 });
 
 const legendAvailable = document.getElementById("legend-available");
-const legendSoldout   = document.getElementById("legend-soldout");
-if (legendAvailable) legendAvailable.textContent = `${donutData.values[0]} Rooms`;
-if (legendSoldout)   legendSoldout.textContent   = `${donutData.values[1]} Rooms`;
+const legendSoldout = document.getElementById("legend-soldout");
+if (legendAvailable)
+  legendAvailable.textContent = `${donutData.values[0]} Rooms`;
+if (legendSoldout) legendSoldout.textContent = `${donutData.values[1]} Rooms`;
 
 const dTooltip = document.getElementById("donutTooltip");
-const dttTitle  = document.getElementById("dtt-title");
-const dttBox    = document.getElementById("dtt-box");
-const dttLabel  = document.getElementById("dtt-label");
-const dttVal    = document.getElementById("dtt-val");
-const dWrap     = document.getElementById("doughnutChartBox");
+const dttTitle = document.getElementById("dtt-title");
+const dttBox = document.getElementById("dtt-box");
+const dttLabel = document.getElementById("dtt-label");
+const dttVal = document.getElementById("dtt-val");
+const dWrap = document.getElementById("doughnutChartBox");
 
 let dHideTimer = null;
-let dVisible   = false;
+let dVisible = false;
 
 function showDonutTooltip(e) {
-  const pts = donutChart.getElementsAtEventForMode(e, "nearest", { intersect: true }, true);
-  if (!pts.length) { hideDonutTooltip(); return; }
+  const pts = donutChart.getElementsAtEventForMode(
+    e,
+    "nearest",
+    { intersect: true },
+    true,
+  );
+  if (!pts.length) {
+    hideDonutTooltip();
+    return;
+  }
   clearTimeout(dHideTimer);
 
-  const idx   = pts[0].index;
+  const idx = pts[0].index;
   const value = donutData.values[idx];
   const color = donutData.colors[idx];
-  const pct   = ((value / donutTotal) * 100).toFixed(1);
+  const pct = ((value / donutTotal) * 100).toFixed(1);
 
-  dttTitle.textContent    = donutData.labels[idx];
+  dttTitle.textContent = donutData.labels[idx];
   dttBox.style.background = color;
-  dttLabel.textContent    = `${value} Rooms`;
-  dttVal.textContent      = `${pct}%`;
+  dttLabel.textContent = `${value} Rooms`;
+  dttVal.textContent = `${pct}%`;
 
   const wrapRect = dWrap.getBoundingClientRect();
-  const mouseX   = e.clientX - wrapRect.left;
-  const mouseY   = e.clientY - wrapRect.top;
+  const mouseX = e.clientX - wrapRect.left;
+  const mouseY = e.clientY - wrapRect.top;
 
   if (!dVisible) {
     dTooltip.style.transition = "opacity 0.22s ease";
@@ -326,17 +357,17 @@ function showDonutTooltip(e) {
       "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
   }
 
-  const tw = dTooltip.offsetWidth  || 170;
+  const tw = dTooltip.offsetWidth || 170;
   const th = dTooltip.offsetHeight || 70;
   let left = mouseX - tw / 2;
-  let top  = mouseY - th - 14;
+  let top = mouseY - th - 14;
 
   if (left < 4) left = 4;
   if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top  < 4) top = mouseY + 14;
+  if (top < 4) top = mouseY + 14;
 
   dTooltip.style.left = `${Math.round(left)}px`;
-  dTooltip.style.top  = `${Math.round(top)}px`;
+  dTooltip.style.top = `${Math.round(top)}px`;
 }
 
 function hideDonutTooltip() {
@@ -349,6 +380,171 @@ function hideDonutTooltip() {
 
 donutCanvas.addEventListener("mousemove", showDonutTooltip);
 donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
+
+/* ============================================================
+   CHART PENGUNJUNG WEB — dashboard.js
+   Tambahkan ke bawah file dashboard.js yang sudah ada.
+   Chart.js sudah di-load di <head> dashboard.html via CDN.
+   ============================================================ */
+
+(function () {
+  /* ---------- Data per periode ---------- */
+  const VISITORS_DATA = {
+    monthly: {
+      labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
+      host: [6800, 7400, 5100, 6200, 7900, 8500],
+      user: [4900, 6100, 6800, 5600, 6500, 7200],
+      total: "12.456",
+      change: "+53%",
+      positive: true,
+    },
+    weekly: {
+      labels: ["Mg 1", "Mg 2", "Mg 3", "Mg 4"],
+      host: [2100, 2800, 1900, 2400],
+      user: [1600, 2200, 1700, 2000],
+      total: "3.120",
+      change: "+21%",
+      positive: true,
+    },
+    daily: {
+      labels: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+      host: [580, 620, 490, 710, 830, 540, 360],
+      user: [420, 510, 380, 590, 690, 460, 280],
+      total: "1.500",
+      change: "-4%",
+      positive: false,
+    },
+  };
+
+  /* ---------- Helpers ---------- */
+  const PRIMARY = "#8b2500"; /* --color-primary */
+  const ACCENT = "#c9933a"; /* --color-accent  */
+  const PRIMARY_LIGHT = "rgba(139, 37, 0, 0.15)";
+  const ACCENT_LIGHT = "rgba(201, 147, 58, 0.15)";
+
+  function fmtAxis(v) {
+    if (v === 0) return "0";
+    return v >= 1000 ? (v / 1000).toFixed(0) + "K" : v;
+  }
+
+  /* ---------- Build / update chart ---------- */
+  const canvas = document.getElementById("visitorsBarChart");
+  if (!canvas) return;
+
+  const totalEl = document.getElementById("visitors-total");
+  const badgeEl = document.getElementById("visitors-badge");
+
+  let visitorsChart = null;
+
+  function renderChart(period) {
+    const d = VISITORS_DATA[period];
+
+    /* Update summary */
+    if (totalEl) totalEl.textContent = d.total;
+    if (badgeEl) {
+      badgeEl.className =
+        "visitors-badge " + (d.positive ? "positive" : "negative");
+      badgeEl.innerHTML = d.positive
+        ? `<i class="ph-bold ph-trend-up"></i>${d.change}`
+        : `<i class="ph-bold ph-trend-down"></i>${d.change}`;
+    }
+
+    if (visitorsChart) {
+      /* Update existing chart data */
+      visitorsChart.data.labels = d.labels;
+      visitorsChart.data.datasets[0].data = d.host;
+      visitorsChart.data.datasets[1].data = d.user;
+      visitorsChart.update("active");
+      return;
+    }
+
+    /* Create chart for the first time */
+    visitorsChart = new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels: d.labels,
+        datasets: [
+          {
+            label: "Host",
+            data: d.host,
+            backgroundColor: PRIMARY,
+            hoverBackgroundColor: PRIMARY,
+            borderRadius: 5,
+            borderSkipped: false,
+            barPercentage: 0.68,
+            categoryPercentage: 0.72,
+          },
+          {
+            label: "User",
+            data: d.user,
+            backgroundColor: ACCENT,
+            hoverBackgroundColor: ACCENT,
+            borderRadius: 5,
+            borderSkipped: false,
+            barPercentage: 0.68,
+            categoryPercentage: 0.72,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 600, easing: "easeInOutQuart" },
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#1e2235",
+            titleColor: "#ffffff",
+            bodyColor: "#ffffff",
+            padding: 10,
+            cornerRadius: 10,
+            callbacks: {
+              label: (ctx) =>
+                ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString("id-ID")}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: {
+              font: { size: 11 },
+              color: "#c0a090",
+              autoSkip: false,
+              maxRotation: 0,
+            },
+          },
+          y: {
+            grid: { color: "rgba(240,228,216,0.8)" },
+            border: { display: false },
+            ticks: {
+              font: { size: 11 },
+              color: "#c0a090",
+              maxTicksLimit: 5,
+              callback: fmtAxis,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  /* ---------- Tab switching ---------- */
+  const tabs = document.querySelectorAll(".visitors-tab");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderChart(tab.dataset.period);
+    });
+  });
+
+  /* Initial render */
+  renderChart("monthly");
+})();
 
 // Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
@@ -363,10 +559,10 @@ filterButton.forEach((filterItem) => {
 const sortButtons = document.querySelectorAll(".sort-button");
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
-    const isActive   = sortItem.classList.toggle("active");
-    const textSpan   = sortItem.querySelector("span");
+    const isActive = sortItem.classList.toggle("active");
+    const textSpan = sortItem.querySelector("span");
     const textActive = sortItem.dataset.active;
-    const textInact  = sortItem.dataset.inactive;
+    const textInact = sortItem.dataset.inactive;
     if (textSpan && textActive && textInact) {
       textSpan.textContent = isActive ? textActive : textInact;
     }
@@ -374,11 +570,11 @@ sortButtons.forEach((sortItem) => {
 });
 
 // Tab Group
-const tabItems     = document.querySelectorAll(".tab-item");
+const tabItems = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
 
 function moveIndicator(tab) {
-  tabIndicator.style.left  = `${tab.offsetLeft}px`;
+  tabIndicator.style.left = `${tab.offsetLeft}px`;
   tabIndicator.style.width = `${tab.offsetWidth}px`;
 }
 
@@ -387,7 +583,9 @@ tabItems.forEach((tab) => {
     tabItems.forEach((t) => t.classList.remove("active"));
     tab.classList.add("active");
     moveIndicator(tab);
-    document.querySelectorAll(".table-section").forEach((c) => (c.style.display = "none"));
+    document
+      .querySelectorAll(".table-section")
+      .forEach((c) => (c.style.display = "none"));
     document.querySelector(tab.dataset.target).style.display = "block";
   });
 });

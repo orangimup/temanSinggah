@@ -431,112 +431,99 @@
                 <span class="chart-card-subtitle">Jumlah kunjungan harian</span>
               </div>
 
-              <div
-                style="
-                  font-size: var(--text-3xl);
-                  font-weight: var(--font-bold);
-                  color: var(--color-text-primary);
-                  letter-spacing: -0.02em;
-                  line-height: 1;
-                ">
-                12.456
-              </div>
+              <!--
+  ============================================================
+  CHART PENGUNJUNG WEB — Teman Singgah Admin
+  Ganti seluruh blok .chart-card ketiga (Pengunjung Web)
+  di dashboard.html dengan kode ini.
+  ============================================================
+-->
 
-              <div class="chart-placeholder-sm" style="min-height: 160px">
-             
+              <div class="chart-card" id="visitors-card">
+                <!-- Header -->
                 <div
+                  class="chart-card-header"
                   style="
-                    display: flex;
-                    align-items: flex-end;
-                    gap: var(--space-10);
-                    height: 80px;
-                    opacity: 0.7;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    justify-content: space-between;
                   ">
-                  <div style="display: flex; align-items: flex-end; gap: 3px">
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 50px;
-                        background: var(--color-primary-light-active);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 38px;
-                        background: var(--color-accent-light);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 30px;
-                        background: var(--color-primary-light-active);
-                      "></div>
+                  <div>
+                    <span class="chart-card-title">Pengunjung Web</span>
+                    <span
+                      class="chart-card-subtitle"
+                      style="display: block; margin-top: var(--space-4)">
+                      Perbandingan Host &amp; User
+                    </span>
                   </div>
-                  <!-- Week 2 — aktif -->
-                  <div style="display: flex; align-items: flex-end; gap: 3px">
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 55px;
-                        background: var(--color-primary-light-active);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 72px;
-                        background: var(--color-primary);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 45px;
-                        background: var(--color-primary-light-active);
-                      "></div>
-                  </div>
-                  <!-- Week 3 -->
-                  <div style="display: flex; align-items: flex-end; gap: 3px">
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 40px;
-                        background: var(--color-primary-light-active);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 52px;
-                        background: var(--color-accent-light);
-                      "></div>
-                    <div
-                      class="placeholder-bar"
-                      style="
-                        height: 35px;
-                        background: var(--color-primary-light-active);
-                      "></div>
+
+                  <!-- Period tabs -->
+                  <div class="visitors-tab-group">
+                    <button class="visitors-tab active" data-period="monthly">
+                      Bulanan
+                    </button>
+                    <button class="visitors-tab" data-period="weekly">
+                      Mingguan
+                    </button>
+                    <button class="visitors-tab" data-period="daily">
+                      Harian
+                    </button>
                   </div>
                 </div>
-                <!-- X-axis labels -->
+
+                <!-- Summary row -->
                 <div
                   style="
                     display: flex;
-                    justify-content: space-around;
-                    width: 100%;
-                    margin-top: var(--space-4);
+                    gap: var(--space-24);
+                    align-items: center;
                   ">
-                  <span style="font-size: 10px; color: var(--color-text-hint)"
-                    >Minggu 1</span
-                  >
-                  <span
-                    style="
-                      font-size: 10px;
-                      color: var(--color-text-primary);
-                      font-weight: var(--font-bold);
-                    "
-                    >Minggu 2</span
-                  >
-                  <span style="font-size: 10px; color: var(--color-text-hint)"
-                    >Minggu 3</span
-                  >
+                  <div>
+                    <span class="visitors-total" id="visitors-total"
+                      >12.456</span
+                    >
+                    <span class="visitors-badge positive" id="visitors-badge">
+                      <i class="ph-bold ph-trend-up"></i>+53%
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Legend -->
+                <div style="display: flex; gap: var(--space-20)">
+                  <div class="legend-item">
+                    <span
+                      class="legend-dot"
+                      style="background: var(--color-primary)"></span>
+                    <span
+                      style="
+                        font-size: var(--text-xs);
+                        color: var(--color-text-secondary);
+                      "
+                      >Host</span
+                    >
+                  </div>
+                  <div class="legend-item">
+                    <span
+                      class="legend-dot"
+                      style="background: var(--color-accent)"></span>
+                    <span
+                      style="
+                        font-size: var(--text-xs);
+                        color: var(--color-text-secondary);
+                      "
+                      >User</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Chart -->
+                <div style="position: relative; width: 100%; height: 180px">
+                  <canvas
+                    id="visitorsBarChart"
+                    role="img"
+                    aria-label="Bar chart perbandingan Host dan User pengunjung web per periode">
+                    Data pengunjung Host dan User Teman Singgah.
+                  </canvas>
                 </div>
               </div>
             </div>

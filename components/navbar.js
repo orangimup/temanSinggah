@@ -3,8 +3,13 @@ const navIndicator = document.querySelector(".nav-indicator");
 
 function moveNavIndicator(link) {
   if (!navIndicator) return;
-  navIndicator.style.left = `${link.offsetLeft}px`;
-  navIndicator.style.width = `${link.offsetWidth}px`;
+
+  const navContainer = navIndicator.parentElement;
+  const containerRect = navContainer.getBoundingClientRect();
+  const linkRect = link.getBoundingClientRect();
+
+  navIndicator.style.left = `${linkRect.left - containerRect.left}px`;
+  navIndicator.style.width = `${linkRect.width}px`;
 }
 
 navLinks.forEach((link) => {
@@ -16,4 +21,9 @@ navLinks.forEach((link) => {
 });
 
 const activeNavLink = document.querySelector(".nav-link.active");
-if (activeNavLink) moveNavIndicator(activeNavLink);
+if (activeNavLink) requestAnimationFrame(() => moveNavIndicator(activeNavLink));
+
+window.addEventListener("resize", () => {
+  const active = document.querySelector(".nav-link.active");
+  if (active) moveNavIndicator(active);
+});
