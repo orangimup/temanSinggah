@@ -255,6 +255,9 @@
   padding: var(--space-24);
   border: 1.5px solid var(--color-border-subtle);
   box-shadow: var(--shadow-card);
+}
+
+.chart-section.big {
   margin-bottom: var(--space-32);
 }
 
@@ -274,7 +277,7 @@
   transition: opacity 0.2s ease;
   white-space: nowrap;
   z-index: 20;
-  min-width: 210px;
+  min-width: 220px;
 }
 #revTooltip.visible {
   opacity: 1;
@@ -303,6 +306,89 @@
 .tt-val {
   margin-left: auto;
   padding-left: 16px;
+}
+
+#doughnutChartBox {
+  position: relative;
+  width: 100%;
+  width: 200px;
+  margin: var(--space-center);
+  height: 200px;
+  display:flex;
+  flex-direction:column;
+  gap:10px
+}
+
+#donutTooltip {
+  position: absolute;
+  background: #1e2235;
+  border-radius: 10px;
+  padding: 10px 14px 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  white-space: nowrap;
+  z-index: 20;
+  min-width: 150px;
+}
+
+#donutTooltip.visible {
+  opacity: 1;
+}
+
+.dtt-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.dtt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #fff;
+}
+.dtt-box {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.dtt-val {
+  margin-left: auto;
+  padding-left: 12px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 4px;
+  margin-top: 16px;
+}
+.donut-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.donut-legend-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.donut-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.donut-legend-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 /* // */

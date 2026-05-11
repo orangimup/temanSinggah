@@ -153,7 +153,7 @@
             </div>
           </section>
 
-          <section class="chart-section">
+          <section class="chart-section big">
             <div class="chart-card-header">
               <span class="chart-card-title">Aktivitas Guest</span>
               <span class="chart-card-subtitle">
@@ -391,9 +391,7 @@
                   Check-in & Check-out minggu ini
                 </span>
               </div>
-              <div
-                id="donutChartBox"
-                style="position: relative; width: 200px; height: 200px">
+              <div id="doughnutChartBox">
                 <canvas id="donutChart"></canvas>
                 <div id="donutTooltip">
                   <div class="dtt-title" id="dtt-title"></div>
@@ -404,16 +402,35 @@
                   </div>
                 </div>
               </div>
+
+              <div class="donut-legend">
+                <div class="donut-legend-row">
+                  <div class="donut-legend-left">
+                    <div
+                      class="donut-legend-dot"
+                      style="background: #4ade80"></div>
+                    <span>Available</span>
+                  </div>
+                  <span class="donut-legend-count" id="legend-available"></span>
+                </div>
+                <div class="donut-legend-row">
+                  <div class="donut-legend-left">
+                    <div
+                      class="donut-legend-dot"
+                      style="background: #fde68a"></div>
+                    <span>Sold Out</span>
+                  </div>
+                  <span class="donut-legend-count" id="legend-soldout"></span>
+                </div>
+              </div>
             </section>
 
-            <!-- 3. Pengunjung Web — Bar Chart -->
             <div class="chart-card">
               <div class="chart-card-header">
                 <span class="chart-card-title">Pengunjung Web</span>
                 <span class="chart-card-subtitle">Jumlah kunjungan harian</span>
               </div>
 
-              <!-- Big number -->
               <div
                 style="
                   font-size: var(--text-3xl);
@@ -426,7 +443,7 @@
               </div>
 
               <div class="chart-placeholder-sm" style="min-height: 160px">
-                <!-- Bar chart ilustrasi — grouped bars per minggu -->
+             
                 <div
                   style="
                     display: flex;
@@ -435,7 +452,6 @@
                     height: 80px;
                     opacity: 0.7;
                   ">
-                  <!-- Week 1 -->
                   <div style="display: flex; align-items: flex-end; gap: 3px">
                     <div
                       class="placeholder-bar"

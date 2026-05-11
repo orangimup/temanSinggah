@@ -1,26 +1,17 @@
+// Revenue Chart
 const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "Mei",
-  "Jun",
-  "Jul",
-  "Agu",
-  "Sep",
-  "Okt",
-  "Nov",
-  "Des",
+  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+  "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
 ];
 
 const revData = [
-  38000000, 34000000, 44000000, 52000000, 61000000, 75000000, 88000000,
-  95000000, 79000000, 58000000, 51000000, 70000000,
+  38000000, 34000000, 44000000, 52000000, 61000000, 75000000,
+  88000000, 95000000, 79000000, 58000000, 51000000, 70000000,
 ];
 
 const resData = [
-  28000000, 25000000, 33000000, 40000000, 48000000, 60000000, 71000000,
-  78000000, 64000000, 45000000, 38000000, 55000000,
+  28000000, 25000000, 33000000, 40000000, 48000000, 60000000,
+  71000000, 78000000, 64000000, 45000000, 38000000, 55000000,
 ];
 
 const fmtIDR = (v) =>
@@ -49,10 +40,9 @@ function createGradients(ctx, chartHeight) {
   return { blueGrad, pinkGrad };
 }
 
-// ── Spring physics ───────────────────────────────────────
 const RADIUS_TARGET = 6.5;
-const STIFFNESS = 0.18;
-const DAMPING = 0.72;
+const STIFFNESS     = 0.18;
+const DAMPING       = 0.72;
 
 const dots = [
   { color: "#378ADD", x: 0, y: 0, r: 0, tr: 0 },
@@ -65,9 +55,9 @@ function springStep(chart) {
   let stillMoving = false;
 
   dots.forEach((d, i) => {
-    const force = (d.tr - d.r) * STIFFNESS;
+    const force      = (d.tr - d.r) * STIFFNESS;
     dotVelocities[i] = (dotVelocities[i] + force) * DAMPING;
-    d.r += dotVelocities[i];
+    d.r             += dotVelocities[i];
 
     if (Math.abs(dotVelocities[i]) > 0.01 || Math.abs(d.tr - d.r) > 0.01) {
       stillMoving = true;
@@ -87,21 +77,18 @@ function startSpring(chart) {
   if (!rafId) rafId = requestAnimationFrame(() => springStep(chart));
 }
 
-// ── Spring dot plugin ─────────────────────────────────────
 const springDotPlugin = {
   id: "springDot",
   afterDraw(chart) {
     const { ctx: c } = chart;
-
     dots.forEach((d) => {
       if (d.r < 0.2) return;
-
       c.save();
       c.beginPath();
       c.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      c.fillStyle = d.color;
+      c.fillStyle   = d.color;
       c.fill();
-      c.lineWidth = 2.5;
+      c.lineWidth   = 2.5;
       c.strokeStyle = "#ffffff";
       c.stroke();
       c.restore();
@@ -111,9 +98,8 @@ const springDotPlugin = {
 
 Chart.register(springDotPlugin);
 
-// ── Inisialisasi Revenue Chart ────────────────────────────
 const canvas = document.getElementById("revenueTrendChart");
-const ctx = canvas.getContext("2d");
+const ctx    = canvas.getContext("2d");
 const { blueGrad, pinkGrad } = createGradients(ctx, 300);
 
 const chart = new Chart(canvas, {
@@ -191,12 +177,11 @@ const chart = new Chart(canvas, {
   },
 });
 
-// ── Revenue Tooltip ───────────────────────────────────────
 const tooltip = document.getElementById("revTooltip");
 const ttTitle = document.getElementById("revTt-title");
-const ttVal1 = document.getElementById("revTt-val1");
-const ttVal2 = document.getElementById("revTt-val2");
-const wrap = document.getElementById("chartWrap");
+const ttVal1  = document.getElementById("revTt-val1");
+const ttVal2  = document.getElementById("revTt-val2");
+const wrap    = document.getElementById("chartWrap");
 
 let hideTimer = null;
 let isVisible = false;
@@ -205,23 +190,23 @@ function showTooltip(i) {
   clearTimeout(hideTimer);
 
   [0, 1].forEach((di) => {
-    const meta = chart.getDatasetMeta(di);
+    const meta  = chart.getDatasetMeta(di);
     const point = meta.data[i];
-    dots[di].x = point.x;
-    dots[di].y = point.y;
+    dots[di].x  = point.x;
+    dots[di].y  = point.y;
     dots[di].tr = RADIUS_TARGET;
   });
 
   startSpring(chart);
 
   const canvasRect = canvas.getBoundingClientRect();
-  const wrapRect = wrap.getBoundingClientRect();
+  const wrapRect   = wrap.getBoundingClientRect();
   const relX = canvasRect.left - wrapRect.left + dots[0].x;
-  const relY = canvasRect.top - wrapRect.top + dots[0].y;
+  const relY = canvasRect.top  - wrapRect.top  + dots[0].y;
 
   ttTitle.textContent = months[i] + " 2024";
-  ttVal1.textContent = fmtIDR(revData[i]);
-  ttVal2.textContent = fmtIDR(resData[i]);
+  ttVal1.textContent  = fmtIDR(revData[i]);
+  ttVal2.textContent  = fmtIDR(resData[i]);
 
   if (!isVisible) {
     tooltip.style.transition = "opacity 0.22s ease";
@@ -232,25 +217,22 @@ function showTooltip(i) {
       "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
   }
 
-  const tw = tooltip.offsetWidth || 215;
+  const tw = tooltip.offsetWidth  || 215;
   const th = tooltip.offsetHeight || 82;
   let left = relX - tw / 2;
-  let top = relY - th - 16;
+  let top  = relY - th - 16;
 
   if (left < 4) left = 4;
   if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top < 4) top = relY + 20;
+  if (top  < 4) top = relY + 20;
 
   tooltip.style.left = `${Math.round(left)}px`;
-  tooltip.style.top = `${Math.round(top)}px`;
+  tooltip.style.top  = `${Math.round(top)}px`;
 }
 
 function scheduleHide() {
-  dots.forEach((d) => {
-    d.tr = 0;
-  });
+  dots.forEach((d) => { d.tr = 0; });
   startSpring(chart);
-
   hideTimer = setTimeout(() => {
     tooltip.style.transition = "opacity 0.3s ease";
     tooltip.classList.remove("visible");
@@ -259,53 +241,40 @@ function scheduleHide() {
 }
 
 canvas.addEventListener("mousemove", (e) => {
-  const pts = chart.getElementsAtEventForMode(
-    e,
-    "index",
-    { intersect: false },
-    true,
-  );
-  if (!pts.length) {
-    scheduleHide();
-    return;
-  }
+  const pts = chart.getElementsAtEventForMode(e, "index", { intersect: false }, true);
+  if (!pts.length) { scheduleHide(); return; }
   showTooltip(pts[0].index);
 });
 
 canvas.addEventListener("mouseleave", scheduleHide);
 
-// ----------------------------------------------------------
-// DONUT CHART — Status Properti
-// ----------------------------------------------------------
+// Property Availability Chart
 const donutData = {
-  labels: ["Tersedia", "Penuh"],
-  values: [66, 129], // ← ganti dengan data aslimu
+  labels: ["Available", "Sold Out"],
+  values: [66, 129],
   colors: ["#4ade80", "#fde68a"],
 };
 
-const donutTotal = donutData.values.reduce((a, b) => a + b, 0);
-
+const donutTotal  = donutData.values.reduce((a, b) => a + b, 0);
 const donutCanvas = document.getElementById("donutChart");
-const donutCtx = donutCanvas.getContext("2d");
+const donutCtx    = donutCanvas.getContext("2d");
 
 const donutChart = new Chart(donutCtx, {
   type: "doughnut",
   data: {
     labels: donutData.labels,
-    datasets: [
-      {
-        data: donutData.values,
-        backgroundColor: donutData.colors,
-        borderColor: "transparent",
-        borderWidth: 0,
-        hoverOffset: 6,
-      },
-    ],
+    datasets: [{
+      data: donutData.values,
+      backgroundColor: donutData.colors,
+      borderColor: "transparent",
+      borderWidth: 0,
+      hoverOffset: 6,
+    }],
   },
   options: {
     responsive: true,
     maintainAspectRatio: true,
-    cutout: "68%",
+    cutout: "60%",
     animation: { duration: 900, easing: "easeInOutQuart" },
     plugins: {
       legend: { display: false },
@@ -314,45 +283,39 @@ const donutChart = new Chart(donutCtx, {
   },
 });
 
-// ── Donut Tooltip (pola sama dengan revenue tooltip) ──────
+const legendAvailable = document.getElementById("legend-available");
+const legendSoldout   = document.getElementById("legend-soldout");
+if (legendAvailable) legendAvailable.textContent = `${donutData.values[0]} Rooms`;
+if (legendSoldout)   legendSoldout.textContent   = `${donutData.values[1]} Rooms`;
+
 const dTooltip = document.getElementById("donutTooltip");
-const dttTitle = document.getElementById("dtt-title");
-const dttBox = document.getElementById("dtt-box");
-const dttLabel = document.getElementById("dtt-label");
-const dttVal = document.getElementById("dtt-val");
-const dWrap = document.getElementById("donutChartBox");
+const dttTitle  = document.getElementById("dtt-title");
+const dttBox    = document.getElementById("dtt-box");
+const dttLabel  = document.getElementById("dtt-label");
+const dttVal    = document.getElementById("dtt-val");
+const dWrap     = document.getElementById("doughnutChartBox");
 
 let dHideTimer = null;
-let dVisible = false;
+let dVisible   = false;
 
 function showDonutTooltip(e) {
-  const pts = donutChart.getElementsAtEventForMode(
-    e,
-    "nearest",
-    { intersect: true },
-    true,
-  );
-  if (!pts.length) {
-    hideDonutTooltip();
-    return;
-  }
-
+  const pts = donutChart.getElementsAtEventForMode(e, "nearest", { intersect: true }, true);
+  if (!pts.length) { hideDonutTooltip(); return; }
   clearTimeout(dHideTimer);
 
-  const idx = pts[0].index;
-  const label = donutData.labels[idx];
+  const idx   = pts[0].index;
   const value = donutData.values[idx];
   const color = donutData.colors[idx];
-  const pct = ((value / donutTotal) * 100).toFixed(1);
+  const pct   = ((value / donutTotal) * 100).toFixed(1);
 
-  dttTitle.textContent = label;
+  dttTitle.textContent    = donutData.labels[idx];
   dttBox.style.background = color;
-  dttLabel.textContent = `${value} Rooms`;
-  dttVal.textContent = `${pct}%`;
+  dttLabel.textContent    = `${value} Rooms`;
+  dttVal.textContent      = `${pct}%`;
 
   const wrapRect = dWrap.getBoundingClientRect();
-  const mouseX = e.clientX - wrapRect.left;
-  const mouseY = e.clientY - wrapRect.top;
+  const mouseX   = e.clientX - wrapRect.left;
+  const mouseY   = e.clientY - wrapRect.top;
 
   if (!dVisible) {
     dTooltip.style.transition = "opacity 0.22s ease";
@@ -363,17 +326,17 @@ function showDonutTooltip(e) {
       "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
   }
 
-  const tw = dTooltip.offsetWidth || 170;
+  const tw = dTooltip.offsetWidth  || 170;
   const th = dTooltip.offsetHeight || 70;
   let left = mouseX - tw / 2;
-  let top = mouseY - th - 14;
+  let top  = mouseY - th - 14;
 
   if (left < 4) left = 4;
   if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top < 4) top = mouseY + 14;
+  if (top  < 4) top = mouseY + 14;
 
   dTooltip.style.left = `${Math.round(left)}px`;
-  dTooltip.style.top = `${Math.round(top)}px`;
+  dTooltip.style.top  = `${Math.round(top)}px`;
 }
 
 function hideDonutTooltip() {
@@ -387,11 +350,8 @@ function hideDonutTooltip() {
 donutCanvas.addEventListener("mousemove", showDonutTooltip);
 donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
 
-// ----------------------------------------------------------
-// FILTER BUTTON
-// ----------------------------------------------------------
+// Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
-
 filterButton.forEach((filterItem) => {
   filterItem.addEventListener("click", () => {
     filterButton.forEach((i) => i.classList.remove("active"));
@@ -399,32 +359,26 @@ filterButton.forEach((filterItem) => {
   });
 });
 
-// ----------------------------------------------------------
-// SORT BUTTON
-// ----------------------------------------------------------
+// Sort Button
 const sortButtons = document.querySelectorAll(".sort-button");
-
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
-    const isActive = sortItem.classList.toggle("active");
-    const textSpan = sortItem.querySelector("span");
+    const isActive   = sortItem.classList.toggle("active");
+    const textSpan   = sortItem.querySelector("span");
     const textActive = sortItem.dataset.active;
-    const textInactive = sortItem.dataset.inactive;
-
-    if (textSpan && textActive && textInactive) {
-      textSpan.textContent = isActive ? textActive : textInactive;
+    const textInact  = sortItem.dataset.inactive;
+    if (textSpan && textActive && textInact) {
+      textSpan.textContent = isActive ? textActive : textInact;
     }
   });
 });
 
-// ----------------------------------------------------------
-// TAB GROUP
-// ----------------------------------------------------------
-const tabItems = document.querySelectorAll(".tab-item");
+// Tab Group
+const tabItems     = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
 
 function moveIndicator(tab) {
-  tabIndicator.style.left = `${tab.offsetLeft}px`;
+  tabIndicator.style.left  = `${tab.offsetLeft}px`;
   tabIndicator.style.width = `${tab.offsetWidth}px`;
 }
 
@@ -433,11 +387,7 @@ tabItems.forEach((tab) => {
     tabItems.forEach((t) => t.classList.remove("active"));
     tab.classList.add("active");
     moveIndicator(tab);
-
-    document
-      .querySelectorAll(".table-section")
-      .forEach((c) => (c.style.display = "none"));
-
+    document.querySelectorAll(".table-section").forEach((c) => (c.style.display = "none"));
     document.querySelector(tab.dataset.target).style.display = "block";
   });
 });
