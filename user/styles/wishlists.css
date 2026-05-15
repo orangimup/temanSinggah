@@ -1,0 +1,108 @@
+.main-content {
+  max-width: var(--container-xl);
+  margin: var(--space-center);
+  margin-top: 112px;
+  padding-bottom: var(--space-96);
+}
+
+.section-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-24);
+}
+
+.list-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-24);
+}
+
+.favorite-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.favorite-card-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3.6;
+  border-radius: var(--radius-3xl);
+  overflow: hidden;
+  background: var(--color-bg-skeleton);
+}
+
+.favorite-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all var(--transition-base);
+}
+
+.list-remove {
+  top: var(--space-12);
+  right: var(--space-12);
+  opacity: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  position: absolute;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
+}
+
+.list-remove:hover {
+  background: var(--color-primary-light-hover);
+}
+
+.list-remove:active {
+  background: var(--color-primary-light-active);
+  transform: scale(0.99);
+}
+
+.favorite-card:hover .list-remove {
+  opacity: 1;
+}
+
+.favorite-card:hover .favorite-card-image {
+  transform: var(--card-transform-hover);
+}
+
+.favorite-card-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-skeleton);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-4) 0;
+}
+
+.favorite-card-name {
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  line-height: 1.35;
+}
+
+.favorite-card-location {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}

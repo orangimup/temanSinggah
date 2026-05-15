@@ -21,6 +21,13 @@
   width: 100%;
 }
 
+.logo-link {
+  position: absolute;
+  width: 180px;
+  z-index: 3;
+  height: var(--navbar-height);
+}
+
 .logo-section {
   display: flex;
   position: relative;
@@ -203,6 +210,10 @@
   transform: scale(0.99);
 }
 
+/* ============================================================
+   HAMBURGER DROPDOWN
+   ============================================================ */
+
 #hamburgerDropdown {
   position: fixed;
   z-index: var(--z-dropdown);
@@ -274,4 +285,177 @@
 
 .hidden {
   display: none;
+}
+
+.language-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-base);
+  height: 100vh; /* Full tinggi layar */
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;
+}
+
+.language-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.language-container {
+  position: relative;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-3xl);
+  box-shadow: var(--shadow-dropdown);
+  width: 100%;
+  max-width: 1200px;
+  max-height: 80vh;
+  height: 80vh;
+  overflow-y: auto;
+  padding: var(--space-80) var(--space-32) var(--space-32);
+}
+
+.close-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  position: absolute;
+  left: var(--space-32);
+  top: var(--space-24);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
+}
+
+.close-button:hover {
+  background: var(--color-primary-light-hover);
+}
+
+.close-button:active {
+  background: var(--color-primary-light-active);
+  transform: scale(0.99);
+}
+
+.tab-group {
+  display: flex;
+  gap: var(--space-20);
+  margin-bottom: var(--space-24);
+  border-bottom: 1.5px solid var(--color-border-subtle);
+  padding-bottom: var(--space-6);
+  position: relative;
+}
+
+.tab-item {
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.tab-item:hover {
+  color: var(--color-primary);
+}
+
+.tab-item:active {
+  color: var(--color-primary-active);
+}
+
+.tab-item.active {
+  color: var(--color-primary);
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab-content h2 {
+  margin-bottom: var(--space-20);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.language-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-16);
+}
+
+.language-item {
+  position: relative;
+}
+
+.language-item input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.language-card {
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-16);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-card);
+}
+
+.language-card h3 {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.language-card h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+}
+
+.language-item input:checked + .language-card {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+}
+
+.language-card:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-bg-section);
+}
+
+.language-card:active {
+  transform: scale(0.99);
+  background: var(--color-bg-skeleton);
 }

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   function closeAllDropdowns() {
     document.getElementById("destinationDropdown")?.classList.remove("open");
     document.getElementById("calendarDropdown")?.classList.remove("open");
@@ -12,12 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
       ([entry]) => {
         if (!entry.isIntersecting) closeAllDropdowns();
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
     observer.observe(searchBar);
   }
 
-  let activeAnchor = null; 
+  let activeAnchor = null;
 
   function positionDropdown(dropdown, triggerEl, align) {
     const searchBarRect = searchBar.getBoundingClientRect();
@@ -100,10 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("click", () =>
-    destinationDropdown.classList.remove("open")
+    destinationDropdown.classList.remove("open"),
   );
   window.addEventListener("resize", () =>
-    destinationDropdown.classList.remove("open")
+    destinationDropdown.classList.remove("open"),
   );
   destinationDropdown.addEventListener("click", (e) => e.stopPropagation());
 
@@ -117,11 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const name = nameEl.textContent.trim();
 
-        if (name === "Terdekat") return;
-
         destinationInput.value = name;
         destinationInput.classList.add("has-value");
-        destinationDropdown.classList.remove("open");
+        destinationDropdown.classList.remove("open"); 
       });
     });
   }
@@ -201,10 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("click", () =>
-    guestDropdown.classList.remove("open")
+    guestDropdown.classList.remove("open"),
   );
   window.addEventListener("resize", () =>
-    guestDropdown.classList.remove("open")
+    guestDropdown.classList.remove("open"),
   );
   guestDropdown.addEventListener("click", (e) => e.stopPropagation());
 
@@ -226,10 +223,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function getTotal() {
         const dewasaVal = parseInt(
-          dewasaRow.querySelector(".counter-value").textContent
+          dewasaRow.querySelector(".counter-value").textContent,
         );
         const anakVal = parseInt(
-          anakRow.querySelector(".counter-value").textContent
+          anakRow.querySelector(".counter-value").textContent,
         );
         return dewasaVal + anakVal;
       }
@@ -241,14 +238,14 @@ document.addEventListener("DOMContentLoaded", () => {
             (other.dataset.group === "dewasa" || other.dataset.group === "anak")
           ) {
             const otherVal = parseInt(
-              other.querySelector(".counter-value").textContent
+              other.querySelector(".counter-value").textContent,
             );
             const otherMax = parseInt(other.dataset.max);
             other
               .querySelector(".plus")
               .classList.toggle(
                 "disabled",
-                otherVal >= otherMax || getTotal() >= 16
+                otherVal >= otherMax || getTotal() >= 16,
               );
           }
         });
@@ -262,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isOrangGroup) {
           plusButton.classList.toggle(
             "disabled",
-            value >= max || getTotal() >= 16
+            value >= max || getTotal() >= 16,
           );
         } else {
           plusButton.classList.toggle("disabled", value >= max);
@@ -313,8 +310,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let calendarLoaded = false;
 
   const MONTH_SHORT = [
-    "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-    "Jul", "Ags", "Sep", "Okt", "Nov", "Des",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Ags",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
   ];
 
   const today = new Date();
@@ -323,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxDate = new Date(
     today.getFullYear() + 2,
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   );
 
   let leftYear = today.getFullYear();
@@ -332,11 +339,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let rangeStart = null;
   let rangeEnd = null;
   let hoverDate = null;
-  let phase = "idle"; 
+  let phase = "idle";
 
   const MONTH_NAMES = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
   ];
 
   function updateDateSummary() {
@@ -376,10 +393,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("click", () =>
-    calendarDropdown.classList.remove("open")
+    calendarDropdown.classList.remove("open"),
   );
   window.addEventListener("resize", () =>
-    calendarDropdown.classList.remove("open")
+    calendarDropdown.classList.remove("open"),
   );
   calendarDropdown.addEventListener("click", (e) => e.stopPropagation());
 
@@ -465,7 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateDayClasses() {
     const allDays = calendarDropdown.querySelectorAll(
-      ".calendar-day:not(.empty):not(.disabled)"
+      ".calendar-day:not(.empty):not(.disabled)",
     );
 
     let previewStart = null;
@@ -504,7 +521,7 @@ document.addEventListener("DOMContentLoaded", () => {
           classes.push(
             previewStart && previewEnd && isSameDay(date, previewStart)
               ? "range-start"
-              : "selected"
+              : "selected",
           );
         } else if (previewStart && previewEnd) {
           if (isSameDay(date, previewEnd)) classes.push("range-end");

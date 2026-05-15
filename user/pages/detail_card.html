@@ -6,20 +6,34 @@
     <title>Detail Penginapan | Teman Singgah</title>
     <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
+    <link rel="stylesheet" href="/components/root.css" />
+    <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/components/search_bar.css" />
+    <link rel="stylesheet" href="/components/footer.css" />
     <link rel="stylesheet" href="/user/styles/detail_card.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet" />
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   </head>
 
   <body>
-    
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="index.html" class="logo-section">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
           <img
             src="/assets/logo/logo_temansinggah.svg"
             alt="Logo Teman Singgah"
@@ -28,11 +42,11 @@
             src="/assets/logo/label_temansinggah.svg"
             alt="Brand Name Teman Singgah"
             class="logo-name" />
-        </a>
+        </div>
 
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="index.html" class="nav-link active">Cari Penginapan</a>
+            <a href="index.html" class="nav-link">Cari Penginapan</a>
           </li>
           <li class="nav-item">
             <a href="/user/pages/promo_deals.html" class="nav-link">
@@ -40,131 +54,189 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/user/pages/become_host.html" class="nav-link">Jadi Host</a>
+            <a href="/user/pages/become_host.html" class="nav-link">
+              Jadi Host
+            </a>
           </li>
           <li class="nav-item">
-            <a href="/user/pages/about_us.html" class="nav-link"> Tentang Kami </a>
+            <a href="/user/pages/about_us.html" class="nav-link">
+              Tentang Kami
+            </a>
           </li>
+
+          <div class="nav-indicator"></div>
         </ul>
 
         <div class="nav-right">
-          <button class="icon-button hamburger" aria-label="Hamburger">
-            <span class="hamburger-icon">☰</span>
-          </button>
-          <button
-            class="icon-button profile"
-            aria-label="Profile"
-            style="display: none">
-            A
-          </button>
-          <div class="auth-buttons">
-            <a href="/components/auth_popup.html">
-              <button class="auth-button">Masuk</button>
-            </a>
+          <button class="ghost-button">Ganti ke host</button>
+          <div class="icon-buttons">
+            <button class="icon-button profile" aria-label="Profile">A</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
+              <i class="ph-bold ph-list"></i>
+            </button>
+            <div class="auth-buttons" style="display: none">
+              <a href="/components/auth_popup.html">
+                <button class="auth-button">Masuk</button>
+              </a>
+            </div>
           </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
         </div>
       </nav>
     </header>
 
     <main class="main-content">
-      
+      <span class="content-header">
+        <h1 class="property-name">Nihi Sumba</h1>
+        <div class="header-buttons">
+          <button class="header-button">
+            <i class="ph-bold ph-share"></i>
+            Bagikan
+          </button>
+          <button class="header-button">
+            <i class="ph-bold ph-heart"></i>
+            Simpan
+          </button>
+        </div>
+      </span>
+
       <section class="gallery-section">
-        <div class="gallery-container">
-          <div class="gallery-main">
+        <div class="gallery-grid">
+          <div class="gallery-card big">
             <img
               src="https://placehold.co/800x500/8b2500/ffffff?text=Foto+Utama"
               alt="Foto Utama Penginapan"
               class="gallery-image" />
           </div>
-          <div class="gallery-thumbs">
+          <div class="gallery-card">
             <img
               src="https://placehold.co/400x240/6b4f3a/ffffff?text=Thumbnail+1"
               alt="Thumbnail 1"
-              class="gallery-thumb" />
+              class="gallery-image" />
+          </div>
+          <div class="gallery-card">
             <img
               src="https://placehold.co/400x240/6b4f3a/ffffff?text=Thumbnail+2"
               alt="Thumbnail 2"
-              class="gallery-thumb" />
+              class="gallery-image" />
+          </div>
+          <div class="gallery-card">
             <img
               src="https://placehold.co/400x240/6b4f3a/ffffff?text=Thumbnail+3"
               alt="Thumbnail 3"
-              class="gallery-thumb" />
+              class="gallery-image" />
+          </div>
+          <div class="gallery-card">
             <img
               src="https://placehold.co/400x240/6b4f3a/ffffff?text=Thumbnail+4"
               alt="Thumbnail 4"
-              class="gallery-thumb" />
+              class="gallery-image" />
           </div>
         </div>
       </section>
 
       <section class="info-section">
-        <div class="info-container">
-          <div class="info-header">
-            <h1 class="info-title">Villa Nusantara Ubud</h1>
-            <div class="info-meta">
-              <span class="info-rating">★★★★☆</span>
-              <span class="info-reviews">128 ulasan</span>
-              <span class="info-location">📍 Ubud, Bali, Indonesia</span>
+        <h2 class="info-title">Hotel bintang 5 di Ubud, Bali</h2>
+        <div class="info-body">
+          <div class="info-meta">
+            <div class="info-rating">
+              <i class="ph-fill ph-star"></i>
+              <i class="ph-fill ph-star"></i>
+              <i class="ph-fill ph-star"></i>
+              <i class="ph-fill ph-star-half"></i>
+              <i class="ph-bold ph-star"></i>
             </div>
-            <div class="info-badges">
-              <span class="info-badge">Villa</span>
-              <span class="info-badge">Kolam Renang</span>
-              <span class="info-badge">Sarapan</span>
-              <span class="info-badge">Spa</span>
-            </div>
+            <span class="info-reviews">128 ulasan</span>
+            <span class="info-location">
+              <i class="ph-fill ph-map-pin"></i>Ubud, Bali, Indonesia
+            </span>
+          </div>
+          <div class="info-badges">
+            <span class="info-badge">Villa</span>
+            <span class="info-badge">Kolam Renang</span>
+            <span class="info-badge">Sarapan</span>
+            <span class="info-badge">Spa</span>
           </div>
         </div>
       </section>
 
       <div class="detail-layout">
         <div class="detail-main">
-          
           <section class="description-section">
-            <h2 class="section-title">Tentang Penginapan</h2>
+            <h3 class="section-title">Tentang Penginapan</h3>
             <p class="description-text">
-              Villa Nusantara Ubud menawarkan pengalaman menginap yang autentik di jantung Bali. Dikelilingi oleh sawah hijau dan pepohonan tropis, villa ini menggabungkan arsitektur tradisional Bali dengan kenyamanan modern. Setiap sudut dirancang untuk memberikan ketenangan dan kedamaian bagi para tamu yang ingin melepas penat dari hiruk-pikuk kota.
+              Villa Nusantara Ubud menawarkan pengalaman menginap yang autentik
+              di jantung Bali. Dikelilingi oleh sawah hijau dan pepohonan
+              tropis, villa ini menggabungkan arsitektur tradisional Bali dengan
+              kenyamanan modern. Setiap sudut dirancang untuk memberikan
+              ketenangan dan kedamaian bagi para tamu yang ingin melepas penat
+              dari hiruk-pikuk kota.
             </p>
             <p class="description-text">
-              Dengan fasilitas lengkap mulai dari kolam renang infinity, restoran dengan menu lokal, hingga spa tradisional, Villa Nusantara adalah pilihan sempurna untuk pasangan, keluarga, maupun solo traveler. Staf kami yang ramah siap membantu Anda merencanakan setiap detail perjalanan Anda di Bali.
+              Dengan fasilitas lengkap mulai dari kolam renang infinity,
+              restoran dengan menu lokal, hingga spa tradisional, Villa
+              Nusantara adalah pilihan sempurna untuk pasangan, keluarga, maupun
+              solo traveler. Staf kami yang ramah siap membantu Anda
+              merencanakan setiap detail perjalanan Anda di Bali.
             </p>
             <p class="description-text">
-              Lokasi strategis hanya 10 menit dari pusat Ubud memudahkan Anda menjelajahi galeri seni, pasar tradisional, dan tempat-tempat ikonik lainnya. Kembali ke villa setelah hari yang panjang dan nikmati senja yang memukau dari balkon pribadi Anda.
+              Lokasi strategis hanya 10 menit dari pusat Ubud memudahkan Anda
+              menjelajahi galeri seni, pasar tradisional, dan tempat-tempat
+              ikonik lainnya. Kembali ke villa setelah hari yang panjang dan
+              nikmati senja yang memukau dari balkon pribadi Anda.
             </p>
           </section>
 
           <section class="amenities-section">
-            <h2 class="section-title">Fasilitas Umum</h2>
+            <h3 class="section-title">Fasilitas Umum</h3>
             <div class="amenities-grid">
               <div class="amenity-item">
-                <span class="amenity-icon">☎</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-phone-disconnect"></i>
+                </span>
                 <span class="amenity-label">Resepsionis 24 Jam</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">🅿</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-letter-circle-p"></i>
+                </span>
                 <span class="amenity-label">Parkir Gratis</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">🏊</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-person-simple-swim"></i>
+                </span>
                 <span class="amenity-label">Kolam Renang</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">📶</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-wifi-high"></i>
+                </span>
                 <span class="amenity-label">WiFi Gratis</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">❄</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-snowflake"></i>
+                </span>
                 <span class="amenity-label">AC</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">🍳</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-bowl-food"></i>
+                </span>
                 <span class="amenity-label">Sarapan Tersedia</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">💆</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-sparkle"></i>
+                </span>
                 <span class="amenity-label">Spa</span>
               </div>
               <div class="amenity-item">
-                <span class="amenity-icon">🏋</span>
+                <span class="amenity-icon">
+                  <i class="ph-bold ph-barbell"></i>
+                </span>
                 <span class="amenity-label">Gym</span>
               </div>
             </div>
@@ -173,9 +245,8 @@
           <section class="rooms-section">
             <h2 class="section-title">Pilihan Kamar</h2>
             <div class="rooms-grid">
-              
               <article class="room-card">
-                <div class="room-image-wrapper">
+                <div class="room-image-container">
                   <img
                     src="https://placehold.co/600x400/8b2500/ffffff?text=Kamar+Standar"
                     alt="Kamar Standar"
@@ -184,17 +255,41 @@
                 <div class="room-content">
                   <h3 class="room-name">Kamar Standar</h3>
                   <p class="room-desc">
-                    Kamar nyaman dengan kasur twin, ideal untuk solo traveler atau pasangan yang mencari penginapan praktis.
+                    Kamar nyaman dengan kasur twin, ideal untuk solo traveler
+                    atau pasangan yang mencari penginapan praktis.
                   </p>
                   <div class="room-details">
                     <span class="room-size">24 m²</span>
-                    <span class="room-capacity">👤 2 Tamu</span>
+                    <span class="room-capacity">
+                      <i class="ph-bold ph-user"></i>
+                      2 Tamu
+                    </span>
                   </div>
                   <ul class="room-facilities">
-                    <li><span>✓</span> Kasur Twin</li>
-                    <li><span>✓</span> Kamar Mandi Dalam</li>
-                    <li><span>✓</span> TV LED</li>
-                    <li><span>✓</span> Minibar</li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kasur Twin
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kamar Mandi Dalam
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      TV LED
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Minibar
+                    </li>
                   </ul>
                   <div class="room-footer">
                     <div class="room-price">
@@ -207,26 +302,50 @@
               </article>
 
               <article class="room-card">
-                <div class="room-image-wrapper">
+                <div class="room-image-container">
                   <img
-                    src="https://placehold.co/600x400/7a1f00/ffffff?text=Kamar+Deluxe"
+                    src="/assets/images/adiwana_suweta_bali.jpg"
                     alt="Kamar Deluxe"
                     class="room-image" />
                 </div>
                 <div class="room-content">
                   <h3 class="room-name">Kamar Deluxe</h3>
                   <p class="room-desc">
-                    Kamar luas dengan kasur king size dan pemandangan taman, sempurna untuk relaksasi.
+                    Kamar luas dengan kasur king size dan pemandangan taman,
+                    sempurna untuk relaksasi.
                   </p>
                   <div class="room-details">
                     <span class="room-size">32 m²</span>
-                    <span class="room-capacity">👤 2 Tamu</span>
+                    <span class="room-capacity">
+                      <i class="ph-bold ph-user"></i>
+                      2 Tamu
+                    </span>
                   </div>
                   <ul class="room-facilities">
-                    <li><span>✓</span> Kasur King</li>
-                    <li><span>✓</span> Kamar Mandi Dalam</li>
-                    <li><span>✓</span> TV LED</li>
-                    <li><span>✓</span> Minibar</li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kasur King
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kamar Mandi Dalam
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      TV LED
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Minibar
+                    </li>
                   </ul>
                   <div class="room-footer">
                     <div class="room-price">
@@ -239,27 +358,56 @@
               </article>
 
               <article class="room-card">
-                <div class="room-image-wrapper">
+                <div class="room-image-container">
                   <img
-                    src="https://placehold.co/600x400/5c1800/ffffff?text=Suite+Junior"
+                    src="/assets/images/apurva_kempinski_bali.jpg"
                     alt="Suite Junior"
                     class="room-image" />
                 </div>
                 <div class="room-content">
                   <h3 class="room-name">Suite Junior</h3>
                   <p class="room-desc">
-                    Suite elegan dengan ruang tamu terpisah dan balkon pribadi untuk menikmati udara segar Ubud.
+                    Suite elegan dengan ruang tamu terpisah dan balkon pribadi
+                    untuk menikmati udara segar Ubud.
                   </p>
                   <div class="room-details">
                     <span class="room-size">45 m²</span>
-                    <span class="room-capacity">👤 3 Tamu</span>
+                    <span class="room-capacity">
+                      <i class="ph-bold ph-user"></i>
+                      3 Tamu
+                    </span>
                   </div>
                   <ul class="room-facilities">
-                    <li><span>✓</span> Kasur King</li>
-                    <li><span>✓</span> Kamar Mandi Dalam</li>
-                    <li><span>✓</span> TV LED</li>
-                    <li><span>✓</span> Minibar</li>
-                    <li><span>✓</span> Balkon</li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kasur King
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kamar Mandi Dalam
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      TV LED
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Minibar
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Balkon
+                    </li>
                   </ul>
                   <div class="room-footer">
                     <div class="room-price">
@@ -272,28 +420,62 @@
               </article>
 
               <article class="room-card">
-                <div class="room-image-wrapper">
+                <div class="room-image-container">
                   <img
-                    src="https://placehold.co/600x400/c9933a/ffffff?text=Suite+Mewah"
+                    src="/assets/images/desa_potato_head_bali.webp"
                     alt="Suite Mewah"
                     class="room-image" />
                 </div>
                 <div class="room-content">
                   <h3 class="room-name">Suite Mewah</h3>
                   <p class="room-desc">
-                    Pengalaman menginap terbaik dengan bathtub, balkon luas, dan layanan butler untuk kenyamanan maksimal.
+                    Pengalaman menginap terbaik dengan bathtub, balkon luas, dan
+                    layanan butler untuk kenyamanan maksimal.
                   </p>
                   <div class="room-details">
                     <span class="room-size">65 m²</span>
-                    <span class="room-capacity">👤 4 Tamu</span>
+                    <span class="room-capacity">
+                      <i class="ph-bold ph-user"></i>
+                      4 Tamu
+                    </span>
                   </div>
                   <ul class="room-facilities">
-                    <li><span>✓</span> Kasur King</li>
-                    <li><span>✓</span> Kamar Mandi Dalam</li>
-                    <li><span>✓</span> TV LED</li>
-                    <li><span>✓</span> Minibar</li>
-                    <li><span>✓</span> Balkon</li>
-                    <li><span>✓</span> Bathtub</li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kasur King
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Kamar Mandi Dalam
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      TV LED
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Minibar
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Balkon
+                    </li>
+                    <li>
+                      <span>
+                        <i class="ph-bold ph-check"></i>
+                      </span>
+                      Bathtub
+                    </li>
                   </ul>
                   <div class="room-footer">
                     <div class="room-price">
@@ -311,42 +493,54 @@
             <h2 class="section-title">Kebijakan Penginapan</h2>
             <div class="policy-grid">
               <div class="policy-item">
-                <span class="policy-icon">🕐</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-clock"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Check-in</strong>
                   <span>Dari 14:00 WIB</span>
                 </div>
               </div>
               <div class="policy-item">
-                <span class="policy-icon">🕐</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-clock"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Check-out</strong>
                   <span>Sebelum 12:00 WIB</span>
                 </div>
               </div>
               <div class="policy-item">
-                <span class="policy-icon">🚫</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-prohibit"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Pembatalan</strong>
                   <span>Gratis hingga 24 jam sebelum check-in</span>
                 </div>
               </div>
               <div class="policy-item">
-                <span class="policy-icon">🐕</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-paw-print"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Hewan Peliharaan</strong>
                   <span>Tidak diperbolehkan</span>
                 </div>
               </div>
               <div class="policy-item">
-                <span class="policy-icon">🚭</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-cigarette-slash"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Merokok</strong>
                   <span>Dilarang merokok di semua area dalam ruangan</span>
                 </div>
               </div>
               <div class="policy-item">
-                <span class="policy-icon">👶</span>
+                <span class="policy-icon">
+                  <i class="ph-bold ph-baby"></i>
+                </span>
                 <div class="policy-text">
                   <strong>Anak-anak</strong>
                   <span>Selamat datang, kasur tambahan tersedia</span>
@@ -357,19 +551,30 @@
 
           <section class="map-section">
             <h2 class="section-title">Lokasi</h2>
-            <div class="map-placeholder">
-              <span class="map-label">Peta Lokasi</span>
+            <div id="propertyMap" class="map-container">
+              <div class="custom-zoom-control">
+                <button class="custom-zoom-btn" id="zoomIn" title="Zoom in">
+                  <i class="ph-bold ph-plus"></i>
+                </button>
+                <button class="custom-zoom-btn" id="zoomOut" title="Zoom out">
+                  <i class="ph-bold ph-minus"></i>
+                </button>
+              </div>
             </div>
             <p class="map-address">
-              Jl. Raya Ubud No. 88, Desa Padangtegal, Kecamatan Ubud, Kabupaten Gianyar, Bali 80571, Indonesia
+              Jl. Raya Ubud No. 88, Desa Padangtegal, Kecamatan Ubud, Kabupaten
+              Gianyar, Bali 80571, Indonesia
             </p>
           </section>
 
           <section class="reviews-section">
             <div class="reviews-header">
-              <h2 class="section-title">Ulasan Tamu</h2>
+              <h3 class="section-title">Ulasan Tamu</h3>
               <div class="reviews-summary">
-                <span class="summary-rating">★ 4.8</span>
+                <span class="summary-rating">
+                  <i class="ph-fill ph-star"></i>
+                  4.8
+                </span>
                 <span class="summary-text">dari 5 · 128 ulasan</span>
               </div>
             </div>
@@ -382,10 +587,18 @@
                     <span class="review-origin">Jakarta, Indonesia</span>
                   </div>
                 </div>
-                <div class="review-rating">★★★★★</div>
+                <div class="review-rating">
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                </div>
                 <span class="review-date">Menginap: Maret 2026</span>
                 <p class="review-text">
-                  Pengalaman menginap yang luar biasa! Pemandangan sawah dari balkon kamar sangat menenangkan. Stafnya sangat ramah dan sarapannya enak sekali.
+                  Pengalaman menginap yang luar biasa! Pemandangan sawah dari
+                  balkon kamar sangat menenangkan. Stafnya sangat ramah dan
+                  sarapannya enak sekali.
                 </p>
                 <span class="review-room">Kamar: Suite Junior</span>
               </article>
@@ -398,10 +611,18 @@
                     <span class="review-origin">Surabaya, Indonesia</span>
                   </div>
                 </div>
-                <div class="review-rating">★★★★☆</div>
+                <div class="review-rating">
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-bold ph-star"></i>
+                </div>
                 <span class="review-date">Menginap: Februari 2026</span>
                 <p class="review-text">
-                  Villa yang sangat cantik dengan sentuhan tradisional Bali. Kolam renangnya bersih dan suasananya tenang. Cukup dekat dengan pusat Ubud.
+                  Villa yang sangat cantik dengan sentuhan tradisional Bali.
+                  Kolam renangnya bersih dan suasananya tenang. Cukup dekat
+                  dengan pusat Ubud.
                 </p>
                 <span class="review-room">Kamar: Kamar Deluxe</span>
               </article>
@@ -414,10 +635,18 @@
                     <span class="review-origin">Bandung, Indonesia</span>
                   </div>
                 </div>
-                <div class="review-rating">★★★★★</div>
+                <div class="review-rating">
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                </div>
                 <span class="review-date">Menginap: Januari 2026</span>
                 <p class="review-text">
-                  Suite Mewah benar-benar worth it! Bathtubnya besar, balkonnya luas, dan pelayanan butler membuat kami merasa seperti raja. Pasti akan kembali!
+                  Suite Mewah benar-benar worth it! Bathtubnya besar, balkonnya
+                  luas, dan pelayanan butler membuat kami merasa seperti raja.
+                  Pasti akan kembali!
                 </p>
                 <span class="review-room">Kamar: Suite Mewah</span>
               </article>
@@ -430,10 +659,17 @@
                     <span class="review-origin">Yogyakarta, Indonesia</span>
                   </div>
                 </div>
-                <div class="review-rating">★★★★☆</div>
+                <div class="review-rating">
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                  <i class="ph-fill ph-star"></i>
+                </div>
                 <span class="review-date">Menginap: Desember 2025</span>
                 <p class="review-text">
-                  Kamar Standarnya sudah sangat nyaman untuk harga segini. WiFi kencang dan lokasinya strategis. Recommended untuk backpacker!
+                  Kamar Standarnya sudah sangat nyaman untuk harga segini. WiFi
+                  kencang dan lokasinya strategis. Recommended untuk backpacker!
                 </p>
                 <span class="review-room">Kamar: Kamar Standar</span>
               </article>
@@ -451,25 +687,39 @@
             <form class="booking-form">
               <div class="booking-field">
                 <label for="checkin">Check-in</label>
-                <input type="date" id="checkin" name="checkin" />
+                <input
+                  type="text"
+                  inputmode="date"
+                  class="calendar-input"
+                  id="checkinInput"
+                  placeholder="Tambahkan Tanggal"
+                  required />
               </div>
               <div class="booking-field">
                 <label for="checkout">Check-out</label>
-                <input type="date" id="checkout" name="checkout" />
+                <input
+                  type="text"
+                  inputmode="date"
+                  class="calendar-input"
+                  id="checkoutInput"
+                  placeholder="Tambahkan Tanggal"
+                  required />
               </div>
               <div class="booking-field">
                 <label for="guests">Jumlah Tamu</label>
                 <input
                   type="number"
-                  id="guests"
+                  class="guest-input"
+                  id="guestInput"
                   name="guests"
                   min="1"
                   max="10"
-                  value="2" />
+                  value="1" />
               </div>
-              <button type="submit" class="booking-submit">Pesan Sekarang</button>
+              <button type="submit" class="booking-submit">
+                Pesan Sekarang
+              </button>
             </form>
-            <p class="booking-note">✓ Gratis pembatalan hingga 24 jam sebelumnya</p>
           </div>
         </aside>
       </div>
@@ -484,11 +734,13 @@
             hotel berbintang hingga homestay lokal.
           </p>
           <div class="footer-social">
-            <a href="" class="social-link">IG</a>
-            <a href="" class="social-link">FB</a>
-            <a href="" class="social-link">YT</a>
-            <a href="" class="social-link">TW</a>
-            <a href="" class="social-link">✉</a>
+            <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
+            <a href="" class="social-link"
+              ><i class="ri-facebook-circle-line"></i
+            ></a>
+            <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
+            <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
+            <a href="" class="social-link"><i class="ri-mail-line"></i></a>
           </div>
         </div>
         <div class="footer-column">
@@ -523,5 +775,54 @@
         </div>
       </div>
     </footer>
+
+    <script src="/user/scripts/detail_card.js"></script>
+    <script src="/components/navbar.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      const map = L.map("propertyMap", {
+        center: [-8.5069, 115.2625],
+        zoom: 15,
+        scrollWheelZoom: false,
+        zoomControl: false,
+      });
+
+      L.tileLayer(
+        "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+        {
+          attribution: "© MapTiler © OpenStreetMap",
+          tileSize: 512,
+          zoomOffset: -1,
+          maxZoom: 20,
+        },
+      ).addTo(map);
+
+      const icon = L.divIcon({
+        html: `<div style="
+    width: 20px; height: 20px;
+    background: #8b2500;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 8px rgba(139,37,0,0.4);
+  "></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 20],
+        className: "",
+      });
+
+      L.marker([-8.5069, 115.2625], { icon })
+        .addTo(map)
+        .bindPopup("<strong>Nihi Sumba</strong><br>Ubud, Bali")
+        .openPopup();
+
+      document
+        .getElementById("zoomIn")
+        .addEventListener("click", () => map.zoomIn());
+      document
+        .getElementById("zoomOut")
+        .addEventListener("click", () => map.zoomOut());
+
+      new L.Control.CustomZoom().addTo(map);
+    </script>
   </body>
 </html>

@@ -1,3 +1,7 @@
+// ============================================================
+//  NAV INDICATOR
+// ============================================================
+
 const navLinks = document.querySelectorAll(".nav-link");
 const navIndicator = document.querySelector(".nav-indicator");
 
@@ -28,6 +32,10 @@ window.addEventListener("resize", () => {
   if (active) moveNavIndicator(active);
 });
 
+// ============================================================
+//  HAMBURGER DROPDOWN + LANGUAGE POPUP
+// ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
   const profileBtn = document.querySelector(".icon-button.profile");
   const hamburgerBtn = document.querySelector(".icon-button.hamburger");
@@ -36,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const isLoggedIn = true;
   let isLoaded = false;
 
+  // Tampilkan tombol sesuai status login
   if (isLoggedIn) {
     profileBtn?.classList.remove("hidden");
     hamburgerBtn?.classList.add("hidden");
@@ -44,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hamburgerBtn?.classList.remove("hidden");
   }
 
+  // ── Muat hamburger dropdown ─────────────────────────────────
   async function loadDropdown() {
     try {
       const res = await fetch("/popups/hamburger.html");
@@ -51,49 +61,161 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
-
       const state = isLoggedIn ? "loggedin" : "guest";
       const section = doc.querySelector(`[data-type="${state}"]`);
 
       if (section) {
         dropdown.innerHTML = section.innerHTML;
         isLoaded = true;
+        bindLanguageOption();
       }
     } catch (err) {
       console.error("Gagal memuat dropdown:", err);
     }
   }
 
-  function toggleDropdown(triggerBtn) {
-    if (!isLoaded) return;
+  // ── Muat language popup dari /popups/language.html ──────────
+  async function loadLanguagePopup() {
+    try {
+      const res = await fetch("/popups/language.html");
+      const html = await res.text();
 
-    if (dropdown.classList.contains("open")) {
-      dropdown.classList.remove("open");
-    } else {
-      const rect = triggerBtn.getBoundingClientRect();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
 
-      dropdown.style.top = `${rect.bottom + 8}px`;
-      dropdown.style.right = `${window.innerWidth - rect.right}px`;
-      dropdown.style.left = "auto";
+      // Ambil #languageOverlay dari file language.html
+      const overlay = doc.querySelector("#languageOverlay");
 
-      dropdown.classList.add("open");
+      if (overlay) {
+        // Inject ke #languagePopup placeholder di index.html
+        const container = document.getElementById("languagePopup");
+        if (container) {
+          container.appendChild(overlay);
+          bindLanguagePopupEvents();
+        }
+      }
+    } catch (err) {
+      console.error("Gagal memuat language popup:", err);
     }
   }
 
-  const handleTrigger = (e, btn) => {
+  // ── Buka / tutup dropdown ───────────────────────────────────
+  function openDropdown(triggerBtn) {
+    const rect = triggerBtn.getBoundingClientRect();
+    dropdown.style.top = `${rect.bottom + 8}px`;
+    dropdown.style.right = `${window.innerWidth - rect.right}px`;
+    dropdown.style.left = "auto";
+    dropdown.classList.add("open");
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove("open");
+  }
+
+  function toggleDropdown(triggerBtn) {
+    if (!isLoaded) return;
+    dropdown.classList.contains("open")
+      ? closeDropdown()
+      : openDropdown(triggerBtn);
+  }
+
+  profileBtn?.addEventListener("click", (e) => {
     e.stopPropagation();
-    toggleDropdown(btn);
-  };
+    toggleDropdown(profileBtn);
+  });
+  hamburgerBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleDropdown(hamburgerBtn);
+  });
 
-  profileBtn?.addEventListener("click", (e) => handleTrigger(e, profileBtn));
-  hamburgerBtn?.addEventListener("click", (e) =>
-    handleTrigger(e, hamburgerBtn),
-  );
-
-  document.addEventListener("click", () => dropdown.classList.remove("open"));
-  window.addEventListener("resize", () => dropdown.classList.remove("open"));
-
+  document.addEventListener("click", closeDropdown);
+  window.addEventListener("resize", closeDropdown);
   dropdown.addEventListener("click", (e) => e.stopPropagation());
 
+  // ── Bind opsi "Bahasa dan Mata Uang" di dropdown ───────────
+  function bindLanguageOption() {
+    const langOption = dropdown.querySelector("[data-action='language']");
+    langOption?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openLanguagePopup();
+    });
+  }
+
+  // ── Language popup events (dipanggil setelah popup di-inject)
+  function bindLanguagePopupEvents() {
+    const langOverlay = document.getElementById("languageOverlay");
+    if (!langOverlay) return;
+
+    // Tombol close
+    const closeBtn = langOverlay.querySelector(".close-button");
+    closeBtn?.addEventListener("click", closeLanguagePopup);
+
+    // Klik backdrop menutup popup
+    langOverlay.addEventListener("click", (e) => {
+      if (e.target === langOverlay) closeLanguagePopup();
+    });
+
+    // Tab indicator
+    const tabItems = langOverlay.querySelectorAll(".tab-item");
+    const tabIndicator = langOverlay.querySelector(".tab-indicator");
+    const tabContents = langOverlay.querySelectorAll(".tab-content");
+
+    function moveTabIndicator(tab) {
+      if (!tabIndicator) return;
+      tabIndicator.style.left = `${tab.offsetLeft}px`;
+      tabIndicator.style.width = `${tab.offsetWidth}px`;
+    }
+
+    tabItems.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabItems.forEach((t) => t.classList.remove("active"));
+        tabContents.forEach((c) => c.classList.remove("active"));
+
+        tab.classList.add("active");
+        moveTabIndicator(tab);
+
+        const target = langOverlay.querySelector(tab.dataset.target);
+        if (target) target.classList.add("active");
+      });
+    });
+
+    // Simpan moveTabIndicator agar bisa dipakai openLanguagePopup
+    langOverlay._moveTabIndicator = moveTabIndicator;
+  }
+
+  // ── Buka / tutup language popup ────────────────────────────
+  function openLanguagePopup() {
+    closeDropdown();
+
+    const langOverlay = document.getElementById("languageOverlay");
+    if (!langOverlay) return;
+
+    langOverlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+
+    // Set tab indicator setelah popup tampil
+    requestAnimationFrame(() => {
+      const activeTab = langOverlay.querySelector(".tab-item.active");
+      if (activeTab && langOverlay._moveTabIndicator) {
+        langOverlay._moveTabIndicator(activeTab);
+      }
+    });
+  }
+
+  function closeLanguagePopup() {
+    const langOverlay = document.getElementById("languageOverlay");
+    if (!langOverlay) return;
+    langOverlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  // Escape key menutup popup
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeLanguagePopup();
+  });
+
+  // ── Mulai muat keduanya ─────────────────────────────────────
   loadDropdown();
+  loadLanguagePopup();
 });

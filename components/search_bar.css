@@ -418,6 +418,8 @@
   margin-top: var(--space-6);
   display: none;
   overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 #destinationDropdown.open {

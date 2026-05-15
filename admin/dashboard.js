@@ -1,3 +1,6 @@
+// ============================================================
+//  REVENUE TREND CHART (dashboard.html)
+// ============================================================
 const months = [
   "Jan",
   "Feb",
@@ -37,350 +40,362 @@ const fmtAxis = (v) => {
     : `Rp ${(v / 1_000).toFixed(0)}K`;
 };
 
-function createGradients(ctx, chartHeight) {
-  const blueGrad = ctx.createLinearGradient(0, 0, 0, chartHeight);
-  blueGrad.addColorStop(0, "rgba(55,138,221,0.22)");
-  blueGrad.addColorStop(1, "rgba(55,138,221,0.01)");
+const revenueTrendCanvas = document.getElementById("revenueTrendChart");
 
-  const pinkGrad = ctx.createLinearGradient(0, 0, 0, chartHeight);
-  pinkGrad.addColorStop(0, "rgba(224,91,122,0.18)");
-  pinkGrad.addColorStop(1, "rgba(224,91,122,0.01)");
+if (revenueTrendCanvas && typeof Chart !== "undefined") {
+  function createGradients(ctx, chartHeight) {
+    const blueGrad = ctx.createLinearGradient(0, 0, 0, chartHeight);
+    blueGrad.addColorStop(0, "rgba(55,138,221,0.22)");
+    blueGrad.addColorStop(1, "rgba(55,138,221,0.01)");
 
-  return { blueGrad, pinkGrad };
-}
+    const pinkGrad = ctx.createLinearGradient(0, 0, 0, chartHeight);
+    pinkGrad.addColorStop(0, "rgba(224,91,122,0.18)");
+    pinkGrad.addColorStop(1, "rgba(224,91,122,0.01)");
 
-const RADIUS_TARGET = 6.5;
-const STIFFNESS = 0.18;
-const DAMPING = 0.72;
-
-const dots = [
-  { color: "#378ADD", x: 0, y: 0, r: 0, tr: 0 },
-  { color: "#E05B7A", x: 0, y: 0, r: 0, tr: 0 },
-];
-const dotVelocities = [0, 0];
-let rafId = null;
-
-function springStep(chart) {
-  let stillMoving = false;
-
-  dots.forEach((d, i) => {
-    const force = (d.tr - d.r) * STIFFNESS;
-    dotVelocities[i] = (dotVelocities[i] + force) * DAMPING;
-    d.r += dotVelocities[i];
-
-    if (Math.abs(dotVelocities[i]) > 0.01 || Math.abs(d.tr - d.r) > 0.01) {
-      stillMoving = true;
-    }
-  });
-
-  chart.render();
-
-  if (stillMoving) {
-    rafId = requestAnimationFrame(() => springStep(chart));
-  } else {
-    rafId = null;
+    return { blueGrad, pinkGrad };
   }
-}
 
-function startSpring(chart) {
-  if (!rafId) rafId = requestAnimationFrame(() => springStep(chart));
-}
+  const RADIUS_TARGET = 6.5;
+  const STIFFNESS = 0.18;
+  const DAMPING = 0.72;
 
-const springDotPlugin = {
-  id: "springDot",
-  afterDraw(chart) {
-    const { ctx: c } = chart;
-    dots.forEach((d) => {
-      if (d.r < 0.2) return;
-      c.save();
-      c.beginPath();
-      c.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      c.fillStyle = d.color;
-      c.fill();
-      c.lineWidth = 2.5;
-      c.strokeStyle = "#ffffff";
-      c.stroke();
-      c.restore();
+  const dots = [
+    { color: "#378ADD", x: 0, y: 0, r: 0, tr: 0 },
+    { color: "#E05B7A", x: 0, y: 0, r: 0, tr: 0 },
+  ];
+  const dotVelocities = [0, 0];
+  let rafId = null;
+
+  function springStep(chart) {
+    let stillMoving = false;
+    dots.forEach((d, i) => {
+      const force = (d.tr - d.r) * STIFFNESS;
+      dotVelocities[i] = (dotVelocities[i] + force) * DAMPING;
+      d.r += dotVelocities[i];
+      if (Math.abs(dotVelocities[i]) > 0.01 || Math.abs(d.tr - d.r) > 0.01) {
+        stillMoving = true;
+      }
     });
-  },
-};
-
-Chart.register(springDotPlugin);
-
-const canvas = document.getElementById("revenueTrendChart");
-const ctx = canvas.getContext("2d");
-const { blueGrad, pinkGrad } = createGradients(ctx, 300);
-
-const chart = new Chart(canvas, {
-  type: "line",
-  data: {
-    labels: months,
-    datasets: [
-      {
-        label: "Pendapatan",
-        data: revData,
-        borderColor: "#378ADD",
-        backgroundColor: blueGrad,
-        fill: true,
-        tension: 0.42,
-        borderWidth: 2.5,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        yAxisID: "y",
-      },
-      {
-        label: "Reservasi",
-        data: resData,
-        borderColor: "#E05B7A",
-        backgroundColor: pinkGrad,
-        fill: true,
-        tension: 0.42,
-        borderWidth: 2.5,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        yAxisID: "y",
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 900, easing: "easeInOutQuart" },
-    interaction: { mode: "index", intersect: false },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        align: "end",
-        labels: {
-          usePointStyle: true,
-          pointStyle: "circle",
-          boxWidth: 6,
-          boxHeight: 6,
-          padding: 20,
-          font: { size: 13 },
-          color: "#6b7280",
-        },
-      },
-      tooltip: { enabled: false },
-    },
-    scales: {
-      x: {
-        display: true,
-        grid: { display: false },
-        border: { display: false },
-        ticks: { font: { size: 11 }, color: "#9ca3af" },
-      },
-      y: {
-        position: "left",
-        grid: { color: "rgba(128,128,128,0.08)" },
-        border: { display: false },
-        ticks: {
-          font: { size: 11 },
-          color: "#9ca3af",
-          maxTicksLimit: 5,
-          callback: fmtAxis,
-        },
-      },
-    },
-  },
-});
-
-const tooltip = document.getElementById("revTooltip");
-const ttTitle = document.getElementById("revTt-title");
-const ttVal1 = document.getElementById("revTt-val1");
-const ttVal2 = document.getElementById("revTt-val2");
-const wrap = document.getElementById("chartWrap");
-
-let hideTimer = null;
-let isVisible = false;
-
-function showTooltip(i) {
-  clearTimeout(hideTimer);
-
-  [0, 1].forEach((di) => {
-    const meta = chart.getDatasetMeta(di);
-    const point = meta.data[i];
-    dots[di].x = point.x;
-    dots[di].y = point.y;
-    dots[di].tr = RADIUS_TARGET;
-  });
-
-  startSpring(chart);
-
-  const canvasRect = canvas.getBoundingClientRect();
-  const wrapRect = wrap.getBoundingClientRect();
-  const relX = canvasRect.left - wrapRect.left + dots[0].x;
-  const relY = canvasRect.top - wrapRect.top + dots[0].y;
-
-  ttTitle.textContent = months[i] + " 2024";
-  ttVal1.textContent = fmtIDR(revData[i]);
-  ttVal2.textContent = fmtIDR(resData[i]);
-
-  if (!isVisible) {
-    tooltip.style.transition = "opacity 0.22s ease";
-    tooltip.classList.add("visible");
-    isVisible = true;
-  } else {
-    tooltip.style.transition =
-      "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
+    chart.render();
+    if (stillMoving) {
+      rafId = requestAnimationFrame(() => springStep(chart));
+    } else {
+      rafId = null;
+    }
   }
 
-  const tw = tooltip.offsetWidth || 215;
-  const th = tooltip.offsetHeight || 82;
-  let left = relX - tw / 2;
-  let top = relY - th - 16;
-
-  if (left < 4) left = 4;
-  if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top < 4) top = relY + 20;
-
-  tooltip.style.left = `${Math.round(left)}px`;
-  tooltip.style.top = `${Math.round(top)}px`;
-}
-
-function scheduleHide() {
-  dots.forEach((d) => {
-    d.tr = 0;
-  });
-  startSpring(chart);
-  hideTimer = setTimeout(() => {
-    tooltip.style.transition = "opacity 0.3s ease";
-    tooltip.classList.remove("visible");
-    isVisible = false;
-  }, 120);
-}
-
-canvas.addEventListener("mousemove", (e) => {
-  const pts = chart.getElementsAtEventForMode(
-    e,
-    "index",
-    { intersect: false },
-    true,
-  );
-  if (!pts.length) {
-    scheduleHide();
-    return;
+  function startSpring(chart) {
+    if (!rafId) rafId = requestAnimationFrame(() => springStep(chart));
   }
-  showTooltip(pts[0].index);
-});
 
-canvas.addEventListener("mouseleave", scheduleHide);
+  const springDotPlugin = {
+    id: "springDot",
+    afterDraw(chart) {
+      const { ctx: c } = chart;
+      dots.forEach((d) => {
+        if (d.r < 0.2) return;
+        c.save();
+        c.beginPath();
+        c.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        c.fillStyle = d.color;
+        c.fill();
+        c.lineWidth = 2.5;
+        c.strokeStyle = "#ffffff";
+        c.stroke();
+        c.restore();
+      });
+    },
+  };
 
-const donutData = {
-  labels: ["Available", "Sold Out"],
-  values: [66, 129],
-  colors: ["#4ade80", "#fde68a"],
-};
+  Chart.register(springDotPlugin);
 
-const donutTotal = donutData.values.reduce((a, b) => a + b, 0);
+  const ctx = revenueTrendCanvas.getContext("2d");
+  const { blueGrad, pinkGrad } = createGradients(ctx, 300);
+
+  const chart = new Chart(revenueTrendCanvas, {
+    type: "line",
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: "Pendapatan",
+          data: revData,
+          borderColor: "#378ADD",
+          backgroundColor: blueGrad,
+          fill: true,
+          tension: 0.42,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          yAxisID: "y",
+        },
+        {
+          label: "Reservasi",
+          data: resData,
+          borderColor: "#E05B7A",
+          backgroundColor: pinkGrad,
+          fill: true,
+          tension: 0.42,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          yAxisID: "y",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 900, easing: "easeInOutQuart" },
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+          align: "end",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            boxWidth: 6,
+            boxHeight: 6,
+            padding: 20,
+            font: { size: 13 },
+            color: "#6b7280",
+          },
+        },
+        tooltip: { enabled: false },
+      },
+      scales: {
+        x: {
+          display: true,
+          grid: { display: false },
+          border: { display: false },
+          ticks: { font: { size: 11 }, color: "#9ca3af" },
+        },
+        y: {
+          position: "left",
+          grid: { color: "rgba(128,128,128,0.08)" },
+          border: { display: false },
+          ticks: {
+            font: { size: 11 },
+            color: "#9ca3af",
+            maxTicksLimit: 5,
+            callback: fmtAxis,
+          },
+        },
+      },
+    },
+  });
+
+  const tooltip = document.getElementById("revTooltip");
+  const ttTitle = document.getElementById("revTt-title");
+  const ttVal1 = document.getElementById("revTt-val1");
+  const ttVal2 = document.getElementById("revTt-val2");
+  const wrap = document.getElementById("chartWrap");
+
+  if (tooltip && ttTitle && ttVal1 && ttVal2 && wrap) {
+    let hideTimer = null;
+    let isVisible = false;
+
+    function showTooltip(i) {
+      clearTimeout(hideTimer);
+      [0, 1].forEach((di) => {
+        const meta = chart.getDatasetMeta(di);
+        const point = meta.data[i];
+        dots[di].x = point.x;
+        dots[di].y = point.y;
+        dots[di].tr = RADIUS_TARGET;
+      });
+      startSpring(chart);
+
+      const canvasRect = revenueTrendCanvas.getBoundingClientRect();
+      const wrapRect = wrap.getBoundingClientRect();
+      const relX = canvasRect.left - wrapRect.left + dots[0].x;
+      const relY = canvasRect.top - wrapRect.top + dots[0].y;
+
+      ttTitle.textContent = months[i] + " 2024";
+      ttVal1.textContent = fmtIDR(revData[i]);
+      ttVal2.textContent = fmtIDR(resData[i]);
+
+      if (!isVisible) {
+        tooltip.style.transition = "opacity 0.22s ease";
+        tooltip.classList.add("visible");
+        isVisible = true;
+      } else {
+        tooltip.style.transition =
+          "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
+      }
+
+      const tw = tooltip.offsetWidth || 215;
+      const th = tooltip.offsetHeight || 82;
+      let left = relX - tw / 2;
+      let top = relY - th - 16;
+
+      if (left < 4) left = 4;
+      if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
+      if (top < 4) top = relY + 20;
+
+      tooltip.style.left = `${Math.round(left)}px`;
+      tooltip.style.top = `${Math.round(top)}px`;
+    }
+
+    function scheduleHide() {
+      dots.forEach((d) => {
+        d.tr = 0;
+      });
+      startSpring(chart);
+      hideTimer = setTimeout(() => {
+        tooltip.style.transition = "opacity 0.3s ease";
+        tooltip.classList.remove("visible");
+        isVisible = false;
+      }, 120);
+    }
+
+    revenueTrendCanvas.addEventListener("mousemove", (e) => {
+      const pts = chart.getElementsAtEventForMode(
+        e,
+        "index",
+        { intersect: false },
+        true,
+      );
+      if (!pts.length) {
+        scheduleHide();
+        return;
+      }
+      showTooltip(pts[0].index);
+    });
+
+    revenueTrendCanvas.addEventListener("mouseleave", scheduleHide);
+  }
+}
+
+// ============================================================
+//  DONUT CHART (dashboard.html)
+// ============================================================
 const donutCanvas = document.getElementById("donutChart");
-const donutCtx = donutCanvas.getContext("2d");
 
-const donutChart = new Chart(donutCtx, {
-  type: "doughnut",
-  data: {
-    labels: donutData.labels,
-    datasets: [
-      {
-        data: donutData.values,
-        backgroundColor: donutData.colors,
-        borderColor: "transparent",
-        borderWidth: 0,
-        hoverOffset: 6,
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: true,
-    cutout: "60%",
-    animation: { duration: 900, easing: "easeInOutQuart" },
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: false },
+if (donutCanvas && typeof Chart !== "undefined") {
+  const donutData = {
+    labels: ["Available", "Sold Out"],
+    values: [66, 129],
+    colors: ["#4ade80", "#fde68a"],
+  };
+
+  const donutTotal = donutData.values.reduce((a, b) => a + b, 0);
+  const donutCtx = donutCanvas.getContext("2d");
+
+  const donutChart = new Chart(donutCtx, {
+    type: "doughnut",
+    data: {
+      labels: donutData.labels,
+      datasets: [
+        {
+          data: donutData.values,
+          backgroundColor: donutData.colors,
+          borderColor: "transparent",
+          borderWidth: 0,
+          hoverOffset: 6,
+        },
+      ],
     },
-  },
-});
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: "60%",
+      animation: { duration: 900, easing: "easeInOutQuart" },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+      },
+    },
+  });
 
-const legendAvailable = document.getElementById("legend-available");
-const legendSoldout = document.getElementById("legend-soldout");
-if (legendAvailable)
-  legendAvailable.textContent = `${donutData.values[0]} Rooms`;
-if (legendSoldout) legendSoldout.textContent = `${donutData.values[1]} Rooms`;
+  const legendAvailable = document.getElementById("legend-available");
+  const legendSoldout = document.getElementById("legend-soldout");
+  if (legendAvailable)
+    legendAvailable.textContent = `${donutData.values[0]} Rooms`;
+  if (legendSoldout) legendSoldout.textContent = `${donutData.values[1]} Rooms`;
 
-const dTooltip = document.getElementById("donutTooltip");
-const dttTitle = document.getElementById("dtt-title");
-const dttBox = document.getElementById("dtt-box");
-const dttLabel = document.getElementById("dtt-label");
-const dttVal = document.getElementById("dtt-val");
-const dWrap = document.getElementById("doughnutChartBox");
+  const dTooltip = document.getElementById("donutTooltip");
+  const dttTitle = document.getElementById("dtt-title");
+  const dttBox = document.getElementById("dtt-box");
+  const dttLabel = document.getElementById("dtt-label");
+  const dttVal = document.getElementById("dtt-val");
+  const dWrap = document.getElementById("doughnutChartBox");
 
-let dHideTimer = null;
-let dVisible = false;
+  if (dTooltip && dttTitle && dttBox && dttLabel && dttVal && dWrap) {
+    let dHideTimer = null;
+    let dVisible = false;
 
-function showDonutTooltip(e) {
-  const pts = donutChart.getElementsAtEventForMode(
-    e,
-    "nearest",
-    { intersect: true },
-    true,
-  );
-  if (!pts.length) {
-    hideDonutTooltip();
-    return;
+    function showDonutTooltip(e) {
+      const pts = donutChart.getElementsAtEventForMode(
+        e,
+        "nearest",
+        { intersect: true },
+        true,
+      );
+      if (!pts.length) {
+        hideDonutTooltip();
+        return;
+      }
+      clearTimeout(dHideTimer);
+
+      const idx = pts[0].index;
+      const value = donutData.values[idx];
+      const color = donutData.colors[idx];
+      const pct = ((value / donutTotal) * 100).toFixed(1);
+
+      dttTitle.textContent = donutData.labels[idx];
+      dttBox.style.background = color;
+      dttLabel.textContent = `${value} Rooms`;
+      dttVal.textContent = `${pct}%`;
+
+      const wrapRect = dWrap.getBoundingClientRect();
+      const mouseX = e.clientX - wrapRect.left;
+      const mouseY = e.clientY - wrapRect.top;
+
+      if (!dVisible) {
+        dTooltip.style.transition = "opacity 0.22s ease";
+        dTooltip.classList.add("visible");
+        dVisible = true;
+      } else {
+        dTooltip.style.transition =
+          "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
+      }
+
+      const tw = dTooltip.offsetWidth || 170;
+      const th = dTooltip.offsetHeight || 70;
+      let left = mouseX - tw / 2;
+      let top = mouseY - th - 14;
+
+      if (left < 4) left = 4;
+      if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
+      if (top < 4) top = mouseY + 14;
+
+      dTooltip.style.left = `${Math.round(left)}px`;
+      dTooltip.style.top = `${Math.round(top)}px`;
+    }
+
+    function hideDonutTooltip() {
+      dHideTimer = setTimeout(() => {
+        dTooltip.style.transition = "opacity 0.3s ease";
+        dTooltip.classList.remove("visible");
+        dVisible = false;
+      }, 120);
+    }
+
+    donutCanvas.addEventListener("mousemove", showDonutTooltip);
+    donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
   }
-  clearTimeout(dHideTimer);
-
-  const idx = pts[0].index;
-  const value = donutData.values[idx];
-  const color = donutData.colors[idx];
-  const pct = ((value / donutTotal) * 100).toFixed(1);
-
-  dttTitle.textContent = donutData.labels[idx];
-  dttBox.style.background = color;
-  dttLabel.textContent = `${value} Rooms`;
-  dttVal.textContent = `${pct}%`;
-
-  const wrapRect = dWrap.getBoundingClientRect();
-  const mouseX = e.clientX - wrapRect.left;
-  const mouseY = e.clientY - wrapRect.top;
-
-  if (!dVisible) {
-    dTooltip.style.transition = "opacity 0.22s ease";
-    dTooltip.classList.add("visible");
-    dVisible = true;
-  } else {
-    dTooltip.style.transition =
-      "opacity 0.22s ease, left 0.18s cubic-bezier(0.25,0.46,0.45,0.94), top 0.18s cubic-bezier(0.25,0.46,0.45,0.94)";
-  }
-
-  const tw = dTooltip.offsetWidth || 170;
-  const th = dTooltip.offsetHeight || 70;
-  let left = mouseX - tw / 2;
-  let top = mouseY - th - 14;
-
-  if (left < 4) left = 4;
-  if (left + tw > wrapRect.width - 4) left = wrapRect.width - tw - 4;
-  if (top < 4) top = mouseY + 14;
-
-  dTooltip.style.left = `${Math.round(left)}px`;
-  dTooltip.style.top = `${Math.round(top)}px`;
 }
 
-function hideDonutTooltip() {
-  dHideTimer = setTimeout(() => {
-    dTooltip.style.transition = "opacity 0.3s ease";
-    dTooltip.classList.remove("visible");
-    dVisible = false;
-  }, 120);
-}
-
-donutCanvas.addEventListener("mousemove", showDonutTooltip);
-donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
-
+// ============================================================
+//  VISITORS BAR CHART (dashboard.html)
+// ============================================================
 (function () {
-  
+  const canvas = document.getElementById("visitorsBarChart");
+  if (!canvas || typeof Chart === "undefined") return;
+
   const VISITORS_DATA = {
     monthly: {
       labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
@@ -408,18 +423,13 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     },
   };
 
-  const PRIMARY = "#8b2500"; 
-  const ACCENT = "#c9933a"; 
-  const PRIMARY_LIGHT = "rgba(139, 37, 0, 0.15)";
-  const ACCENT_LIGHT = "rgba(201, 147, 58, 0.15)";
+  const PRIMARY = "#8b2500";
+  const ACCENT = "#c9933a";
 
-  function fmtAxis(v) {
+  function fmtAxisBar(v) {
     if (v === 0) return "0";
     return v >= 1000 ? (v / 1000).toFixed(0) + "K" : v;
   }
-
-  const canvas = document.getElementById("visitorsBarChart");
-  if (!canvas) return;
 
   const totalEl = document.getElementById("visitors-total");
   const badgeEl = document.getElementById("visitors-badge");
@@ -439,7 +449,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     }
 
     if (visitorsChart) {
-      
       visitorsChart.data.labels = d.labels;
       visitorsChart.data.datasets[0].data = d.host;
       visitorsChart.data.datasets[1].data = d.user;
@@ -511,7 +520,7 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
               font: { size: 11 },
               color: "#c0a090",
               maxTicksLimit: 5,
-              callback: fmtAxis,
+              callback: fmtAxisBar,
             },
           },
         },
@@ -520,7 +529,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
   }
 
   const tabs = document.querySelectorAll(".visitors-tab");
-
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => t.classList.remove("active"));
@@ -532,14 +540,20 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
   renderChart("monthly");
 })();
 
-const filterButton = document.querySelectorAll(".filter-item");
-filterButton.forEach((filterItem) => {
+// ============================================================
+//  FILTER (reviews.html & halaman lain yang punya .filter-item)
+// ============================================================
+const filterButtons = document.querySelectorAll(".filter-item");
+filterButtons.forEach((filterItem) => {
   filterItem.addEventListener("click", () => {
-    filterButton.forEach((i) => i.classList.remove("active"));
+    filterButtons.forEach((i) => i.classList.remove("active"));
     filterItem.classList.add("active");
   });
 });
 
+// ============================================================
+//  SORT BUTTON (reviews.html & halaman lain yang punya .sort-button)
+// ============================================================
 const sortButtons = document.querySelectorAll(".sort-button");
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
@@ -553,25 +567,44 @@ sortButtons.forEach((sortItem) => {
   });
 });
 
-const tabItems = document.querySelectorAll(".tab-item");
-const tabIndicator = document.querySelector(".tab-indicator");
+// ============================================================
+//  TOGGLE SWITCH (settings.html)
+// ============================================================
+const toggleSwitches = document.querySelectorAll(".toggle-switch");
 
-function moveIndicator(tab) {
-  tabIndicator.style.left = `${tab.offsetLeft}px`;
-  tabIndicator.style.width = `${tab.offsetWidth}px`;
-}
-
-tabItems.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    tabItems.forEach((t) => t.classList.remove("active"));
-    tab.classList.add("active");
-    moveIndicator(tab);
-    document
-      .querySelectorAll(".table-section")
-      .forEach((c) => (c.style.display = "none"));
-    document.querySelector(tab.dataset.target).style.display = "block";
+toggleSwitches.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    toggle.classList.toggle("active");
   });
 });
 
-const activeTab = document.querySelector(".tab-item.active");
-if (activeTab) moveIndicator(activeTab);
+// ============================================================
+//  TAB + INDICATOR (logs.html & halaman lain yang punya .tab-item)
+// ============================================================
+const tabItems = document.querySelectorAll(".tab-item");
+const tabIndicator = document.querySelector(".tab-indicator");
+
+if (tabItems.length && tabIndicator) {
+  function moveIndicator(tab) {
+    tabIndicator.style.left = `${tab.offsetLeft}px`;
+    tabIndicator.style.width = `${tab.offsetWidth}px`;
+  }
+
+  tabItems.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabItems.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      moveIndicator(tab);
+
+      document
+        .querySelectorAll(".table-section")
+        .forEach((c) => (c.style.display = "none"));
+
+      const target = document.querySelector(tab.dataset.target);
+      if (target) target.style.display = "block";
+    });
+  });
+
+  const activeTab = document.querySelector(".tab-item.active");
+  if (activeTab) moveIndicator(activeTab);
+}
