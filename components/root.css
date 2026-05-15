@@ -1,5 +1,5 @@
 :root {
-  /* Primary - Maroon */
+  
   --color-primary: #8b2500;
   --color-primary-hover: #7a1f00;
   --color-primary-active: #5c1800;
@@ -9,13 +9,11 @@
   --color-primary-light-active: #eecfc2;
   --color-primary-subtle: #fdf5f2;
 
-  /* Accent - Gold */
   --color-accent: #c9933a;
   --color-accent-hover: #b8832a;
   --color-accent-light: #f0c97a;
   --color-accent-subtle: #fdf6e8;
 
-  /* Neutral - Text & Border */
   --color-text-primary: #1a0a00;
   --color-text-secondary: #6b4f3a;
   --color-text-disabled: #b0907a;
@@ -26,7 +24,6 @@
   --color-border-strong: #c8b5a0;
   --color-border-subtle: #f0e4d8;
 
-  /* Background */
   --color-bg: #fffaf5;
   --color-bg-card: #ffffff;
   --color-bg-section: #f5e6d8;
@@ -46,8 +43,6 @@
     transparent 70%
   );
 
-  /* Status */
-  /* ── Success ── */
   --color-success: #2d7d4f;
   --color-success-light: #e8f5ee;
   --color-success-hover: #256642;
@@ -55,7 +50,6 @@
   --color-success-active: #1d5035;
   --color-success-light-active: #bde0cc;
 
-  /* ── Warning ── */
   --color-warning: #e09b2d;
   --color-warning-light: #fef4e0;
   --color-warning-hover: #c8841a;
@@ -63,7 +57,6 @@
   --color-warning-active: #a86d0f;
   --color-warning-light-active: #fbe0a8;
 
-  /* ── Error ── */
   --color-error: #cc2b2b;
   --color-error-light: #fdeaea;
   --color-error-hover: #b02222;
@@ -71,7 +64,6 @@
   --color-error-active: #8f1a1a;
   --color-error-light-active: #f5b8b8;
 
-  /* ── Info ── */
   --color-info: #2b6ecc;
   --color-info-light: #eaf1fd;
   --color-info-hover: #2159a8;
@@ -79,19 +71,18 @@
   --color-info-active: #184585;
   --color-info-light-active: #b8d2f7;
 
-  /* Typography */
   --font-family: "inter", sans-serif;
   --font-display: montserrat, sans-serif;
 
-  --text-xs: 0.75rem; /* -> 12px */
-  --text-sm: 0.875rem; /* -> 14px */
-  --text-base: 1rem; /* -> 16px */
-  --text-md: 1.125rem; /* -> 18px */
-  --text-lg: 1.25rem; /* -> 20px */
-  --text-xl: 1.5rem; /* -> 24px */
-  --text-2xl: 1.875rem; /* -> 30px */
-  --text-3xl: 2.25rem; /* -> 36px */
-  --text-4xl: 3rem; /* -> 48px */
+  --text-xs: 0.75rem; 
+  --text-sm: 0.875rem; 
+  --text-base: 1rem; 
+  --text-md: 1.125rem; 
+  --text-lg: 1.25rem; 
+  --text-xl: 1.5rem; 
+  --text-2xl: 1.875rem; 
+  --text-3xl: 2.25rem; 
+  --text-4xl: 3rem; 
 
   --font-light: 300;
   --font-regular: 400;
@@ -99,7 +90,6 @@
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* Spacing */
   --space-letter: 0.03125rem;
   --space-center: 0 auto;
   --space-2: 0.125rem;
@@ -119,7 +109,6 @@
   --space-80: 5rem;
   --space-96: 6rem;
 
-  /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 10px;
@@ -128,7 +117,6 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* Box Shadow */
   --shadow-navbar: 0 1px 3px rgba(26, 10, 0, 0.08);
   --shadow-card: 0 2px 8px rgba(26, 10, 0, 0.08);
   --shadow-card-hover: 0 8px 24px rgba(26, 10, 0, 0.14);
@@ -136,7 +124,6 @@
   --shadow-dropdown: 0 12px 40px rgba(26, 10, 0, 0.18);
   --shadow-float: 0 4px 16px rgba(26, 10, 0, 0.12);
 
-  /* Z Index */
   --z-below: -1;
   --z-base: 0;
   --z-hero: 10;
@@ -147,7 +134,6 @@
   --z-toast: 500;
   --z-tooltip: 600;
 
-  /* Transition */
   --transition-fast: 200ms ease;
   --transition-base: 300ms ease;
   --transition-slow: 400ms ease;
@@ -156,7 +142,6 @@
   --card-transform-hover: scale(1.03);
   --button-transform-hover: scale(1.05);
 
-  /* Layout */
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;
@@ -167,7 +152,7 @@
   --navbar-height: 68px;
   --hero-height: 100vh;
   --hero-content-width: 640px;
-  --searchbar-width: 920px;
+  --searchbar-width: 940px;
   --sidebar-width: 280px;
 }
 

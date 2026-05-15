@@ -1,4 +1,3 @@
-//Counter Input
 const counterItem = document.querySelectorAll(".counter-row");
 
 counterItem.forEach((item) => {
@@ -33,12 +32,10 @@ counterItem.forEach((item) => {
   updateCounter();
 });
 
-// Slider Input
 const priceSlider = document.querySelector(".price-slider");
 const priceValue = document.querySelector(".price-display-value");
 const priceInput = document.querySelector(".price-input");
 
-// Fungsi format angka ke Rupiah
 function rupiahFormatting(angka) {
   return angka.toLocaleString("id-ID");
 }

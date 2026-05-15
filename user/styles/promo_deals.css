@@ -568,7 +568,6 @@
   color: var(--color-text-secondary);
 }
 
-/* separator · antar amenity-item */
 .amenity-item + .amenity-item::before {
   content: "·";
   color: var(--color-text-hint);

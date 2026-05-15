@@ -34,9 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.getElementById("hamburgerDropdown");
 
   const isLoggedIn = true;
-  let isLoaded = false; // Flag untuk mengecek apakah konten sudah siap
+  let isLoaded = false;
 
-  // 1. Inisialisasi Tombol
   if (isLoggedIn) {
     profileBtn?.classList.remove("hidden");
     hamburgerBtn?.classList.add("hidden");
@@ -45,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
     hamburgerBtn?.classList.remove("hidden");
   }
 
-  // 2. Load isi dropdown (Hanya ambil yang dibutuhkan saja)
   async function loadDropdown() {
     try {
       const res = await fetch("/popups/hamburger.html");
@@ -58,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const section = doc.querySelector(`[data-type="${state}"]`);
 
       if (section) {
-        dropdown.innerHTML = section.innerHTML; // Hanya ambil isi yang relevan
+        dropdown.innerHTML = section.innerHTML;
         isLoaded = true;
       }
     } catch (err) {
@@ -66,16 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 3. Buka / tutup dropdown
   function toggleDropdown(triggerBtn) {
-    if (!isLoaded) return; // Jangan buka jika konten belum siap
+    if (!isLoaded) return;
 
     if (dropdown.classList.contains("open")) {
       dropdown.classList.remove("open");
     } else {
       const rect = triggerBtn.getBoundingClientRect();
 
-      // Gunakan fixed agar aman saat scroll (sesuaikan CSS kamu)
       dropdown.style.top = `${rect.bottom + 8}px`;
       dropdown.style.right = `${window.innerWidth - rect.right}px`;
       dropdown.style.left = "auto";
@@ -84,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Event Listeners
   const handleTrigger = (e, btn) => {
     e.stopPropagation();
     toggleDropdown(btn);
@@ -95,12 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
     handleTrigger(e, hamburgerBtn),
   );
 
-  // Global Close
-  const closeAll = () => dropdown.classList.remove("open");
-
-  document.addEventListener("click", closeAll);
-  window.addEventListener("resize", closeAll);
-  window.addEventListener("scroll", closeAll); // Tambahan: tutup saat scroll
+  document.addEventListener("click", () => dropdown.classList.remove("open"));
+  window.addEventListener("resize", () => dropdown.classList.remove("open"));
 
   dropdown.addEventListener("click", (e) => e.stopPropagation());
 

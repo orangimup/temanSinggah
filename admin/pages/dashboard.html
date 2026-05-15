@@ -182,9 +182,8 @@
             </div>
           </section>
 
-          <!-- ===== 3 CHARTS ROW ===== -->
           <div class="chart-row">
-            <!-- 1. Aktivitas Guest — Line Chart (2fr, lebih besar) -->
+            
             <div class="chart-card">
               <div
                 class="chart-card-header"
@@ -201,7 +200,7 @@
                     >Check-in & Check-out minggu ini</span
                   >
                 </div>
-                <!-- Tab: Month / Weekly / Day -->
+                
                 <div
                   style="
                     display: flex;
@@ -256,7 +255,6 @@
                 </div>
               </div>
 
-              <!-- Stats row -->
               <div style="display: flex; gap: var(--space-24)">
                 <div class="legend-item" style="gap: var(--space-8)">
                   <span
@@ -317,12 +315,12 @@
                   height="100"
                   viewBox="0 0 260 100"
                   fill="none">
-                  <!-- Area fill primary -->
+                  
                   <path
                     d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35 L260,100 L0,100 Z"
                     fill="var(--color-primary)"
                     opacity="0.12" />
-                  <!-- Line primary (Check-in) -->
+                  
                   <path
                     d="M0,70 C30,55 50,65 70,40 C90,18 110,45 130,30 C150,15 170,50 200,20 L260,35"
                     stroke="var(--color-primary)"
@@ -330,12 +328,12 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     fill="none" />
-                  <!-- Area fill accent -->
+                  
                   <path
                     d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68 L260,100 L0,100 Z"
                     fill="var(--color-accent)"
                     opacity="0.12" />
-                  <!-- Line accent (Check-out) -->
+                  
                   <path
                     d="M0,82 C30,72 50,78 70,65 C90,52 110,68 130,58 C150,48 170,72 200,60 L260,68"
                     stroke="var(--color-accent)"
@@ -343,10 +341,10 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     fill="none" />
-                  <!-- Tooltip dot -->
+                  
                   <circle cx="90" cy="18" r="5" fill="var(--color-primary)" />
                 </svg>
-                <!-- X-axis labels -->
+                
                 <div
                   style="
                     display: flex;
@@ -431,16 +429,8 @@
                 <span class="chart-card-subtitle">Jumlah kunjungan harian</span>
               </div>
 
-              <!--
-  ============================================================
-  CHART PENGUNJUNG WEB — Teman Singgah Admin
-  Ganti seluruh blok .chart-card ketiga (Pengunjung Web)
-  di dashboard.html dengan kode ini.
-  ============================================================
--->
-
               <div class="chart-card" id="visitors-card">
-                <!-- Header -->
+                
                 <div
                   class="chart-card-header"
                   style="
@@ -457,7 +447,6 @@
                     </span>
                   </div>
 
-                  <!-- Period tabs -->
                   <div class="visitors-tab-group">
                     <button class="visitors-tab active" data-period="monthly">
                       Bulanan
@@ -471,7 +460,6 @@
                   </div>
                 </div>
 
-                <!-- Summary row -->
                 <div
                   style="
                     display: flex;
@@ -488,7 +476,6 @@
                   </div>
                 </div>
 
-                <!-- Legend -->
                 <div style="display: flex; gap: var(--space-20)">
                   <div class="legend-item">
                     <span
@@ -516,7 +503,6 @@
                   </div>
                 </div>
 
-                <!-- Chart -->
                 <div style="position: relative; width: 100%; height: 180px">
                   <canvas
                     id="visitorsBarChart"

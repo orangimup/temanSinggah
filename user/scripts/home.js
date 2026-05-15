@@ -1,4 +1,3 @@
-// Save Button
 const saveButton = document.querySelectorAll(".save-button");
 
 saveButton.forEach((saveItem) => {
@@ -13,12 +12,11 @@ saveButton.forEach((saveItem) => {
   });
 });
 
-// Slide Button
 const cardSections = document.querySelectorAll(".card-section");
 
 cardSections.forEach((section) => {
   const cardList = section.querySelector(".card-list");
-if (!cardList) return;
+  if (!cardList) return;
 
   const prevButton = section.querySelector(".prev-button");
   const nextButton = section.querySelector(".next-button");
@@ -34,7 +32,7 @@ if (!cardList) return;
 
   nextButton?.addEventListener("click", () => {
     const hotelCard = section.querySelector(".hotel-card");
-   
+
     const cardWidth = hotelCard.offsetWidth + 16;
     cardList.scrollBy({ left: cardWidth * 5, behavior: "smooth" });
   });

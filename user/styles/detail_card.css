@@ -1,6 +1,5 @@
-/* ── Root Variables ── */
 :root {
-  /* Primary - Maroon */
+  
   --color-primary: #8b2500;
   --color-primary-hover: #7a1f00;
   --color-primary-active: #5c1800;
@@ -10,13 +9,11 @@
   --color-primary-light-active: #eecfc2;
   --color-primary-subtle: #fdf5f2;
 
-  /* Accent - Gold */
   --color-accent: #c9933a;
   --color-accent-hover: #b8832a;
   --color-accent-light: #f0c97a;
   --color-accent-subtle: #fdf6e8;
 
-  /* Neutral - Text & Border */
   --color-text-primary: #1a0a00;
   --color-text-secondary: #6b4f3a;
   --color-text-disabled: #b0907a;
@@ -27,7 +24,6 @@
   --color-border-strong: #c8b5a0;
   --color-border-subtle: #f0e4d8;
 
-  /* Background */
   --color-bg: #fffaf5;
   --color-bg-card: #ffffff;
   --color-bg-section: #f5e6d8;
@@ -47,13 +43,11 @@
     transparent 70%
   );
 
-  /* Status */
   --color-success: #2d7d4f;
   --color-success-light: #e8f5ee;
   --color-error: #cc2b2b;
   --color-error-light: #fdeaea;
 
-  /* Typography */
   --font-family: "Inter", sans-serif;
   --font-display: "Playfair Display", serif;
 
@@ -73,7 +67,6 @@
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* Spacing */
   --space-letter: 0.03125rem;
   --space-center: 0 auto;
   --space-2: 0.125rem;
@@ -93,7 +86,6 @@
   --space-80: 5rem;
   --space-96: 6rem;
 
-  /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 10px;
@@ -102,21 +94,18 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* Box Shadow */
   --shadow-navbar: 0 1px 3px rgba(26, 10, 0, 0.08);
   --shadow-card: 0 2px 8px rgba(26, 10, 0, 0.08);
   --shadow-card-hover: 0 8px 24px rgba(26, 10, 0, 0.14);
   --shadow-search: 0 8px 32px rgba(26, 10, 0, 0.2);
   --shadow-dropdown: 0 12px 40px rgba(26, 10, 0, 0.18);
 
-  /* Transition */
   --transition-fast: 200ms ease;
   --transition-base: 300ms ease;
   --transition-slow: 400ms ease;
 
   --card-transform-hover: scale(1.03);
 
-  /* Layout */
   --container-xl: 1300px;
   --navbar-height: 68px;
 }
@@ -151,7 +140,6 @@ a {
   color: inherit;
 }
 
-/* ── Navbar ── */
 .navbar {
   position: sticky;
   top: 0;
@@ -260,14 +248,12 @@ a {
   background: var(--color-primary-hover);
 }
 
-/* ── Main Content ── */
 .main-content {
   max-width: var(--container-xl);
   margin: var(--space-center);
   padding: var(--space-32) var(--space-24);
 }
 
-/* ── Galeri Foto ── */
 .gallery-section {
   margin-bottom: var(--space-32);
 }
@@ -319,7 +305,6 @@ a {
   box-shadow: var(--shadow-card-hover);
 }
 
-/* ── Judul & Info Singkat ── */
 .info-section {
   margin-bottom: var(--space-32);
 }
@@ -377,7 +362,6 @@ a {
   font-weight: var(--font-semibold);
 }
 
-/* ── Layout Detail Dua Kolom ── */
 .detail-layout {
   display: flex;
   gap: var(--space-32);
@@ -389,12 +373,11 @@ a {
   min-width: 0;
 }
 
-/* ── Sidebar Booking ── */
 .booking-sidebar {
   width: 320px;
   flex-shrink: 0;
   position: sticky;
-  top: 1rem; /* tambahan — tidak ada di referensi (teknik sticky) */
+  top: 1rem; 
 }
 
 .booking-card {
@@ -495,7 +478,6 @@ a {
   text-align: center;
 }
 
-/* ── Deskripsi Penginapan ── */
 .description-section {
   margin-bottom: var(--space-48);
 }
@@ -519,7 +501,6 @@ a {
   margin-bottom: 0;
 }
 
-/* ── Fasilitas Umum ── */
 .amenities-section {
   margin-bottom: var(--space-48);
 }
@@ -564,7 +545,6 @@ a {
   color: var(--color-text-primary);
 }
 
-/* ── Tipe Kamar ── */
 .rooms-section {
   margin-bottom: var(--space-48);
 }
@@ -718,7 +698,6 @@ a {
   transform: scale(0.98);
 }
 
-/* ── Kebijakan Penginapan ── */
 .policy-section {
   margin-bottom: var(--space-48);
 }
@@ -768,7 +747,6 @@ a {
   color: var(--color-text-secondary);
 }
 
-/* ── Peta Lokasi ── */
 .map-section {
   margin-bottom: var(--space-48);
 }
@@ -805,7 +783,6 @@ a {
   line-height: 1.6;
 }
 
-/* ── Ulasan Tamu ── */
 .reviews-section {
   margin-bottom: var(--space-48);
 }
@@ -932,7 +909,6 @@ a {
   display: inline-block;
 }
 
-/* ── Footer ── */
 .footer {
   background: var(--color-primary-footer);
   color: var(--color-text-inverse);
@@ -1044,7 +1020,6 @@ a {
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* ── Responsive Mobile ── */
 @media (max-width: 1024px) {
   .detail-layout {
     flex-direction: column;

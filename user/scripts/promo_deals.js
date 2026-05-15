@@ -1,4 +1,3 @@
-// Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
 
 filterButton.forEach((filterItem) => {
@@ -8,7 +7,6 @@ filterButton.forEach((filterItem) => {
   });
 });
 
-// Sort Button
 const sortButton = document.querySelectorAll(".sort-button");
 
 sortButton.forEach((sortItem) => {
@@ -28,7 +26,6 @@ sortButton.forEach((sortItem) => {
   });
 });
 
-// Copy Button
 const copyButton = document.querySelectorAll(".copy-button");
 copyButton.forEach((copyItem) => {
   copyItem.addEventListener("click", () => {
@@ -39,7 +36,6 @@ copyButton.forEach((copyItem) => {
   });
 });
 
-// Save Button
 const saveButton = document.querySelectorAll(".save-button");
 
 saveButton.forEach((saveItem) => {

@@ -1,4 +1,3 @@
-// Calendar Body
 const state = {
   month: new Date().getMonth(),
   year: new Date().getFullYear(),
@@ -127,7 +126,6 @@ Promise.all([
   const titlePopup = document.querySelector("#titlePopup");
   const filterPopup = document.querySelector("#filterPopup");
 
-  // Title Dropdown
   document.querySelector(".content-title").addEventListener("click", (e) => {
     e.stopPropagation();
     filterPopup.classList.remove("open");
@@ -169,7 +167,6 @@ Promise.all([
     titlePopup.classList.toggle("open");
   });
 
-  // Filter Dropdown
   document.querySelector(".header-filter").addEventListener("click", (e) => {
     e.stopPropagation();
     titlePopup.classList.remove("open");
@@ -201,7 +198,6 @@ Promise.all([
   });
 });
 
-// Listing Sidebar
 document
   .querySelector(".listing-sidebar-close")
   .addEventListener("click", () => {

@@ -1,4 +1,3 @@
-// Revenue Chart
 const months = [
   "Jan",
   "Feb",
@@ -268,7 +267,6 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("mouseleave", scheduleHide);
 
-// Property Availability Chart
 const donutData = {
   labels: ["Available", "Sold Out"],
   values: [66, 129],
@@ -381,14 +379,8 @@ function hideDonutTooltip() {
 donutCanvas.addEventListener("mousemove", showDonutTooltip);
 donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
 
-/* ============================================================
-   CHART PENGUNJUNG WEB — dashboard.js
-   Tambahkan ke bawah file dashboard.js yang sudah ada.
-   Chart.js sudah di-load di <head> dashboard.html via CDN.
-   ============================================================ */
-
 (function () {
-  /* ---------- Data per periode ---------- */
+  
   const VISITORS_DATA = {
     monthly: {
       labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"],
@@ -416,9 +408,8 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     },
   };
 
-  /* ---------- Helpers ---------- */
-  const PRIMARY = "#8b2500"; /* --color-primary */
-  const ACCENT = "#c9933a"; /* --color-accent  */
+  const PRIMARY = "#8b2500"; 
+  const ACCENT = "#c9933a"; 
   const PRIMARY_LIGHT = "rgba(139, 37, 0, 0.15)";
   const ACCENT_LIGHT = "rgba(201, 147, 58, 0.15)";
 
@@ -427,7 +418,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     return v >= 1000 ? (v / 1000).toFixed(0) + "K" : v;
   }
 
-  /* ---------- Build / update chart ---------- */
   const canvas = document.getElementById("visitorsBarChart");
   if (!canvas) return;
 
@@ -439,7 +429,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
   function renderChart(period) {
     const d = VISITORS_DATA[period];
 
-    /* Update summary */
     if (totalEl) totalEl.textContent = d.total;
     if (badgeEl) {
       badgeEl.className =
@@ -450,7 +439,7 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     }
 
     if (visitorsChart) {
-      /* Update existing chart data */
+      
       visitorsChart.data.labels = d.labels;
       visitorsChart.data.datasets[0].data = d.host;
       visitorsChart.data.datasets[1].data = d.user;
@@ -458,7 +447,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
       return;
     }
 
-    /* Create chart for the first time */
     visitorsChart = new Chart(canvas, {
       type: "bar",
       data: {
@@ -531,7 +519,6 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     });
   }
 
-  /* ---------- Tab switching ---------- */
   const tabs = document.querySelectorAll(".visitors-tab");
 
   tabs.forEach((tab) => {
@@ -542,11 +529,9 @@ donutCanvas.addEventListener("mouseleave", hideDonutTooltip);
     });
   });
 
-  /* Initial render */
   renderChart("monthly");
 })();
 
-// Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
 filterButton.forEach((filterItem) => {
   filterItem.addEventListener("click", () => {
@@ -555,7 +540,6 @@ filterButton.forEach((filterItem) => {
   });
 });
 
-// Sort Button
 const sortButtons = document.querySelectorAll(".sort-button");
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
@@ -569,7 +553,6 @@ sortButtons.forEach((sortItem) => {
   });
 });
 
-// Tab Group
 const tabItems = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
 

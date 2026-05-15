@@ -391,12 +391,6 @@
   color: var(--color-text-primary);
 }
 
-/* ============================================================
-   CHART PENGUNJUNG WEB — dashboard.css
-   Tambahkan ke bawah file dashboard.css yang sudah ada.
-   ============================================================ */
-
-/* ---------- Period tab group ---------- */
 .visitors-tab-group {
   display: flex;
   gap: 0;
@@ -430,7 +424,6 @@
   color: var(--color-text-secondary);
 }
 
-/* ---------- Summary total & badge ---------- */
 .visitors-total {
   font-size: var(--text-3xl);
   font-weight: var(--font-bold);
@@ -460,8 +453,6 @@
   background: var(--color-error-light);
   color: var(--color-error);
 }
-
-/* // */
 
 .table-section {
   margin-bottom: var(--space-32);
@@ -996,8 +987,6 @@
   background: var(--color-bg-skeleton);
   color: var(--color-primary-active);
 }
-
-/*  */
 
 .chart-row {
   display: grid;

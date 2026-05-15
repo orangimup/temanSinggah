@@ -1,4 +1,3 @@
-// Sort Button
 const sortButton = document.querySelectorAll(".sort-button");
 
 sortButton.forEach((sortItem) => {
@@ -13,7 +12,6 @@ sortButton.forEach((sortItem) => {
   });
 });
 
-// Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
 
 filterButton.forEach((filterItem) => {
@@ -27,7 +25,6 @@ filterButton.forEach((filterItem) => {
   });
 });
 
-// Thread Item
 const threadContact = document.querySelectorAll(".thread-item");
 
 threadContact.forEach((threadItem) => {
@@ -37,7 +34,6 @@ threadContact.forEach((threadItem) => {
   });
 });
 
-// Send Messages
 const chatInput = document.querySelector(".chat-input");
 const sendButton = document.querySelector(".send-button");
 const fileInput = document.querySelector(".attach-button input");

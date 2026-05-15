@@ -1,4 +1,3 @@
-// Filter Button
 const filterButton = document.querySelectorAll(".filter-item");
 
 filterButton.forEach((filterItem) => {

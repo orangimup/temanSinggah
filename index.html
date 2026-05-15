@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/components/search_bar.css" />
     <link rel="stylesheet" href="/components/footer.css" />
     <link rel="stylesheet" href="user/styles/home.css" />
 
@@ -115,31 +116,38 @@
               <span class="field-label">Mau Kemana?</span>
               <input
                 type="text"
+                id="destinationInput"
                 class="field-value input"
-                placeholder="Cari Tempatnya" />
+                placeholder="Cari Tempatnya"
+                autocomplete="off" />
             </div>
           </div>
           <div class="search-field">
             <i class="ph-bold ph-calendar-blank"></i>
             <div class="field-text">
               <span class="field-label">Kapan?</span>
-              <span class="field-value">Tambahkan Tanggal</span>
+              <span class="field-value" id="dateSummary"
+                >Tambahkan Tanggal</span
+              >
             </div>
           </div>
           <div class="search-field">
             <i class="ph-bold ph-users-three"></i>
             <div class="field-text">
               <span class="field-label">Siapa Saja?</span>
-              <span class="field-value">Tambahkan Pengunjung</span>
+              <span class="field-value" id="guestSummary">
+                Tambahkan Pengunjung
+              </span>
             </div>
-            <a href="search_results_page.html">
-              <button class="search-button">
-                <i class="ph-bold ph-magnifying-glass"></i>
-              </button>
-            </a>
+            <button class="search-button" type="button">
+              <i class="ph-bold ph-magnifying-glass"></i>
+            </button>
           </div>
         </div>
       </section>
+      <div id="destinationDropdown"></div>
+      <div id="calendarDropdown"></div>
+      <div id="guestCounterDropdown"></div>
 
       <section class="card-section">
         <span class="section-header">
@@ -1051,7 +1059,8 @@
       </div>
     </footer>
 
-    <script src="user/scripts/home.js"></script>
+    <script src="/user/scripts/home.js"></script>
     <script src="/components/navbar.js"></script>
+    <script src="/components/search_bar.js"></script>
   </body>
 </html>
