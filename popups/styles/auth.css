@@ -1,32 +1,33 @@
-.main-content {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  overflow-y: auto;
+/* ============================================================
+   AUTH OVERLAY — wrapper modal sama seperti language popup
+   ============================================================ */
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-32);
-  background: var(--color-bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: all var(--transition-base);
+  height: 100vh; /* Full tinggi layar */
+  display: flex;
+  justify-content: center; /* Horizontal center */
+  align-items: center;
 }
 
-.main-content::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(
-      circle at 20% 50%,
-      rgba(201, 147, 58, 0.03) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(139, 37, 0, 0.03) 0%,
-      transparent 50%
-    );
-  pointer-events: none;
+.auth-overlay.open {
+  opacity: 1;
+  pointer-events: all;
 }
+
+/* ============================================================
+   AUTH FORM CARD — tidak diubah dari desain asli
+   ============================================================ */
 
 .auth-form-card {
   background: rgba(255, 255, 255, 0.95);
@@ -44,22 +45,33 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  transition: height var(--transition-base);
+  transition:
+    height var(--transition-base),
+    transform var(--transition-base);
+  transform: translateY(12px);
 }
 
 .auth-form-card:has(.auth-step.small.active) {
   height: auto;
 }
 
+/* ============================================================
+   AUTH FORM
+   ============================================================ */
+
 .auth-form {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 400px;
+  width: 100%;
+  height: 100%;
 }
 
 .auth-step {
   display: none;
+  width: 100%;
+  height: 100%;
 }
 
 .auth-step.active {
@@ -102,6 +114,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-32);
+  width: 100%;
 }
 
 .auth-top-section {
@@ -383,6 +396,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-8);
+  font-family: var(--font-family);
 }
 
 .auth-submit-button:hover {
@@ -531,4 +545,9 @@
   color: var(--color-text-primary);
   text-align: center;
   line-height: 1.6;
+}
+
+.empty-div {
+  width: 36px;
+  height: 36px;
 }

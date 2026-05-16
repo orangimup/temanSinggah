@@ -212,13 +212,12 @@
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
-  transition: all var(--transition-fast);  
+  transition: all var(--transition-fast);
   width: 100%;
   color: var(--color-text-primary);
   background: var(--color-bg-card);
   outline: none;
 }
-
 
 .calendar-input::placeholder,
 .guest-input::placeholder {
@@ -258,7 +257,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top:var(--space-8)
+  margin-top: var(--space-8);
 }
 
 .booking-submit:hover {
@@ -554,6 +553,37 @@
   z-index: var(--z-base);
 }
 
+.map-popup-custom {
+  display: none;
+}
+
+.leaflet-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.leaflet-popup-content strong {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.leaflet-popup-content span {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  border: 1.5px solid var(--color-border-subtle);
+}
+
+.leaflet-popup-tip {
+  background: var(--color-bg-card);
+}
+
 .map-container .leaflet-control-attribution {
   display: none;
 }
@@ -572,38 +602,40 @@
 
 .custom-zoom-control {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
+  bottom: var(--space-12);
+  right: var(--space-12);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-4);
   z-index: 1000;
 }
 
-.custom-zoom-btn {
-  width: 36px;
-  height: 36px;
-  background: var(--color-bg-card);
-  border: 1.5px solid var(--color-border);
+.custom-zoom-button {
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  font-weight: var(--font-bold);
+  font-size: var(--text-md);
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
   color: var(--color-text-primary);
-  font-size: var(--text-md);
-  box-shadow: var(--shadow-card);
-  transition: all var(--transition-fast);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-bg-card);
 }
 
-.custom-zoom-btn:hover {
+.custom-zoom-button:hover {
   background: var(--color-bg-section);
   border-color: var(--color-border-strong);
 }
 
-.custom-zoom-btn:active {
+.custom-zoom-button:active {
+  transform: scale(0.99);
   background: var(--color-bg-skeleton);
-  transform: scale(0.97);
 }
 
 .reviews-section {

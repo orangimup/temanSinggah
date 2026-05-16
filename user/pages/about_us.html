@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/components/footer.css" />
+    <link rel="stylesheet" href="/popups/styles/auth.css" />
     <link rel="stylesheet" href="/user/styles/about_us.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,7 +29,8 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="reservations.html" class="logo-section">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
           <img
             src="/assets/logo/logo_temansinggah.svg"
             alt="Logo Teman Singgah"
@@ -37,7 +39,8 @@
             src="/assets/logo/label_temansinggah.svg"
             alt="Brand Name Teman Singgah"
             class="logo-name" />
-        </a>
+        </div>
+
         <ul class="nav-menu">
           <li class="nav-item">
             <a href="/index.html" class="nav-link">Cari Penginapan</a>
@@ -62,25 +65,18 @@
         </ul>
 
         <div class="nav-right">
-          <button class="ghost-button">Ganti ke host</button>
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
           <div class="icon-buttons">
-            <a href="">
-              <button class="icon-button profile" aria-label="Profile">
-                A
-              </button>
-            </a>
-            <button
-              class="icon-button hamburger"
-              aria-label="Hamburger"
-              style="display: none">
+            <button class="icon-button profile" aria-label="Profile">A</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
               <i class="ph-bold ph-list"></i>
             </button>
-            <div class="auth-buttons" style="display: none">
-              <a href="/components/auth_popup.html">
-                <button class="auth-button">Masuk</button>
-              </a>
-            </div>
           </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
+          <div id="authPopup"></div>
         </div>
       </nav>
     </header>
@@ -353,5 +349,6 @@
     </footer>
 
     <script src="/components/navbar.js"></script>
+    <script src="/popups/auth.js"></script>
   </body>
 </html>

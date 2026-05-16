@@ -1,5 +1,4 @@
 :root {
-  
   --color-primary: #8b2500;
   --color-primary-hover: #7a1f00;
   --color-primary-active: #5c1800;
@@ -145,7 +144,7 @@
   --container-sm: 640px;
   --container-md: 768px;
   --container-lg: 1024px;
-  --container-xl: 1300px;
+  --container-xl: 1350px;
   --container-2xl: 1440px;
   --container-full: 100vh;
 

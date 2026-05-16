@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Facorit | Teman Singgah</title>
+    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/components/root.css" />
+    <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/components/footer.css" />
+    <link rel="stylesheet" href="/user/styles/wishlist.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet" />
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
+          <img
+            src="/assets/logo/logo_temansinggah.svg"
+            alt="Logo Teman Singgah"
+            class="logo-icon" />
+          <img
+            src="/assets/logo/label_temansinggah.svg"
+            alt="Brand Name Teman Singgah"
+            class="logo-name" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="/index.html" class="nav-link">Cari Penginapan</a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/promo_deals.html" class="nav-link">
+              Promo & Deals
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/become_host.html" class="nav-link">
+              Jadi Host
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/about_us.html" class="nav-link">
+              Tentang Kami
+            </a>
+          </li>
+
+          <div class="nav-indicator"></div>
+        </ul>
+
+        <div class="nav-right">
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
+          <div class="icon-buttons">
+            <button class="icon-button profile" aria-label="Profile">A</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
+              <i class="ph-bold ph-list"></i>
+            </button>
+          </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
+          <div id="authPopup"></div>
+        </div>
+      </nav>
+    </header>
+  </body>
+</html>

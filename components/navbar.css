@@ -111,6 +111,11 @@
   gap: var(--space-24);
 }
 
+.header-actions {
+  display: flex;
+  gap: var(--space-8);
+}
+
 .ghost-button {
   padding: var(--space-12) var(--space-20);
   border: 1.5px solid var(--color-border);

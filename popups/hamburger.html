@@ -1,11 +1,9 @@
-<div id="hamburgerDropdown" class="dropdown-popup"></div>
-
-<div id="dropdownTemplates" style="display: none">
+<div id="hamburgerDropdown" class="dropdown-popup">
   <div data-type="loggedin">
-    <a href="" class="dropdown-option">
+    <a href="/user/pages/account.html" class="dropdown-option">
       <i class="ph-bold ph-user"></i>Profil
     </a>
-    <a href="" class="dropdown-option">
+    <a href="/user/pages/wishlist.html" class="dropdown-option">
       <i class="ph-bold ph-heart"></i>Favorit
     </a>
     <a href="" class="dropdown-option">
@@ -22,24 +20,49 @@
       <i class="ph-bold ph-question"></i>Pusat Bantuan
     </a>
     <div class="dropdown-divider"></div>
-    <a href="" class="dropdown-option dropdown-option-danger">
+    <a
+      href=""
+      class="dropdown-option dropdown-option-danger"
+      data-action="logout">
       <i class="ph-bold ph-sign-out"></i>Keluar
     </a>
   </div>
 
   <div data-type="guest">
-    <a href="" class="dropdown-option">
+    <a href="#" class="dropdown-option" data-action="auth">
       <i class="ph-bold ph-sign-in"></i>Masuk atau Mendaftar
     </a>
-    <a href="" class="dropdown-option">
+    <a href="#" class="dropdown-option" data-action="language">
       <i class="ph-bold ph-globe"></i>Bahasa dan Mata Uang
     </a>
     <div class="dropdown-divider"></div>
-    <a href="" class="dropdown-option">
+    <a href="#" class="dropdown-option" data-action="auth">
       <i class="ph-bold ph-user-check"></i>Daftar menjadi Host
     </a>
     <a href="" class="dropdown-option">
       <i class="ph-bold ph-question"></i>Pusat Bantuan
+    </a>
+  </div>
+
+  <div data-type="host">
+    <a href="/user/pages/account.html" class="dropdown-option">
+      <i class="ph-bold ph-user"></i>Profil
+    </a>
+    <a href="" class="dropdown-option">
+      <i class="ph-bold ph-gear"></i>Pengaturan Akun
+    </a>
+    <a href="#" class="dropdown-option" data-action="language">
+      <i class="ph-bold ph-globe"></i>Bahasa dan Mata Uang
+    </a>
+    <a href="" class="dropdown-option">
+      <i class="ph-bold ph-question"></i>Pusat Bantuan
+    </a>
+    <div class="dropdown-divider"></div>
+    <a
+      href=""
+      class="dropdown-option dropdown-option-danger"
+      data-action="logout">
+      <i class="ph-bold ph-sign-out"></i>Keluar
     </a>
   </div>
 </div>

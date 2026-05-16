@@ -1,8 +1,58 @@
 <div id="authOverlay" class="auth-overlay">
   <div class="auth-form-card">
     <form class="auth-form" method="post">
-      <!-- Step 1: Input email / nomor telepon -->
+      <!-- Step 1: Pilih akun -->
       <div class="auth-step active" id="authStep1">
+        <div class="auth-header-section">
+          <div class="empty-div"></div>
+          <button
+            type="button"
+            class="auth-nav-button"
+            aria-label="Tutup"
+            data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+
+        <div class="auth-body-section">
+          <div class="auth-top-section">
+            <h2 class="auth-title">Selamat datang kembali</h2>
+            <p class="auth-subtitle">
+              Pilih akun untuk masuk, kami mungkin akan mengirimkan kode melalui
+              email atau pesan teks kepada Anda.
+            </p>
+          </div>
+
+          <div class="auth-option-list">
+            <button type="button" class="auth-option-item">
+              <div class="auth-option-profile">A</div>
+              <div class="auth-option-text">
+                <span class="auth-option-label">k***0@gmail.com</span>
+                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
+              </div>
+              <i class="ph-bold ph-caret-right"></i>
+            </button>
+
+            <button type="button" class="auth-option-item">
+              <div class="auth-option-profile">A</div>
+              <div class="auth-option-text">
+                <span class="auth-option-label">k***0@gmail.com</span>
+                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
+              </div>
+              <i class="ph-bold ph-caret-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth-footer-section">
+          <button class="auth-submit-button outline" type="button">
+            Bukan kamu?
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Input email / nomor telepon -->
+      <div class="auth-step" id="authStep2">
         <div class="auth-header-section">
           <div class="empty-div"></div>
           <button
@@ -120,56 +170,6 @@
         </div>
       </div>
 
-      <!-- Step 2: Pilih akun -->
-      <div class="auth-step" id="authStep2">
-        <div class="auth-header-section">
-          <div class="empty-div"></div>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section">
-          <div class="auth-top-section">
-            <h2 class="auth-title">Selamat datang kembali</h2>
-            <p class="auth-subtitle">
-              Pilih akun untuk masuk, kami mungkin akan mengirimkan kode melalui
-              email atau pesan teks kepada Anda.
-            </p>
-          </div>
-
-          <div class="auth-option-list">
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-profile">A</div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">k***0@gmail.com</span>
-                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
-              </div>
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
-
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-profile">A</div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">k***0@gmail.com</span>
-                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
-              </div>
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="auth-footer-section">
-          <button class="auth-submit-button outline" type="button">
-            Bukan kamu?
-          </button>
-        </div>
-      </div>
-
       <!-- Step 3: Kode konfirmasi -->
       <div class="auth-step" id="authStep3">
         <div class="auth-header-section">
@@ -281,13 +281,14 @@
             </fieldset>
 
             <fieldset class="auth-field">
-              <legend class="auth-input-label">Password</legend>
+              <legend class="auth-input-label">Email</legend>
               <div class="auth-input-group">
                 <input
-                  type="password"
+                  type="email"
                   class="auth-input"
-                  placeholder="Masukkan password"
-                  required />
+                  value="akhmaddaqiqulm@gmail.com"
+                  disabled 
+                  style="cursor:not-allowed"/>
               </div>
             </fieldset>
           </div>
@@ -401,6 +402,34 @@
           <div class="auth-option-list">
             <button type="button" class="auth-option-item">
               <div class="auth-option-icon">
+                <svg
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  focusable="false"
+                  style="display: block; height: 16px; width: 16px">
+                  <g fill="none">
+                    <path
+                      d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
+                      fill="#4285f4" />
+                    <path
+                      d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
+                      fill="#34a853" />
+                    <path
+                      d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
+                      fill="#fbbc04" />
+                    <path
+                      d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
+                      fill="#e94235" />
+                  </g>
+                </svg>
+              </div>
+              <div class="auth-option-text">
+                <span class="auth-option-label">Lanjutkan dengan Google</span>
+              </div>
+            </button>
+
+            <button type="button" class="auth-option-item">
+              <div class="auth-option-icon">
                 <i class="ph-bold ph-device-mobile-camera"></i>
               </div>
               <div class="auth-option-text">
@@ -427,9 +456,9 @@
                 </svg>
               </div>
               <div class="auth-option-text">
-                <span class="auth-option-label"
-                  >Dapatkan kode via WhatsApp</span
-                >
+                <span class="auth-option-label">
+                  Dapatkan kode via WhatsApp
+                </span>
                 <span class="auth-option-sub">+62 812-3130-3690</span>
               </div>
             </button>
@@ -485,7 +514,10 @@
         </div>
 
         <div class="auth-footer-section">
-          <button class="auth-submit-button" type="submit">
+          <button
+            class="auth-submit-button"
+            type="submit"
+            data-action="login-success">
             Setuju dan lanjutkan
           </button>
         </div>

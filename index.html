@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/components/search_bar.css" />
     <link rel="stylesheet" href="/components/footer.css" />
+    <link rel="stylesheet" href="/popups/styles/auth.css" />
     <link rel="stylesheet" href="user/styles/home.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -64,20 +65,18 @@
         </ul>
 
         <div class="nav-right">
-          <button class="ghost-button">Ganti ke host</button>
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
           <div class="icon-buttons">
             <button class="icon-button profile" aria-label="Profile">A</button>
             <button class="icon-button hamburger" aria-label="Hamburger">
               <i class="ph-bold ph-list"></i>
             </button>
-            <div class="auth-buttons" style="display: none">
-              <a href="/components/auth_popup.html">
-                <button class="auth-button">Masuk</button>
-              </a>
-            </div>
           </div>
           <div id="hamburgerDropdown"></div>
           <div id="languagePopup"></div>
+          <div id="authPopup"></div>
         </div>
       </nav>
     </header>
@@ -1064,5 +1063,6 @@
     <script src="/user/scripts/home.js"></script>
     <script src="/components/navbar.js"></script>
     <script src="/components/search_bar.js"></script>
+    <script src="/popups/auth.js"></script>
   </body>
 </html>

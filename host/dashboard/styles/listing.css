@@ -45,6 +45,7 @@
 .header-button:hover {
   background: var(--color-primary-light-hover);
 }
+
 .header-button:active {
   background: var(--color-primary-light-active);
   transform: scale(0.99);

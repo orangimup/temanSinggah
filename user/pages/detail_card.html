@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/components/search_bar.css" />
     <link rel="stylesheet" href="/components/footer.css" />
+    <link rel="stylesheet" href="/popups/styles/auth.css" />
     <link rel="stylesheet" href="/user/styles/detail_card.css" />
 
     <link
@@ -46,7 +47,7 @@
 
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="index.html" class="nav-link">Cari Penginapan</a>
+            <a href="/index.html" class="nav-link">Cari Penginapan</a>
           </li>
           <li class="nav-item">
             <a href="/user/pages/promo_deals.html" class="nav-link">
@@ -68,20 +69,18 @@
         </ul>
 
         <div class="nav-right">
-          <button class="ghost-button">Ganti ke host</button>
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
           <div class="icon-buttons">
             <button class="icon-button profile" aria-label="Profile">A</button>
             <button class="icon-button hamburger" aria-label="Hamburger">
               <i class="ph-bold ph-list"></i>
             </button>
-            <div class="auth-buttons" style="display: none">
-              <a href="/components/auth_popup.html">
-                <button class="auth-button">Masuk</button>
-              </a>
-            </div>
           </div>
           <div id="hamburgerDropdown"></div>
           <div id="languagePopup"></div>
+          <div id="authPopup"></div>
         </div>
       </nav>
     </header>
@@ -552,11 +551,15 @@
           <section class="map-section">
             <h2 class="section-title">Lokasi</h2>
             <div id="propertyMap" class="map-container">
+              <div id="mapPopup" class="map-popup-custom">
+                <strong>Nihi Sumba</strong>
+                <span>Ubud, Bali</span>
+              </div>
               <div class="custom-zoom-control">
-                <button class="custom-zoom-btn" id="zoomIn" title="Zoom in">
+                <button class="custom-zoom-button" id="zoomIn">
                   <i class="ph-bold ph-plus"></i>
                 </button>
-                <button class="custom-zoom-btn" id="zoomOut" title="Zoom out">
+                <button class="custom-zoom-button" id="zoomOut">
                   <i class="ph-bold ph-minus"></i>
                 </button>
               </div>
@@ -776,53 +779,48 @@
       </div>
     </footer>
 
-    <script src="/user/scripts/detail_card.js"></script>
     <script src="/components/navbar.js"></script>
+    <script src="/popups/auth.js"></script>
+    <script src="/user/scripts/detail_card.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-      const map = L.map("propertyMap", {
-        center: [-8.5069, 115.2625],
-        zoom: 15,
-        scrollWheelZoom: false,
-        zoomControl: false,
+      window.addEventListener("load", () => {
+        const map = L.map("propertyMap", {
+          center: [-8.5069, 115.2625],
+          zoom: 15,
+          scrollWheelZoom: false,
+          zoomControl: false,
+        });
+
+        L.tileLayer(
+          "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+          {
+            attribution: "© MapTiler © OpenStreetMap",
+            tileSize: 512,
+            zoomOffset: -1,
+            maxZoom: 20,
+          },
+        ).addTo(map);
+
+        const icon = L.divIcon({
+          html: `<i class="ph-fill ph-map-pin" style="font-size:32px;color:#8b2500;display:block;"></i>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          className: "",
+        });
+
+        L.marker([-8.5069, 115.2625], { icon })
+          .addTo(map)
+          .bindPopup(document.getElementById("mapPopup").innerHTML)
+          .openPopup();
+
+        document
+          .getElementById("zoomIn")
+          .addEventListener("click", () => map.zoomIn());
+        document
+          .getElementById("zoomOut")
+          .addEventListener("click", () => map.zoomOut());
       });
-
-      L.tileLayer(
-        "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
-        {
-          attribution: "© MapTiler © OpenStreetMap",
-          tileSize: 512,
-          zoomOffset: -1,
-          maxZoom: 20,
-        },
-      ).addTo(map);
-
-      const icon = L.divIcon({
-        html: `<div style="
-    width: 20px; height: 20px;
-    background: #8b2500;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    box-shadow: 0 2px 8px rgba(139,37,0,0.4);
-  "></div>`,
-        iconSize: [20, 20],
-        iconAnchor: [10, 20],
-        className: "",
-      });
-
-      L.marker([-8.5069, 115.2625], { icon })
-        .addTo(map)
-        .bindPopup("<strong>Nihi Sumba</strong><br>Ubud, Bali")
-        .openPopup();
-
-      document
-        .getElementById("zoomIn")
-        .addEventListener("click", () => map.zoomIn());
-      document
-        .getElementById("zoomOut")
-        .addEventListener("click", () => map.zoomOut());
-
-      new L.Control.CustomZoom().addTo(map);
     </script>
   </body>
 </html>
