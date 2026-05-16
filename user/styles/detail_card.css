@@ -147,7 +147,7 @@
 }
 
 .booking-sidebar {
-  width: 400px;
+  width: 430px;
   flex-shrink: 0;
   position: sticky;
   top: var(--space-16);
@@ -194,6 +194,11 @@
   gap: var(--space-16);
 }
 
+.date-input-field {
+  display: flex;
+  gap: var(--space-16);
+}
+
 .booking-field {
   display: flex;
   flex-direction: column;
@@ -207,7 +212,8 @@
 }
 
 .calendar-input,
-.guest-input {
+.guest-input,
+.promo-input {
   padding: var(--space-12) var(--space-14);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -220,12 +226,14 @@
 }
 
 .calendar-input::placeholder,
-.guest-input::placeholder {
+.guest-input::placeholder,
+.promo-input::placeholder {
   color: var(--color-text-hint);
 }
 
 .calendar-input:focus,
-.guest-input:focus {
+.guest-input:focus,
+.promo-input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(139, 37, 0, 0.08);
 }
@@ -235,7 +243,10 @@
 .calendar-input:-webkit-autofill:focus,
 .guest-input:-webkit-autofill,
 .guest-input:-webkit-autofill:hover,
-.guest-input:-webkit-autofill:focus {
+.guest-input:-webkit-autofill:focus,
+.promo-input:-webkit-autofill,
+.promo-input:-webkit-autofill:hover,
+.promo-input:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px var(--color-bg-card) inset;
   box-shadow: 0 0 0px 1000px var(--color-bg-card) inset;
   -webkit-text-fill-color: var(--color-text-primary);
@@ -270,11 +281,34 @@
   transform: scale(0.99);
 }
 
-.booking-note {
-  font-size: var(--text-sm);
-  color: var(--color-success);
-  margin-top: var(--space-16);
-  text-align: center;
+#bookingCalendarDropdown {
+  position: fixed;
+  z-index: var(--z-dropdown);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-dropdown);
+  margin-top: var(--space-6);
+  transform:translateX(-560px);
+  display: none;
+}
+
+#bookingCalendarDropdown.open {
+  display: block;
+}
+
+#bookingGuestDropdown {
+  position: fixed;
+  z-index: var(--z-dropdown);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-dropdown);
+  width: 380px;
+  margin-top: var(--space-6);
+  display: none;
+}
+
+#bookingGuestDropdown.open {
+  display: block;
 }
 
 .description-section {

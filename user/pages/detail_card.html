@@ -688,41 +688,51 @@
               <span class="booking-price-unit">/ malam</span>
             </div>
             <form class="booking-form">
-              <div class="booking-field">
-                <label for="checkin">Check-in</label>
-                <input
-                  type="text"
-                  inputmode="date"
-                  class="calendar-input"
-                  id="checkinInput"
-                  placeholder="Tambahkan Tanggal"
-                  required />
-              </div>
-              <div class="booking-field">
-                <label for="checkout">Check-out</label>
-                <input
-                  type="text"
-                  inputmode="date"
-                  class="calendar-input"
-                  id="checkoutInput"
-                  placeholder="Tambahkan Tanggal"
-                  required />
+              <div class="date-input-field">
+                <div class="booking-field">
+                  <label for="checkin">Check-in</label>
+                  <input
+                    type="text"
+                    inputmode="date"
+                    class="calendar-input"
+                    id="checkinInput"
+                    placeholder="Tambahkan Tanggal"
+                    required />
+                </div>
+                <div class="booking-field">
+                  <label for="checkout">Check-out</label>
+                  <input
+                    type="text"
+                    inputmode="date"
+                    class="calendar-input"
+                    id="checkoutInput"
+                    placeholder="Tambahkan Tanggal"
+                    required />
+                </div>
               </div>
               <div class="booking-field">
                 <label for="guests">Jumlah Tamu</label>
                 <input
-                  type="number"
+                  type="text"
                   class="guest-input"
                   id="guestInput"
                   name="guests"
-                  min="1"
-                  max="10"
-                  value="1" />
+                  value="1 Pengunjung" />
+              </div>
+              <div class="booking-field">
+                <label for="promo">Kode Promo</label>
+                <input
+                  type="text"
+                  class="promo-input"
+                  id="promoInput"
+                  placeholder="Masukkan kode promo" />
               </div>
               <button type="submit" class="booking-submit">
                 Pesan Sekarang
               </button>
             </form>
+            <div id="bookingCalendarDropdown" class="calendar-dropdown"></div>
+            <div id="bookingGuestDropdown" class="guest-counter-dropdown"></div>
           </div>
         </aside>
       </div>

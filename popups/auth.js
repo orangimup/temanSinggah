@@ -29,8 +29,9 @@ window.bindAuthPopupEvents = function () {
   // ============================================================
 
   const showStep = (stepId) => {
-    const steps = form.querySelectorAll(".auth-step");
-    steps.forEach((s) => s.classList.remove("active"));
+    form
+      .querySelectorAll(".auth-step")
+      .forEach((s) => s.classList.remove("active"));
     const target = form.querySelector(`#${stepId}`);
     if (target) target.classList.add("active");
     else console.error(`Step "${stepId}" tidak ditemukan`);
@@ -81,11 +82,9 @@ window.bindAuthPopupEvents = function () {
 
   // ============================================================
   // STEP 2
-  // Google → Step 4
-  // Apple → Step 4
-  // Facebook → Step 4
   // submit email existing → Step 3
-  // submit email baru → Step 4
+  // submit email baru → Step 4 (ditangani di form submit)
+  // Google / Apple / Facebook → Step 4
   // ============================================================
 
   form
@@ -235,7 +234,7 @@ window.bindAuthPopupEvents = function () {
     if (!activeStep) return;
     const stepId = activeStep.id;
 
-    // Step 2: email
+    // Step 2: email → selalu ke Step 3 dulu
     if (stepId === "authStep2") {
       const email =
         form.querySelector("#authStep2 .auth-input")?.value.trim() || "";
@@ -247,11 +246,8 @@ window.bindAuthPopupEvents = function () {
       authState.enteredEmail = email;
       authState.isExistingUser = isEmailRegistered(email);
 
-      if (authState.isExistingUser) {
-        showStep("authStep3");
-      } else {
-        showStep("authStep4");
-      }
+      // Existing maupun baru → Step 3 (verifikasi OTP)
+      showStep("authStep3");
     }
 
     // Step 3: OTP
@@ -264,9 +260,9 @@ window.bindAuthPopupEvents = function () {
       }
 
       if (authState.isExistingUser) {
-        showStep("authStep7");
+        showStep("authStep7"); // existing → komunitas
       } else {
-        showStep("authStep4");
+        showStep("authStep4"); // baru → lengkapi data
       }
     }
 
