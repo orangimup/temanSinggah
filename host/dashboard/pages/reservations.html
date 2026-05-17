@@ -45,28 +45,27 @@
           <li class="nav-item">
             <a
               href="/host/dashboard/pages/reservations.html"
-              class="nav-link active">
-              Reservasi
-            </a>
+              class="nav-link active"
+              >Reservasi</a
+            >
           </li>
           <li class="nav-item">
             <a
               href="/host/dashboard/pages/calendar_router.html"
-              class="nav-link">
-              Kalender
-            </a>
+              class="nav-link"
+              >Kalender</a
+            >
           </li>
           <li class="nav-item">
-            <a href="/host/dashboard/pages/listing.html" class="nav-link">
-              Listing
-            </a>
+            <a href="/host/dashboard/pages/listing.html" class="nav-link"
+              >Listing</a
+            >
           </li>
           <li class="nav-item">
-            <a href="/host/dashboard/pages/messages.html" class="nav-link">
-              Pesan
-            </a>
+            <a href="/host/dashboard/pages/messages.html" class="nav-link"
+              >Pesan</a
+            >
           </li>
-
           <div class="nav-indicator"></div>
         </ul>
 
@@ -88,33 +87,235 @@
     </header>
 
     <main class="main-content">
+      <!-- Filter -->
       <section class="filter-section">
         <div class="filter-group">
-          <button class="filter-item active">Hari ini</button>
-          <button class="filter-item">Mendatang</button>
+          <button class="filter-item active" data-filter="semua">Semua</button>
+          <button class="filter-item" data-filter="mendatang">Mendatang</button>
+          <button class="filter-item" data-filter="berlangsung">
+            Sedang berlangsung
+          </button>
+          <button class="filter-item" data-filter="selesai">Selesai</button>
+          <button class="filter-item" data-filter="dibatalkan">
+            Dibatalkan
+          </button>
         </div>
       </section>
 
-      <section class="empty-state">
+      <!-- Cards -->
+      <section class="reservations-grid" id="reservationsGrid">
+        <!-- Card 1 — Mendatang -->
+        <article class="reservation-card" data-status="mendatang">
+          <div class="card-header">
+            <span class="card-badge upcoming">
+              <span class="badge-dot"></span>Mendatang
+            </span>
+            <span class="card-id">#TS-00421</span>
+          </div>
+
+          <div class="card-guest">
+            <div class="guest-avatar">SR</div>
+            <div class="guest-info">
+              <p class="guest-name">Sari Rahmawati</p>
+              <p class="guest-meta">2 tamu</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-property">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              alt="Nihi Sumba Resort"
+              class="property-image" />
+            <div class="property-info">
+              <p class="property-name">Nihi Sumba Resort</p>
+              <p class="property-dates">
+                <i class="ph-bold ph-calendar-blank"></i>
+                15 – 18 Jun 2025
+              </p>
+              <p class="property-duration">3 malam · 1 kamar</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-footer">
+            <div class="card-earning">
+              <p class="earning-label">Pendapatan</p>
+              <p class="earning-value">Rp 13.500.000</p>
+            </div>
+            <div class="card-actions">
+              <a href="#" class="card-button primary">Lihat detail</a>
+              <button class="card-button secondary">
+                <i class="ph-bold ph-chat-circle"></i>
+                Hubungi tamu
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 — Berlangsung -->
+        <article class="reservation-card" data-status="berlangsung">
+          <div class="card-header">
+            <span class="card-badge ongoing">
+              <span class="badge-dot"></span>Berlangsung
+            </span>
+            <span class="card-id">#TS-00398</span>
+          </div>
+
+          <div class="card-guest">
+            <div class="guest-avatar">BH</div>
+            <div class="guest-info">
+              <p class="guest-name">Budi Hartono</p>
+              <p class="guest-meta">3 tamu</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-property">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              alt="Apurva Kempinski Bali"
+              class="property-image" />
+            <div class="property-info">
+              <p class="property-name">Apurva Kempinski Bali</p>
+              <p class="property-dates">
+                <i class="ph-bold ph-calendar-blank"></i>
+                10 – 14 Jun 2025
+              </p>
+              <p class="property-duration">4 malam · 2 kamar</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-footer">
+            <div class="card-earning">
+              <p class="earning-label">Pendapatan</p>
+              <p class="earning-value">Rp 32.800.000</p>
+            </div>
+            <div class="card-actions">
+              <a href="#" class="card-button primary">Lihat detail</a>
+              <button class="card-button secondary">
+                <i class="ph-bold ph-chat-circle"></i>
+                Hubungi tamu
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 — Selesai -->
+        <article class="reservation-card" data-status="selesai">
+          <div class="card-header">
+            <span class="card-badge completed">
+              <span class="badge-dot"></span>Selesai
+            </span>
+            <span class="card-id">#TS-00371</span>
+          </div>
+
+          <div class="card-guest">
+            <div class="guest-avatar">DP</div>
+            <div class="guest-info">
+              <p class="guest-name">Dewi Puspita</p>
+              <p class="guest-meta">2 tamu</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-property">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              alt="Alila Manggis"
+              class="property-image" />
+            <div class="property-info">
+              <p class="property-name">Alila Manggis</p>
+              <p class="property-dates">
+                <i class="ph-bold ph-calendar-blank"></i>
+                1 – 5 Mei 2025
+              </p>
+              <p class="property-duration">4 malam · 1 kamar</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-footer">
+            <div class="card-earning">
+              <p class="earning-label">Pendapatan</p>
+              <p class="earning-value">Rp 12.400.000</p>
+            </div>
+            <div class="card-actions">
+              <a href="#" class="card-button primary">Lihat detail</a>
+              <button class="card-button secondary">
+                <i class="ph-bold ph-star"></i>
+                Beri ulasan
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4 — Dibatalkan -->
+        <article class="reservation-card" data-status="dibatalkan">
+          <div class="card-header">
+            <span class="card-badge cancelled">
+              <span class="badge-dot"></span>Dibatalkan
+            </span>
+            <span class="card-id">#TS-00355</span>
+          </div>
+
+          <div class="card-guest">
+            <div class="guest-avatar">AF</div>
+            <div class="guest-info">
+              <p class="guest-name">Ahmad Fauzi</p>
+              <p class="guest-meta">1 tamu</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-property">
+            <img
+              src="/assets/images/apurva_kempinski_bali.jpg"
+              alt="The Legian Seminyak"
+              class="property-image" />
+            <div class="property-info">
+              <p class="property-name">The Legian Seminyak</p>
+              <p class="property-dates">
+                <i class="ph-bold ph-calendar-blank"></i>
+                20 – 23 Apr 2025
+              </p>
+              <p class="property-duration">3 malam · 1 kamar</p>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="card-footer">
+            <div class="card-earning">
+              <p class="earning-label">Pendapatan</p>
+              <p class="earning-value earning-cancelled">Dibatalkan</p>
+            </div>
+            <div class="card-actions">
+              <a href="#" class="card-button primary">Lihat detail</a>
+              <button class="card-button secondary danger">
+                <i class="ph-bold ph-x-circle"></i>
+                Alasan batal
+              </button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Empty state -->
+      <section class="empty-state" id="emptyState" style="display: none">
         <div class="empty-icon">
           <i class="ph-bold ph-book-open-text"></i>
         </div>
         <h3 class="empty-title">Belum Ada Reservasi</h3>
-        <p class="empty-desc">
-          Untuk mendapatkan pemesanan, anda perlu menyelesaikan listing anda
-        </p>
-        <a href="/index.html" class="empty-button"> Selesaikan listing anda </a>
-      </section>
-
-      <section class="empty-state">
-        <div class="empty-icon">
-          <i class="ph-bold ph-book-open-text"></i>
-        </div>
-        <h3 class="empty-title">Belum Ada Reservasi</h3>
-        <p class="empty-desc">
-          Anda tidak memiliki check-in, check-out, atau tugas yang perlu
-          diselesaikan hari ini.
-        </p>
+        <p class="empty-desc">Tidak ada reservasi pada kategori ini.</p>
         <a href="/index.html" class="empty-button">
           <i class="ph-bold ph-plus"></i>
           Tambahkan properti baru

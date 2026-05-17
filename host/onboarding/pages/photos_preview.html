@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pratinjau Foto | Teman Singgah</title>
     <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
-
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/host/onboarding/onboarding.css" />
-   
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet" />
@@ -17,7 +16,6 @@
       type="module"
       src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   </head>
-
   <body class="onboarding-page">
     <header class="navbar">
       <nav class="navbar-container">
@@ -34,11 +32,12 @@
         </div>
         <div class="header-actions">
           <a href="#"><button class="ghost-button">Pertanyaan?</button></a>
-          <a href="/index.html"><button class="ghost-button">Simpan & keluar</button></a>
+          <a href="/index.html"
+            ><button class="ghost-button">Simpan & keluar</button></a
+          >
         </div>
       </nav>
     </header>
-
     <main class="main-content wide">
       <div class="page-header">
         <div>
@@ -48,42 +47,9 @@
           </p>
         </div>
       </div>
-
       <div class="photo-grid">
-        <div class="photo-item">
-          <img
-            src="https://placehold.co/960x540/8b2500/ffffff?text=Foto+Cover"
-            alt="Cover" />
-          <span class="photo-badge">Foto Cover</span>
-          <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
-        </div>
-        <div class="photo-item">
-          <img
-            src="https://placehold.co/600x450/c9933a/ffffff?text=Kamar+Tidur"
-            alt="Kamar" />
-          <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
-        </div>
-        <div class="photo-item">
-          <img
-            src="https://placehold.co/600x450/7d2e0e/ffffff?text=Ruang+Tamu"
-            alt="Ruang Tamu" />
-          <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
-        </div>
-        <div class="photo-item">
-          <img
-            src="https://placehold.co/600x450/6b4f3a/ffffff?text=Dapur"
-            alt="Dapur" />
-          <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
-        </div>
-        <div class="photo-item">
-          <img
-            src="https://placehold.co/600x450/c0a090/ffffff?text=Kamar+Mandi"
-            alt="Kamar Mandi" />
-          <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
-        </div>
       </div>
     </main>
-
     <footer class="onboarding-footer">
       <div class="progress-bar">
         <div class="progress-segment completed"></div>
@@ -95,5 +61,7 @@
         <a href="title.html" class="next-button">Selanjutnya</a>
       </div>
     </footer>
+
+    <script src="/host/onboarding/onboarding.js"></script>
   </body>
 </html>

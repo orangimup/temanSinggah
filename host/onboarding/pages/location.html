@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/host/onboarding/onboarding.css" />
-   
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet" />
@@ -34,7 +38,9 @@
         </div>
         <div class="header-actions">
           <a href="#"><button class="ghost-button">Pertanyaan?</button></a>
-          <a href="/index.html"><button class="ghost-button">Simpan & keluar</button></a>
+          <a href="/index.html"
+            ><button class="ghost-button">Simpan & keluar</button></a
+          >
         </div>
       </nav>
     </header>
@@ -56,13 +62,17 @@
           placeholder="Masukkan alamat lengkap"
           value="Jl. Jodipan Wetan III, Jodipan, Blimbing, Malang, 65121" />
       </div>
-
-      <div class="map-placeholder">
-        <img
-          src="https://placehold.co/960x380/f0e4d8/c8b5a0?text="
-          alt="Peta" />
-        <div class="map-overlay">
-          <div class="map-pin"><i class="ph-fill ph-map-pin"></i></div>
+      
+      <div class="map-container">
+        <div id="propertyMap" class="map-body">
+          <div class="custom-zoom-control">
+            <button class="custom-zoom-button" id="zoomIn">
+              <i class="ph-bold ph-plus"></i>
+            </button>
+            <button class="custom-zoom-button" id="zoomOut">
+              <i class="ph-bold ph-minus"></i>
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -78,5 +88,8 @@
         <a href="floor_plan.html" class="next-button">Selanjutnya</a>
       </div>
     </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/host/onboarding/onboarding.js"></script>
   </body>
 </html>

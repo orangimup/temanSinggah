@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konfirmasi & Pembayaran | Teman Singgah</title>
+    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/components/root.css" />
+    <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/popups/auth.css" />
+    <link rel="stylesheet" href="/user/styles/payment_confirm.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
+          <img
+            src="/assets/logo/logo_temansinggah.svg"
+            alt="Logo Teman Singgah"
+            class="logo-icon" />
+          <img
+            src="/assets/logo/label_temansinggah.svg"
+            alt="Brand Name Teman Singgah"
+            class="logo-name" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="/index.html" class="nav-link">Cari Penginapan</a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/promo_deals.html" class="nav-link">
+              Promo & Deals
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/become_host.html" class="nav-link">
+              Jadi Host
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/about_us.html" class="nav-link">
+              Tentang Kami
+            </a>
+          </li>
+
+          <div class="nav-indicator"></div>
+        </ul>
+
+        <div class="nav-right">
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
+          <div class="icon-buttons">
+            <button class="icon-button profile" aria-label="Profile">A</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
+              <i class="ph-bold ph-list"></i>
+            </button>
+          </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
+          <div id="authPopup"></div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <section class="page-title">
+        <button
+          class="back-button"
+          aria-label="Kembali">
+          <i class="ph-bold ph-caret-left"></i>
+        </button>
+        Konfirmasi dan Bayar
+      </section>
+
+      <div class="content-layout">
+        <!-- Kiri: steps -->
+        <section class="step-section">
+          <!-- Step 1 -->
+          <div class="step-card" id="payCard">
+            <div class="step-card-header">
+              <div>
+                <div class="step-card-title">1. Choose when to pay</div>
+                <div class="step-card-sub" id="sub-pay">
+                  Pay Rp2,949,601.00 now
+                </div>
+              </div>
+              <button
+                class="cp-change-btn"
+                id="btn-pay"
+                onclick="toggleSection('pay')">
+                Change
+              </button>
+            </div>
+            <div class="cp-expand" id="expand-pay">
+              <div class="cp-radio-row" onclick="selectPay('now')" id="row-now">
+                <div>
+                  <div class="cp-radio-label">Pay Rp2,949,601.00 now</div>
+                </div>
+                <div class="cp-radio-circle selected" id="radio-now"></div>
+              </div>
+              <div
+                class="cp-radio-row"
+                onclick="selectPay('later')"
+                id="row-later">
+                <div>
+                  <div class="cp-radio-label">Pay Rp0 now</div>
+                  <div class="cp-radio-desc">
+                    Rp2,949,601.00 charged on May 29. No extra fees.
+                  </div>
+                  <div class="cp-radio-note">
+                    <a class="cp-link">More info</a>
+                  </div>
+                  <div class="cp-radio-note" style="margin-top: 6px">
+                    Not available with your payment method.
+                  </div>
+                </div>
+                <div class="cp-radio-circle" id="radio-later"></div>
+              </div>
+              <div class="cp-done-row">
+                <button class="cp-done-btn" onclick="toggleSection('pay')">
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="cp-card" id="card-method">
+            <div class="cp-card-header">
+              <div>
+                <div class="cp-step-title">2. Add a payment method</div>
+                <div
+                  class="cp-payment-row"
+                  style="margin-top: 6px"
+                  id="method-header-display">
+                  <div class="cp-gopay-icon"><span>GP</span></div>
+                  <span class="cp-step-sub">GoPay</span>
+                </div>
+              </div>
+              <button class="cp-change-btn" onclick="toggleSection('method')">
+                Change
+              </button>
+            </div>
+            <div class="cp-expand" id="expand-method">
+              <!-- Pilihan: Credit or debit card -->
+              <div
+                class="cp-radio-row"
+                onclick="selectMethod('card')"
+                style="pointer-events: auto">
+                <div class="cp-payment-row" style="pointer-events: none">
+                  <div class="cp-card-icon">
+                    <i class="ph-bold ph-credit-card"></i>
+                  </div>
+                  <div>
+                    <div class="cp-radio-label" style="margin-bottom: 4px">
+                      Credit or debit card
+                    </div>
+                    <div class="cp-card-brands">
+                      <span class="cp-visa">VISA</span>
+                      <span class="cp-mc-red">●</span>
+                      <span class="cp-mc-yellow">●</span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="cp-radio-circle"
+                  id="radio-card"
+                  style="pointer-events: none"></div>
+              </div>
+
+              <!-- Form kartu — muncul saat kartu dipilih -->
+              <div id="card-form" class="cp-card-form" style="display: none">
+                <div class="cp-field-group">
+                  <input
+                    class="cp-input cp-input-full"
+                    type="text"
+                    placeholder="Card number"
+                    maxlength="19" />
+                  <div class="cp-input-row">
+                    <input
+                      class="cp-input"
+                      type="text"
+                      placeholder="Expiration"
+                      maxlength="5" />
+                    <input
+                      class="cp-input"
+                      type="text"
+                      placeholder="CVV"
+                      maxlength="4" />
+                  </div>
+                </div>
+                <div class="cp-billing-title">Billing address</div>
+                <div class="cp-field-group">
+                  <input
+                    class="cp-input cp-input-full"
+                    type="text"
+                    placeholder="Street address" />
+                  <input
+                    class="cp-input cp-input-full"
+                    type="text"
+                    placeholder="Apt or suite number" />
+                  <input
+                    class="cp-input cp-input-full"
+                    type="text"
+                    placeholder="City" />
+                  <div class="cp-input-row">
+                    <input class="cp-input" type="text" placeholder="State" />
+                    <input
+                      class="cp-input"
+                      type="text"
+                      placeholder="ZIP code" />
+                  </div>
+                  <div class="cp-select-wrap">
+                    <label class="cp-select-label">Country/region</label>
+                    <select class="cp-select">
+                      <option>Indonesia</option>
+                      <option>Malaysia</option>
+                      <option>Singapore</option>
+                      <option>United States</option>
+                    </select>
+                    <i class="ph-bold ph-caret-down cp-select-arrow"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pilihan: GoPay -->
+              <div
+                class="cp-radio-row"
+                onclick="selectMethod('gopay')"
+                style="pointer-events: auto">
+                <div class="cp-payment-row" style="pointer-events: none">
+                  <div class="cp-gopay-icon"><span>GP</span></div>
+                  <span class="cp-radio-label">GoPay</span>
+                </div>
+                <div
+                  class="cp-radio-circle selected"
+                  id="radio-gopay"
+                  style="pointer-events: none"></div>
+              </div>
+
+              <div class="cp-done-row">
+                <button class="cp-done-btn" onclick="toggleSection('method')">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="cp-card">
+            <div class="cp-card-header">
+              <div class="cp-step-title">3. Review your reservation</div>
+            </div>
+            <div id="review-content" class="cp-review-content">
+              <p class="cp-review-desc">
+                By selecting the button, I agree to the
+                <a class="cp-link">booking terms</a>.
+              </p>
+              <button class="cp-confirm-btn">Confirm and pay</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Kanan: ringkasan -->
+        <div class="cp-summary">
+          <div class="cp-summary-card">
+            <div class="cp-prop-row">
+              <div class="cp-prop-img">
+                <img
+                  src="https://placehold.co/80x60/c0a090/ffffff?text=Properti"
+                  alt="Adhya Living" />
+              </div>
+              <div>
+                <div class="cp-prop-name">
+                  Adhya Living homestay villa Jogja
+                </div>
+                <div class="cp-prop-rating">
+                  <i class="ph-fill ph-star" style="font-size: 12px"></i>
+                  <span>4.94 (33)</span>
+                  <span>·</span>
+                  <i class="ph-fill ph-medal" style="font-size: 12px"></i>
+                  <span>Guest favorite</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cp-cancel-box">
+              <div class="cp-cancel-title">Free cancellation</div>
+              <div class="cp-cancel-desc">
+                Cancel before June 6 for a full refund.
+                <a class="cp-link">Full policy</a>
+              </div>
+            </div>
+
+            <div class="cp-info-row">
+              <div>
+                <div class="cp-info-label">Dates</div>
+                <div class="cp-info-value">Jun 7 – 9, 2026</div>
+              </div>
+              <button class="cp-change-sm">Change</button>
+            </div>
+            <hr class="cp-divider" />
+            <div class="cp-info-row">
+              <div>
+                <div class="cp-info-label">Guests</div>
+                <div class="cp-info-value">1 adult</div>
+              </div>
+              <button class="cp-change-sm">Change</button>
+            </div>
+            <hr class="cp-divider" />
+            <div class="cp-info-label" style="margin-bottom: 10px">
+              Price details
+            </div>
+            <div class="cp-price-row">
+              <span>2 nights x Rp1,474,801.00</span>
+              <span>Rp2,949,601.00</span>
+            </div>
+            <hr class="cp-divider" />
+            <div class="cp-total-row">
+              <span>Total <span class="cp-link">IDR</span></span>
+              <span>Rp2,949,601.00</span>
+            </div>
+            <div style="margin-top: 6px">
+              <a class="cp-link" style="font-size: 12px">Price breakdown</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/user/scripts/payment_confirm.js"></script>
+  </body>
+</html>
