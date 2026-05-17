@@ -283,7 +283,6 @@
   scroll-margin: var(--space-20);
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
   display: flex;
   flex-direction: column;
   transition: transform var(--transition-base);

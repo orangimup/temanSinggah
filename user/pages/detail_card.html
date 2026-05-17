@@ -89,11 +89,11 @@
       <span class="content-header">
         <h1 class="property-name">Nihi Sumba</h1>
         <div class="header-buttons">
-          <button class="header-button">
+          <button class="header-button share">
             <i class="ph-bold ph-share"></i>
             Bagikan
           </button>
-          <button class="header-button">
+          <button class="header-button save">
             <i class="ph-bold ph-heart"></i>
             Simpan
           </button>
@@ -793,44 +793,5 @@
     <script src="/popups/auth.js"></script>
     <script src="/user/scripts/detail_card.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-      window.addEventListener("load", () => {
-        const map = L.map("propertyMap", {
-          center: [-8.5069, 115.2625],
-          zoom: 15,
-          scrollWheelZoom: false,
-          zoomControl: false,
-        });
-
-        L.tileLayer(
-          "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
-          {
-            attribution: "© MapTiler © OpenStreetMap",
-            tileSize: 512,
-            zoomOffset: -1,
-            maxZoom: 20,
-          },
-        ).addTo(map);
-
-        const icon = L.divIcon({
-          html: `<i class="ph-fill ph-map-pin" style="font-size:32px;color:#8b2500;display:block;"></i>`,
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          className: "",
-        });
-
-        L.marker([-8.5069, 115.2625], { icon })
-          .addTo(map)
-          .bindPopup(document.getElementById("mapPopup").innerHTML)
-          .openPopup();
-
-        document
-          .getElementById("zoomIn")
-          .addEventListener("click", () => map.zoomIn());
-        document
-          .getElementById("zoomOut")
-          .addEventListener("click", () => map.zoomOut());
-      });
-    </script>
   </body>
 </html>

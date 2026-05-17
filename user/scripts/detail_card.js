@@ -1,3 +1,57 @@
+document.querySelectorAll(".header-button.save").forEach((saveButton) => {
+  saveButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const icon = saveButton.querySelector("i");
+    const isActive = saveButton.classList.toggle("active");
+
+    icon.className = isActive ? "ph-fill ph-heart" : "ph-bold ph-heart";
+
+    saveButton.innerHTML = isActive
+      ? '<i class="ph-fill ph-heart"></i> Tersimpan!'
+      : '<i class="ph-bold ph-heart"></i> Simpan';
+  });
+});
+
+window.addEventListener("load", () => {
+  const map = L.map("propertyMap", {
+    center: [-8.5069, 115.2625],
+    zoom: 15,
+    scrollWheelZoom: false,
+    zoomControl: false,
+  });
+
+  L.tileLayer(
+    "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+    {
+      attribution: "© MapTiler © OpenStreetMap",
+      tileSize: 512,
+      zoomOffset: -1,
+      maxZoom: 20,
+    },
+  ).addTo(map);
+
+  const icon = L.divIcon({
+    html: `<i class="ph-fill ph-map-pin" style="font-size:32px;color:#8b2500;display:block;"></i>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    className: "",
+  });
+
+  L.marker([-8.5069, 115.2625], { icon })
+    .addTo(map)
+    .bindPopup(document.getElementById("mapPopup").innerHTML)
+    .openPopup();
+
+  document
+    .getElementById("zoomIn")
+    .addEventListener("click", () => map.zoomIn());
+  document
+    .getElementById("zoomOut")
+    .addEventListener("click", () => map.zoomOut());
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   // ============================================================
   //  HELPERS
@@ -361,9 +415,33 @@ document.addEventListener("DOMContentLoaded", () => {
         ? parseInt(row.querySelector(".counter-value").textContent)
         : 0;
     };
-    const total = getValue("dewasa") + getValue("anak") + getValue("bayi");
-    guestInput.value = total > 0 ? total : 1;
+    const dewasa = getValue("dewasa");
+    const anak = getValue("anak");
+    const bayi = getValue("bayi");
+    const hewan = getValue("hewan");
+
+    const parts = [];
+    if (dewasa > 0) parts.push(`${dewasa} Pengunjung`);
+    if (anak > 0) parts.push(`${anak} Anak`);
+    if (bayi > 0) parts.push(`${bayi} Bayi`);
+    if (hewan > 0) parts.push(`${hewan} Peliharaan`);
+
+    guestInput.value = parts.length > 0 ? parts.join(", ") : "1 Pengunjung";
   }
+
+  async function loadBookingGuestEager() {
+    try {
+      const res = await fetch("/popups/guest_counter.html");
+      const html = await res.text();
+      guestDropdown.innerHTML = html;
+      guestLoaded = true;
+      initGuestCounter();
+    } catch (err) {
+      console.error("Gagal memuat guest counter:", err);
+    }
+  }
+
+  loadBookingGuestEager();
 
   function initGuestCounter() {
     const counterItems = guestDropdown.querySelectorAll(".counter-row");
@@ -452,7 +530,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Posisi: nempel di bawah .booking-field yang berisi guestInput
   function toggleGuestDropdown() {
-    if (!guestLoaded) return;
     calendarDropdown?.classList.remove("open");
     if (guestDropdown.classList.contains("open")) {
       guestDropdown.classList.remove("open");
@@ -465,11 +542,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Trigger: guestInput saja
   guestInput?.addEventListener("click", (e) => {
     e.stopPropagation();
-    toggleGuestDropdown();
+    if (guestLoaded) {
+      toggleGuestDropdown();
+    }
   });
   guestInput?.addEventListener("focus", (e) => {
     e.stopPropagation();
-    if (!guestDropdown.classList.contains("open")) toggleGuestDropdown();
+    if (guestLoaded && !guestDropdown.classList.contains("open")) {
+      toggleGuestDropdown();
+    }
+  });
+  guestInput?.addEventListener("keydown", (e) => {
+    e.preventDefault();
   });
 
   document.addEventListener("click", () => {
@@ -479,6 +563,4 @@ document.addEventListener("DOMContentLoaded", () => {
     guestDropdown?.classList.remove("open");
   });
   guestDropdown?.addEventListener("click", (e) => e.stopPropagation());
-
-  loadBookingGuest();
 });
