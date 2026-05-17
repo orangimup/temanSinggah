@@ -9,7 +9,6 @@
   const nextBtn = document.getElementById("paginateNext");
   const numbersEl = document.getElementById("paginationNumbers");
 
-  // ── Tampilkan item sesuai halaman aktif ───────────────────
   function showPage(page) {
     const start = (page - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
@@ -18,36 +17,26 @@
     });
   }
 
-  // ── Bangun array halaman: angka + "..." ───────────────────
   function buildPageList(current, total) {
     if (total <= 7) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
-
     const delta = 1;
     const left = current - delta;
     const right = current + delta;
     const pages = [];
-
     pages.push(1);
-
     if (left > 2) pages.push("...");
-
     for (let p = Math.max(2, left); p <= Math.min(total - 1, right); p++) {
       pages.push(p);
     }
-
     if (right < total - 1) pages.push("...");
-
     pages.push(total);
-
     return pages;
   }
 
-  // ── Render tombol nomor dengan ellipsis ───────────────────
   function renderNumbers(page) {
     numbersEl.innerHTML = "";
-
     buildPageList(page, totalPages).forEach((p) => {
       if (p === "...") {
         const el = document.createElement("span");
@@ -64,13 +53,11 @@
     });
   }
 
-  // ── Update state prev/next button ─────────────────────────
   function updateControls(page) {
     prevBtn.disabled = page === 1;
     nextBtn.disabled = page === totalPages;
   }
 
-  // ── Go to page ────────────────────────────────────────────
   function goTo(page) {
     if (page < 1 || page > totalPages) return;
     currentPage = page;
@@ -80,11 +67,9 @@
     allItems[0]?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // ── Event prev / next ─────────────────────────────────────
   prevBtn.addEventListener("click", () => goTo(currentPage - 1));
   nextBtn.addEventListener("click", () => goTo(currentPage + 1));
 
-  // ── Init ──────────────────────────────────────────────────
   if (allItems.length > 0) {
     goTo(1);
   } else {
@@ -112,39 +97,26 @@ window.addEventListener("load", () => {
     },
   ).addTo(map);
 
-  // ── Data properti (tambah entry untuk tiap marker) ─────────
   const properties = [
-    {
-      id: "1",
-      latlng: [-8.5069, 115.2625],
-      price: "Rp 850.000",
-    },
-    {
-      id: "2",
-      latlng: [-8.508, 115.264],
-      price: "Rp 650.000",
-    },
+    { id: "1", latlng: [-8.5069, 115.2625], price: "Rp 850.000" },
+    { id: "2", latlng: [-8.508, 115.264], price: "Rp 650.000" },
   ];
 
-  // ── Custom CardLayer ───────────────────────────────────────
   const CardLayer = L.Layer.extend({
     initialize(latlng, card, options) {
       this._latlng = latlng;
       this._card = card;
       L.setOptions(this, options);
     },
-
     onAdd(map) {
       this._map = map;
       map.getPane("overlayPane").appendChild(this._card);
       map.on("zoom move zoomend moveend", this._update, this);
       this._update();
     },
-
     onRemove(map) {
       map.off("zoom move zoomend moveend", this._update, this);
     },
-
     _update() {
       if (!this._map || !this._card) return;
       const pos = this._map.latLngToLayerPoint(this._latlng);
@@ -157,21 +129,18 @@ window.addEventListener("load", () => {
     },
   });
 
-  // ── Helper: tutup semua card & reset semua pill ────────────
   function closeAllCards() {
-    document.querySelectorAll(".map-property-card.open").forEach((c) => {
-      c.classList.remove("open");
-    });
-    document.querySelectorAll(".map-price-pill.active").forEach((p) => {
-      p.classList.remove("active");
-    });
+    document
+      .querySelectorAll(".map-property-card.open")
+      .forEach((c) => c.classList.remove("open"));
+    document
+      .querySelectorAll(".map-price-pill.active")
+      .forEach((p) => p.classList.remove("active"));
   }
 
-  // ── Inisialisasi tiap properti ─────────────────────────────
   properties.forEach(({ id, latlng, price }) => {
     const latLng = L.latLng(...latlng);
 
-    // Pill icon
     const icon = L.divIcon({
       html: `<button class="map-price-pill" data-marker-id="${id}">${price}</button>`,
       iconSize: null,
@@ -181,17 +150,14 @@ window.addEventListener("load", () => {
 
     const marker = L.marker(latLng, { icon }).addTo(map);
 
-    // Card element (ambil dari DOM berdasarkan data-marker-id)
     const card = document.querySelector(
       `.map-property-card[data-marker-id="${id}"]`,
     );
     if (!card) return;
 
-    // CardLayer per marker
     const cardLayer = new CardLayer(latLng, card);
     cardLayer.addTo(map);
 
-    // ── Open / close card ────────────────────────────────────
     function openCard() {
       closeAllCards();
       card.classList.add("open");
@@ -210,13 +176,11 @@ window.addEventListener("load", () => {
         ?.classList.remove("active");
     }
 
-    // Klik pill → toggle card
     marker.on("click", (e) => {
       L.DomEvent.stopPropagation(e);
       card.classList.contains("open") ? closeCard() : openCard();
     });
 
-    // Disable dblclick zoom pada pill
     marker.on("add", () => {
       const pillEl = marker.getElement();
       if (pillEl) {
@@ -225,13 +189,13 @@ window.addEventListener("load", () => {
       }
     });
 
-    // Tombol close di dalam card
+    // ── Tombol close — cegah navigasi <a href> ───────────────
     card.querySelector(".map-card-close")?.addEventListener("click", (e) => {
+      e.preventDefault();
       e.stopPropagation();
       closeCard();
     });
 
-    // ── Disable map saat card di-hover ───────────────────────
     card.addEventListener("mouseenter", () => {
       map.dragging.disable();
       map.scrollWheelZoom.disable();
@@ -249,7 +213,6 @@ window.addEventListener("load", () => {
       map.keyboard.enable();
     });
 
-    // Stop propagasi event dari card ke map
     ["click", "dblclick", "mousedown"].forEach((evt) => {
       card.addEventListener(evt, (e) => e.stopPropagation());
     });
@@ -257,11 +220,12 @@ window.addEventListener("load", () => {
       card.addEventListener(evt, (e) => e.stopPropagation(), { passive: true });
     });
 
-    // ── Save button di dalam card ────────────────────────────
+    // ── Save button di dalam card — cegah navigasi <a href> ──
     const saveBtn = card.querySelector(".map-card-button.wishlist");
     if (saveBtn) {
       const saveImg = saveBtn.querySelector("img");
       saveBtn.addEventListener("click", (e) => {
+        e.preventDefault();
         e.stopPropagation();
         const isActive = saveBtn.classList.toggle("active");
         if (saveImg) {
@@ -273,10 +237,9 @@ window.addEventListener("load", () => {
     }
   });
 
-  // ── Klik di luar semua marker → tutup semua card ──────────
   map.on("click", closeAllCards);
 
-  // ── Save button di card-section listing (bukan map) ───────
+  // ── Save button card list — cegah navigasi <a href> parent ─
   document.querySelectorAll(".save-button").forEach((saveItem) => {
     saveItem.addEventListener("click", (e) => {
       e.preventDefault();
@@ -288,7 +251,6 @@ window.addEventListener("load", () => {
     });
   });
 
-  // ── Zoom controls ──────────────────────────────────────────
   document
     .getElementById("zoomIn")
     ?.addEventListener("click", () => map.zoomIn());

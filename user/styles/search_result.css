@@ -135,6 +135,23 @@
   font-weight: var(--font-regular);
 }
 
+.card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.card-rating i {
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  display: block;
+  line-height: 1;
+}
+
 .control-buttons {
   display: flex;
   align-items: center;
@@ -201,23 +218,6 @@
   color: var(--color-text-muted);
   flex-shrink: 0;
   user-select: none;
-}
-
-.card-rating {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
-  color: var(--color-text-primary);
-  flex-shrink: 0;
-}
-
-.card-rating i {
-  color: var(--color-accent);
-  font-size: var(--text-sm);
-  display: block;
-  line-height: 1;
 }
 
 .map-section {

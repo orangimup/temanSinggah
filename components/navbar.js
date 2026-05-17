@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/hamburger.html");
+      const res = await fetch("/popups/screen/hamburger.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/language.html");
+      const res = await fetch("/popups/screen/language.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/auth.html");
+      const res = await fetch("/popups/screen/auth.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeLanguagePopup();
-      window.closeAuthPopup(); 
+      window.closeAuthPopup();
     }
   });
 

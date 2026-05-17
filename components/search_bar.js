@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadDestinationDropdown() {
     try {
-      const res = await fetch("/popups/destinations.html");
+      const res = await fetch("/popups/screen/destinations.html");
       const html = await res.text();
       destinationDropdown.innerHTML = html;
       destinationLoaded = true;
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         destinationInput.value = name;
         destinationInput.classList.add("has-value");
-        destinationDropdown.classList.remove("open"); 
+        destinationDropdown.classList.remove("open");
       });
     });
   }
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadGuestDropdown() {
     try {
-      const res = await fetch("/popups/guest_counter.html");
+      const res = await fetch("/popups/screen/guest_counter.html");
       const html = await res.text();
       guestDropdown.innerHTML = html;
       isLoaded = true;
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadCalendarDropdown() {
     try {
-      const res = await fetch("/popups/calendar.html");
+      const res = await fetch("/popups/screen/calendar.html");
       const html = await res.text();
       calendarDropdown.innerHTML = html;
       calendarLoaded = true;

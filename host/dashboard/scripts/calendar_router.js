@@ -117,8 +117,8 @@ function renderCalendar() {
 }
 
 Promise.all([
-  fetch("/popups/calendar_title.html").then((res) => res.text()),
-  fetch("/popups/calendar_filter.html").then((res) => res.text()),
+  fetch("/popups/screen/calendar_title.html").then((res) => res.text()),
+  fetch("/popups/screen/calendar_filter.html").then((res) => res.text()),
 ]).then(([monthHtml, filterHtml]) => {
   document.body.insertAdjacentHTML("beforeend", monthHtml);
   document.body.insertAdjacentHTML("beforeend", filterHtml);

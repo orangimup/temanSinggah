@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadBookingCalendar() {
     try {
-      const res = await fetch("/popups/calendar.html");
+      const res = await fetch("/popups/screen/calendar.html");
       const html = await res.text();
       calendarDropdown.innerHTML = html;
       calendarLoaded = true;
@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadBookingGuestEager() {
     try {
-      const res = await fetch("/popups/guest_counter.html");
+      const res = await fetch("/popups/screen/guest_counter.html");
       const html = await res.text();
       guestDropdown.innerHTML = html;
       guestLoaded = true;
@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadBookingGuest() {
     try {
-      const res = await fetch("/popups/guest_counter.html");
+      const res = await fetch("/popups/screen/guest_counter.html");
       const html = await res.text();
       guestDropdown.innerHTML = html;
       guestLoaded = true;
