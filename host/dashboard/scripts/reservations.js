@@ -15,7 +15,7 @@ filterButtons.forEach((btn) => {
     let visibleCount = 0;
 
     reservationCards.forEach((card) => {
-      const match = filter === "semua" || card.dataset.status === filter;
+      const match = filter === "all" || card.dataset.status === filter;
       if (match) {
         card.classList.remove("hidden");
         visibleCount++;

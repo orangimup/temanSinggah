@@ -90,13 +90,13 @@
       <!-- Filter -->
       <section class="filter-section">
         <div class="filter-group">
-          <button class="filter-item active" data-filter="semua">Semua</button>
-          <button class="filter-item" data-filter="mendatang">Mendatang</button>
-          <button class="filter-item" data-filter="berlangsung">
+          <button class="filter-item active" data-filter="all">Semua</button>
+          <button class="filter-item" data-filter="upcoming">Mendatang</button>
+          <button class="filter-item" data-filter="ongoing">
             Sedang berlangsung
           </button>
-          <button class="filter-item" data-filter="selesai">Selesai</button>
-          <button class="filter-item" data-filter="dibatalkan">
+          <button class="filter-item" data-filter="completed">Selesai</button>
+          <button class="filter-item" data-filter="cancelled">
             Dibatalkan
           </button>
         </div>
@@ -105,7 +105,7 @@
       <!-- Cards -->
       <section class="reservations-grid" id="reservationsGrid">
         <!-- Card 1 — Mendatang -->
-        <article class="reservation-card" data-status="mendatang">
+        <article class="reservation-card" data-status="upcoming">
           <div class="card-header">
             <span class="card-badge upcoming">
               <span class="badge-dot"></span>Mendatang
@@ -156,7 +156,7 @@
         </article>
 
         <!-- Card 2 — Berlangsung -->
-        <article class="reservation-card" data-status="berlangsung">
+        <article class="reservation-card" data-status="ongoing">
           <div class="card-header">
             <span class="card-badge ongoing">
               <span class="badge-dot"></span>Berlangsung
@@ -207,7 +207,7 @@
         </article>
 
         <!-- Card 3 — Selesai -->
-        <article class="reservation-card" data-status="selesai">
+        <article class="reservation-card" data-status="completed">
           <div class="card-header">
             <span class="card-badge completed">
               <span class="badge-dot"></span>Selesai
@@ -258,7 +258,7 @@
         </article>
 
         <!-- Card 4 — Dibatalkan -->
-        <article class="reservation-card" data-status="dibatalkan">
+        <article class="reservation-card" data-status="cancelled">
           <div class="card-header">
             <span class="card-badge cancelled">
               <span class="badge-dot"></span>Dibatalkan

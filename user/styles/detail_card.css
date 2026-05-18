@@ -684,6 +684,27 @@
   background: var(--color-bg-skeleton);
 }
 
+/* ============================================================
+   PRICE UPDATE ANIMATION
+   ============================================================ */
+
+@keyframes pricePulse {
+  0% {
+    color: var(--color-text-primary);
+  }
+  50% {
+    color: var(--color-primary);
+    font-weight: var(--font-bold);
+  }
+  100% {
+    color: var(--color-text-primary);
+  }
+}
+
+.price-highlight {
+  animation: pricePulse 0.8s ease-in-out;
+}
+
 .reviews-section {
   margin-bottom: var(--space-48);
 }

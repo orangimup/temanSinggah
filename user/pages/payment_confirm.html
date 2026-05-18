@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/popups/auth.css" />
+    <link rel="stylesheet" href="/components/search_bar.css" />
     <link rel="stylesheet" href="/user/styles/payment_confirm.css" />
 
     <link
@@ -76,9 +76,7 @@
 
     <main class="main-content">
       <section class="page-title">
-        <button
-          class="back-button"
-          aria-label="Kembali">
+        <button class="back-button" aria-label="Kembali">
           <i class="ph-bold ph-caret-left"></i>
         </button>
         Konfirmasi dan Bayar
@@ -90,46 +88,41 @@
           <!-- Step 1 -->
           <div class="step-card" id="payCard">
             <div class="step-card-header">
-              <div>
-                <div class="step-card-title">1. Choose when to pay</div>
-                <div class="step-card-sub" id="sub-pay">
-                  Pay Rp2,949,601.00 now
+              <div class="step-card-text">
+                <div class="step-card-title">1. Pilih kapan akan membayar</div>
+                <div class="step-card-sub" id="paySub">
+                  Bayar Rp2,949,601.00 sekarang
                 </div>
               </div>
               <button
-                class="cp-change-btn"
-                id="btn-pay"
-                onclick="toggleSection('pay')">
-                Change
+                class="change-button"
+                data-toggle-section="pay"
+                aria-label="Ganti metode pembayaran">
+                Ganti
               </button>
             </div>
-            <div class="cp-expand" id="expand-pay">
-              <div class="cp-radio-row" onclick="selectPay('now')" id="row-now">
+
+            <div class="step-expand" id="payExpand">
+              <div class="expand-radio-row" data-select-pay="now">
                 <div>
-                  <div class="cp-radio-label">Pay Rp2,949,601.00 now</div>
-                </div>
-                <div class="cp-radio-circle selected" id="radio-now"></div>
-              </div>
-              <div
-                class="cp-radio-row"
-                onclick="selectPay('later')"
-                id="row-later">
-                <div>
-                  <div class="cp-radio-label">Pay Rp0 now</div>
-                  <div class="cp-radio-desc">
-                    Rp2,949,601.00 charged on May 29. No extra fees.
-                  </div>
-                  <div class="cp-radio-note">
-                    <a class="cp-link">More info</a>
-                  </div>
-                  <div class="cp-radio-note" style="margin-top: 6px">
-                    Not available with your payment method.
+                  <div class="expand-radio-label">
+                    Bayar Rp2,949,601.00 sekarang
                   </div>
                 </div>
-                <div class="cp-radio-circle" id="radio-later"></div>
+                <div class="expand-radio-circle selected" id="nowRadio"></div>
               </div>
-              <div class="cp-done-row">
-                <button class="cp-done-btn" onclick="toggleSection('pay')">
+              <div class="expand-radio-row" data-select-pay="later">
+                <div class="step-card-text">
+                  <div class="expand-radio-label">Bayar Rp0 sekarang</div>
+                  <div class="expand-radio-desc">
+                    Rp2.949.601,00 dibebankan pada 29 Mei. Tidak ada biaya
+                    tambahan
+                  </div>
+                </div>
+                <div class="expand-radio-circle" id="radio-later"></div>
+              </div>
+              <div class="expand-done-row">
+                <button class="expand-done-button" data-toggle-section="pay">
                   Done
                 </button>
               </div>
@@ -137,203 +130,130 @@
           </div>
 
           <!-- Step 2 -->
-          <div class="cp-card" id="card-method">
-            <div class="cp-card-header">
-              <div>
-                <div class="cp-step-title">2. Add a payment method</div>
+          <div class="step-card" id="card-method">
+            <div class="step-card-header">
+              <div class="step-card-text">
+                <div class="step-card-title">2. Add a payment method</div>
                 <div
-                  class="cp-payment-row"
-                  style="margin-top: 6px"
+                  class="expand-payment-row expand-payment-row-header"
                   id="method-header-display">
-                  <div class="cp-gopay-icon"><span>GP</span></div>
-                  <span class="cp-step-sub">GoPay</span>
+                  <div class="expand-gopay-icon"><span>GP</span></div>
+                  <span class="expand-step-sub">GoPay</span>
                 </div>
               </div>
-              <button class="cp-change-btn" onclick="toggleSection('method')">
+              <button
+                class="expand-change-button"
+                data-toggle-section="method"
+                aria-label="Ganti metode pembayaran">
                 Change
               </button>
             </div>
-            <div class="cp-expand" id="expand-method">
+
+            <div class="step-expand" id="methodExpand">
               <!-- Pilihan: Credit or debit card -->
-              <div
-                class="cp-radio-row"
-                onclick="selectMethod('card')"
-                style="pointer-events: auto">
-                <div class="cp-payment-row" style="pointer-events: none">
-                  <div class="cp-card-icon">
+              <div class="expand-radio-row" data-select-method="card">
+                <div class="expand-payment-row">
+                  <div class="expand-card-icon">
                     <i class="ph-bold ph-credit-card"></i>
                   </div>
                   <div>
-                    <div class="cp-radio-label" style="margin-bottom: 4px">
+                    <div class="expand-radio-label expand-radio-label-card">
                       Credit or debit card
                     </div>
-                    <div class="cp-card-brands">
-                      <span class="cp-visa">VISA</span>
-                      <span class="cp-mc-red">●</span>
-                      <span class="cp-mc-yellow">●</span>
+                    <div class="expand-card-brands">
+                      <span class="expand-visa">VISA</span>
+                      <span class="expand-mc-red">●</span>
+                      <span class="expand-mc-yellow">●</span>
                     </div>
                   </div>
                 </div>
-                <div
-                  class="cp-radio-circle"
-                  id="radio-card"
-                  style="pointer-events: none"></div>
-              </div>
-
-              <!-- Form kartu — muncul saat kartu dipilih -->
-              <div id="card-form" class="cp-card-form" style="display: none">
-                <div class="cp-field-group">
-                  <input
-                    class="cp-input cp-input-full"
-                    type="text"
-                    placeholder="Card number"
-                    maxlength="19" />
-                  <div class="cp-input-row">
-                    <input
-                      class="cp-input"
-                      type="text"
-                      placeholder="Expiration"
-                      maxlength="5" />
-                    <input
-                      class="cp-input"
-                      type="text"
-                      placeholder="CVV"
-                      maxlength="4" />
-                  </div>
-                </div>
-                <div class="cp-billing-title">Billing address</div>
-                <div class="cp-field-group">
-                  <input
-                    class="cp-input cp-input-full"
-                    type="text"
-                    placeholder="Street address" />
-                  <input
-                    class="cp-input cp-input-full"
-                    type="text"
-                    placeholder="Apt or suite number" />
-                  <input
-                    class="cp-input cp-input-full"
-                    type="text"
-                    placeholder="City" />
-                  <div class="cp-input-row">
-                    <input class="cp-input" type="text" placeholder="State" />
-                    <input
-                      class="cp-input"
-                      type="text"
-                      placeholder="ZIP code" />
-                  </div>
-                  <div class="cp-select-wrap">
-                    <label class="cp-select-label">Country/region</label>
-                    <select class="cp-select">
-                      <option>Indonesia</option>
-                      <option>Malaysia</option>
-                      <option>Singapore</option>
-                      <option>United States</option>
-                    </select>
-                    <i class="ph-bold ph-caret-down cp-select-arrow"></i>
-                  </div>
-                </div>
+                <div class="expand-radio-circle" id="radioCard"></div>
               </div>
 
               <!-- Pilihan: GoPay -->
-              <div
-                class="cp-radio-row"
-                onclick="selectMethod('gopay')"
-                style="pointer-events: auto">
-                <div class="cp-payment-row" style="pointer-events: none">
-                  <div class="cp-gopay-icon"><span>GP</span></div>
-                  <span class="cp-radio-label">GoPay</span>
+              <div class="expand-radio-row" data-select-method="gopay">
+                <div class="expand-payment-row">
+                  <div class="expand-gopay-icon"><span>GP</span></div>
+                  <span class="expand-radio-label">GoPay</span>
                 </div>
                 <div
-                  class="cp-radio-circle selected"
-                  id="radio-gopay"
-                  style="pointer-events: none"></div>
+                  class="expand-radio-circle selected"
+                  id="radio-gopay"></div>
               </div>
 
-              <div class="cp-done-row">
-                <button class="cp-done-btn" onclick="toggleSection('method')">
-                  Next
+              <div class="expand-done-row">
+                <button class="expand-done-button" data-toggle-section="method">
+                  Selanjutnya
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Step 3 -->
-          <div class="cp-card">
-            <div class="cp-card-header">
-              <div class="cp-step-title">3. Review your reservation</div>
+          <div class="step-card">
+            <div class="expand-card-header">
+              <div class="expand-step-title">3. Review reservasi anda</div>
             </div>
-            <div id="review-content" class="cp-review-content">
-              <p class="cp-review-desc">
-                By selecting the button, I agree to the
-                <a class="cp-link">booking terms</a>.
-              </p>
-              <button class="cp-confirm-btn">Confirm and pay</button>
+            <div id="review-content" class="expand-review-content">
+              <button class="expand-confirm-button">
+                Konfirmasi dan Bayar
+              </button>
             </div>
           </div>
         </section>
 
         <!-- Kanan: ringkasan -->
-        <div class="cp-summary">
-          <div class="cp-summary-card">
-            <div class="cp-prop-row">
-              <div class="cp-prop-img">
+        <div class="expand-summary">
+          <div class="expand-summary-card">
+            <div class="expand-prop-row">
+              <div class="expand-prop-image">
                 <img
                   src="https://placehold.co/80x60/c0a090/ffffff?text=Properti"
                   alt="Adhya Living" />
               </div>
               <div>
-                <div class="cp-prop-name">
+                <div class="expand-prop-name">
                   Adhya Living homestay villa Jogja
                 </div>
-                <div class="cp-prop-rating">
-                  <i class="ph-fill ph-star" style="font-size: 12px"></i>
+                <div class="expand-prop-rating">
+                  <i class="ph-fill ph-star"></i>
                   <span>4.94 (33)</span>
-                  <span>·</span>
-                  <i class="ph-fill ph-medal" style="font-size: 12px"></i>
-                  <span>Guest favorite</span>
                 </div>
               </div>
             </div>
 
-            <div class="cp-cancel-box">
-              <div class="cp-cancel-title">Free cancellation</div>
-              <div class="cp-cancel-desc">
-                Cancel before June 6 for a full refund.
-                <a class="cp-link">Full policy</a>
+            <div class="expand-cancel-box">
+              <div class="expand-cancel-title">Gratis pembatalan</div>
+              <div class="expand-cancel-desc">
+                Batalkan sebelum 6 Juni untuk pengembalian uang penuh
               </div>
             </div>
 
-            <div class="cp-info-row">
+            <div class="expand-info-row">
               <div>
-                <div class="cp-info-label">Dates</div>
-                <div class="cp-info-value">Jun 7 – 9, 2026</div>
+                <div class="expand-info-label">Tanggal</div>
+                <div class="expand-info-value">Jun 7 – 9, 2026</div>
               </div>
-              <button class="cp-change-sm">Change</button>
+              <button class="expand-change-sm">Ganti</button>
             </div>
-            <hr class="cp-divider" />
-            <div class="cp-info-row">
+            <hr class="expand-divider" />
+            <div class="expand-info-row">
               <div>
-                <div class="cp-info-label">Guests</div>
-                <div class="cp-info-value">1 adult</div>
+                <div class="expand-info-label">Pengunjung</div>
+                <div class="expand-info-value">1 pengunjung</div>
               </div>
-              <button class="cp-change-sm">Change</button>
+              <button class="expand-change-sm">Ganti</button>
             </div>
-            <hr class="cp-divider" />
-            <div class="cp-info-label" style="margin-bottom: 10px">
-              Price details
-            </div>
-            <div class="cp-price-row">
-              <span>2 nights x Rp1,474,801.00</span>
+            <hr class="expand-divider" />
+            <div class="expand-info-label expand-price-label">Detail harga</div>
+            <div class="expand-price-row">
+              <span>2 malam x Rp1,474,801.00</span>
               <span>Rp2,949,601.00</span>
             </div>
-            <hr class="cp-divider" />
-            <div class="cp-total-row">
-              <span>Total <span class="cp-link">IDR</span></span>
+            <hr class="expand-divider" />
+            <div class="expand-total-row">
+              <span>Total Bayar</span>
               <span>Rp2,949,601.00</span>
-            </div>
-            <div style="margin-top: 6px">
-              <a class="cp-link" style="font-size: 12px">Price breakdown</a>
             </div>
           </div>
         </div>

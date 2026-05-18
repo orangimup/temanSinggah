@@ -1,19 +1,21 @@
+// ============================================================
+//  SAVE BUTTON
+// ============================================================
 document.querySelectorAll(".header-button.save").forEach((saveButton) => {
   saveButton.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const icon = saveButton.querySelector("i");
     const isActive = saveButton.classList.toggle("active");
-
-    icon.className = isActive ? "ph-fill ph-heart" : "ph-bold ph-heart";
-
     saveButton.innerHTML = isActive
       ? '<i class="ph-fill ph-heart"></i> Tersimpan!'
       : '<i class="ph-bold ph-heart"></i> Simpan';
   });
 });
 
+// ============================================================
+//  MAP
+// ============================================================
 window.addEventListener("load", () => {
   const map = L.map("propertyMap", {
     center: [-8.5069, 115.2625],
@@ -46,17 +48,105 @@ window.addEventListener("load", () => {
 
   document
     .getElementById("zoomIn")
-    .addEventListener("click", () => map.zoomIn());
+    ?.addEventListener("click", () => map.zoomIn());
   document
     .getElementById("zoomOut")
-    .addEventListener("click", () => map.zoomOut());
+    ?.addEventListener("click", () => map.zoomOut());
 });
 
+// ============================================================
+//  UI STATE
+// ============================================================
+let nights = 0;
+let rangeStart = null;
+let rangeEnd = null;
+
+function formatRupiah(amount) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+}
+
+// ============================================================
+//  ROOM SELECTION
+//  Baca harga dari data-price di .room-button,
+//  update tampilan sidebar (harga per malam & jumlah malam).
+// ============================================================
+document.querySelectorAll(".room-button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const card = btn.closest(".room-card");
+    if (!card) return;
+
+    // Highlight
+    document.querySelectorAll(".room-card").forEach((c) => {
+      c.style.outline = "none";
+    });
+    card.style.outline = "2px solid var(--color-primary)";
+    card.style.borderRadius = "var(--radius-3xl)";
+
+    // Update harga per malam di sidebar dari data-price
+    const price = parseInt(btn.dataset.price, 10);
+    if (!isNaN(price)) {
+      const priceAmountEl = document.querySelector(".booking-price-amount");
+      if (priceAmountEl) {
+        priceAmountEl.textContent = formatRupiah(price);
+
+        // Add highlight animation
+        priceAmountEl.classList.remove("price-highlight");
+        // Trigger reflow to restart animation
+        void priceAmountEl.offsetWidth;
+        priceAmountEl.classList.add("price-highlight");
+      }
+      updateNightsDisplay(price);
+    }
+
+    // Scroll ke booking sidebar
+    document.querySelector(".booking-sidebar")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+});
+
+// ============================================================
+//  NIGHTS DISPLAY
+//  Tampilkan jumlah malam di bawah form, hanya jika tanggal sudah dipilih.
+//  Terima price opsional untuk update saat kamar berubah.
+// ============================================================
+function updateNightsDisplay(overridePrice) {
+  let el = document.getElementById("bookingNightsSummary");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "bookingNightsSummary";
+    el.style.cssText = `
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      padding-top: var(--space-8);
+      border-top: 1.5px solid var(--color-border-subtle);
+    `;
+    const submitBtn = document.querySelector(".booking-submit");
+    submitBtn?.parentNode.insertBefore(el, submitBtn);
+  }
+
+  if (nights > 0) {
+    el.textContent = `${nights} malam dipilih`;
+    el.style.display = "block";
+  } else {
+    el.style.display = "none";
+  }
+}
+
+// ============================================================
+//  MAIN DOMContentLoaded
+// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
+  updateNightsDisplay();
+
   // ============================================================
   //  HELPERS
   // ============================================================
-
   let activeAnchor = null;
 
   function positionDropdown(dropdown, triggerEl) {
@@ -87,18 +177,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   //  CALENDAR DROPDOWN
-  //  Trigger : checkinInput ATAU checkoutInput
-  //  Posisi  : nempel di bawah .date-input-field
   // ============================================================
-
   const checkinInput = document.getElementById("checkinInput");
   const checkoutInput = document.getElementById("checkoutInput");
   const dateInputField = document.querySelector(".date-input-field");
   const calendarDropdown = document.getElementById("bookingCalendarDropdown");
 
   let calendarLoaded = false;
-  let rangeStart = null;
-  let rangeEnd = null;
   let hoverDate = null;
   let phase = "idle";
   let leftYear = new Date().getFullYear();
@@ -160,6 +245,14 @@ document.addEventListener("DOMContentLoaded", () => {
     checkoutInput.value = rangeEnd ? fmtDate(rangeEnd) : "";
     checkinInput.classList.toggle("has-value", !!rangeStart);
     checkoutInput.classList.toggle("has-value", !!rangeEnd);
+
+    if (rangeStart && rangeEnd) {
+      const diff = Math.round((rangeEnd - rangeStart) / (1000 * 60 * 60 * 24));
+      nights = diff > 0 ? diff : 0;
+    } else {
+      nights = 0;
+    }
+    updateNightsDisplay();
   }
 
   function onDayClick(date) {
@@ -329,8 +422,8 @@ document.addEventListener("DOMContentLoaded", () => {
     containers[1]
       .querySelector(".ph-caret-right")
       ?.addEventListener("click", () => {
-        const right = addMonths(leftYear, leftMonth, 1),
-          newRight = addMonths(leftYear, leftMonth, 2);
+        const right = addMonths(leftYear, leftMonth, 1);
+        const newRight = addMonths(leftYear, leftMonth, 2);
         if (
           newRight.year > maxDate.getFullYear() ||
           (newRight.year === maxDate.getFullYear() &&
@@ -356,7 +449,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Posisi: nempel di bawah .date-input-field
   function toggleCalendarDropdown() {
     if (!calendarLoaded) return;
     guestDropdown?.classList.remove("open");
@@ -368,7 +460,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Trigger: checkinInput dan checkoutInput saja
   checkinInput?.addEventListener("click", (e) => {
     e.stopPropagation();
     toggleCalendarDropdown();
@@ -398,10 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ============================================================
   //  GUEST COUNTER DROPDOWN
-  //  Trigger : guestInput
-  //  Posisi  : nempel di bawah .booking-field yang berisi guestInput
   // ============================================================
-
   const guestInput = document.getElementById("guestInput");
   const guestDropdown = document.getElementById("bookingGuestDropdown");
   const guestField = document.querySelector(".booking-field:has(#guestInput)");
@@ -425,23 +513,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (anak > 0) parts.push(`${anak} Anak`);
     if (bayi > 0) parts.push(`${bayi} Bayi`);
     if (hewan > 0) parts.push(`${hewan} Peliharaan`);
-
     guestInput.value = parts.length > 0 ? parts.join(", ") : "1 Pengunjung";
   }
-
-  async function loadBookingGuestEager() {
-    try {
-      const res = await fetch("/popups/screen/guest_counter.html");
-      const html = await res.text();
-      guestDropdown.innerHTML = html;
-      guestLoaded = true;
-      initGuestCounter();
-    } catch (err) {
-      console.error("Gagal memuat guest counter:", err);
-    }
-  }
-
-  loadBookingGuestEager();
 
   function initGuestCounter() {
     const counterItems = guestDropdown.querySelectorAll(".counter-row");
@@ -470,9 +543,9 @@ document.addEventListener("DOMContentLoaded", () => {
             (other.dataset.group === "dewasa" || other.dataset.group === "anak")
           ) {
             const ov = parseInt(
-                other.querySelector(".counter-value").textContent,
-              ),
-              om = parseInt(other.dataset.max);
+              other.querySelector(".counter-value").textContent,
+            );
+            const om = parseInt(other.dataset.max);
             other
               .querySelector(".plus")
               .classList.toggle("disabled", ov >= om || getTotal() >= 16);
@@ -516,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  async function loadBookingGuest() {
+  async function loadBookingGuestEager() {
     try {
       const res = await fetch("/popups/screen/guest_counter.html");
       const html = await res.text();
@@ -524,11 +597,12 @@ document.addEventListener("DOMContentLoaded", () => {
       guestLoaded = true;
       initGuestCounter();
     } catch (err) {
-      console.error("Gagal memuat booking guest counter:", err);
+      console.error("Gagal memuat guest counter:", err);
     }
   }
 
-  // Posisi: nempel di bawah .booking-field yang berisi guestInput
+  loadBookingGuestEager();
+
   function toggleGuestDropdown() {
     calendarDropdown?.classList.remove("open");
     if (guestDropdown.classList.contains("open")) {
@@ -539,18 +613,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Trigger: guestInput saja
   guestInput?.addEventListener("click", (e) => {
     e.stopPropagation();
-    if (guestLoaded) {
-      toggleGuestDropdown();
-    }
+    if (guestLoaded) toggleGuestDropdown();
   });
   guestInput?.addEventListener("focus", (e) => {
     e.stopPropagation();
-    if (guestLoaded && !guestDropdown.classList.contains("open")) {
+    if (guestLoaded && !guestDropdown.classList.contains("open"))
       toggleGuestDropdown();
-    }
   });
   guestInput?.addEventListener("keydown", (e) => {
     e.preventDefault();
