@@ -26,7 +26,7 @@
   <body>
     <div class="admin-layout">
       <aside class="sidebar">
-          <div class="sidebar-header">
+        <div class="sidebar-header">
           <a href="/admin/pages/dashboard.html" class="logo-link"></a>
           <div class="logo-section">
             <img
@@ -38,7 +38,7 @@
               alt="Brand Name Teman Singgah"
               class="logo-name" />
           </div>
-        </div>  
+        </div>
 
         <nav class="sidebar-nav">
           <div class="nav-section">
@@ -118,9 +118,13 @@
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
               <button class="filter-item active">Semua</button>
-              <button class="filter-item">Host</button>
-              <button class="filter-item">Tamu</button>
-              <button class="filter-item">Suspended</button>
+              <button class="filter-item" data-filter="role:Host">Host</button>
+              <button class="filter-item" data-filter="role:Tamu">Tamu</button>
+              <button
+                class="filter-item"
+                data-filter="account_status:Suspended">
+                Suspended
+              </button>
             </div>
             <div class="sort-dropdown">
               <button
@@ -185,7 +189,7 @@
                     <td>
                       <div class="table-cell">
                         <div class="table-avatar">BS</div>
-                        <h3 class="table-name">Budi Santoso</h3>
+                        <h3 class="table-name">Acep Santoso</h3>
                       </div>
                     </td>
                     <td>budi.santoso@email.com</td>

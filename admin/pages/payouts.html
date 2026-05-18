@@ -118,10 +118,20 @@
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
               <button class="filter-item active">Semua</button>
-              <button class="filter-item">Scheduled</button>
-              <button class="filter-item">Processing</button>
-              <button class="filter-item">Completed</button>
-              <button class="filter-item">Failed</button>
+              <button class="filter-item" data-filter="payout_status:Scheduled">
+                Scheduled
+              </button>
+              <button
+                class="filter-item"
+                data-filter="payout_status:Processing">
+                Processing
+              </button>
+              <button class="filter-item" data-filter="payout_status:Completed">
+                Completed
+              </button>
+              <button class="filter-item" data-filter="payout_status:Failed">
+                Failed
+              </button>
             </div>
             <div class="sort-dropdown">
               <button

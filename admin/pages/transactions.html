@@ -26,7 +26,7 @@
   <body>
     <div class="admin-layout">
       <aside class="sidebar">
-          <div class="sidebar-header">
+        <div class="sidebar-header">
           <a href="/admin/pages/dashboard.html" class="logo-link"></a>
           <div class="logo-section">
             <img
@@ -118,9 +118,13 @@
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
               <button class="filter-item active">Semua</button>
-              <button class="filter-item">Pembayaran</button>
-              <button class="filter-item">Refund</button>
-              <button class="filter-item">Disbursement</button>
+              <button class="filter-item" data-filter="2:Pembayaran">
+                Pembayaran
+              </button>
+              <button class="filter-item" data-filter="2:Refund">Refund</button>
+              <button class="filter-item" data-filter="2:Disbursement">
+                Disbursement
+              </button>
             </div>
             <div class="sort-dropdown">
               <button

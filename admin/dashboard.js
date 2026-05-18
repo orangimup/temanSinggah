@@ -544,15 +544,233 @@ if (donutCanvas && typeof Chart !== "undefined") {
 //  FILTER (reviews.html & halaman lain yang punya .filter-item)
 // ============================================================
 const filterButtons = document.querySelectorAll(".filter-item");
+const filterGroup = document.querySelector(".filter-group");
+
 filterButtons.forEach((filterItem) => {
   filterItem.addEventListener("click", () => {
     filterButtons.forEach((i) => i.classList.remove("active"));
     filterItem.classList.add("active");
+
+    // Apply filter based on filter group context
+    applyTableFilter();
   });
 });
 
+function applyTableFilter() {
+  const table = document.querySelector("table");
+  if (!table) return;
+
+  const tbody = table.querySelector("tbody");
+  if (!tbody) return;
+
+  const rows = tbody.querySelectorAll("tr");
+  const activeFilter = document.querySelector(".filter-item.active");
+  if (!activeFilter) return;
+
+  const filterText = activeFilter.textContent.trim().toLowerCase();
+  const isShowAll = filterText === "semua";
+
+  // Try to use data-filter attribute first (more explicit)
+  const dataFilter = activeFilter.dataset.filter;
+
+  rows.forEach((row) => {
+    if (isShowAll) {
+      row.style.display = "";
+      return;
+    }
+
+    let matches = false;
+
+    if (dataFilter) {
+      // Use data-filter for precise column matching
+      const [columnKey, ...filterValues] = dataFilter.split(":");
+      matches = checkRowMatchesFilter(row, columnKey, filterValues);
+    } else {
+      // Fallback to smart detection
+      const pageContext = detectPageContext();
+      const filterColumnIndex = pageContext.columnIndex;
+      const filterKeywords = pageContext.keywords[filterText] || [];
+
+      const cell = row.querySelectorAll("td")[filterColumnIndex];
+      if (cell) {
+        const cellText = cell.textContent.toLowerCase();
+        const cellBadges = cell.querySelectorAll(".table-badge");
+
+        for (const badge of cellBadges) {
+          const badgeText = badge.textContent.toLowerCase();
+          if (filterKeywords.some((keyword) => badgeText.includes(keyword))) {
+            matches = true;
+            break;
+          }
+        }
+
+        if (!matches) {
+          if (filterKeywords.some((keyword) => cellText.includes(keyword))) {
+            matches = true;
+          }
+        }
+      }
+    }
+
+    row.style.display = matches ? "" : "none";
+  });
+}
+
+function checkRowMatchesFilter(row, columnKey, filterValues) {
+  // Map column keys to indices
+  const columnMap = {
+    role: 2, // users
+    status: 3, // general
+    account_status: 3, // users account status
+    verification: 4, // users verification
+    listing_status: 4, // listings
+    reservation_status: 6, // reservations status (column 6)
+    review_status: 4, // reviews status (column 4)
+    check_in: 3, // reservations
+    rating: 2, // reviews
+    report_status: 4, // reports
+    report_type: 2, // reports type
+    transaction_status: 4, // transactions status
+    transaction_type: 2, // transactions type
+    payout_status: 4, // payouts status
+    name: 0,
+    email: 1,
+  };
+
+  // If columnKey is numeric, use it directly
+  let columnIndex = parseInt(columnKey);
+  if (isNaN(columnIndex)) {
+    columnIndex = columnMap[columnKey];
+  }
+  if (columnIndex === undefined) return true;
+
+  const cell = row.querySelectorAll("td")[columnIndex];
+  if (!cell) return true;
+
+  const cellText = cell.textContent.toLowerCase();
+  const cellBadges = cell.querySelectorAll(".table-badge");
+
+  // Check badges first
+  for (const badge of cellBadges) {
+    const badgeText = badge.textContent.toLowerCase();
+    if (filterValues.some((val) => badgeText.includes(val.toLowerCase()))) {
+      return true;
+    }
+  }
+
+  // Check cell text
+  if (filterValues.some((val) => cellText.includes(val.toLowerCase()))) {
+    return true;
+  }
+
+  return false;
+}
+
+function detectPageContext() {
+  // Detect page from filter buttons text
+  const filterItems = Array.from(document.querySelectorAll(".filter-item")).map(
+    (f) => f.textContent.toLowerCase(),
+  );
+
+  // Users page
+  if (filterItems.includes("host") && filterItems.includes("tamu")) {
+    return {
+      columnIndex: 2, // Role column
+      keywords: {
+        semua: [],
+        host: ["host"],
+        tamu: ["tamu"],
+        suspended: ["suspended"],
+      },
+    };
+  }
+
+  // Listings page
+  if (filterItems.includes("aktif") && filterItems.includes("nonaktif")) {
+    return {
+      columnIndex: 4, // Status column
+      keywords: {
+        semua: [],
+        aktif: ["aktif"],
+        nonaktif: ["nonaktif"],
+        "pending review": ["pending"],
+      },
+    };
+  }
+
+  // Reservations page
+  if (filterItems.includes("check-in") && filterItems.includes("check-out")) {
+    return {
+      columnIndex: 5, // Status column
+      keywords: {
+        semua: [],
+        confirmed: ["confirmed", "terkonfirmasi"],
+        completed: ["completed", "selesai"],
+        cancelled: ["cancelled", "dibatalkan"],
+      },
+    };
+  }
+
+  // Reviews page
+  if (filterItems.includes("verified")) {
+    return {
+      columnIndex: 3, // Verified/Status column
+      keywords: {
+        semua: [],
+        verified: ["verified", "terverifikasi"],
+        unverified: ["unverified", "belum"],
+      },
+    };
+  }
+
+  // Reports page
+  if (filterItems.includes("open") && filterItems.includes("resolved")) {
+    return {
+      columnIndex: 4, // Status column
+      keywords: {
+        semua: [],
+        open: ["open", "dibuka"],
+        resolved: ["resolved", "terselesaikan"],
+        pending: ["pending"],
+      },
+    };
+  }
+
+  // Transactions page
+  if (filterItems.includes("pending") && filterItems.includes("completed")) {
+    return {
+      columnIndex: 4, // Status column
+      keywords: {
+        semua: [],
+        pending: ["pending"],
+        completed: ["completed", "selesai"],
+        failed: ["failed", "gagal"],
+      },
+    };
+  }
+
+  // Payouts page
+  if (filterItems.includes("requested") && filterItems.includes("processed")) {
+    return {
+      columnIndex: 5, // Status column
+      keywords: {
+        semua: [],
+        requested: ["requested", "diminta"],
+        processed: ["processed", "diproses"],
+        paid: ["paid", "dibayar"],
+      },
+    };
+  }
+
+  // Default
+  return {
+    columnIndex: 3,
+    keywords: {},
+  };
+}
+
 // ============================================================
-//  SORT BUTTON (reviews.html & halaman lain yang punya .sort-button)
+//  SORT BUTTON
 // ============================================================
 const sortButtons = document.querySelectorAll(".sort-button");
 sortButtons.forEach((sortItem) => {
@@ -561,11 +779,121 @@ sortButtons.forEach((sortItem) => {
     const textSpan = sortItem.querySelector("span");
     const textActive = sortItem.dataset.active;
     const textInact = sortItem.dataset.inactive;
+    const sortBy = sortItem.dataset.sort;
+
     if (textSpan && textActive && textInact) {
       textSpan.textContent = isActive ? textActive : textInact;
     }
+
+    if (sortBy) {
+      sortTableByColumn(sortBy, isActive);
+    }
   });
 });
+
+function parseValue(text, sortBy) {
+  // Angka Rupiah — hapus "Rp", titik, spasi
+  const cleaned = text.replace(/[Rp\s.]/g, "").replace(/,/g, "");
+  const asNum = parseFloat(cleaned);
+
+  // Tanggal bahasa Indonesia
+  const BULAN = {
+    Jan: 0,
+    Feb: 1,
+    Mar: 2,
+    Apr: 3,
+    Mei: 4,
+    Jun: 5,
+    Jul: 6,
+    Agu: 7,
+    Sep: 8,
+    Okt: 9,
+    Nov: 10,
+    Des: 11,
+  };
+  const dateMatch = text.match(/(\d{1,2})\s(\w+)\s(\d{4})/);
+  if (dateMatch) {
+    const [, tgl, bln, thn] = dateMatch;
+    const bulanIdx = BULAN[bln];
+    if (bulanIdx !== undefined) {
+      return new Date(+thn, bulanIdx, +tgl).getTime();
+    }
+  }
+
+  // Rating — hitung jumlah bintang fill
+  if (sortBy === "review") return NaN; // ditangani lewat DOM count
+
+  // Angka biasa
+  if (!isNaN(asNum)) return asNum;
+
+  // String
+  return text.trim().toLowerCase();
+}
+
+function sortTableByColumn(sortBy, isDescending) {
+  const table = document.querySelector("table");
+  if (!table) return;
+
+  const tbody = table.querySelector("tbody");
+  if (!tbody) return;
+
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  // Kolom per halaman
+  const columnMap = {
+    user: 0, // Nama
+    listing: 0, // Nama Listing
+    reservation: 3, // Check-in
+    review: 2, // Rating (kolom bintang)
+    report: 5, // Tanggal Melapor
+    transaction: 3, // Jumlah
+    payout: 1, // Jumlah Payout
+    date: 5,
+    status: 3,
+  };
+
+  const columnIndex = columnMap[sortBy] ?? 0;
+
+  rows.sort((a, b) => {
+    const cellA = a.querySelectorAll("td")[columnIndex];
+    const cellB = b.querySelectorAll("td")[columnIndex];
+    if (!cellA || !cellB) return 0;
+
+    // Khusus rating — hitung ikon bintang fill
+    if (sortBy === "review") {
+      const countA = cellA.querySelectorAll(
+        ".ph-fill.ph-star, .ph-fill.ph-star-half",
+      ).length;
+      const countB = cellB.querySelectorAll(
+        ".ph-fill.ph-star, .ph-fill.ph-star-half",
+      ).length;
+      return isDescending ? countB - countA : countA - countB;
+    }
+
+    // Ambil nama dari nested element jika ada
+    const nameElemA = cellA.querySelector(".table-name, .listing-name");
+    const nameElemB = cellB.querySelector(".table-name, .listing-name");
+    const rawA = (nameElemA ?? cellA).textContent.trim();
+    const rawB = (nameElemB ?? cellB).textContent.trim();
+
+    const valA = parseValue(rawA, sortBy);
+    const valB = parseValue(rawB, sortBy);
+
+    // Keduanya angka atau timestamp
+    if (typeof valA === "number" && typeof valB === "number") {
+      if (isNaN(valA) && isNaN(valB)) return 0;
+      if (isNaN(valA)) return 1;
+      if (isNaN(valB)) return -1;
+      return isDescending ? valB - valA : valA - valB;
+    }
+
+    // String
+    const cmp = String(valA).localeCompare(String(valB), "id-ID");
+    return isDescending ? -cmp : cmp;
+  });
+
+  rows.forEach((row) => tbody.appendChild(row));
+}
 
 // ============================================================
 //  TOGGLE SWITCH (settings.html)

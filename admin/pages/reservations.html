@@ -118,10 +118,26 @@
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
               <button class="filter-item active">Semua</button>
-              <button class="filter-item">Pending</button>
-              <button class="filter-item">Confirmed</button>
-              <button class="filter-item">Cancelled</button>
-              <button class="filter-item">Completed</button>
+              <button
+                class="filter-item"
+                data-filter="reservation_status:Pending">
+                Pending
+              </button>
+              <button
+                class="filter-item"
+                data-filter="reservation_status:Confirmed">
+                Confirmed
+              </button>
+              <button
+                class="filter-item"
+                data-filter="reservation_status:Cancelled">
+                Cancelled
+              </button>
+              <button
+                class="filter-item"
+                data-filter="reservation_status:Completed">
+                Completed
+              </button>
             </div>
             <div class="sort-dropdown">
               <button
@@ -217,7 +233,7 @@
                       </div>
                     </td>
                     <td>Villa Sunset Tepi Pantai</td>
-                    <td>5 Mei 2026</td>
+                    <td>6 Mei 2026</td>
                     <td>7 Mei 2026</td>
                     <td>Rp2.450.000</td>
                     <td>
