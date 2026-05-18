@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/components/root.css" />
     <link rel="stylesheet" href="/components/navbar.css" />
     <link rel="stylesheet" href="/components/search_bar.css" />
+    <link rel="stylesheet" href="/popups/auth.css" />
     <link rel="stylesheet" href="/user/styles/payment_confirm.css" />
 
     <link
@@ -123,7 +124,7 @@
               </div>
               <div class="expand-done-row">
                 <button class="expand-done-button" data-toggle-section="pay">
-                  Done
+                  Selanjutnya
                 </button>
               </div>
             </div>
@@ -145,7 +146,7 @@
                 class="expand-change-button"
                 data-toggle-section="method"
                 aria-label="Ganti metode pembayaran">
-                Change
+                Ganti
               </button>
             </div>
 
@@ -183,7 +184,7 @@
 
               <div class="expand-done-row">
                 <button class="expand-done-button" data-toggle-section="method">
-                  Selanjutnya
+                  Selesai
                 </button>
               </div>
             </div>
@@ -195,9 +196,11 @@
               <div class="expand-step-title">3. Review reservasi anda</div>
             </div>
             <div id="review-content" class="expand-review-content">
-              <button class="expand-confirm-button">
-                Konfirmasi dan Bayar
-              </button>
+              <a href="/index.html">
+                <button class="expand-confirm-button">
+                  Konfirmasi dan Bayar
+                </button>
+              </a>
             </div>
           </div>
         </section>
@@ -261,5 +264,7 @@
     </main>
 
     <script src="/user/scripts/payment_confirm.js"></script>
+    <script src="/components/navbar.js"></script>
+    <script src="/popups/auth.js"></script>
   </body>
 </html>

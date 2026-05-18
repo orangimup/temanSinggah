@@ -5,12 +5,23 @@
   padding-bottom: var(--space-96);
 }
 
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  margin-bottom: var(--space-24);
+}
+
+.section-header i{
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
 .section-title {
   font-size: var(--text-3xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
-  line-height: 1.2;
-  margin-bottom: var(--space-24);
 }
 
 .list-section {
@@ -110,7 +121,6 @@
 .content-layout {
   display: flex;
   gap: var(--space-48);
-  margin-top: var(--space-64);
 }
 
 .card-section {

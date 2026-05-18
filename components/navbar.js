@@ -41,6 +41,17 @@ document.addEventListener("DOMContentLoaded", () => {
   let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   let isLoaded = false;
 
+  // ── Deteksi halaman host ────────────────────────────────────
+  function isHostPage() {
+    return window.location.pathname.includes("/host/");
+  }
+
+  // ── Tentukan tipe user ──────────────────────────────────────
+  function getUserType() {
+    if (!isLoggedIn) return "guest";
+    return isHostPage() ? "host" : "loggedin";
+  }
+
   // ── Terapkan tampilan navbar sesuai state ──────────────────
   function applyAuthState() {
     if (isLoggedIn) {
@@ -80,8 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Muat dropdown ───────────────────────────────────────────
   async function loadDropdown() {
+    const userType = getUserType();
     const inlineTemplate = document.querySelector(
-      `#dropdownTemplates [data-type="${isLoggedIn ? "loggedin" : "guest"}"]`,
+      `#dropdownTemplates [data-type="${userType}"]`,
     );
 
     if (inlineTemplate) {
@@ -94,11 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
-      const state = isLoggedIn ? "loggedin" : "guest";
-      const template = doc.querySelector(`[data-type="${state}"]`);
+      const template = doc.querySelector(`[data-type="${userType}"]`);
       if (!template) {
         console.error(
-          `[navbar] Template [data-type="${state}"] tidak ditemukan`,
+          `[navbar] Template [data-type="${userType}"] tidak ditemukan`,
         );
         return;
       }
