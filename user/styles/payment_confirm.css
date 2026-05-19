@@ -1,7 +1,3 @@
-/* ============================================================
-   MAIN CONTENT
-   ============================================================ */
-
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -112,10 +108,6 @@
   background: var(--color-bg-skeleton);
 }
 
-/* ============================================================
-   EXPAND SECTION
-   ============================================================ */
-
 .step-expand {
   display: none;
   margin-top: var(--space-16);
@@ -152,10 +144,6 @@
   background: var(--color-primary-active);
   transform: scale(0.99);
 }
-
-/* ============================================================
-   RADIO BUTTONS
-   ============================================================ */
 
 .expand-radio-row {
   display: flex;
@@ -219,10 +207,6 @@
   color: var(--color-text-secondary);
   margin-top: var(--space-8);
 }
-
-/* ============================================================
-   PAYMENT METHOD
-   ============================================================ */
 
 .expand-payment-row {
   display: flex;
@@ -300,10 +284,6 @@
   font-weight: var(--font-semibold);
 }
 
-/* ============================================================
-   CARD HEADER (STEP 3)
-   ============================================================ */
-
 .expand-card-header {
   display: flex;
   justify-content: space-between;
@@ -341,10 +321,6 @@
   background: var(--color-bg-skeleton);
 }
 
-/* ============================================================
-   CONFIRM BUTTON & REVIEW SECTION
-   ============================================================ */
-
 .expand-review-content {
   display: none;
   margin-top: var(--space-16);
@@ -375,10 +351,6 @@
   background: var(--color-primary-active);
   transform: scale(0.99);
 }
-
-/* ============================================================
-   SUMMARY SECTION
-   ============================================================ */
 
 .expand-summary {
   position: sticky;
@@ -433,10 +405,6 @@
   color: var(--color-accent);
 }
 
-/* ============================================================
-   CANCELLATION BOX
-   ============================================================ */
-
 .expand-cancel-box {
   background: var(--color-bg-section);
   border-radius: var(--radius-lg);
@@ -456,19 +424,11 @@
   color: var(--color-text-secondary);
 }
 
-/* ============================================================
-   DIVIDER
-   ============================================================ */
-
 .expand-divider {
   border: none;
   border-top: 1.5px solid var(--color-border);
   margin: var(--space-16) 0;
 }
-
-/* ============================================================
-   INFO ROWS (DATE, GUEST, PRICE)
-   ============================================================ */
 
 .expand-info-row {
   display: flex;
@@ -521,10 +481,6 @@
   background: var(--color-bg-skeleton);
 }
 
-/* ============================================================
-   PRICING
-   ============================================================ */
-
 .expand-price-row {
   display: flex;
   justify-content: space-between;
@@ -541,10 +497,6 @@
   color: var(--color-text-primary);
   margin-top: var(--space-12);
 }
-
-/* ============================================================
-   SUMMARY CARD DROPDOWNS
-   ============================================================ */
 
 #summaryCalendarDropdown {
   position: fixed;

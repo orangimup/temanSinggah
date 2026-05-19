@@ -1,7 +1,3 @@
-// ============================================================
-// FILTER — Reservasi Host
-// ============================================================
-
 const filterButtons = document.querySelectorAll(".filter-item");
 const reservationCards = document.querySelectorAll(".reservation-card");
 const emptyState = document.getElementById("emptyState");

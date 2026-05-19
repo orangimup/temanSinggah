@@ -1,7 +1,3 @@
-// ============================================================
-//  NAV INDICATOR
-// ============================================================
-
 const navLinks = document.querySelectorAll(".nav-link");
 const navIndicator = document.querySelector(".nav-indicator");
 
@@ -29,10 +25,6 @@ window.addEventListener("resize", () => {
   if (active) moveNavIndicator(active);
 });
 
-// ============================================================
-//  HAMBURGER DROPDOWN + LANGUAGE POPUP + AUTH POPUP
-// ============================================================
-
 document.addEventListener("DOMContentLoaded", () => {
   const profileBtn = document.querySelector(".icon-button.profile");
   const hamburgerBtn = document.querySelector(".icon-button.hamburger");
@@ -41,18 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   let isLoaded = false;
 
-  // ── Deteksi halaman host ────────────────────────────────────
   function isHostPage() {
     return window.location.pathname.includes("/host/");
   }
 
-  // ── Tentukan tipe user ──────────────────────────────────────
   function getUserType() {
     if (!isLoggedIn) return "guest";
     return isHostPage() ? "host" : "loggedin";
   }
 
-  // ── Terapkan tampilan navbar sesuai state ──────────────────
   function applyAuthState() {
     if (isLoggedIn) {
       profileBtn?.classList.remove("hidden");
@@ -65,8 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyAuthState();
 
-  // ── Login berhasil ─────────────────────────────────────────
-  // Dijadikan global agar bisa dipanggil dari auth.js
   window.onLoginSuccess = function (userInitial = "A") {
     isLoggedIn = true;
     localStorage.setItem("isLoggedIn", "true");
@@ -78,7 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDropdown();
   };
 
-  // ── Logout ─────────────────────────────────────────────────
   function onLogout() {
     isLoggedIn = false;
     localStorage.removeItem("isLoggedIn");
@@ -89,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDropdown();
   }
 
-  // ── Muat dropdown ───────────────────────────────────────────
   async function loadDropdown() {
     const userType = getUserType();
     const inlineTemplate = document.querySelector(
@@ -108,14 +93,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const doc = new DOMParser().parseFromString(html, "text/html");
       const template = doc.querySelector(`[data-type="${userType}"]`);
       if (!template) {
-        console.error(
           `[navbar] Template [data-type="${userType}"] tidak ditemukan`,
         );
         return;
       }
       injectDropdown(template.innerHTML);
     } catch (err) {
-      console.error("[navbar] Gagal memuat dropdown:", err);
     }
   }
 
@@ -127,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
     bindLogoutOption();
   }
 
-  // ── Muat language popup ─────────────────────────────────────
   async function loadLanguagePopup() {
     if (document.getElementById("languageOverlay")) {
       bindLanguagePopupEvents();
@@ -147,22 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
           container.appendChild(overlay);
           bindLanguagePopupEvents();
         } else {
-          console.error("[navbar] #languagePopup container tidak ditemukan");
         }
       } else {
-        console.error(
           "[navbar] #languageOverlay tidak ditemukan di language.html",
         );
       }
     } catch (err) {
-      console.error("[navbar] Gagal memuat language popup:", err);
     }
   }
 
-  // ── Muat auth popup ─────────────────────────────────────────
   async function loadAuthPopup() {
     if (document.getElementById("authOverlay")) {
-      // Panggil fungsi global dari auth.js
+
       window.bindAuthPopupEvents?.();
       return;
     }
@@ -178,20 +156,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("authPopup");
         if (container) {
           container.appendChild(overlay);
-          // Panggil fungsi global dari auth.js
+
           window.bindAuthPopupEvents?.();
         } else {
-          console.error("[navbar] #authPopup container tidak ditemukan");
         }
       } else {
-        console.error("[navbar] #authOverlay tidak ditemukan di auth.html");
       }
     } catch (err) {
-      console.error("[navbar] Gagal memuat auth popup:", err);
     }
   }
 
-  // ── Buka / tutup dropdown ───────────────────────────────────
   function openDropdown(triggerBtn) {
     const rect = triggerBtn.getBoundingClientRect();
     dropdown.style.top = `${rect.bottom + 8}px`;
@@ -224,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", closeDropdown);
   dropdown.addEventListener("click", (e) => e.stopPropagation());
 
-  // ── Bind opsi dropdown ─────────────────────────────────────
   function bindLanguageOption() {
     dropdown.querySelectorAll("[data-action='language']").forEach((el) => {
       el.addEventListener("click", (e) => {
@@ -255,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ── Language popup events ───────────────────────────────────
   function bindLanguagePopupEvents() {
     const langOverlay = document.getElementById("languageOverlay");
     if (!langOverlay) return;
@@ -292,7 +264,6 @@ document.addEventListener("DOMContentLoaded", () => {
     langOverlay._moveTabIndicator = moveTabIndicator;
   }
 
-  // ── Buka / tutup language popup ────────────────────────────
   function openLanguagePopup() {
     closeDropdown();
     const langOverlay = document.getElementById("languageOverlay");
@@ -314,13 +285,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "";
   }
 
-  // ── Buka / tutup auth popup — dijadikan global ─────────────
-  // agar bisa dipanggil dari auth.js
   window.openAuthPopup = function () {
     closeDropdown();
     const authOverlay = document.getElementById("authOverlay");
     if (!authOverlay) return;
-    // Reset ke step awal setiap kali popup dibuka
+
     authOverlay
       .querySelectorAll(".auth-step")
       .forEach((el) => el.classList.remove("active"));
@@ -337,7 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "";
   };
 
-  // Escape menutup semua popup
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeLanguagePopup();
@@ -345,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ── Mulai ───────────────────────────────────────────────────
   loadDropdown();
   loadLanguagePopup();
   loadAuthPopup();

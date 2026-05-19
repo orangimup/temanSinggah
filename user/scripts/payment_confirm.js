@@ -1,25 +1,13 @@
-// ============================================================
-//  PAYMENT CONFIRM — payment_confirm.js
-//  Data harga, tanggal, tamu di-render server ke HTML.
-//  JS mengurus: UI step expand/collapse, radio, dan dropdown
-//  kalender & tamu pada tombol "Ganti" di summary card.
-// ============================================================
-
-// ===== State =====
 let activeSection = "pay";
 let selectedPay = "now";
 let selectedMethod = "gopay";
 
-// ===== Init =====
 document.addEventListener("DOMContentLoaded", () => {
   setupStepListeners();
   setupSummaryDropdowns();
   renderAll();
 });
 
-// ============================================================
-//  STEP LISTENERS
-// ============================================================
 function setupStepListeners() {
   document.querySelectorAll("[data-toggle-section]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -58,9 +46,6 @@ function selectMethod(val) {
   renderAll();
 }
 
-// ============================================================
-//  RENDER
-// ============================================================
 function renderAll() {
   document
     .getElementById("payExpand")
@@ -92,36 +77,27 @@ function setRadio(id, active) {
   document.getElementById(id)?.classList.toggle("selected", active);
 }
 
-// ============================================================
-//  SUMMARY CARD DROPDOWNS
-//  Tombol "Ganti" tanggal → kalender (fetch dari /popups/screen/calendar.html)
-//  Tombol "Ganti" tamu   → counter (fetch dari /popups/screen/guest_counter.html)
-// ============================================================
-
-// Dropdown positioning helpers (same as detail_card.js)
 let activeAnchor = null;
 
 function positionDropdown(dropdown, triggerEl) {
   const rect = triggerEl.getBoundingClientRect();
-  const dropdownHeight = dropdown.offsetHeight || 300; // fallback height
+  const dropdownHeight = dropdown.offsetHeight || 300;
   const viewportHeight = window.innerHeight;
   const viewportWidth = window.innerWidth;
 
-  // Calculate vertical position (below trigger, or above if not enough space)
   let top = rect.bottom + 8;
   if (top + dropdownHeight > viewportHeight - 16) {
-    // Not enough space below, position above
+
     top = rect.top - dropdownHeight - 8;
     if (top < 16) {
-      // Not enough space above either, constrain to viewport
+
       top = Math.max(16, viewportHeight - dropdownHeight - 16);
     }
   }
 
-  // Calculate horizontal position (left-aligned, but keep right margin)
   let left = rect.left;
   if (left + 380 > viewportWidth) {
-    // Not enough space on right, align to right edge with margin
+
     left = Math.max(16, viewportWidth - 380 - 16);
   }
 
@@ -162,14 +138,10 @@ function setupSummaryDropdowns() {
   setupDropdownTracking();
 }
 
-// -------------------------------------------------------
-//  DATE DROPDOWN
-// -------------------------------------------------------
 function setupDateGantiButton(dateRow) {
   const gantiBtn = dateRow.querySelector(".expand-change-sm");
   if (!gantiBtn) return;
 
-  // Container dropdown diletakkan setelah dateRow
   const dropdown = document.createElement("div");
   dropdown.id = "summaryCalendarDropdown";
   dropdown.style.position = "fixed";
@@ -179,12 +151,10 @@ function setupDateGantiButton(dateRow) {
   let calLoaded = false;
   let calReady = false;
 
-  // Fungsi buka/tutup
   gantiBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
     const isOpen = dropdown.classList.contains("open");
 
-    // Tutup guest dropdown jika terbuka
     const guestDd = document.getElementById("summaryGuestDropdown");
     if (guestDd) guestDd.classList.remove("open");
 
@@ -193,7 +163,6 @@ function setupDateGantiButton(dateRow) {
       return;
     }
 
-    // Load HTML kalender sekali saja
     if (!calLoaded) {
       try {
         const res = await fetch("/popups/screen/calendar.html");
@@ -203,7 +172,6 @@ function setupDateGantiButton(dateRow) {
         initSummaryCalendar(dropdown);
         calReady = true;
       } catch (err) {
-        console.error("Gagal memuat kalender:", err);
         return;
       }
     }
@@ -304,7 +272,7 @@ function initSummaryCalendar(container) {
         rangeEnd = date;
         hoverDate = null;
         phase = "idle";
-        // Update display di summary card
+
         applyDateToSummary(rangeStart, rangeEnd);
         setTimeout(() => {
           container.classList.remove("open");
@@ -437,7 +405,6 @@ function initSummaryCalendar(container) {
     updateArrowState();
   }
 
-  // Arrows
   const [leftM, rightM] = container.querySelectorAll(".calendar-month");
   leftM?.querySelector(".ph-caret-left")?.addEventListener("click", () => {
     const prev = addMonths(leftYear, leftMonth, -1);
@@ -467,9 +434,6 @@ function initSummaryCalendar(container) {
   renderCalendar();
 }
 
-// -------------------------------------------------------
-//  GUEST DROPDOWN
-// -------------------------------------------------------
 function setupGuestGantiButton(guestRow) {
   const gantiBtn = guestRow.querySelector(".expand-change-sm");
   if (!gantiBtn) return;
@@ -486,7 +450,6 @@ function setupGuestGantiButton(guestRow) {
     e.stopPropagation();
     const isOpen = dropdown.classList.contains("open");
 
-    // Tutup calendar dropdown jika terbuka
     const calDd = document.getElementById("summaryCalendarDropdown");
     if (calDd) calDd.classList.remove("open");
 
@@ -503,7 +466,6 @@ function setupGuestGantiButton(guestRow) {
         guestLoaded = true;
         initSummaryGuestCounter(dropdown, guestRow);
       } catch (err) {
-        console.error("Gagal memuat guest counter:", err);
         return;
       }
     }
@@ -562,7 +524,6 @@ function initSummaryGuestCounter(container, guestRow) {
     if (bayi > 0) parts.push(`${bayi} bayi`);
     if (hewan > 0) parts.push(`${hewan} peliharaan`);
 
-    // Update nilai di summary card
     const allInfoRows = document.querySelectorAll(".expand-info-row");
     const guestVal = allInfoRows[1]?.querySelector(".expand-info-value");
     if (guestVal) guestVal.textContent = parts.join(", ") || "1 pengunjung";

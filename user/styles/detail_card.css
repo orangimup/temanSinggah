@@ -684,10 +684,6 @@
   background: var(--color-bg-skeleton);
 }
 
-/* ============================================================
-   PRICE UPDATE ANIMATION
-   ============================================================ */
-
 @keyframes pricePulse {
   0% {
     color: var(--color-text-primary);

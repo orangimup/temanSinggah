@@ -1,21 +1,12 @@
-// ============================================================
-// AUTH STEP NAVIGATION & ROUTING
-// ============================================================
-
 window.bindAuthPopupEvents = function () {
   const authOverlay = document.getElementById("authOverlay");
   if (!authOverlay) return;
 
-  // Cegah bind dobel
   if (authOverlay.dataset.bound === "true") return;
   authOverlay.dataset.bound = "true";
 
   const form = authOverlay.querySelector(".auth-form");
   if (!form) return;
-
-  // ============================================================
-  // STATE
-  // ============================================================
 
   const authState = {
     isExistingUser: true,
@@ -23,10 +14,6 @@ window.bindAuthPopupEvents = function () {
     selectedContactMethod: "",
     googleUserIsNew: false,
   };
-
-  // ============================================================
-  // HELPER: SHOW STEP — instan, tanpa delay
-  // ============================================================
 
   const showStep = (stepId) => {
     form
@@ -37,20 +24,12 @@ window.bindAuthPopupEvents = function () {
     else console.error(`Step "${stepId}" tidak ditemukan`);
   };
 
-  // ============================================================
-  // MOCK
-  // ============================================================
-
   const isEmailRegistered = (email) => email.includes("gmail");
 
   const simulateGoogleLogin = () => {
     authState.googleUserIsNew = Math.random() > 0.5;
     return true;
   };
-
-  // ============================================================
-  // CLOSE
-  // ============================================================
 
   authOverlay.querySelectorAll("[data-action='close-auth']").forEach((btn) => {
     btn.addEventListener("click", () => window.closeAuthPopup?.());
@@ -59,12 +38,6 @@ window.bindAuthPopupEvents = function () {
   authOverlay.addEventListener("click", (e) => {
     if (e.target === authOverlay) window.closeAuthPopup?.();
   });
-
-  // ============================================================
-  // STEP 1
-  // pilih akun → Step 5
-  // "Bukan kamu?" → Step 2
-  // ============================================================
 
   form.querySelectorAll("#authStep1 .auth-option-item").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -79,13 +52,6 @@ window.bindAuthPopupEvents = function () {
       e.preventDefault();
       showStep("authStep2");
     });
-
-  // ============================================================
-  // STEP 2
-  // submit email existing → Step 3
-  // submit email baru → Step 4 (ditangani di form submit)
-  // Google / Apple / Facebook → Step 4
-  // ============================================================
 
   form
     .querySelector(
@@ -117,12 +83,6 @@ window.bindAuthPopupEvents = function () {
       showStep("authStep4");
     });
 
-  // ============================================================
-  // STEP 3
-  // back → Step 2
-  // resend OTP
-  // ============================================================
-
   form
     .querySelector("#authStep3 [data-action='prev-step']")
     ?.addEventListener("click", (e) => {
@@ -141,23 +101,12 @@ window.bindAuthPopupEvents = function () {
       }, 3000);
     });
 
-  // ============================================================
-  // STEP 4
-  // back → Step 2
-  // ============================================================
-
   form
     .querySelector("#authStep4 [data-action='prev-step']")
     ?.addEventListener("click", (e) => {
       e.preventDefault();
       showStep("authStep2");
     });
-
-  // ============================================================
-  // STEP 5
-  // "Coba cara lain" → Step 6
-  // back → Step 2
-  // ============================================================
 
   form
     .querySelector(
@@ -174,12 +123,6 @@ window.bindAuthPopupEvents = function () {
       e.preventDefault();
       showStep("authStep2");
     });
-
-  // ============================================================
-  // STEP 6
-  // Google → Step 5
-  // SMS / WA / Email → Step 3
-  // ============================================================
 
   form.querySelectorAll("#authStep6 .auth-option-item").forEach((item) => {
     item.addEventListener("click", () => {
@@ -203,12 +146,6 @@ window.bindAuthPopupEvents = function () {
     });
   });
 
-  // ============================================================
-  // STEP 7
-  // back → Step 4
-  // setuju → login success
-  // ============================================================
-
   form
     .querySelector("#authStep7 [data-action='prev-step']")
     ?.addEventListener("click", (e) => {
@@ -223,10 +160,6 @@ window.bindAuthPopupEvents = function () {
       window.onLoginSuccess?.("A");
     });
 
-  // ============================================================
-  // FORM SUBMIT — satu listener, tidak ada duplikat
-  // ============================================================
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -234,7 +167,6 @@ window.bindAuthPopupEvents = function () {
     if (!activeStep) return;
     const stepId = activeStep.id;
 
-    // Step 2: email → selalu ke Step 3 dulu
     if (stepId === "authStep2") {
       const email =
         form.querySelector("#authStep2 .auth-input")?.value.trim() || "";
@@ -246,11 +178,9 @@ window.bindAuthPopupEvents = function () {
       authState.enteredEmail = email;
       authState.isExistingUser = isEmailRegistered(email);
 
-      // Existing maupun baru → Step 3 (verifikasi OTP)
       showStep("authStep3");
     }
 
-    // Step 3: OTP
     else if (stepId === "authStep3") {
       const otp =
         form.querySelector("#authStep3 .auth-input.code")?.value.trim() || "";
@@ -260,13 +190,12 @@ window.bindAuthPopupEvents = function () {
       }
 
       if (authState.isExistingUser) {
-        showStep("authStep7"); // existing → komunitas
+        showStep("authStep7");
       } else {
-        showStep("authStep4"); // baru → lengkapi data
+        showStep("authStep4");
       }
     }
 
-    // Step 4: data akun
     else if (stepId === "authStep4") {
       const inputs = form.querySelectorAll("#authStep4 .auth-input");
       const firstName = inputs[0]?.value.trim();
@@ -282,7 +211,6 @@ window.bindAuthPopupEvents = function () {
       showStep("authStep7");
     }
 
-    // Step 5: Google login
     else if (stepId === "authStep5") {
       if (!simulateGoogleLogin()) {
         alert("Google login gagal");
@@ -297,6 +225,5 @@ window.bindAuthPopupEvents = function () {
     }
   });
 
-  // Default step saat pertama bind
   showStep("authStep2");
 };

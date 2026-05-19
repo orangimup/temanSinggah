@@ -1,6 +1,3 @@
-// ============================================================
-//  SAVE BUTTON
-// ============================================================
 document.querySelectorAll(".header-button.save").forEach((saveButton) => {
   saveButton.addEventListener("click", (e) => {
     e.preventDefault();
@@ -13,9 +10,6 @@ document.querySelectorAll(".header-button.save").forEach((saveButton) => {
   });
 });
 
-// ============================================================
-//  MAP
-// ============================================================
 window.addEventListener("load", () => {
   const map = L.map("propertyMap", {
     center: [-8.5069, 115.2625],
@@ -54,9 +48,6 @@ window.addEventListener("load", () => {
     ?.addEventListener("click", () => map.zoomOut());
 });
 
-// ============================================================
-//  UI STATE
-// ============================================================
 let nights = 0;
 let rangeStart = null;
 let rangeEnd = null;
@@ -69,40 +60,31 @@ function formatRupiah(amount) {
   }).format(amount);
 }
 
-// ============================================================
-//  ROOM SELECTION
-//  Baca harga dari data-price di .room-button,
-//  update tampilan sidebar (harga per malam & jumlah malam).
-// ============================================================
 document.querySelectorAll(".room-button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const card = btn.closest(".room-card");
     if (!card) return;
 
-    // Highlight
     document.querySelectorAll(".room-card").forEach((c) => {
       c.style.outline = "none";
     });
     card.style.outline = "2px solid var(--color-primary)";
     card.style.borderRadius = "var(--radius-3xl)";
 
-    // Update harga per malam di sidebar dari data-price
     const price = parseInt(btn.dataset.price, 10);
     if (!isNaN(price)) {
       const priceAmountEl = document.querySelector(".booking-price-amount");
       if (priceAmountEl) {
         priceAmountEl.textContent = formatRupiah(price);
 
-        // Add highlight animation
         priceAmountEl.classList.remove("price-highlight");
-        // Trigger reflow to restart animation
+
         void priceAmountEl.offsetWidth;
         priceAmountEl.classList.add("price-highlight");
       }
       updateNightsDisplay(price);
     }
 
-    // Scroll ke booking sidebar
     document.querySelector(".booking-sidebar")?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -110,11 +92,6 @@ document.querySelectorAll(".room-button").forEach((btn) => {
   });
 });
 
-// ============================================================
-//  NIGHTS DISPLAY
-//  Tampilkan jumlah malam di bawah form, hanya jika tanggal sudah dipilih.
-//  Terima price opsional untuk update saat kamar berubah.
-// ============================================================
 function updateNightsDisplay(overridePrice) {
   let el = document.getElementById("bookingNightsSummary");
   if (!el) {
@@ -138,15 +115,9 @@ function updateNightsDisplay(overridePrice) {
   }
 }
 
-// ============================================================
-//  MAIN DOMContentLoaded
-// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
   updateNightsDisplay();
 
-  // ============================================================
-  //  HELPERS
-  // ============================================================
   let activeAnchor = null;
 
   function positionDropdown(dropdown, triggerEl) {
@@ -175,9 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
     activeAnchor = { dropdown, triggerEl };
   }
 
-  // ============================================================
-  //  CALENDAR DROPDOWN
-  // ============================================================
   const checkinInput = document.getElementById("checkinInput");
   const checkoutInput = document.getElementById("checkoutInput");
   const dateInputField = document.querySelector(".date-input-field");
@@ -445,7 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
       attachCalendarArrows();
       renderCalendar();
     } catch (err) {
-      console.error("Gagal memuat booking calendar:", err);
     }
   }
 
@@ -487,9 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadBookingCalendar();
 
-  // ============================================================
-  //  GUEST COUNTER DROPDOWN
-  // ============================================================
   const guestInput = document.getElementById("guestInput");
   const guestDropdown = document.getElementById("bookingGuestDropdown");
   const guestField = document.querySelector(".booking-field:has(#guestInput)");
@@ -597,7 +561,6 @@ document.addEventListener("DOMContentLoaded", () => {
       guestLoaded = true;
       initGuestCounter();
     } catch (err) {
-      console.error("Gagal memuat guest counter:", err);
     }
   }
 

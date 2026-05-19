@@ -214,3 +214,19 @@ document.querySelectorAll(".listing-sidebar-item").forEach((item) => {
 });
 
 renderCalendar();
+
+document.querySelectorAll(".panel-group").forEach((group) => {
+  const btn = group.querySelector(".panel-card.button");
+  const popup = group.querySelector(".panel-popup");
+
+  btn.addEventListener("click", () => {
+    document
+      .querySelectorAll(".panel-popup")
+      .forEach((p) => p.classList.remove("open"));
+    popup.classList.add("open");
+  });
+
+  popup.querySelector(".popup-header i")?.addEventListener("click", () => {
+    popup.classList.remove("open");
+  });
+});

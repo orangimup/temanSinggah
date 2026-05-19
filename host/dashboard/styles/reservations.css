@@ -1,17 +1,9 @@
-/* ============================================================
-   MAIN CONTENT
-   ============================================================ */
-
 .main-content {
   max-width: var(--container-xl);
   margin: var(--space-center);
   margin-top: 112px;
   padding: 0 var(--space-24) var(--space-80);
 }
-
-/* ============================================================
-   FILTER
-   ============================================================ */
 
 .filter-section {
   margin-bottom: var(--space-40);
@@ -50,10 +42,6 @@
   color: var(--color-text-inverse);
 }
 
-/* ============================================================
-   RESERVATIONS GRID
-   ============================================================ */
-
 .reservations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 360px));
@@ -63,10 +51,6 @@
 .reservation-card.hidden {
   display: none;
 }
-
-/* ============================================================
-   RESERVATION CARD
-   ============================================================ */
 
 .reservation-card {
   background: var(--color-bg-card);
@@ -334,10 +318,6 @@
   background: var(--color-error-light-hover);
   color: var(--color-error-hover);
 }
-
-/* ============================================================
-   EMPTY STATE
-   ============================================================ */
 
 .empty-state {
   border-radius: var(--radius-3xl);

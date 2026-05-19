@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
       destinationLoaded = true;
       initDestinationItems();
     } catch (err) {
-      console.error("Gagal memuat destination dropdown:", err);
     }
   }
 
@@ -140,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
       isLoaded = true;
       initCounter();
     } catch (err) {
-      console.error("Gagal memuat guest counter:", err);
     }
   }
 
@@ -409,7 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
       attachArrows();
       renderCalendar();
     } catch (err) {
-      console.error("Gagal memuat calendar:", err);
     }
   }
 

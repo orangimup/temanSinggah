@@ -193,21 +193,18 @@
   background: var(--color-bg-skeleton);
 }
 
-/* Tombol nomor aktif */
 .control-button.active {
   background: var(--color-primary);
   color: var(--color-text-inverse);
   border-color: var(--color-primary);
 }
 
-/* Prev/next disabled */
 .control-button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
   box-shadow: none;
 }
 
-/* Ellipsis */
 .pagination-ellipsis {
   width: 44px;
   height: 44px;
@@ -238,7 +235,6 @@
   position: relative;
 }
 
-/* ── Pill popup ── */
 .map-price-pill {
   background: var(--color-primary);
   border-radius: var(--radius-full);

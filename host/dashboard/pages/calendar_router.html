@@ -102,44 +102,126 @@
       </section>
 
       <aside class="settings-sidebar">
-        <button class="panel-card button" aria-label="Buka pengaturan harga">
-          <div class="panel-card-info">
-            <div class="panel-card-title">Pengaturan harga</div>
-            <div class="panel-card-detail">
-              <span>Rp399.344 per malam</span>
-              <span>Rp423.305 harga akhir pekan</span>
-              <span>Diskon mingguan 11%</span>
+        <!-- ── Group 1: Harga ── -->
+        <div class="panel-group">
+          <button class="panel-card button" aria-label="Buka pengaturan harga">
+            <div class="panel-card-info">
+              <div class="panel-card-title">Pengaturan harga</div>
+              <div class="panel-card-detail">
+                <span>Rp399.344 per malam</span>
+                <span>Rp423.305 harga akhir pekan</span>
+                <span>Diskon mingguan 11%</span>
+              </div>
             </div>
-          </div>
-          <i class="ph-bold ph-caret-right"></i>
-        </button>
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
 
-        <button
-          class="panel-card button"
-          aria-label="Buka pengaturan ketersediaan">
-          <div class="panel-card-info">
-            <div class="panel-card-title">Pengaturan ketersediaan</div>
-            <div class="panel-card-detail">
-              <span>1 – 1 malam minimal menginap</span>
-              <span>Pemberitahuan hari yang sama</span>
+          <section class="panel-popup">
+            <div class="popup-header">
+              <i class="ph-bold ph-caret-left"></i>
+              <div class="popup-title">Pengaturan Harga</div>
             </div>
-          </div>
-          <i class="ph-bold ph-caret-right"></i>
-        </button>
-
-        <button
-          class="panel-card button"
-          aria-label="Buka aturan kedatangan & keberangkatan">
-          <div class="panel-card-info">
-            <div class="panel-card-title">Kedatangan & keberangkatan</div>
-            <div class="panel-card-detail">
-              <span>Fleksibel – semua hari</span>
-              <span>Check-in: 14.00 – 22.00</span>
+            <span class="popup-desc">
+              Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
+              berdasarkan tanggal.
+            </span>
+            <div class="panel-title">Harga</div>
+            <div class="panel-button">
+              <span class="panel-label">Per Malam</span>
+              <span class="panel-value">Rp399.344</span>
             </div>
-          </div>
-          <i class="ph-bold ph-caret-right"></i>
-        </button>
+            <div class="panel-button">
+              <span class="panel-label">Akhir Pekan</span>
+              <span class="panel-value">Rp423.305</span>
+            </div>
+            <div class="panel-title">Diskon</div>
+            <div class="panel-desc">
+              Sesuaikan harga Anda untuk menarik lebih banyak tamu.
+            </div>
+            <div class="panel-button">
+              <span class="panel-label">Mingguan</span>
+              <span class="panel-value">10%</span>
+            </div>
+            <div class="panel-button">
+              <span class="panel-label">Bulanan</span>
+              <span class="panel-value">30%</span>
+            </div>
+          </section>
+        </div>
 
+        <!-- ── Group 2: Ketersediaan ── -->
+        <div class="panel-group">
+          <button
+            class="panel-card button"
+            aria-label="Buka pengaturan ketersediaan">
+            <div class="panel-card-info">
+              <div class="panel-card-title">Pengaturan ketersediaan</div>
+              <div class="panel-card-detail">
+                <span>1 – 1 malam minimal menginap</span>
+                <span>Pemberitahuan hari yang sama</span>
+              </div>
+            </div>
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
+
+          <section class="panel-popup">
+            <div class="popup-header">
+              <i class="ph-bold ph-caret-left"></i>
+              <div class="popup-title">Pengaturan Ketersediaan</div>
+            </div>
+            <span class="popup-desc">
+              Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
+              berdasarkan tanggal.
+            </span>
+            <div class="panel-title">Lama Perjalanan</div>
+            <div class="panel-button">
+              <span class="panel-label">Minimal malam</span>
+              <span class="panel-value">1</span>
+            </div>
+            <div class="panel-button">
+              <span class="panel-label">Maksimal malam</span>
+              <span class="panel-value">365</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- ── Group 3: Check-in & Check-out ── -->
+        <div class="panel-group">
+          <button
+            class="panel-card button"
+            aria-label="Buka aturan kedatangan & keberangkatan">
+            <div class="panel-card-info">
+              <div class="panel-card-title">Kedatangan & keberangkatan</div>
+              <div class="panel-card-detail">
+                <span>Fleksibel – semua hari</span>
+                <span>Check-in: 14.00 – 22.00</span>
+              </div>
+            </div>
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
+
+          <section class="panel-popup">
+            <div class="popup-header">
+              <i class="ph-bold ph-caret-left"></i>
+              <div class="popup-title">Kedatangan & Keberangkatan</div>
+            </div>
+            <span class="popup-desc">
+              Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
+              berdasarkan tanggal.
+            </span>
+            <div class="panel-title">Batas Check-in dan Check-out</div>
+            <div class="panel-button">
+              <span class="panel-label">Check-in</span>
+              <span class="panel-value">14:00</span>
+            </div>
+            <div class="panel-button">
+              <span class="panel-label">Check-out</span>
+              <span class="panel-value">11:00</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- ── Legend ── -->
         <div class="panel-card">
           <div class="legend-section">
             <div class="legend-title">Keterangan</div>

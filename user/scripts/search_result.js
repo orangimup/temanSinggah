@@ -189,7 +189,6 @@ window.addEventListener("load", () => {
       }
     });
 
-    // ── Tombol close — cegah navigasi <a href> ───────────────
     card.querySelector(".map-card-close")?.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -220,7 +219,6 @@ window.addEventListener("load", () => {
       card.addEventListener(evt, (e) => e.stopPropagation(), { passive: true });
     });
 
-    // ── Save button di dalam card — cegah navigasi <a href> ──
     const saveBtn = card.querySelector(".map-card-button.wishlist");
     if (saveBtn) {
       const saveImg = saveBtn.querySelector("img");
@@ -239,7 +237,6 @@ window.addEventListener("load", () => {
 
   map.on("click", closeAllCards);
 
-  // ── Save button card list — cegah navigasi <a href> parent ─
   document.querySelectorAll(".save-button").forEach((saveItem) => {
     saveItem.addEventListener("click", (e) => {
       e.preventDefault();

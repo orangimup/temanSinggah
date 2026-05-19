@@ -1,6 +1,3 @@
-// ============================================================
-//  REVENUE TREND CHART (dashboard.html)
-// ============================================================
 const months = [
   "Jan",
   "Feb",
@@ -269,9 +266,6 @@ if (revenueTrendCanvas && typeof Chart !== "undefined") {
   }
 }
 
-// ============================================================
-//  DONUT CHART (dashboard.html)
-// ============================================================
 const donutCanvas = document.getElementById("donutChart");
 
 if (donutCanvas && typeof Chart !== "undefined") {
@@ -389,9 +383,6 @@ if (donutCanvas && typeof Chart !== "undefined") {
   }
 }
 
-// ============================================================
-//  VISITORS BAR CHART (dashboard.html)
-// ============================================================
 (function () {
   const canvas = document.getElementById("visitorsBarChart");
   if (!canvas || typeof Chart === "undefined") return;
@@ -540,9 +531,6 @@ if (donutCanvas && typeof Chart !== "undefined") {
   renderChart("monthly");
 })();
 
-// ============================================================
-//  FILTER (reviews.html & halaman lain yang punya .filter-item)
-// ============================================================
 const filterButtons = document.querySelectorAll(".filter-item");
 const filterGroup = document.querySelector(".filter-group");
 
@@ -551,7 +539,6 @@ filterButtons.forEach((filterItem) => {
     filterButtons.forEach((i) => i.classList.remove("active"));
     filterItem.classList.add("active");
 
-    // Apply filter based on filter group context
     applyTableFilter();
   });
 });
@@ -570,7 +557,6 @@ function applyTableFilter() {
   const filterText = activeFilter.textContent.trim().toLowerCase();
   const isShowAll = filterText === "semua";
 
-  // Try to use data-filter attribute first (more explicit)
   const dataFilter = activeFilter.dataset.filter;
 
   rows.forEach((row) => {
@@ -582,11 +568,11 @@ function applyTableFilter() {
     let matches = false;
 
     if (dataFilter) {
-      // Use data-filter for precise column matching
+
       const [columnKey, ...filterValues] = dataFilter.split(":");
       matches = checkRowMatchesFilter(row, columnKey, filterValues);
     } else {
-      // Fallback to smart detection
+
       const pageContext = detectPageContext();
       const filterColumnIndex = pageContext.columnIndex;
       const filterKeywords = pageContext.keywords[filterText] || [];
@@ -617,27 +603,26 @@ function applyTableFilter() {
 }
 
 function checkRowMatchesFilter(row, columnKey, filterValues) {
-  // Map column keys to indices
+
   const columnMap = {
-    role: 2, // users
-    status: 3, // general
-    account_status: 3, // users account status
-    verification: 4, // users verification
-    listing_status: 4, // listings
-    reservation_status: 6, // reservations status (column 6)
-    review_status: 4, // reviews status (column 4)
-    check_in: 3, // reservations
-    rating: 2, // reviews
-    report_status: 4, // reports
-    report_type: 2, // reports type
-    transaction_status: 4, // transactions status
-    transaction_type: 2, // transactions type
-    payout_status: 4, // payouts status
+    role: 2,
+    status: 3,
+    account_status: 3,
+    verification: 4,
+    listing_status: 4,
+    reservation_status: 6,
+    review_status: 4,
+    check_in: 3,
+    rating: 2,
+    report_status: 4,
+    report_type: 2,
+    transaction_status: 4,
+    transaction_type: 2,
+    payout_status: 4,
     name: 0,
     email: 1,
   };
 
-  // If columnKey is numeric, use it directly
   let columnIndex = parseInt(columnKey);
   if (isNaN(columnIndex)) {
     columnIndex = columnMap[columnKey];
@@ -650,7 +635,6 @@ function checkRowMatchesFilter(row, columnKey, filterValues) {
   const cellText = cell.textContent.toLowerCase();
   const cellBadges = cell.querySelectorAll(".table-badge");
 
-  // Check badges first
   for (const badge of cellBadges) {
     const badgeText = badge.textContent.toLowerCase();
     if (filterValues.some((val) => badgeText.includes(val.toLowerCase()))) {
@@ -658,7 +642,6 @@ function checkRowMatchesFilter(row, columnKey, filterValues) {
     }
   }
 
-  // Check cell text
   if (filterValues.some((val) => cellText.includes(val.toLowerCase()))) {
     return true;
   }
@@ -667,15 +650,14 @@ function checkRowMatchesFilter(row, columnKey, filterValues) {
 }
 
 function detectPageContext() {
-  // Detect page from filter buttons text
+
   const filterItems = Array.from(document.querySelectorAll(".filter-item")).map(
     (f) => f.textContent.toLowerCase(),
   );
 
-  // Users page
   if (filterItems.includes("host") && filterItems.includes("tamu")) {
     return {
-      columnIndex: 2, // Role column
+      columnIndex: 2,
       keywords: {
         semua: [],
         host: ["host"],
@@ -685,10 +667,9 @@ function detectPageContext() {
     };
   }
 
-  // Listings page
   if (filterItems.includes("aktif") && filterItems.includes("nonaktif")) {
     return {
-      columnIndex: 4, // Status column
+      columnIndex: 4,
       keywords: {
         semua: [],
         aktif: ["aktif"],
@@ -698,10 +679,9 @@ function detectPageContext() {
     };
   }
 
-  // Reservations page
   if (filterItems.includes("check-in") && filterItems.includes("check-out")) {
     return {
-      columnIndex: 5, // Status column
+      columnIndex: 5,
       keywords: {
         semua: [],
         confirmed: ["confirmed", "terkonfirmasi"],
@@ -711,10 +691,9 @@ function detectPageContext() {
     };
   }
 
-  // Reviews page
   if (filterItems.includes("verified")) {
     return {
-      columnIndex: 3, // Verified/Status column
+      columnIndex: 3,
       keywords: {
         semua: [],
         verified: ["verified", "terverifikasi"],
@@ -723,10 +702,9 @@ function detectPageContext() {
     };
   }
 
-  // Reports page
   if (filterItems.includes("open") && filterItems.includes("resolved")) {
     return {
-      columnIndex: 4, // Status column
+      columnIndex: 4,
       keywords: {
         semua: [],
         open: ["open", "dibuka"],
@@ -736,10 +714,9 @@ function detectPageContext() {
     };
   }
 
-  // Transactions page
   if (filterItems.includes("pending") && filterItems.includes("completed")) {
     return {
-      columnIndex: 4, // Status column
+      columnIndex: 4,
       keywords: {
         semua: [],
         pending: ["pending"],
@@ -749,10 +726,9 @@ function detectPageContext() {
     };
   }
 
-  // Payouts page
   if (filterItems.includes("requested") && filterItems.includes("processed")) {
     return {
-      columnIndex: 5, // Status column
+      columnIndex: 5,
       keywords: {
         semua: [],
         requested: ["requested", "diminta"],
@@ -762,16 +738,12 @@ function detectPageContext() {
     };
   }
 
-  // Default
   return {
     columnIndex: 3,
     keywords: {},
   };
 }
 
-// ============================================================
-//  SORT BUTTON
-// ============================================================
 const sortButtons = document.querySelectorAll(".sort-button");
 sortButtons.forEach((sortItem) => {
   sortItem.addEventListener("click", () => {
@@ -792,11 +764,10 @@ sortButtons.forEach((sortItem) => {
 });
 
 function parseValue(text, sortBy) {
-  // Angka Rupiah — hapus "Rp", titik, spasi
+
   const cleaned = text.replace(/[Rp\s.]/g, "").replace(/,/g, "");
   const asNum = parseFloat(cleaned);
 
-  // Tanggal bahasa Indonesia
   const BULAN = {
     Jan: 0,
     Feb: 1,
@@ -820,13 +791,10 @@ function parseValue(text, sortBy) {
     }
   }
 
-  // Rating — hitung jumlah bintang fill
-  if (sortBy === "review") return NaN; // ditangani lewat DOM count
+  if (sortBy === "review") return NaN;
 
-  // Angka biasa
   if (!isNaN(asNum)) return asNum;
 
-  // String
   return text.trim().toLowerCase();
 }
 
@@ -839,15 +807,14 @@ function sortTableByColumn(sortBy, isDescending) {
 
   const rows = Array.from(tbody.querySelectorAll("tr"));
 
-  // Kolom per halaman
   const columnMap = {
-    user: 0, // Nama
-    listing: 0, // Nama Listing
-    reservation: 3, // Check-in
-    review: 2, // Rating (kolom bintang)
-    report: 5, // Tanggal Melapor
-    transaction: 3, // Jumlah
-    payout: 1, // Jumlah Payout
+    user: 0,
+    listing: 0,
+    reservation: 3,
+    review: 2,
+    report: 5,
+    transaction: 3,
+    payout: 1,
     date: 5,
     status: 3,
   };
@@ -859,7 +826,6 @@ function sortTableByColumn(sortBy, isDescending) {
     const cellB = b.querySelectorAll("td")[columnIndex];
     if (!cellA || !cellB) return 0;
 
-    // Khusus rating — hitung ikon bintang fill
     if (sortBy === "review") {
       const countA = cellA.querySelectorAll(
         ".ph-fill.ph-star, .ph-fill.ph-star-half",
@@ -870,7 +836,6 @@ function sortTableByColumn(sortBy, isDescending) {
       return isDescending ? countB - countA : countA - countB;
     }
 
-    // Ambil nama dari nested element jika ada
     const nameElemA = cellA.querySelector(".table-name, .listing-name");
     const nameElemB = cellB.querySelector(".table-name, .listing-name");
     const rawA = (nameElemA ?? cellA).textContent.trim();
@@ -879,7 +844,6 @@ function sortTableByColumn(sortBy, isDescending) {
     const valA = parseValue(rawA, sortBy);
     const valB = parseValue(rawB, sortBy);
 
-    // Keduanya angka atau timestamp
     if (typeof valA === "number" && typeof valB === "number") {
       if (isNaN(valA) && isNaN(valB)) return 0;
       if (isNaN(valA)) return 1;
@@ -887,7 +851,6 @@ function sortTableByColumn(sortBy, isDescending) {
       return isDescending ? valB - valA : valA - valB;
     }
 
-    // String
     const cmp = String(valA).localeCompare(String(valB), "id-ID");
     return isDescending ? -cmp : cmp;
   });
@@ -895,9 +858,6 @@ function sortTableByColumn(sortBy, isDescending) {
   rows.forEach((row) => tbody.appendChild(row));
 }
 
-// ============================================================
-//  TOGGLE SWITCH (settings.html)
-// ============================================================
 const toggleSwitches = document.querySelectorAll(".toggle-switch");
 
 toggleSwitches.forEach((toggle) => {
@@ -906,9 +866,6 @@ toggleSwitches.forEach((toggle) => {
   });
 });
 
-// ============================================================
-//  TAB + INDICATOR (logs.html & halaman lain yang punya .tab-item)
-// ============================================================
 const tabItems = document.querySelectorAll(".tab-item");
 const tabIndicator = document.querySelector(".tab-indicator");
 

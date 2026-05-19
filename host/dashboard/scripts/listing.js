@@ -14,7 +14,6 @@ listToggleButton.addEventListener("click", () => {
   icon.className = isGrid ? "ph-bold ph-squares-four" : "ph-bold ph-rows";
 });
 
-// Make listing rows clickable
 document.querySelectorAll(".listing-row").forEach((row) => {
   row.style.cursor = "pointer";
   row.addEventListener("click", () => {

@@ -1,7 +1,3 @@
-/* ============================================================
-   AUTH OVERLAY — wrapper modal sama seperti language popup
-   ============================================================ */
-
 .auth-overlay {
   position: fixed;
   inset: 0;
@@ -14,9 +10,9 @@
   opacity: 0;
   pointer-events: none;
   transition: all var(--transition-base);
-  height: 100vh; /* Full tinggi layar */
+  height: 100vh;
   display: flex;
-  justify-content: center; /* Horizontal center */
+  justify-content: center;
   align-items: center;
 }
 
@@ -24,10 +20,6 @@
   opacity: 1;
   pointer-events: all;
 }
-
-/* ============================================================
-   AUTH FORM CARD — tidak diubah dari desain asli
-   ============================================================ */
 
 .auth-form-card {
   background: rgba(255, 255, 255, 0.95);
@@ -54,10 +46,6 @@
 .auth-form-card:has(.auth-step.small.active) {
   height: auto;
 }
-
-/* ============================================================
-   AUTH FORM
-   ============================================================ */
 
 .auth-form {
   flex: 1;

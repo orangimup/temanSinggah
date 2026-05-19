@@ -1,7 +1,3 @@
-// ============================================================
-// SAVE BUTTON — card list
-// ============================================================
-
 document.querySelectorAll(".save-button").forEach((saveItem) => {
   saveItem.addEventListener("click", (e) => {
     e.preventDefault();
@@ -12,10 +8,6 @@ document.querySelectorAll(".save-button").forEach((saveItem) => {
       : "/assets/icons/save_fill.svg";
   });
 });
-
-// ============================================================
-// MAP
-// ============================================================
 
 window.addEventListener("load", () => {
   const map = L.map("propertyMap", {
@@ -35,13 +27,11 @@ window.addEventListener("load", () => {
     },
   ).addTo(map);
 
-  // ── Data properti ──────────────────────────────────────────
   const properties = [
     { id: "1", latlng: [-8.5069, 115.2625], price: "Rp 850.000" },
     { id: "2", latlng: [-8.508, 115.264], price: "Rp 650.000" },
   ];
 
-  // ── Custom CardLayer — card ikut gerak saat map digeser ────
   const CardLayer = L.Layer.extend({
     initialize(latlng, card, options) {
       this._latlng = latlng;
@@ -72,18 +62,15 @@ window.addEventListener("load", () => {
     },
   });
 
-  // ── Tutup semua card ───────────────────────────────────────
   function closeAllCards() {
     document.querySelectorAll(".map-property-card.open").forEach((c) => {
       c.classList.remove("open");
     });
   }
 
-  // ── Inisialisasi tiap properti ─────────────────────────────
   properties.forEach(({ id, latlng, price }) => {
     const latLng = L.latLng(...latlng);
 
-    // Pin icon — klik akan membuka card popup
     const icon = L.divIcon({
       html: `<i class="ph-fill ph-map-pin" style="font-size:32px;color:#8b2500;display:block;"></i>`,
       iconSize: [32, 32],
@@ -101,7 +88,6 @@ window.addEventListener("load", () => {
     const cardLayer = new CardLayer(latLng, card);
     cardLayer.addTo(map);
 
-    // ── Open / close ─────────────────────────────────────────
     function openCard() {
       closeAllCards();
       card.classList.add("open");
@@ -112,20 +98,17 @@ window.addEventListener("load", () => {
       card.classList.remove("open");
     }
 
-    // Klik pin → toggle card
     marker.on("click", (e) => {
       L.DomEvent.stopPropagation(e);
       card.classList.contains("open") ? closeCard() : openCard();
     });
 
-    // Tombol close di dalam card
     card.querySelector(".map-card-close")?.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       closeCard();
     });
 
-    // Disable map interaction saat hover card
     card.addEventListener("mouseenter", () => {
       map.dragging.disable();
       map.scrollWheelZoom.disable();
@@ -143,7 +126,6 @@ window.addEventListener("load", () => {
       map.keyboard.enable();
     });
 
-    // Stop propagasi event dari card ke map
     ["click", "dblclick", "mousedown"].forEach((evt) => {
       card.addEventListener(evt, (e) => e.stopPropagation());
     });
@@ -151,7 +133,6 @@ window.addEventListener("load", () => {
       card.addEventListener(evt, (e) => e.stopPropagation(), { passive: true });
     });
 
-    // ── Save button di dalam card ────────────────────────────
     const saveBtn = card.querySelector(".map-card-button.wishlist");
     if (saveBtn) {
       const saveImg = saveBtn.querySelector("img");
@@ -168,10 +149,8 @@ window.addEventListener("load", () => {
     }
   });
 
-  // ── Klik di luar marker → tutup semua card ─────────────────
   map.on("click", closeAllCards);
 
-  // ── Zoom controls ──────────────────────────────────────────
   document
     .getElementById("zoomIn")
     ?.addEventListener("click", () => map.zoomIn());

@@ -111,7 +111,6 @@ function initializeMap() {
 
     const marker = L.marker([-7.9797, 112.6304], { icon }).addTo(map);
 
-    // Single click = pindah pin + update alamat, double click = zoom in
     let clickTimer = null;
 
     map.on("click", (e) => {
@@ -121,11 +120,10 @@ function initializeMap() {
         clickTimer = null;
         marker.setLatLng(e.latlng);
 
-        // Reverse geocoding: koordinat → alamat
         const { lat, lng } = e.latlng;
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+            `https:
           );
           const data = await res.json();
           const input = document.querySelector(".location-search input");
@@ -133,7 +131,6 @@ function initializeMap() {
             input.value = data.display_name;
           }
         } catch (err) {
-          console.error("Gagal mengambil alamat:", err);
         }
       }, 250);
     });
@@ -163,7 +160,6 @@ function initializeMap() {
       });
     }
   } catch (error) {
-    console.error("Error initializing map:", error);
   }
 }
 
@@ -209,7 +205,7 @@ if (grid) {
   const fotos = JSON.parse(localStorage.getItem("fotoProperti") || "[]");
 
   if (fotos.length > 0) {
-    // Kosongkan placeholder
+
     grid.innerHTML = "";
 
     fotos.forEach((src, index) => {
@@ -223,7 +219,6 @@ if (grid) {
         <div class="photo-remove"><i class="ph-bold ph-x"></i></div>
       `;
 
-      // Tombol hapus
       item.querySelector(".photo-remove").addEventListener("click", () => {
         fotos.splice(index, 1);
         localStorage.setItem("fotoProperti", JSON.stringify(fotos));
@@ -275,12 +270,12 @@ function initDragSort() {
 
     item.addEventListener("dragend", () => {
       item.classList.remove("dragging");
-      // Simpan urutan baru ke localStorage
+
       const newOrder = Array.from(grid.querySelectorAll(".photo-item img")).map(
         (img) => img.src
       );
       localStorage.setItem("fotoProperti", JSON.stringify(newOrder));
-      // Update badge cover
+
       const badges = grid.querySelectorAll(".photo-badge");
       badges.forEach((b) => b.remove());
       const firstImg = grid.querySelector(".photo-item");

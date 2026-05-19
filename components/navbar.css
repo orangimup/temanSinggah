@@ -215,10 +215,6 @@
   transform: scale(0.99);
 }
 
-/* ============================================================
-   HAMBURGER DROPDOWN
-   ============================================================ */
-
 #hamburgerDropdown {
   position: fixed;
   z-index: var(--z-dropdown);
@@ -303,9 +299,9 @@
   opacity: 0;
   pointer-events: none;
   transition: all var(--transition-base);
-  height: 100vh; /* Full tinggi layar */
+  height: 100vh;
   display: flex;
-  justify-content: center; /* Horizontal center */
+  justify-content: center;
   align-items: center;
 }
 
