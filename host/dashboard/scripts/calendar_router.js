@@ -230,3 +230,81 @@ document.querySelectorAll(".panel-group").forEach((group) => {
     popup.classList.remove("open");
   });
 });
+
+function displayValue(btn) {
+  const prefix = btn.dataset.prefix || "";
+  const suffix = btn.dataset.suffix || "";
+  const valueEl = btn.querySelector(".panel-value");
+  const input = btn.querySelector(".panel-input");
+
+  if (!input || !valueEl) return;
+
+  const raw = input.value;
+
+  if (prefix === "Rp") {
+    const num = parseFloat(raw);
+    valueEl.textContent = isNaN(num) ? raw : "Rp" + num.toLocaleString("id-ID");
+  } else if (suffix) {
+    valueEl.textContent = raw + suffix;
+  } else {
+    valueEl.textContent = raw;
+  }
+}
+
+function openEdit(btn, saveBtn) {
+  document
+    .querySelectorAll(".panel-button.editable.editing")
+    .forEach((other) => {
+      if (other !== btn) closeEdit(other);
+    });
+
+  btn.classList.add("editing");
+  saveBtn.classList.add("visible");
+
+  const input = btn.querySelector(".panel-input");
+  input?.focus();
+  input?.select();
+}
+
+function closeEdit(btn) {
+  btn.classList.remove("editing");
+  const saveBtn = btn.nextElementSibling;
+  if (saveBtn?.classList.contains("panel-save-button")) {
+    saveBtn.classList.remove("visible");
+  }
+}
+
+function saveEdit(btn) {
+  displayValue(btn);
+  closeEdit(btn);
+}
+
+document.querySelectorAll(".panel-button.editable").forEach((btn) => {
+  const input = btn.querySelector(".panel-input");
+
+  const saveBtn = document.createElement("button");
+  saveBtn.className = "panel-save-button";
+  saveBtn.textContent = "Simpan";
+  btn.after(saveBtn);
+
+  btn.addEventListener("click", (e) => {
+    if (e.target === input) return; 
+    openEdit(btn, saveBtn);
+  });
+
+  input?.addEventListener("click", (e) => e.stopPropagation());
+
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveEdit(btn);
+    }
+    if (e.key === "Escape") {
+      closeEdit(btn);
+    }
+  });
+
+  saveBtn.addEventListener("click", () => {
+    saveEdit(btn);
+  });
+});

@@ -502,6 +502,113 @@ body {
   margin-bottom: var(--space-20);
 }
 
+.panel-button.editable {
+  position: relative;
+  padding-right: var(--space-40);
+}
+
+.panel-edit-icon {
+  position: absolute;
+  top: 50%;
+  right: var(--space-16);
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  color: var(--color-text-hint);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
+
+.panel-button.editable:hover .panel-edit-icon {
+  opacity: 1;
+}
+
+.panel-button.editable.editing {
+  border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  cursor: default;
+}
+
+.panel-button.editable.editing .panel-edit-icon {
+  opacity: 0;
+}
+
+.panel-button.editable.editing .panel-value {
+  display: none;
+}
+
+.panel-edit-wrap {
+  display: flex ;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+
+.panel-button.editable:not(.editing) .panel-edit-wrap {
+  display: none;
+}
+
+.panel-edit-prefix,
+.panel-edit-suffix {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.panel-input {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-family: var(--font-family);
+  padding: 0;
+}
+
+.panel-input::-webkit-outer-spin-button,
+.panel-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.panel-input[type="time"] {
+  width: auto;
+  min-width: 100px;
+}
+
+.panel-save-button {
+  display: none;
+  margin: var(--space-6) var(--space-16) var(--space-10);
+  padding: var(--space-12) var(--space-16);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-xl);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  width: calc(100% - var(--space-32));
+  font-family: var(--font-family);
+}
+
+.panel-save-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.panel-save-button:active {
+  background: var(--color-primary-active);
+  transform: scale(0.99);
+}
+
+.panel-save-button.visible {
+  display: block;
+}
+
 .legend-section {
   padding: var(--space-20);
   display: flex;

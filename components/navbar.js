@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   let isLoaded = false;
+  let intentToBeHost = false;
 
   function isHostPage() {
     return window.location.pathname.includes("/host/");
@@ -63,6 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
     isLoaded = false;
     dropdown.innerHTML = "";
     loadDropdown();
+
+    if (intentToBeHost) {
+      intentToBeHost = false;
+      setTimeout(() => {
+        window.location.href = "/host/onboarding/pages/about_place.html";
+      }, 500);
+    }
   };
 
   function onLogout() {
@@ -73,6 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
     isLoaded = false;
     dropdown.innerHTML = "";
     loadDropdown();
+
+    if (isHostPage()) {
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 300);
+    }
   }
 
   async function loadDropdown() {
@@ -93,12 +107,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const doc = new DOMParser().parseFromString(html, "text/html");
       const template = doc.querySelector(`[data-type="${userType}"]`);
       if (!template) {
+        console.warn(
           `[navbar] Template [data-type="${userType}"] tidak ditemukan`,
         );
         return;
       }
       injectDropdown(template.innerHTML);
     } catch (err) {
+      console.error("[navbar] Error loading dropdown:", err);
     }
   }
 
@@ -129,18 +145,20 @@ document.addEventListener("DOMContentLoaded", () => {
           container.appendChild(overlay);
           bindLanguagePopupEvents();
         } else {
+          console.warn("[navbar] #languagePopup container tidak ditemukan");
         }
       } else {
+        console.warn(
           "[navbar] #languageOverlay tidak ditemukan di language.html",
         );
       }
     } catch (err) {
+      console.error("[navbar] Error loading language popup:", err);
     }
   }
 
   async function loadAuthPopup() {
     if (document.getElementById("authOverlay")) {
-
       window.bindAuthPopupEvents?.();
       return;
     }
@@ -156,13 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("authPopup");
         if (container) {
           container.appendChild(overlay);
-
           window.bindAuthPopupEvents?.();
         } else {
+          console.warn("[navbar] #authPopup container tidak ditemukan");
         }
       } else {
+        console.warn("[navbar] #authOverlay tidak ditemukan di auth.html");
       }
     } catch (err) {
+      console.error("[navbar] Error loading auth popup:", err);
     }
   }
 
@@ -213,6 +233,12 @@ document.addEventListener("DOMContentLoaded", () => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (el.textContent.includes("Host")) {
+          intentToBeHost = true;
+        } else {
+          intentToBeHost = false;
+        }
         window.openAuthPopup();
       });
     });

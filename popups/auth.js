@@ -16,20 +16,20 @@ window.bindAuthPopupEvents = function () {
   };
 
   const showStep = (stepId) => {
+    console.log("[AUTH] Navigasi ke:", stepId);
     form
       .querySelectorAll(".auth-step")
       .forEach((s) => s.classList.remove("active"));
     const target = form.querySelector(`#${stepId}`);
-    if (target) target.classList.add("active");
-    else console.error(`Step "${stepId}" tidak ditemukan`);
+    if (target) {
+      target.classList.add("active");
+      console.log("[AUTH] ✓ Berhasil ke:", stepId);
+    } else {
+      console.error(`[AUTH] ✗ Step "${stepId}" tidak ditemukan`);
+    }
   };
 
   const isEmailRegistered = (email) => email.includes("gmail");
-
-  const simulateGoogleLogin = () => {
-    authState.googleUserIsNew = Math.random() > 0.5;
-    return true;
-  };
 
   authOverlay.querySelectorAll("[data-action='close-auth']").forEach((btn) => {
     btn.addEventListener("click", () => window.closeAuthPopup?.());
@@ -54,11 +54,29 @@ window.bindAuthPopupEvents = function () {
     });
 
   form
+    .querySelector("#authStep2 .auth-submit-button")
+    ?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const email =
+        form.querySelector("#authStep2 .auth-input")?.value.trim() || "";
+      if (!email) {
+        alert("Masukkan email atau nomor telepon");
+        return;
+      }
+
+      authState.enteredEmail = email;
+      authState.isExistingUser = isEmailRegistered(email);
+      showStep("authStep3");
+    });
+
+  form
     .querySelector(
       "#authStep2 .auth-social-icon[aria-label='Login dengan Google']",
     )
     ?.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       authState.isExistingUser = false;
       showStep("authStep4");
     });
@@ -69,6 +87,7 @@ window.bindAuthPopupEvents = function () {
     )
     ?.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       authState.isExistingUser = false;
       showStep("authStep4");
     });
@@ -79,6 +98,7 @@ window.bindAuthPopupEvents = function () {
     )
     ?.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       authState.isExistingUser = false;
       showStep("authStep4");
     });
@@ -102,11 +122,82 @@ window.bindAuthPopupEvents = function () {
     });
 
   form
+    .querySelector("#authStep3 .auth-submit-button")
+    ?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log(
+        "[AUTH] Step 3 submit - isExistingUser:",
+        authState.isExistingUser,
+      );
+
+      const otp =
+        form.querySelector("#authStep3 .auth-input.code")?.value.trim() || "";
+      if (!otp || otp.length !== 6) {
+        alert("Masukkan kode OTP 6 digit");
+        return;
+      }
+
+      if (authState.isExistingUser) {
+        console.log("[AUTH] Existing user → Step 7");
+        showStep("authStep7");
+      } else {
+        console.log("[AUTH] New user → Step 4");
+        showStep("authStep4");
+      }
+    });
+
+  form
     .querySelector("#authStep4 [data-action='prev-step']")
     ?.addEventListener("click", (e) => {
       e.preventDefault();
       showStep("authStep2");
     });
+
+  const step4Button = form.querySelector("#authStep4 .auth-submit-button");
+  if (step4Button) {
+    console.log("[AUTH] ✓ Step 4 button ditemukan");
+    step4Button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("[AUTH] Step 4 submit clicked");
+
+      const nameInputs = form.querySelectorAll(
+        "#authStep4 fieldset .auth-input",
+      );
+      const firstName = nameInputs[0]?.value.trim();
+      const lastName = nameInputs[1]?.value.trim();
+      const dob = nameInputs[2]?.value.trim();
+
+      console.log("[AUTH] Step 4 data:", { firstName, lastName, dob });
+
+      if (!firstName || !lastName || !dob) {
+        alert("Lengkapi semua data akun");
+        return;
+      }
+
+      console.log("[AUTH] Step 4 → Step 7");
+      showStep("authStep7");
+    });
+  } else {
+    console.error("[AUTH] ✗ Step 4 button TIDAK ditemukan!");
+  }
+
+  const step5GoogleBtn = form.querySelector(
+    "#authStep5 .auth-submit-button:not(.outline)",
+  );
+  if (step5GoogleBtn) {
+    console.log("[AUTH] ✓ Step 5 Google button ditemukan");
+    step5GoogleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("[AUTH] Step 5 Google button clicked → Step 4");
+      authState.isExistingUser = false;
+      showStep("authStep7");
+    });
+  } else {
+    console.error("[AUTH] ✗ Step 5 Google button TIDAK ditemukan!");
+  }
 
   form
     .querySelector(
@@ -153,77 +244,51 @@ window.bindAuthPopupEvents = function () {
       showStep("authStep4");
     });
 
-  form
-    .querySelector("#authStep7 [data-action='login-success']")
-    ?.addEventListener("click", (e) => {
+  const step7Button = form.querySelector("#authStep7 .auth-submit-button");
+  if (step7Button) {
+    console.log("[AUTH] ✓ Step 7 button ditemukan");
+    step7Button.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
+      console.log("[AUTH] Step 7 submit clicked → login success");
       window.onLoginSuccess?.("A");
     });
+  } else {
+    console.error("[AUTH] ✗ Step 7 button TIDAK ditemukan!");
+  }
 
   form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("[AUTH] Form submit prevented");
+  });
+
+  form.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
     e.preventDefault();
 
     const activeStep = form.querySelector(".auth-step.active");
     if (!activeStep) return;
+
     const stepId = activeStep.id;
+    console.log("[AUTH] Enter pressed di:", stepId);
 
+    let submitBtn = null;
     if (stepId === "authStep2") {
-      const email =
-        form.querySelector("#authStep2 .auth-input")?.value.trim() || "";
-      if (!email) {
-        alert("Masukkan email atau nomor telepon");
-        return;
-      }
-
-      authState.enteredEmail = email;
-      authState.isExistingUser = isEmailRegistered(email);
-
-      showStep("authStep3");
+      submitBtn = form.querySelector("#authStep2 .auth-submit-button");
+    } else if (stepId === "authStep3") {
+      submitBtn = form.querySelector("#authStep3 .auth-submit-button");
+    } else if (stepId === "authStep4") {
+      submitBtn = form.querySelector("#authStep4 .auth-submit-button");
+    } else if (stepId === "authStep7") {
+      submitBtn = form.querySelector("#authStep7 .auth-submit-button");
     }
 
-    else if (stepId === "authStep3") {
-      const otp =
-        form.querySelector("#authStep3 .auth-input.code")?.value.trim() || "";
-      if (!otp || otp.length !== 6) {
-        alert("Masukkan kode OTP 6 digit");
-        return;
-      }
-
-      if (authState.isExistingUser) {
-        showStep("authStep7");
-      } else {
-        showStep("authStep4");
-      }
-    }
-
-    else if (stepId === "authStep4") {
-      const inputs = form.querySelectorAll("#authStep4 .auth-input");
-      const firstName = inputs[0]?.value.trim();
-      const lastName = inputs[1]?.value.trim();
-      const dob = inputs[2]?.value.trim();
-      const password = inputs[3]?.value.trim();
-
-      if (!firstName || !lastName || !dob || !password) {
-        alert("Lengkapi semua data akun");
-        return;
-      }
-
-      showStep("authStep7");
-    }
-
-    else if (stepId === "authStep5") {
-      if (!simulateGoogleLogin()) {
-        alert("Google login gagal");
-        return;
-      }
-
-      if (authState.googleUserIsNew) {
-        showStep("authStep7");
-      } else {
-        window.onLoginSuccess?.("A");
-      }
+    if (submitBtn) {
+      console.log("[AUTH] Trigger submit button via Enter");
+      submitBtn.click();
     }
   });
 
+  console.log("[AUTH] Binding selesai, navigasi ke Step 2");
   showStep("authStep2");
 };

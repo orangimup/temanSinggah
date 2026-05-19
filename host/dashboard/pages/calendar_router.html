@@ -102,7 +102,6 @@
       </section>
 
       <aside class="settings-sidebar">
-        <!-- ── Group 1: Harga ── -->
         <div class="panel-group">
           <button class="panel-card button" aria-label="Buka pengaturan harga">
             <div class="panel-card-info">
@@ -125,31 +124,86 @@
               Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
               berdasarkan tanggal.
             </span>
+
             <div class="panel-title">Harga</div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="harga-malam"
+              data-prefix="Rp"
+              data-type="number">
               <span class="panel-label">Per Malam</span>
-              <span class="panel-value">Rp399.344</span>
+              <span class="panel-value">399.344</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <span class="panel-edit-prefix">Rp</span>
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="399344"
+                  min="0" />
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="harga-weekend"
+              data-prefix="Rp"
+              data-type="number">
               <span class="panel-label">Akhir Pekan</span>
-              <span class="panel-value">Rp423.305</span>
+              <span class="panel-value">423.305</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <span class="panel-edit-prefix">Rp</span>
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="423305"
+                  min="0" />
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
+
             <div class="panel-title">Diskon</div>
             <div class="panel-desc">
               Sesuaikan harga Anda untuk menarik lebih banyak tamu.
             </div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="diskon-mingguan"
+              data-suffix="%"
+              data-type="number">
               <span class="panel-label">Mingguan</span>
               <span class="panel-value">10%</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="10"
+                  min="0"
+                  max="99" />
+                <span class="panel-edit-suffix">%</span>
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="diskon-bulanan"
+              data-suffix="%"
+              data-type="number">
               <span class="panel-label">Bulanan</span>
               <span class="panel-value">30%</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="30"
+                  min="0"
+                  max="99" />
+                <span class="panel-edit-suffix">%</span>
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
           </section>
         </div>
 
-        <!-- ── Group 2: Ketersediaan ── -->
         <div class="panel-group">
           <button
             class="panel-card button"
@@ -173,19 +227,47 @@
               Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
               berdasarkan tanggal.
             </span>
+
             <div class="panel-title">Lama Perjalanan</div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="min-malam"
+              data-suffix=" malam"
+              data-type="number">
               <span class="panel-label">Minimal malam</span>
-              <span class="panel-value">1</span>
+              <span class="panel-value">1 malam</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="1"
+                  min="1"
+                  max="365" />
+                <span class="panel-edit-suffix">malam</span>
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="max-malam"
+              data-suffix=" malam"
+              data-type="number">
               <span class="panel-label">Maksimal malam</span>
-              <span class="panel-value">365</span>
+              <span class="panel-value">365 malam</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input
+                  class="panel-input"
+                  type="number"
+                  value="365"
+                  min="1"
+                  max="365" />
+                <span class="panel-edit-suffix">malam</span>
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
           </section>
         </div>
 
-        <!-- ── Group 3: Check-in & Check-out ── -->
         <div class="panel-group">
           <button
             class="panel-card button"
@@ -209,19 +291,33 @@
               Ini berlaku untuk semua malam, kecuali Anda menyesuaikannya
               berdasarkan tanggal.
             </span>
+
             <div class="panel-title">Batas Check-in dan Check-out</div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="checkin"
+              data-type="time">
               <span class="panel-label">Check-in</span>
               <span class="panel-value">14:00</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input class="panel-input" type="time" value="14:00" />
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
-            <div class="panel-button">
+            <div
+              class="panel-button editable"
+              data-field="checkout"
+              data-type="time">
               <span class="panel-label">Check-out</span>
               <span class="panel-value">11:00</span>
+              <div class="panel-edit-wrap" style="display: none">
+                <input class="panel-input" type="time" value="11:00" />
+              </div>
+              <i class="ph-bold ph-pencil-simple panel-edit-icon"></i>
             </div>
           </section>
         </div>
 
-        <!-- ── Legend ── -->
         <div class="panel-card">
           <div class="legend-section">
             <div class="legend-title">Keterangan</div>
