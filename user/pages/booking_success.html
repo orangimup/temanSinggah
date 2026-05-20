@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pemesanan Berhasil | Teman Singgah</title>
+    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/components/root.css" />
+    <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/components/footer.css" />
+    <link rel="stylesheet" href="/popups/auth.css" />
+    <link rel="stylesheet" href="/user/styles/booking_success.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
+          <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+          <img src="/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+        </div>
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/index.html" class="nav-link">Cari Penginapan</a></li>
+          <li class="nav-item"><a href="/user/pages/promo_deals.html" class="nav-link">Promo & Deals</a></li>
+          <li class="nav-item"><a href="/user/pages/become_host.html" class="nav-link">Jadi Host</a></li>
+          <li class="nav-item"><a href="/user/pages/about_us.html" class="nav-link">Tentang Kami</a></li>
+          <div class="nav-indicator"></div>
+        </ul>
+        <div class="nav-right">
+          <button class="ghost-button" id="gantiHostBtn">Ganti ke host</button>
+          <div class="icon-buttons">
+            <button class="icon-button profile" aria-label="Profile">A</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
+              <i class="ph-bold ph-list"></i>
+            </button>
+          </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
+          <div id="authPopup"></div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content success-main">
+
+      <!-- Success Hero -->
+      <section class="success-hero">
+        <div class="success-icon-wrap">
+          <div class="success-icon-ring"></div>
+          <div class="success-icon">
+            <i class="ph-fill ph-check-circle"></i>
+          </div>
+        </div>
+        <h1 class="success-title">Pemesanan Berhasil!</h1>
+        <p class="success-subtitle">
+          Terima kasih telah memesan di Teman Singgah.<br />
+          Detail reservasi dikirim ke email kamu.
+        </p>
+        <div class="booking-id-badge">
+          <i class="ph-bold ph-ticket"></i>
+          <span>Kode Booking: <strong id="bookingCode">TS-20260607-8841</strong></span>
+          <button class="copy-btn" id="copyCodeBtn" title="Salin kode booking">
+            <i class="ph-bold ph-copy"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Detail Card -->
+      <section class="detail-section">
+        <div class="detail-card">
+
+          <!-- Property Info -->
+          <div class="detail-property">
+            <img
+              src="https://placehold.co/100x80/c0a090/ffffff?text=Properti"
+              alt="Adhya Living"
+              class="detail-property-img" />
+            <div class="detail-property-info">
+              <span class="detail-property-type">Homestay Villa · Yogyakarta</span>
+              <h2 class="detail-property-name">Adhya Living Homestay Villa Jogja</h2>
+              <span class="detail-property-rating">
+                <i class="ph-fill ph-star"></i> 4.94 &nbsp;·&nbsp; 33 ulasan
+              </span>
+            </div>
+          </div>
+
+          <hr class="detail-divider" />
+
+          <!-- Booking Details Grid -->
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-calendar-blank"></i> Check-in</span>
+              <span class="detail-item-value">Sabtu, 7 Juni 2026</span>
+              <span class="detail-item-note">Pukul 14.00 ke atas</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-calendar-check"></i> Check-out</span>
+              <span class="detail-item-value">Senin, 9 Juni 2026</span>
+              <span class="detail-item-note">Sebelum pukul 12.00</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-moon"></i> Durasi</span>
+              <span class="detail-item-value">2 Malam</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-users-three"></i> Tamu</span>
+              <span class="detail-item-value">1 Pengunjung</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-bed"></i> Kamar</span>
+              <span class="detail-item-value">Kamar Deluxe</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-item-label"><i class="ph-bold ph-credit-card"></i> Metode Bayar</span>
+              <span class="detail-item-value">GoPay</span>
+            </div>
+          </div>
+
+          <hr class="detail-divider" />
+
+          <!-- Price Breakdown -->
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>2 malam × Rp 1.474.801</span>
+              <span>Rp 2.949.601</span>
+            </div>
+            <div class="price-row">
+              <span>Biaya layanan</span>
+              <span>Rp 0</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Dibayar</span>
+              <span>Rp 2.949.601</span>
+            </div>
+          </div>
+
+          <hr class="detail-divider" />
+
+          <!-- Cancellation Policy -->
+          <div class="policy-row">
+            <i class="ph-fill ph-shield-check policy-icon"></i>
+            <div>
+              <span class="policy-title">Gratis Pembatalan</span>
+              <span class="policy-desc">Batalkan sebelum 6 Juni 2026 untuk pengembalian uang penuh.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Host Contact -->
+        <div class="host-contact-card">
+          <h3 class="host-contact-title">Kontak Host</h3>
+          <div class="host-contact-row">
+            <div class="host-avatar">B</div>
+            <div>
+              <span class="host-name">Baskara Wicaksono</span>
+              <span class="host-since">Host sejak 2021</span>
+            </div>
+          </div>
+          <a href="/user/pages/messages.html" class="host-message-btn">
+            <i class="ph-bold ph-chat-circle-text"></i>
+            Kirim Pesan ke Host
+          </a>
+        </div>
+      </section>
+
+      <!-- CTA Buttons -->
+      <section class="success-actions">
+        <button class="btn-outline" id="downloadBtn">
+          <i class="ph-bold ph-download-simple"></i>
+          Simpan Detail
+        </button>
+        <a href="/user/pages/history.html" class="btn-outline">
+          <i class="ph-bold ph-clock-counter-clockwise"></i>
+          Lihat Riwayat Booking
+        </a>
+        <a href="/index.html" class="btn-primary">
+          <i class="ph-bold ph-house-simple"></i>
+          Kembali ke Beranda
+        </a>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <span class="footer-brand">Teman Singgah</span>
+          <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Navigasi</h3>
+          <ul class="footer-links">
+            <li><a href="/index.html" class="footer-link">Beranda</a></li>
+            <li><a href="/user/pages/history.html" class="footer-link">Riwayat Booking</a></li>
+            <li><a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Dukungan</h3>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
+            <li><a href="#" class="footer-link">Kebijakan Privasi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Teman Singgah. Hak cipta dilindungi.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Salin kode booking
+      document.getElementById('copyCodeBtn')?.addEventListener('click', function () {
+        const code = document.getElementById('bookingCode').textContent;
+        navigator.clipboard.writeText(code).then(function () {
+          const btn = document.getElementById('copyCodeBtn');
+          btn.innerHTML = '<i class="ph-fill ph-check"></i>';
+          btn.style.color = '#2e7d32';
+          setTimeout(function () {
+            btn.innerHTML = '<i class="ph-bold ph-copy"></i>';
+            btn.style.color = '';
+          }, 2000);
+        });
+      });
+
+      // Simpan detail sebagai teks (print dialog)
+      document.getElementById('downloadBtn')?.addEventListener('click', function () {
+        window.print();
+      });
+    </script>
+
+    <script src="/components/navbar.js"></script>
+    <script src="/components/ganti_host_modal.js"></script>
+    <script src="/popups/auth.js"></script>
+  </body>
+</html>
