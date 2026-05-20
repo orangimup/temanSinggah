@@ -1,0 +1,364 @@
+/* ═══════════════════════════════════════════
+   SETTINGS PAGE STYLES
+   Extends account.css — pastikan dimuat setelahnya
+═══════════════════════════════════════════ */
+
+/* ── Group container ── */
+.settings-group {
+  margin-bottom: var(--space-8);
+}
+
+.settings-group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-20);
+}
+
+.settings-group-title i {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+}
+
+.settings-group-title.danger-title,
+.danger-title {
+  color: var(--color-error);
+}
+
+.settings-group-title.danger-title i {
+  color: var(--color-error);
+}
+
+/* ── Item row ── */
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+  padding: var(--space-20) var(--space-24);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  border: 1.5px solid var(--color-border-subtle);
+  margin-bottom: var(--space-12);
+  transition: border-color var(--transition-base);
+}
+
+.settings-item:hover {
+  border-color: var(--color-border);
+}
+
+.settings-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-item-label {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+.settings-item-value {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.settings-item-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Buttons ── */
+.settings-btn-outline {
+  flex-shrink: 0;
+  padding: var(--space-8) var(--space-20);
+  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.settings-btn-outline:hover {
+  background: var(--color-bg-section);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.settings-btn-primary {
+  padding: var(--space-10) var(--space-24);
+  border-radius: var(--radius-xl);
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: background var(--transition-base);
+}
+
+.settings-btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.settings-btn-danger {
+  flex-shrink: 0;
+  padding: var(--space-8) var(--space-20);
+  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--color-error);
+  background: transparent;
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.settings-btn-danger:hover {
+  background: var(--color-error-light);
+}
+
+/* ── Toggle switch ── */
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  width: 48px;
+  height: 26px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: background var(--transition-base);
+}
+
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition-base);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.toggle-switch input:checked + .toggle-track {
+  background: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-track::after {
+  transform: translateX(22px);
+}
+
+/* ── Modal overlay ── */
+.settings-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-24);
+}
+
+.settings-modal-overlay.open {
+  display: flex;
+}
+
+.settings-modal {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-3xl);
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 64px rgba(26, 10, 0, 0.18);
+  overflow: hidden;
+}
+
+.settings-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-24) var(--space-32);
+  border-bottom: 1.5px solid var(--color-border-subtle);
+}
+
+.settings-modal-header h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.settings-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--color-bg-section);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  transition: background var(--transition-base);
+}
+
+.settings-modal-close:hover {
+  background: var(--color-border);
+}
+
+.settings-modal-body {
+  padding: var(--space-32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+.settings-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-12);
+  padding: var(--space-20) var(--space-32);
+  border-top: 1.5px solid var(--color-border-subtle);
+}
+
+.settings-modal-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Form inside modal ── */
+.settings-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.settings-form-field label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+.settings-input {
+  width: 100%;
+  padding: var(--space-12) var(--space-16);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background: var(--color-bg-card);
+  outline: none;
+  transition: border-color var(--transition-base);
+  box-sizing: border-box;
+}
+
+.settings-input:focus {
+  border-color: var(--color-primary);
+}
+
+.settings-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.settings-input-group .settings-input {
+  padding-right: 48px;
+}
+
+.settings-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.settings-eye-btn:hover {
+  color: var(--color-text-primary);
+}
+
+/* ── Danger box in modal ── */
+.settings-danger-box {
+  display: flex;
+  gap: var(--space-16);
+  align-items: flex-start;
+  background: var(--color-error-light);
+  border: 1.5px solid var(--color-error);
+  border-radius: var(--radius-xl);
+  padding: var(--space-16) var(--space-20);
+}
+
+.settings-danger-box i {
+  font-size: var(--text-xl);
+  color: var(--color-error);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.settings-danger-box p {
+  font-size: var(--text-sm);
+  color: var(--color-error);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Toast notification ── */
+.settings-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-14) var(--space-24);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 2000;
+  white-space: nowrap;
+}
+
+.settings-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
