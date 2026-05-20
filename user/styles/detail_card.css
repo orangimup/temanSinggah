@@ -812,3 +812,110 @@
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
 }
+
+/* ─── HOST SECTION ─────────────────────────────────── */
+
+.host-section {
+  margin-bottom: var(--space-48);
+}
+
+.host-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+  padding: var(--space-24);
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: var(--radius-2xl);
+  background: var(--color-bg-card);
+}
+
+.host-card-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  flex: 1;
+  min-width: 0;
+}
+
+.host-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.host-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.host-name {
+  font-size: var(--text-md);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.host-joined {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.host-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  margin-top: var(--space-4);
+}
+
+.host-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.host-stat i {
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+}
+
+.host-chat-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-primary);
+  background: transparent;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.host-chat-button i {
+  font-size: var(--text-md);
+}
+
+.host-chat-button:hover {
+  background: var(--color-primary-light);
+}
+
+.host-chat-button:active {
+  background: var(--color-primary-light-hover);
+  transform: scale(0.99);
+}
