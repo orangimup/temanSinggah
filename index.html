@@ -1,1091 +1,1085 @@
 ﻿<!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cari Penginapan | Teman Singgah</title>
-    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
-    <link rel="stylesheet" href="/components/root.css" />
-    <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/components/search_bar.css" />
-    <link rel="stylesheet" href="/components/footer.css" />
-    <link rel="stylesheet" href="/popups/auth.css" />
-    <link rel="stylesheet" href="/user/styles/home.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cari Penginapan | Teman Singgah</title>
+  <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet" />
-    <script
-      type="module"
-      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
-  </head>
+  <link rel="stylesheet" href="/components/root.css" />
+  <link rel="stylesheet" href="/components/navbar.css" />
+  <link rel="stylesheet" href="/components/search_bar.css" />
+  <link rel="stylesheet" href="/components/footer.css" />
+  <link rel="stylesheet" href="/popups/auth.css" />
+  <link rel="stylesheet" href="/user/styles/home.css" />
 
-  <body>
-    <header class="navbar">
-      <nav class="navbar-container">
-        <a href="/index.html" class="logo-link"></a>
-        <div class="logo-section">
-          <img
-            src="/assets/logo/logo_temansinggah.svg"
-            alt="Logo Teman Singgah"
-            class="logo-icon" />
-          <img
-            src="/assets/logo/label_temansinggah.svg"
-            alt="Brand Name Teman Singgah"
-            class="logo-name" />
-        </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+</head>
 
-        <ul class="nav-menu">
-          <li class="nav-item">
-            <a href="/index.html" class="nav-link active">Cari Penginapan</a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/promo_deals.html" class="nav-link">
-              Promo & Deals
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/become_host.html" class="nav-link">
-              Jadi Host
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/about_us.html" class="nav-link">
-              Tentang Kami
-            </a>
-          </li>
+<body>
+  <header class="navbar">
+    <nav class="navbar-container">
+      <a href="/index.html" class="logo-link"></a>
+      <div class="logo-section">
+        <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+        <img src="/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+      </div>
 
-          <div class="nav-indicator"></div>
-        </ul>
-
-        <div class="nav-right">
-          <a href="/host/onboarding/pages/about_place.html">
-            <button class="ghost-button">Ganti ke host</button>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="/index.html" class="nav-link active">Cari Penginapan</a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/promo_deals.html" class="nav-link">
+            Promo & Deals
           </a>
-          <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
-            <button class="icon-button hamburger" aria-label="Hamburger">
-              <i class="ph-bold ph-list"></i>
-            </button>
-          </div>
-          <div id="hamburgerDropdown"></div>
-          <div id="languagePopup"></div>
-          <div id="authPopup"></div>
-        </div>
-      </nav>
-    </header>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/become_host.html" class="nav-link">
+            Jadi Host
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/about_us.html" class="nav-link">
+            Tentang Kami
+          </a>
+        </li>
 
-    <main class="main-content">
-      <section class="hero-section">
-        <div class="hero-bg"></div>
-        <div class="hero-overlay"></div>
-        <div class="hero-container">
-          <div class="hero-content">
-            <h1 class="hero-title">
-              Temukan Penginapan Impianmu di Seluruh Indonesia
-            </h1>
-            <p class="hero-description">
-              Platform all-in-one untuk cari penginapan, bandingkan harga, dan
-              pesan dalam hitungan menit. Perjalananmu makin mudah dan
-              menyenangkan!
-            </p>
-            <div class="hero-buttons" id="hero-buttons">
-              <a href="#hero-buttons">
-                <button class="hero-button primary-button">
-                  Cari Penginapan
-                </button>
-              </a>
-              <a href="/user/pages/become_host.html">
-                <button class="hero-button secondary-button">Jadi Host</button>
-              </a>
-            </div>
+        <div class="nav-indicator"></div>
+      </ul>
+
+      <div class="nav-right">
+        <a href="/host/onboarding/pages/about_place.html">
+          <button class="ghost-button">Ganti ke host</button>
+        </a>
+        <div class="icon-buttons">
+          <button class="icon-button profile" aria-label="Profile">A</button>
+          <button class="icon-button hamburger" aria-label="Hamburger">
+            <i class="ph-bold ph-list"></i>
+          </button>
+        </div>
+        <div id="hamburgerDropdown"></div>
+        <div id="languagePopup"></div>
+
+      </div>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Temukan Penginapan Impianmu di Seluruh Indonesia
+          </h1>
+          <p class="hero-description">
+            Platform all-in-one untuk cari penginapan, bandingkan harga, dan
+            pesan dalam hitungan menit. Perjalananmu makin mudah dan
+            menyenangkan!
+          </p>
+          <div class="hero-buttons" id="hero-buttons">
+            <a href="#hero-buttons">
+              <button class="hero-button primary-button">
+                Cari Penginapan
+              </button>
+            </a>
+            <a href="/user/pages/become_host.html">
+              <button class="hero-button secondary-button">Jadi Host</button>
+            </a>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="search-bar">
-        <div class="search-fields">
-          <div class="search-field">
-            <i class="ph-bold ph-map-pin"></i>
-            <div class="field-text">
-              <span class="field-label">Mau Kemana?</span>
-              <input
-                type="text"
-                id="destinationInput"
-                class="field-value input"
-                placeholder="Cari Tempatnya"
-                autocomplete="off" />
-            </div>
+    <section class="search-bar">
+      <div class="search-fields">
+        <div class="search-field">
+          <i class="ph-bold ph-map-pin"></i>
+          <div class="field-text">
+            <span class="field-label">Mau Kemana?</span>
+            <input type="text" id="destinationInput" class="field-value input" placeholder="Cari Tempatnya"
+              autocomplete="off" />
           </div>
-          <div class="search-field">
-            <i class="ph-bold ph-calendar-blank"></i>
-            <div class="field-text">
-              <span class="field-label">Kapan?</span>
-              <span class="field-value" id="dateSummary"
-                >Tambahkan Tanggal</span
-              >
-            </div>
+        </div>
+        <div class="search-field">
+          <i class="ph-bold ph-calendar-blank"></i>
+          <div class="field-text">
+            <span class="field-label">Kapan?</span>
+            <span class="field-value" id="dateSummary">Tambahkan Tanggal</span>
           </div>
-          <div class="search-field">
-            <i class="ph-bold ph-users-three"></i>
-            <div class="field-text">
-              <span class="field-label">Siapa Saja?</span>
-              <span class="field-value" id="guestSummary">
-                Tambahkan Pengunjung
+        </div>
+        <div class="search-field">
+          <i class="ph-bold ph-users-three"></i>
+          <div class="field-text">
+            <span class="field-label">Siapa Saja?</span>
+            <span class="field-value" id="guestSummary">
+              Tambahkan Pengunjung
+            </span>
+          </div>
+          <a href="/user/pages/search_result.html">
+            <button class="search-button" type="button">
+              <i class="ph-bold ph-magnifying-glass"></i></button></a>
+        </div>
+      </div>
+    </section>
+    <div id="destinationDropdown"></div>
+    <div id="calendarDropdown"></div>
+    <div id="guestCounterDropdown"></div>
+
+    <section class="card-section">
+      <span class="section-header">
+        <h2 class="section-title">Destinasi Populer</h2>
+      </span>
+      <div class="card-grid">
+        <a href="/user/pages/detail_card.html" class="grid-card big">
+          <img class="card-image" src="/assets/images/nihi_sumba.webp" alt="Nihi Sumba" />
+          <div class="card-overlay"></div>
+          <div class="card-text">
+            <span class="card-location">Sumba, NTT</span>
+            <span class="card-name">Nihi Sumba</span>
+          </div>
+        </a>
+        <a href="/user/pages/detail_card.html" class="grid-card">
+          <img class="card-image" src="/assets/images/desa_potato_head_bali.webp" alt="Desa Potato Head Bali" />
+          <div class="card-overlay"></div>
+          <div class="card-text">
+            <span class="card-location">Kuta, Bali</span>
+            <span class="card-name">Desa Potato Head</span>
+          </div>
+        </a>
+        <a href="/user/pages/detail_card.html" class="grid-card">
+          <img class="card-image" src="/assets/images/adiwana_suweta_bali.jpg" alt="Adiwana Suweta Bali" />
+          <div class="card-overlay"></div>
+          <div class="card-text">
+            <span class="card-location">Ubud, Bali</span>
+            <span class="card-name">Adiwana Suweta</span>
+          </div>
+        </a>
+        <a href="/user/pages/detail_card.html" class="grid-card">
+          <img class="card-image" src="/assets/images/padma_resort_ubud_bali.jpg" alt="Padma Resort Ubud Bali" />
+          <div class="card-overlay"></div>
+          <div class="card-text">
+            <span class="card-location">Ubud, Bali</span>
+            <span class="card-name">Padma Resort Ubud</span>
+          </div>
+        </a>
+        <a href="/user/pages/detail_card.html" class="grid-card">
+          <img class="card-image" src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski Bali" />
+          <div class="card-overlay"></div>
+          <div class="card-text">
+            <span class="card-location">Nusa Dua, Bali</span>
+            <span class="card-name">Apurva Kempinski</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="card-section">
+      <div class="section-header">
+        <h2 class="section-title">Penginapan di Dekat Anda</h2>
+        <div class="section-controls">
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button class="control-button next-button" aria-label="Selanjutnya">
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card-list">
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
               </span>
             </div>
-            <a href="/user/pages/search_result.html">
-              <button class="search-button" type="button">
-                <i class="ph-bold ph-magnifying-glass"></i></button
-            ></a>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
           </div>
-        </div>
-      </section>
-      <div id="destinationDropdown"></div>
-      <div id="calendarDropdown"></div>
-      <div id="guestCounterDropdown"></div>
+        </a>
 
-      <section class="card-section">
-        <span class="section-header">
-          <h2 class="section-title">Destinasi Populer</h2>
-        </span>
-        <div class="card-grid">
-          <a href="/user/pages/detail_card.html" class="grid-card big">
-            <img
-              class="card-image"
-              src="/assets/images/nihi_sumba.webp"
-              alt="Nihi Sumba" />
-            <div class="card-overlay"></div>
-            <div class="card-text">
-              <span class="card-location">Sumba, NTT</span>
-              <span class="card-name">Nihi Sumba</span>
-            </div>
-          </a>
-          <a href="/user/pages/detail_card.html" class="grid-card">
-            <img
-              class="card-image"
-              src="/assets/images/desa_potato_head_bali.webp"
-              alt="Desa Potato Head Bali" />
-            <div class="card-overlay"></div>
-            <div class="card-text">
-              <span class="card-location">Kuta, Bali</span>
-              <span class="card-name">Desa Potato Head</span>
-            </div>
-          </a>
-          <a href="/user/pages/detail_card.html" class="grid-card">
-            <img
-              class="card-image"
-              src="/assets/images/adiwana_suweta_bali.jpg"
-              alt="Adiwana Suweta Bali" />
-            <div class="card-overlay"></div>
-            <div class="card-text">
-              <span class="card-location">Ubud, Bali</span>
-              <span class="card-name">Adiwana Suweta</span>
-            </div>
-          </a>
-          <a href="/user/pages/detail_card.html" class="grid-card">
-            <img
-              class="card-image"
-              src="/assets/images/padma_resort_ubud_bali.jpg"
-              alt="Padma Resort Ubud Bali" />
-            <div class="card-overlay"></div>
-            <div class="card-text">
-              <span class="card-location">Ubud, Bali</span>
-              <span class="card-name">Padma Resort Ubud</span>
-            </div>
-          </a>
-          <a href="/user/pages/detail_card.html" class="grid-card">
-            <img
-              class="card-image"
-              src="/assets/images/apurva_kempinski_bali.jpg"
-              alt="Apurva Kempinski Bali" />
-            <div class="card-overlay"></div>
-            <div class="card-text">
-              <span class="card-location">Nusa Dua, Bali</span>
-              <span class="card-name">Apurva Kempinski</span>
-            </div>
-          </a>
-        </div>
-      </section>
-
-      <div class="card-section">
-        <div class="section-header">
-          <h2 class="section-title">Penginapan di Dekat Anda</h2>
-          <div class="section-controls">
-            <button
-              class="control-button prev-button disabled"
-              aria-label="Sebelumnya">
-              <i class="ph-bold ph-caret-left"></i>
-            </button>
-            <button class="control-button next-button" aria-label="Selanjutnya">
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
           </div>
-        </div>
-        <div class="card-list">
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
+        <a href="/user/pages/search_result.html" class="see-all-card">
+          <div class="see-all-photos">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+          </div>
+          <span class="see-all-label">Lihat Semua</span>
+        </a>
+      </div>
+    </div>
 
-          <a href="/user/pages/search_result.html" class="see-all-card">
-            <div class="see-all-photos">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-            </div>
-            <span class="see-all-label">Lihat Semua</span>
-          </a>
+    <div class="card-section">
+      <div class="section-header">
+        <h2 class="section-title">Rekomendasi Untukmu</h2>
+        <div class="section-controls">
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button class="control-button next-button" aria-label="Selanjutnya">
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
         </div>
       </div>
-
-      <div class="card-section">
-        <div class="section-header">
-          <h2 class="section-title">Rekomendasi Untukmu</h2>
-          <div class="section-controls">
-            <button
-              class="control-button prev-button disabled"
-              aria-label="Sebelumnya">
-              <i class="ph-bold ph-caret-left"></i>
-            </button>
-            <button class="control-button next-button" aria-label="Selanjutnya">
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
+      <div class="card-list">
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
           </div>
-        </div>
-        <div class="card-list">
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <a href="/user/pages/search_result.html" class="see-all-card">
-            <div class="see-all-photos">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-            </div>
-            <span class="see-all-label">Lihat Semua</span>
-          </a>
+        <a href="/user/pages/search_result.html" class="see-all-card">
+          <div class="see-all-photos">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+          </div>
+          <span class="see-all-label">Lihat Semua</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-header">
+        <h2 class="section-title">Penginapan Terpopuler</h2>
+        <div class="section-controls">
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button class="control-button next-button" aria-label="Selanjutnya">
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
         </div>
       </div>
-
-      <div class="card-section">
-        <div class="section-header">
-          <h2 class="section-title">Penginapan Terpopuler</h2>
-          <div class="section-controls">
-            <button
-              class="control-button prev-button disabled"
-              aria-label="Sebelumnya">
-              <i class="ph-bold ph-caret-left"></i>
-            </button>
-            <button class="control-button next-button" aria-label="Selanjutnya">
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
+      <div class="card-list">
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
           </div>
-        </div>
-        <div class="card-list">
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
             </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
               </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
             </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/detail_card.html" class="hotel-card">
-            <div class="card-image-wrapper">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt="Apurva Kempinski"
-                class="card-image" />
-              <img
-                src="assets/icons/save.svg"
-                alt="wishlist"
-                class="save-button" />
-            </div>
-            <div class="card-content">
-              <div class="card-top">
-                <h3 class="card-title">Apurva Kempinski</h3>
-                <span class="card-location-text">
-                  <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-                </span>
-              </div>
-              <div class="card-bottom">
-                <div class="price-section">
-                  <span class="card-price">Rp 850.000</span>
-                  <span class="price-unit">/ malam</span>
-                </div>
-                <span class="card-rating">
-                  <i class="ph-fill ph-star"></i>4.9
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <a href="/user/pages/search_result.html" class="see-all-card">
-            <div class="see-all-photos">
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-              <img
-                src="/assets/images/apurva_kempinski_bali.jpg"
-                alt=""
-                class="see-all-photo" />
-            </div>
-            <span class="see-all-label">Lihat Semua</span>
-          </a>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-grid">
-        <div class="footer-column">
-          <span class="footer-brand">Teman Singgah</span>
-          <p class="footer-description">
-            Platform booking penginapan terpercaya di seluruh Indonesia, dari
-            hotel berbintang hingga homestay lokal.
-          </p>
-          <div class="footer-social">
-            <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
-            <a href="" class="social-link"
-              ><i class="ri-facebook-circle-line"></i
-            ></a>
-            <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
-            <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
-            <a href="" class="social-link"><i class="ri-mail-line"></i></a>
           </div>
-        </div>
-        <div class="footer-column">
-          <h3 class="footer-title">Navigasi</h3>
-          <ul class="footer-links">
-            <li><a href="/index.html" class="footer-link">Beranda</a></li>
-            <li>
-              <a href="/user/pages/promo_deals.html" class="footer-link"
-                >Promo & Deals</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/become_host.html" class="footer-link"
-                >Jadi Host</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/account.html" class="footer-link">Akun</a>
-            </li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3 class="footer-title">Dukungan</h3>
-          <ul class="footer-links">
-            <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
-            <li><a href="#" class="footer-link">FAQ</a></li>
-            <li>
-              <a href="/user/pages/become_host.html" class="footer-link"
-                >Cara Menjadi Host</a
-              >
-            </li>
-            <li><a href="#" class="footer-link">Cara Booking</a></li>
-            <li>
-              <a href="/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
-          </ul>
-        </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/detail_card.html" class="hotel-card">
+          <div class="card-image-wrapper">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
+            <img src="assets/icons/save.svg" alt="wishlist" class="save-button" />
+          </div>
+          <div class="card-content">
+            <div class="card-top">
+              <h3 class="card-title">Apurva Kempinski</h3>
+              <span class="card-location-text">
+                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
+              </span>
+            </div>
+            <div class="card-bottom">
+              <div class="price-section">
+                <span class="card-price">Rp 850.000</span>
+                <span class="price-unit">/ malam</span>
+              </div>
+              <span class="card-rating">
+                <i class="ph-fill ph-star"></i>4.9
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <a href="/user/pages/search_result.html" class="see-all-card">
+          <div class="see-all-photos">
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+            <img src="/assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
+          </div>
+          <span class="see-all-label">Lihat Semua</span>
+        </a>
       </div>
-      <div class="footer-bottom">
-        <p class="footer-copyright">
-          © 2026 Teman Singgah — All rights reserved.
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-column">
+        <span class="footer-brand">Teman Singgah</span>
+        <p class="footer-description">
+          Platform booking penginapan terpercaya di seluruh Indonesia, dari
+          hotel berbintang hingga homestay lokal.
         </p>
-        <div class="footer-legal">
-          <a href="" class="footer-link bottom">Kebijakan Privasi</a>
-          <span class="footer-dot">•</span>
-          <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+        <div class="footer-social">
+          <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
+          <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
+          <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
+          <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
+          <a href="" class="social-link"><i class="ri-mail-line"></i></a>
         </div>
       </div>
-    </footer>
+      <div class="footer-column">
+        <h3 class="footer-title">Navigasi</h3>
+        <ul class="footer-links">
+          <li><a href="/index.html" class="footer-link">Beranda</a></li>
+          <li>
+            <a href="/user/pages/promo_deals.html" class="footer-link">Promo & Deals</a>
+          </li>
+          <li>
+            <a href="/user/pages/become_host.html" class="footer-link">Jadi Host</a>
+          </li>
+          <li>
+            <a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a>
+          </li>
+          <li>
+            <a href="/user/pages/account.html" class="footer-link">Akun</a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3 class="footer-title">Dukungan</h3>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
+          <li><a href="#" class="footer-link">FAQ</a></li>
+          <li>
+            <a href="/user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a>
+          </li>
+          <li><a href="#" class="footer-link">Cara Booking</a></li>
+          <li>
+            <a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        © 2026 Teman Singgah — All rights reserved.
+      </p>
+      <div class="footer-legal">
+        <a href="" class="footer-link bottom">Kebijakan Privasi</a>
+        <span class="footer-dot">•</span>
+        <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </footer>
 
-    <script src="/user/scripts/home.js"></script>
-    <script src="/components/navbar.js"></script>
-    <script src="/components/search_bar.js"></script>
-    <script src="/popups/auth.js"></script>
-  </body>
+  <script src="/user/scripts/home.js"></script>
+  <script src="/popups/auth.js"></script>
+  <script src="/components/navbar.js"></script>
+  <script src="/components/search_bar.js"></script>
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-form-card">
+      <form class="auth-form" method="post" autocomplete="off">
+
+        <!-- ══════════════════════════════════════════
+           STEP PILIH — Masuk / Daftar / Social
+      ══════════════════════════════════════════ -->
+        <div class="auth-step active" id="authStepPilih">
+
+          <div class="auth-header-section">
+            <div class="empty-div"></div>
+            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+
+          <div class="auth-body-section">
+
+            <div class="auth-logo-container">
+              <div class="auth-logo">
+                <img class="auth-logo-image" src="/assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
+              </div>
+              <h2 class="auth-title center">Selamat datang</h2>
+              <p class="auth-subtitle center">Masuk atau buat akun baru untuk mulai memesan.</p>
+            </div>
+
+            <div class="auth-fields">
+              <button class="auth-submit-button" type="button" id="btnKeLogin">Masuk</button>
+              <button class="auth-submit-button outline" type="button" id="btnKeDaftar">Daftar akun baru</button>
+            </div>
+
+            <div class="auth-divider">
+              <span class="auth-divider-line"></span>
+              <span class="auth-divider-text">atau lanjutkan dengan</span>
+              <span class="auth-divider-line"></span>
+            </div>
+
+            <div class="auth-social-icons">
+              <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Google" id="btnSocialGoogle">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false"
+                  style="display:block;height:22px;width:22px">
+                  <g fill="none">
+                    <path
+                      d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
+                      fill="#4285f4" />
+                    <path
+                      d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
+                      fill="#34a853" />
+                    <path
+                      d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
+                      fill="#fbbc04" />
+                    <path
+                      d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
+                      fill="#e94235" />
+                  </g>
+                </svg>
+              </button>
+              <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Apple" id="btnSocialApple">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"
+                  style="height:22px;width:22px;display:block;fill:currentcolor">
+                  <path
+                    d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z" />
+                </svg>
+              </button>
+              <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Facebook"
+                id="btnSocialFacebook">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false"
+                  style="display:block;height:22px;width:22px">
+                  <g fill="none" fill-rule="nonzero">
+                    <path
+                      d="m31.9361277 15.9680639c0-8.81884234-7.1492215-15.9680639-15.9680638-15.9680639-8.81884234 0-15.9680639 7.14922156-15.9680639 15.9680639 0 7.4883832 5.15576846 13.7721357 12.1108184 15.497964v-10.6181237h-3.29261481v-4.8798403h3.29261481v-2.1026747c0-5.4348902 2.4597205-7.95401195 7.7956087-7.95401195 1.0117366 0 2.7573653.19864271 3.4714571.3966467v4.42315365c-.3768463-.0396008-1.0315369-.0594012-1.8446307-.0594012-2.6181238 0-3.6298603.9919362-3.6298603 3.5704591v1.7258284h5.2158084l-.8961277 4.8798403h-4.3196807v10.9713373c7.9067465-.9548902 14.0333733-7.6870259 14.0333733-15.8511776z"
+                      fill="#0866ff" />
+                    <path
+                      d="m22.2224351 20.8479042.8961278-4.8798403h-5.2158084v-1.7258284c0-2.5785229 1.0117365-3.5704591 3.6298603-3.5704591.8130938 0 1.4677844.0198004 1.8446307.0594012v-4.42315365c-.7140918-.19864271-2.4597205-.3966467-3.4714571-.3966467-5.3358882 0-7.7956088 2.51912175-7.7956088 7.95401195v2.1026747h-3.29261473v4.8798403h3.29261473v10.6181237c1.2352895.3065869 2.5274252.4700998 3.8572455.4700998.6546907 0 1.3004392-.0402395 1.9346907-.1168862v-10.9713373h4.3196806z"
+                      fill="#fff" />
+                  </g>
+                </svg>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+           STEP LOGIN
+      ══════════════════════════════════════════ -->
+        <div class="auth-step" id="authStepLogin">
+
+          <div class="auth-header-section">
+            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
+              <i class="ph-bold ph-caret-left"></i>
+            </button>
+            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+
+          <div class="auth-body-section">
+
+            <div>
+              <h2 class="auth-title">Masuk</h2>
+              <p class="auth-subtitle">Masukkan email dan password kamu.</p>
+            </div>
+
+            <div class="auth-fields">
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Email</legend>
+                <div class="auth-input-group">
+                  <input type="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com"
+                    autocomplete="email" required />
+                </div>
+              </fieldset>
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Password</legend>
+                <div class="auth-input-group auth-password-group">
+                  <input type="password" id="loginPassword" class="auth-input" placeholder="Masukkan password"
+                    autocomplete="current-password" required />
+                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                    <i class="ph-bold ph-eye"></i>
+                  </button>
+                </div>
+              </fieldset>
+
+              <button type="button" class="auth-forgot-link" id="btnLupaPassword">Lupa password?</button>
+
+            </div>
+          </div>
+
+          <div class="auth-footer-section">
+            <button class="auth-submit-button" type="button" id="btnSubmitLogin">Masuk</button>
+            <p class="auth-switch-text">
+              Belum punya akun?
+              <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button>
+            </p>
+          </div>
+
+        </div>
+
+        <!-- ══════════════════════════════════════════
+           STEP DAFTAR — Nama, Email & Password
+      ══════════════════════════════════════════ -->
+        <div class="auth-step" id="authStepDaftar1">
+
+          <div class="auth-header-section">
+            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
+              <i class="ph-bold ph-caret-left"></i>
+            </button>
+            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+
+          <div class="auth-body-section">
+
+            <div>
+              <h2 class="auth-title">Buat akun</h2>
+              <p class="auth-subtitle">Isi data di bawah untuk membuat akun baru.</p>
+            </div>
+
+            <div class="auth-fields">
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Nama</legend>
+                <div class="auth-input-group">
+                  <input type="text" id="daftarNama" class="auth-input" placeholder="Masukkan namamu"
+                    autocomplete="name" required />
+                </div>
+              </fieldset>
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Email</legend>
+                <div class="auth-input-group">
+                  <input type="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com"
+                    autocomplete="email" required />
+                </div>
+              </fieldset>
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Password</legend>
+                <div class="auth-input-group auth-password-group">
+                  <input type="password" id="daftarPassword" class="auth-input" placeholder="Minimal 8 karakter"
+                    autocomplete="new-password" required />
+                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                    <i class="ph-bold ph-eye"></i>
+                  </button>
+                </div>
+                <p class="auth-field-hint">Gunakan minimal 8 karakter, kombinasi huruf dan angka.</p>
+              </fieldset>
+
+            </div>
+          </div>
+
+          <div class="auth-footer-section">
+            <button class="auth-submit-button" type="button" id="btnDaftar1Lanjut">Buat akun</button>
+            <p class="auth-switch-text">
+              Sudah punya akun?
+              <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
+            </p>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+  </div>
+</body>
+
 </html>

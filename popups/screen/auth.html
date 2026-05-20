@@ -89,12 +89,14 @@
 
             <fieldset class="auth-field">
               <legend class="auth-input-label">Email</legend>
-              <input type="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+              <div class="auth-input-group">
+                <input type="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+              </div>
             </fieldset>
 
             <fieldset class="auth-field">
               <legend class="auth-input-label">Password</legend>
-              <div class="auth-password-wrap">
+              <div class="auth-input-group auth-password-group">
                 <input type="password" id="loginPassword" class="auth-input" placeholder="Masukkan password" autocomplete="current-password" required />
                 <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
                   <i class="ph-bold ph-eye"></i>
@@ -118,7 +120,7 @@
       </div>
 
       <!-- ══════════════════════════════════════════
-           STEP DAFTAR 1 — Nama & Tanggal Lahir
+           STEP DAFTAR — Nama, Email & Password
       ══════════════════════════════════════════ -->
       <div class="auth-step" id="authStepDaftar1">
 
@@ -134,81 +136,29 @@
         <div class="auth-body-section">
 
           <div>
-            <div class="auth-step-indicator">
-              <span class="auth-step-dot active"></span>
-              <span class="auth-step-dot"></span>
-              <span class="auth-step-dot"></span>
-            </div>
-            <h2 class="auth-title">Siapa namamu?</h2>
-            <p class="auth-subtitle">Nama ini akan ditampilkan di profilmu.</p>
-          </div>
-
-          <div class="auth-fields">
-
-            <fieldset class="auth-field">
-              <legend class="auth-input-label">Nama depan</legend>
-              <input type="text" id="daftarNamaDepan" class="auth-input" placeholder="Masukkan nama depan" autocomplete="given-name" required />
-            </fieldset>
-
-            <fieldset class="auth-field">
-              <legend class="auth-input-label">Nama belakang</legend>
-              <input type="text" id="daftarNamaBelakang" class="auth-input" placeholder="Masukkan nama belakang" autocomplete="family-name" required />
-            </fieldset>
-
-            <fieldset class="auth-field">
-              <legend class="auth-input-label">Tanggal lahir</legend>
-              <input type="date" id="daftarTanggalLahir" class="auth-input" required />
-            </fieldset>
-
-          </div>
-        </div>
-
-        <div class="auth-footer-section">
-          <button class="auth-submit-button" type="button" id="btnDaftar1Lanjut">Lanjutkan</button>
-          <p class="auth-switch-text">
-            Sudah punya akun?
-            <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
-          </p>
-        </div>
-
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           STEP DAFTAR 2 — Email & Password
-      ══════════════════════════════════════════ -->
-      <div class="auth-step" id="authStepDaftar2">
-
-        <div class="auth-header-section">
-          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-daftar1">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section">
-
-          <div>
-            <div class="auth-step-indicator">
-              <span class="auth-step-dot active"></span>
-              <span class="auth-step-dot active"></span>
-              <span class="auth-step-dot"></span>
-            </div>
             <h2 class="auth-title">Buat akun</h2>
-            <p class="auth-subtitle">Email dan password untuk masuk ke akun kamu.</p>
+            <p class="auth-subtitle">Isi data di bawah untuk membuat akun baru.</p>
           </div>
 
           <div class="auth-fields">
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Nama</legend>
+              <div class="auth-input-group">
+                <input type="text" id="daftarNama" class="auth-input" placeholder="Masukkan namamu" autocomplete="name" required />
+              </div>
+            </fieldset>
 
             <fieldset class="auth-field">
               <legend class="auth-input-label">Email</legend>
-              <input type="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+              <div class="auth-input-group">
+                <input type="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+              </div>
             </fieldset>
 
             <fieldset class="auth-field">
               <legend class="auth-input-label">Password</legend>
-              <div class="auth-password-wrap">
+              <div class="auth-input-group auth-password-group">
                 <input type="password" id="daftarPassword" class="auth-input" placeholder="Minimal 8 karakter" autocomplete="new-password" required />
                 <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
                   <i class="ph-bold ph-eye"></i>
@@ -221,53 +171,11 @@
         </div>
 
         <div class="auth-footer-section">
-          <button class="auth-submit-button" type="button" id="btnDaftar2Lanjut">Lanjutkan</button>
-        </div>
-
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           STEP DAFTAR 3 — Komitmen komunitas
-      ══════════════════════════════════════════ -->
-      <div class="auth-step" id="authStepDaftar3">
-
-        <div class="auth-header-section">
-          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-daftar2">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section">
-
-          <div>
-            <div class="auth-step-indicator">
-              <span class="auth-step-dot active"></span>
-              <span class="auth-step-dot active"></span>
-              <span class="auth-step-dot active"></span>
-            </div>
-          </div>
-
-          <div class="auth-logo-container">
-            <div class="auth-logo" style="width:56px;height:56px;border-radius:var(--radius-xl)">
-              <img class="auth-logo-image" src="/assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
-            </div>
-            <h2 class="auth-title center">Semua orang diterima di sini</h2>
-          </div>
-
-          <div class="auth-fields">
-            <p class="auth-community-intro">Saat bergabung dengan Teman Singgah, kami mengajak kamu untuk menyepakati Komitmen Komunitas kami:</p>
-            <p class="auth-community-commitment">Saya berkomitmen untuk memperlakukan setiap orang dalam komunitas ini dengan hormat dan tanpa prasangka, terlepas dari ras, agama, asal negara, suku, warna kulit, disabilitas, jenis kelamin, identitas gender, orientasi seksual, maupun usia mereka.</p>
-          </div>
-
-        </div>
-
-        <div class="auth-footer-section">
-          <button class="auth-submit-button" type="button" id="btnDaftar3Selesai">
-            Setuju dan buat akun
-          </button>
+          <button class="auth-submit-button" type="button" id="btnDaftar1Lanjut">Buat akun</button>
+          <p class="auth-switch-text">
+            Sudah punya akun?
+            <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
+          </p>
         </div>
 
       </div>

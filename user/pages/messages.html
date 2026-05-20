@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesan | Teman Singgah</title>
+    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/components/root.css" />
+    <link rel="stylesheet" href="/components/navbar.css" />
+    <link rel="stylesheet" href="/popups/auth.css" />
+    <link rel="stylesheet" href="/user/styles/messages.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet" />
+
+    <script
+      type="module"
+      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/index.html" class="logo-link"></a>
+        <div class="logo-section">
+          <img
+            src="/assets/logo/logo_temansinggah.svg"
+            alt="Logo Teman Singgah"
+            class="logo-icon" />
+          <img
+            src="/assets/logo/label_temansinggah.svg"
+            alt="Brand Name Teman Singgah"
+            class="logo-name" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="/index.html" class="nav-link">Cari Penginapan</a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/promo_deals.html" class="nav-link">
+              Promo & Deals
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/become_host.html" class="nav-link">
+              Jadi Host
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/user/pages/about_us.html" class="nav-link">
+              Tentang Kami
+            </a>
+          </li>
+          <div class="nav-indicator"></div>
+        </ul>
+
+        <div class="nav-right">
+          <a href="/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
+          <div class="icon-buttons">
+            <button class="icon-button profile" aria-label="Profile">K</button>
+            <button class="icon-button hamburger" aria-label="Hamburger">
+              <i class="ph-bold ph-list"></i>
+            </button>
+          </div>
+          <div id="hamburgerDropdown"></div>
+          <div id="languagePopup"></div>
+          <div id="authPopup"></div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <!-- SIDEBAR: Daftar percakapan -->
+      <aside class="messages-sidebar">
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">Pesan</h2>
+          <div class="sidebar-actions">
+            <button class="sidebar-button" aria-label="Cari">
+              <i class="ph-bold ph-magnifying-glass"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-filter">
+          <button class="filter-item active">Semua</button>
+          <button class="filter-item">Belum Dibaca</button>
+        </div>
+
+        <div class="thread-list">
+          <!-- Thread item: percakapan dengan host -->
+          <a href="#" class="thread-item active" data-chat="budi">
+            <div class="thread-avatar">B</div>
+            <div class="thread-info">
+              <div class="thread-header">
+                <span class="thread-name">Budi (Host)</span>
+                <span class="thread-time">12:25</span>
+              </div>
+              <span class="thread-preview">Halo! Ya, masih tersedia.</span>
+              <span class="thread-property">Nihi Sumba · Sumba, NTT</span>
+            </div>
+          </a>
+
+          <a href="#" class="thread-item" data-chat="sari">
+            <div class="thread-avatar">S</div>
+            <div class="thread-info">
+              <div class="thread-header">
+                <span class="thread-name">Sari (Host)</span>
+                <span class="thread-time">Kemarin</span>
+              </div>
+              <span class="thread-preview">Anda: Terima kasih kak!</span>
+              <span class="thread-property">Adiwana Suweta · Ubud, Bali</span>
+            </div>
+          </a>
+        </div>
+      </aside>
+
+      <!-- CHAT AREA -->
+      <section class="chat-area">
+        <!-- Header chat -->
+        <div class="chat-header">
+          <div class="chat-avatar">B</div>
+          <div class="chat-header-info">
+            <span class="chat-name">Budi</span>
+            <span class="chat-property-label">Nihi Sumba · Sumba, NTT</span>
+          </div>
+          <button class="chat-detail-button" aria-label="Detail">
+            <i class="ph-bold ph-caret-right"></i>
+          </button>
+        </div>
+
+        <!-- Konteks reservasi (opsional, muncul di atas chat) -->
+        <div class="chat-context-banner">
+          <i class="ph-bold ph-calendar-check"></i>
+          <span>Reservasi: 24 – 27 Mei 2026 · 2 tamu</span>
+          <a href="/user/pages/reservations.html" class="context-link">Lihat Detail</a>
+        </div>
+
+        <!-- Bubble chat -->
+        <div class="chat-messages">
+          <div class="bubble you">
+            <p>Halo, apakah properti tersedia untuk akhir pekan ini?</p>
+          </div>
+          <div class="bubble me">
+            <p>Halo! Ya, masih tersedia. Silakan lanjutkan pemesanan.</p>
+          </div>
+          <div class="bubble you">
+            <p>Oke kak, nanti saya booking. Apakah ada fasilitas kolam renang?</p>
+          </div>
+          <div class="bubble me">
+            <p>Ada, kolam renang private tersedia dan sudah termasuk dalam harga. Breakfast juga sudah include ya!</p>
+          </div>
+
+          <template id="bubbleImageTemplate">
+            <div class="bubble you bubble-image-only">
+              <div class="bubble-image-grid"></div>
+            </div>
+          </template>
+
+          <template id="bubbleTextTemplate">
+            <div class="bubble you">
+              <p class="bubble-text"></p>
+            </div>
+          </template>
+        </div>
+
+        <!-- Input pesan -->
+        <div class="chat-input-container">
+          <div class="image-preview-container" id="imagePreview"></div>
+
+          <template id="previewItemTemplate">
+            <div class="preview-item">
+              <img class="preview-image" src="/" alt="preview" />
+              <button class="remove-preview">
+                <i class="ph-bold ph-x"></i>
+              </button>
+            </div>
+          </template>
+
+          <div class="chat-input-box">
+            <textarea
+              class="chat-input"
+              placeholder="Tulis pesan ke host..."
+              rows="1"></textarea>
+            <div class="chat-input-actions">
+              <label class="attach-button" aria-label="Lampirkan gambar">
+                <i class="ph-bold ph-image"></i>
+                <input type="file" accept="image/*" style="display: none" multiple />
+              </label>
+              <button class="send-button" aria-label="Kirim">
+                <i class="ph-bold ph-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/user/scripts/messages.js"></script>
+    <script src="/components/navbar.js"></script>
+    <script src="/popups/auth.js"></script>
+  </body>
+</html>
