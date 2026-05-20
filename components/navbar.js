@@ -55,9 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyAuthState();
 
+  // Restore inisial dari localStorage saat halaman load
+  const savedInitial = localStorage.getItem("userInitial");
+  if (savedInitial && profileBtn) profileBtn.textContent = savedInitial;
+
   window.onLoginSuccess = function (userInitial = "A") {
     isLoggedIn = true;
     localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userInitial", userInitial);
     if (profileBtn) profileBtn.textContent = userInitial;
     window.closeAuthPopup();
     applyAuthState();
@@ -76,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function onLogout() {
     isLoggedIn = false;
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userInitial");
     closeDropdown();
     applyAuthState();
     isLoaded = false;
@@ -319,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     authOverlay
       .querySelectorAll(".auth-step")
       .forEach((el) => el.classList.remove("active"));
-    const defaultStep = authOverlay.querySelector("#authStep1");
+    const defaultStep = authOverlay.querySelector("#authStepPilih");
     if (defaultStep) defaultStep.classList.add("active");
     authOverlay.classList.add("open");
     document.body.style.overflow = "hidden";

@@ -1,294 +1,178 @@
+window.openAuthPopup = function () {
+  const overlay = document.getElementById("authOverlay");
+  if (!overlay) return;
+
+  if (overlay.parentElement !== document.body) {
+    document.body.appendChild(overlay);
+  }
+
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  window.bindAuthPopupEvents?.();
+};
+
+window.closeAuthPopup = function () {
+  const overlay = document.getElementById("authOverlay");
+  if (!overlay) return;
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+};
+
 window.bindAuthPopupEvents = function () {
   const authOverlay = document.getElementById("authOverlay");
   if (!authOverlay) return;
-
   if (authOverlay.dataset.bound === "true") return;
   authOverlay.dataset.bound = "true";
 
   const form = authOverlay.querySelector(".auth-form");
   if (!form) return;
 
-  const authState = {
-    isExistingUser: true,
-    enteredEmail: "",
-    selectedContactMethod: "",
-    googleUserIsNew: false,
-  };
-
+  // ── Tampilkan step ────────────────────────────────────────
   const showStep = (stepId) => {
-    console.log("[AUTH] Navigasi ke:", stepId);
-    form
-      .querySelectorAll(".auth-step")
-      .forEach((s) => s.classList.remove("active"));
+    form.querySelectorAll(".auth-step").forEach((s) => s.classList.remove("active"));
     const target = form.querySelector(`#${stepId}`);
-    if (target) {
-      target.classList.add("active");
-      console.log("[AUTH] ✓ Berhasil ke:", stepId);
-    } else {
-      console.error(`[AUTH] ✗ Step "${stepId}" tidak ditemukan`);
-    }
+    if (target) target.classList.add("active");
   };
 
-  const isEmailRegistered = (email) => email.includes("gmail");
-
+  // ── Tutup overlay ─────────────────────────────────────────
   authOverlay.querySelectorAll("[data-action='close-auth']").forEach((btn) => {
     btn.addEventListener("click", () => window.closeAuthPopup?.());
   });
-
   authOverlay.addEventListener("click", (e) => {
     if (e.target === authOverlay) window.closeAuthPopup?.();
   });
 
-  form.querySelectorAll("#authStep1 .auth-option-item").forEach((btn) => {
+  // ── Tombol back berdasarkan data-action ───────────────────
+  authOverlay.querySelectorAll("[data-action='ke-pilih']").forEach((btn) => {
+    btn.addEventListener("click", () => showStep("authStepPilih"));
+  });
+  authOverlay.querySelectorAll("[data-action='ke-daftar1']").forEach((btn) => {
+    btn.addEventListener("click", () => showStep("authStepDaftar1"));
+  });
+  authOverlay.querySelectorAll("[data-action='ke-daftar2']").forEach((btn) => {
+    btn.addEventListener("click", () => showStep("authStepDaftar2"));
+  });
+
+  // ── Toggle show/hide password ─────────────────────────────
+  authOverlay.querySelectorAll(".auth-toggle-password").forEach((btn) => {
     btn.addEventListener("click", () => {
-      authState.isExistingUser = true;
-      showStep("authStep5");
+      const wrap = btn.closest(".auth-password-wrap");
+      const input = wrap.querySelector("input");
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+      btn.querySelector("i").className = isHidden ? "ph-bold ph-eye-slash" : "ph-bold ph-eye";
     });
   });
 
-  form
-    .querySelector("#authStep1 .auth-submit-button.outline")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep2");
-    });
+  // ══════════════════════════════════════════════════════════
+  // STEP PILIH
+  // ══════════════════════════════════════════════════════════
+  form.querySelector("#btnKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
+  form.querySelector("#btnKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
 
-  form
-    .querySelector("#authStep2 .auth-submit-button")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const email =
-        form.querySelector("#authStep2 .auth-input")?.value.trim() || "";
-      if (!email) {
-        alert("Masukkan email atau nomor telepon");
-        return;
-      }
-
-      authState.enteredEmail = email;
-      authState.isExistingUser = isEmailRegistered(email);
-      showStep("authStep3");
-    });
-
-  form
-    .querySelector(
-      "#authStep2 .auth-social-icon[aria-label='Login dengan Google']",
-    )
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      authState.isExistingUser = false;
-      showStep("authStep4");
-    });
-
-  form
-    .querySelector(
-      "#authStep2 .auth-social-icon[aria-label='Login dengan Apple']",
-    )
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      authState.isExistingUser = false;
-      showStep("authStep4");
-    });
-
-  form
-    .querySelector(
-      "#authStep2 .auth-social-icon[aria-label='Login dengan Facebook']",
-    )
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      authState.isExistingUser = false;
-      showStep("authStep4");
-    });
-
-  form
-    .querySelector("#authStep3 [data-action='prev-step']")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep2");
-    });
-
-  form
-    .querySelector("#authStep3 .auth-resend-button")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      const btn = e.currentTarget;
-      btn.textContent = "Terkirim";
-      setTimeout(() => {
-        btn.textContent = "Kirim ulang";
-      }, 3000);
-    });
-
-  form
-    .querySelector("#authStep3 .auth-submit-button")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log(
-        "[AUTH] Step 3 submit - isExistingUser:",
-        authState.isExistingUser,
-      );
-
-      const otp =
-        form.querySelector("#authStep3 .auth-input.code")?.value.trim() || "";
-      if (!otp || otp.length !== 6) {
-        alert("Masukkan kode OTP 6 digit");
-        return;
-      }
-
-      if (authState.isExistingUser) {
-        console.log("[AUTH] Existing user → Step 7");
-        showStep("authStep7");
-      } else {
-        console.log("[AUTH] New user → Step 4");
-        showStep("authStep4");
-      }
-    });
-
-  form
-    .querySelector("#authStep4 [data-action='prev-step']")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep2");
-    });
-
-  const step4Button = form.querySelector("#authStep4 .auth-submit-button");
-  if (step4Button) {
-    console.log("[AUTH] ✓ Step 4 button ditemukan");
-    step4Button.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("[AUTH] Step 4 submit clicked");
-
-      const nameInputs = form.querySelectorAll(
-        "#authStep4 fieldset .auth-input",
-      );
-      const firstName = nameInputs[0]?.value.trim();
-      const lastName = nameInputs[1]?.value.trim();
-      const dob = nameInputs[2]?.value.trim();
-
-      console.log("[AUTH] Step 4 data:", { firstName, lastName, dob });
-
-      if (!firstName || !lastName || !dob) {
-        alert("Lengkapi semua data akun");
-        return;
-      }
-
-      console.log("[AUTH] Step 4 → Step 7");
-      showStep("authStep7");
-    });
-  } else {
-    console.error("[AUTH] ✗ Step 4 button TIDAK ditemukan!");
-  }
-
-  const step5GoogleBtn = form.querySelector(
-    "#authStep5 .auth-submit-button:not(.outline)",
-  );
-  if (step5GoogleBtn) {
-    console.log("[AUTH] ✓ Step 5 Google button ditemukan");
-    step5GoogleBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("[AUTH] Step 5 Google button clicked → Step 4");
-      authState.isExistingUser = false;
-      showStep("authStep7");
-    });
-  } else {
-    console.error("[AUTH] ✗ Step 5 Google button TIDAK ditemukan!");
-  }
-
-  form
-    .querySelector(
-      "#authStep5 [data-action='next-step'][data-target='authStep6']",
-    )
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep6");
-    });
-
-  form
-    .querySelector("#authStep5 [data-action='prev-step']")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep2");
-    });
-
-  form.querySelectorAll("#authStep6 .auth-option-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      const label = item.querySelector(".auth-option-label")?.textContent || "";
-      const sub = item.querySelector(".auth-option-sub")?.textContent || "";
-
-      if (label.includes("Google")) {
-        showStep("authStep5");
-        return;
-      }
-
-      const subtitle = form.querySelector("#authStep3 .auth-subtitle");
-      if (subtitle) subtitle.textContent = `Kami mengirimkan kode ke ${sub}`;
-
-      if (label.includes("SMS")) authState.selectedContactMethod = "sms";
-      if (label.includes("WhatsApp"))
-        authState.selectedContactMethod = "whatsapp";
-      if (label.includes("Email")) authState.selectedContactMethod = "email";
-
-      showStep("authStep3");
+  ["#btnSocialGoogle", "#btnSocialApple", "#btnSocialFacebook"].forEach((sel) => {
+    form.querySelector(sel)?.addEventListener("click", () => {
+      window.onLoginSuccess?.("S");
     });
   });
 
-  form
-    .querySelector("#authStep7 [data-action='prev-step']")
-    ?.addEventListener("click", (e) => {
-      e.preventDefault();
-      showStep("authStep4");
-    });
+  // ══════════════════════════════════════════════════════════
+  // STEP LOGIN
+  // ══════════════════════════════════════════════════════════
+  form.querySelector("#btnSubmitLogin")?.addEventListener("click", () => {
+    const email    = form.querySelector("#loginEmail")?.value.trim();
+    const password = form.querySelector("#loginPassword")?.value;
 
-  const step7Button = form.querySelector("#authStep7 .auth-submit-button");
-  if (step7Button) {
-    console.log("[AUTH] ✓ Step 7 button ditemukan");
-    step7Button.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log("[AUTH] Step 7 submit clicked → login success");
-      window.onLoginSuccess?.("A");
-    });
-  } else {
-    console.error("[AUTH] ✗ Step 7 button TIDAK ditemukan!");
-  }
+    if (!email)    { showError("loginEmail",    "Masukkan email kamu"); return; }
+    if (!password) { showError("loginPassword", "Masukkan password kamu"); return; }
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("[AUTH] Form submit prevented");
+    window.onLoginSuccess?.(email.charAt(0).toUpperCase());
   });
 
+  form.querySelector("#btnSwitchKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
+
+  form.querySelector("#btnLupaPassword")?.addEventListener("click", () => {
+    alert("Fitur lupa password akan segera tersedia.");
+  });
+
+  // ══════════════════════════════════════════════════════════
+  // STEP DAFTAR 1 — Nama & Tanggal Lahir
+  // ══════════════════════════════════════════════════════════
+  form.querySelector("#btnDaftar1Lanjut")?.addEventListener("click", () => {
+    const namaDepan    = form.querySelector("#daftarNamaDepan")?.value.trim();
+    const namaBelakang = form.querySelector("#daftarNamaBelakang")?.value.trim();
+    const tglLahir     = form.querySelector("#daftarTanggalLahir")?.value;
+
+    if (!namaDepan)    { showError("daftarNamaDepan",    "Masukkan nama depan"); return; }
+    if (!namaBelakang) { showError("daftarNamaBelakang", "Masukkan nama belakang"); return; }
+    if (!tglLahir)     { showError("daftarTanggalLahir", "Masukkan tanggal lahir"); return; }
+
+    showStep("authStepDaftar2");
+  });
+
+  form.querySelector("#btnSwitchKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
+
+  // ══════════════════════════════════════════════════════════
+  // STEP DAFTAR 2 — Email & Password
+  // ══════════════════════════════════════════════════════════
+  form.querySelector("#btnDaftar2Lanjut")?.addEventListener("click", () => {
+    const email    = form.querySelector("#daftarEmail")?.value.trim();
+    const password = form.querySelector("#daftarPassword")?.value;
+
+    if (!email)                           { showError("daftarEmail",    "Masukkan email yang valid"); return; }
+    if (!password || password.length < 8) { showError("daftarPassword", "Password minimal 8 karakter"); return; }
+
+    showStep("authStepDaftar3");
+  });
+
+  // ══════════════════════════════════════════════════════════
+  // STEP DAFTAR 3 — Komunitas
+  // ══════════════════════════════════════════════════════════
+  form.querySelector("#btnDaftar3Selesai")?.addEventListener("click", () => {
+    const namaDepan = form.querySelector("#daftarNamaDepan")?.value.trim();
+    const inisial   = namaDepan ? namaDepan.charAt(0).toUpperCase() : "U";
+    window.onLoginSuccess?.(inisial);
+  });
+
+  // ── Cegah submit HTML biasa ───────────────────────────────
+  form.addEventListener("submit", (e) => e.preventDefault());
+
+  // ── Enter key shortcut ────────────────────────────────────
   form.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     e.preventDefault();
-
     const activeStep = form.querySelector(".auth-step.active");
     if (!activeStep) return;
-
-    const stepId = activeStep.id;
-    console.log("[AUTH] Enter pressed di:", stepId);
-
-    let submitBtn = null;
-    if (stepId === "authStep2") {
-      submitBtn = form.querySelector("#authStep2 .auth-submit-button");
-    } else if (stepId === "authStep3") {
-      submitBtn = form.querySelector("#authStep3 .auth-submit-button");
-    } else if (stepId === "authStep4") {
-      submitBtn = form.querySelector("#authStep4 .auth-submit-button");
-    } else if (stepId === "authStep7") {
-      submitBtn = form.querySelector("#authStep7 .auth-submit-button");
-    }
-
-    if (submitBtn) {
-      console.log("[AUTH] Trigger submit button via Enter");
-      submitBtn.click();
-    }
+    const map = {
+      authStepLogin:   "#btnSubmitLogin",
+      authStepDaftar1: "#btnDaftar1Lanjut",
+      authStepDaftar2: "#btnDaftar2Lanjut",
+      authStepDaftar3: "#btnDaftar3Selesai",
+    };
+    form.querySelector(map[activeStep.id])?.click();
   });
 
-  console.log("[AUTH] Binding selesai, navigasi ke Step 2");
-  showStep("authStep2");
+  showStep("authStepPilih");
 };
+
+// ── Helper: tampilkan error input ─────────────────────────
+function showError(inputId, message) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  input.classList.add("input-error");
+  input.focus();
+
+  const old = input.closest(".auth-field")?.querySelector(".auth-error-msg");
+  if (old) old.remove();
+
+  const msg = document.createElement("p");
+  msg.className = "auth-error-msg";
+  msg.textContent = message;
+  input.closest(".auth-field")?.appendChild(msg);
+
+  input.addEventListener("input", () => {
+    input.classList.remove("input-error");
+    msg.remove();
+  }, { once: true });
+}

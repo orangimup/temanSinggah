@@ -1,520 +1,277 @@
 <div id="authOverlay" class="auth-overlay">
   <div class="auth-form-card">
-    <form class="auth-form" method="post">
-      <div class="auth-step active" id="authStep1">
+    <form class="auth-form" method="post" autocomplete="off">
+
+      <!-- ══════════════════════════════════════════
+           STEP PILIH — Masuk / Daftar / Social
+      ══════════════════════════════════════════ -->
+      <div class="auth-step active" id="authStepPilih">
+
         <div class="auth-header-section">
           <div class="empty-div"></div>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
             <i class="ph-bold ph-x"></i>
           </button>
         </div>
 
         <div class="auth-body-section">
-          <div class="auth-top-section">
-            <h2 class="auth-title">Selamat datang kembali</h2>
-            <p class="auth-subtitle">
-              Pilih akun untuk masuk, kami mungkin akan mengirimkan kode melalui
-              email atau pesan teks kepada Anda.
-            </p>
+
+          <div class="auth-logo-container">
+            <div class="auth-logo">
+              <img class="auth-logo-image" src="/assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
+            </div>
+            <h2 class="auth-title center">Selamat datang</h2>
+            <p class="auth-subtitle center">Masuk atau buat akun baru untuk mulai memesan.</p>
           </div>
 
-          <div class="auth-option-list">
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-profile">A</div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">k***0@gmail.com</span>
-                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
-              </div>
-              <i class="ph-bold ph-caret-right"></i>
-            </button>
+          <div class="auth-fields">
+            <button class="auth-submit-button" type="button" id="btnKeLogin">Masuk</button>
+            <button class="auth-submit-button outline" type="button" id="btnKeDaftar">Daftar akun baru</button>
+          </div>
 
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-profile">A</div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">k***0@gmail.com</span>
-                <span class="auth-option-sub">Terakhir login 06/07/1967</span>
-              </div>
-              <i class="ph-bold ph-caret-right"></i>
+          <div class="auth-divider">
+            <span class="auth-divider-line"></span>
+            <span class="auth-divider-text">atau lanjutkan dengan</span>
+            <span class="auth-divider-line"></span>
+          </div>
+
+          <div class="auth-social-icons">
+            <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Google" id="btnSocialGoogle">
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false" style="display:block;height:22px;width:22px">
+                <g fill="none">
+                  <path d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z" fill="#4285f4"/>
+                  <path d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z" fill="#34a853"/>
+                  <path d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z" fill="#fbbc04"/>
+                  <path d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z" fill="#e94235"/>
+                </g>
+              </svg>
+            </button>
+            <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Apple" id="btnSocialApple">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false" style="height:22px;width:22px;display:block;fill:currentcolor">
+                <path d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z"/>
+              </svg>
+            </button>
+            <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Facebook" id="btnSocialFacebook">
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false" style="display:block;height:22px;width:22px">
+                <g fill="none" fill-rule="nonzero">
+                  <path d="m31.9361277 15.9680639c0-8.81884234-7.1492215-15.9680639-15.9680638-15.9680639-8.81884234 0-15.9680639 7.14922156-15.9680639 15.9680639 0 7.4883832 5.15576846 13.7721357 12.1108184 15.497964v-10.6181237h-3.29261481v-4.8798403h3.29261481v-2.1026747c0-5.4348902 2.4597205-7.95401195 7.7956087-7.95401195 1.0117366 0 2.7573653.19864271 3.4714571.3966467v4.42315365c-.3768463-.0396008-1.0315369-.0594012-1.8446307-.0594012-2.6181238 0-3.6298603.9919362-3.6298603 3.5704591v1.7258284h5.2158084l-.8961277 4.8798403h-4.3196807v10.9713373c7.9067465-.9548902 14.0333733-7.6870259 14.0333733-15.8511776z" fill="#0866ff"/>
+                  <path d="m22.2224351 20.8479042.8961278-4.8798403h-5.2158084v-1.7258284c0-2.5785229 1.0117365-3.5704591 3.6298603-3.5704591.8130938 0 1.4677844.0198004 1.8446307.0594012v-4.42315365c-.7140918-.19864271-2.4597205-.3966467-3.4714571-.3966467-5.3358882 0-7.7956088 2.51912175-7.7956088 7.95401195v2.1026747h-3.29261473v4.8798403h3.29261473v10.6181237c1.2352895.3065869 2.5274252.4700998 3.8572455.4700998.6546907 0 1.3004392-.0402395 1.9346907-.1168862v-10.9713373h4.3196806z" fill="#fff"/>
+                </g>
+              </svg>
             </button>
           </div>
-        </div>
 
-        <div class="auth-footer-section">
-          <button class="auth-submit-button outline" type="button">
-            Bukan kamu?
-          </button>
         </div>
       </div>
 
-      <div class="auth-step" id="authStep2">
+      <!-- ══════════════════════════════════════════
+           STEP LOGIN
+      ══════════════════════════════════════════ -->
+      <div class="auth-step" id="authStepLogin">
+
         <div class="auth-header-section">
-          <div class="empty-div"></div>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section">
-          <div class="auth-top-section">
-            <div class="auth-logo-container">
-              <div class="auth-logo">
-                <img
-                  class="auth-logo-image"
-                  src="/assets/logo/logo_temansinggah.svg"
-                  alt="Teman Singgah" />
-              </div>
-              <h2 class="auth-title">Login atau Masuk</h2>
-            </div>
-
-            <div class="auth-input-container">
-              <input
-                type="text"
-                inputmode="email"
-                autocomplete="username"
-                class="auth-input"
-                placeholder="Masukkan nomor telepon atau email"
-                required />
-            </div>
-
-            <p class="auth-info">
-              Kami akan mengirimkan kode konfirmasi melalui SMS atau email.
-            </p>
-          </div>
-
-          <div class="auth-bottom-section">
-            <button class="auth-submit-button" type="submit">Lanjutkan</button>
-
-            <div class="auth-divider">
-              <span class="auth-divider-line"></span>
-              <span class="auth-divider-text">atau</span>
-              <span class="auth-divider-line"></span>
-            </div>
-
-            <div class="auth-social-icons">
-              <button
-                type="button"
-                class="auth-social-icon"
-                aria-label="Login dengan Google">
-                <svg
-                  viewBox="0 0 32 32"
-                  xmlns="http://www.w3.org/2000/svg"
-                  focusable="false"
-                  style="display: block; height: 24px; width: 24px">
-                  <g fill="none">
-                    <path
-                      d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
-                      fill="#4285f4" />
-                    <path
-                      d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
-                      fill="#34a853" />
-                    <path
-                      d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
-                      fill="#fbbc04" />
-                    <path
-                      d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
-                      fill="#e94235" />
-                  </g>
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                class="auth-social-icon"
-                aria-label="Login dengan Apple">
-                <svg
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  focusable="false"
-                  style="
-                    height: 24px;
-                    width: 24px;
-                    display: block;
-                    fill: currentcolor;
-                  ">
-                  <path
-                    d="m13.3 2.1a5.1 5.1 0 0 1 3.8-2.1 5.1 5.1 0 0 1 -1.2 3.8 4.1 4.1 0 0 1 -3.6 1.7 4.5 4.5 0 0 1 1-3.4zm-5 3.7c-2.8 0-5.8 2.5-5.8 7.3 0 4.9 3.5 10.9 6.3 10.9 1 0 2.5-1 4-1s2.6.9 4 .9c3.1 0 5.3-6.4 5.3-6.4a5.3 5.3 0 0 1 -3.2-4.9 5.2 5.2 0 0 1 2.6-4.5 5.4 5.4 0 0 0 -4.7-2.4c-2 0-3.5 1.1-4.3 1.1-.9 0-2.4-1-4.2-1z" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                class="auth-social-icon"
-                aria-label="Login dengan Facebook">
-                <svg
-                  viewBox="0 0 32 32"
-                  xmlns="http://www.w3.org/2000/svg"
-                  focusable="false"
-                  style="display: block; height: 24px; width: 24px">
-                  <g fill="none" fill-rule="nonzero">
-                    <path
-                      d="m31.9361277 15.9680639c0-8.81884234-7.1492215-15.9680639-15.9680638-15.9680639-8.81884234 0-15.9680639 7.14922156-15.9680639 15.9680639 0 7.4883832 5.15576846 13.7721357 12.1108184 15.497964v-10.6181237h-3.29261481v-4.8798403h3.29261481v-2.1026747c0-5.4348902 2.4597205-7.95401195 7.7956087-7.95401195 1.0117366 0 2.7573653.19864271 3.4714571.3966467v4.42315365c-.3768463-.0396008-1.0315369-.0594012-1.8446307-.0594012-2.6181238 0-3.6298603.9919362-3.6298603 3.5704591v1.7258284h5.2158084l-.8961277 4.8798403h-4.3196807v10.9713373c7.9067465-.9548902 14.0333733-7.6870259 14.0333733-15.8511776z"
-                      fill="#0866ff" />
-                    <path
-                      d="m22.2224351 20.8479042.8961278-4.8798403h-5.2158084v-1.7258284c0-2.5785229 1.0117365-3.5704591 3.6298603-3.5704591.8130938 0 1.4677844.0198004 1.8446307.0594012v-4.42315365c-.7140918-.19864271-2.4597205-.3966467-3.4714571-.3966467-5.3358882 0-7.7956088 2.51912175-7.7956088 7.95401195v2.1026747h-3.29261473v4.8798403h3.29261473v10.6181237c1.2352895.3065869 2.5274252.4700998 3.8572455.4700998.6546907 0 1.3004392-.0402395 1.9346907-.1168862v-10.9713373h4.3196806z"
-                      fill="#fff" />
-                  </g>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="auth-step" id="authStep3">
-        <div class="auth-header-section">
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Kembali"
-            data-action="prev-step">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
             <i class="ph-bold ph-caret-left"></i>
           </button>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section code">
-          <div class="auth-top-section">
-            <h2 class="auth-title">Konfirmasi bahwa ini anda</h2>
-            <p class="auth-subtitle">
-              Kami mengirimkan kode ke akhmaddakhir@gmail.com
-            </p>
-          </div>
-
-          <div class="auth-bottom-section">
-            <div class="auth-input-container">
-              <input
-                type="text"
-                inputmode="numeric"
-                autocomplete="one-time-code"
-                maxlength="6"
-                pattern="\d{6}"
-                class="auth-input code"
-                placeholder="– – – – – –"
-                required />
-            </div>
-
-            <p class="auth-info">
-              Tidak mendapatkan kode?
-              <button type="button" class="auth-resend-button">
-                Kirim ulang
-              </button>
-            </p>
-          </div>
-        </div>
-
-        <div class="auth-footer-section">
-          <button class="auth-submit-button" type="submit">Lanjutkan</button>
-        </div>
-      </div>
-
-      <div class="auth-step" id="authStep4">
-        <div class="auth-header-section">
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Kembali"
-            data-action="prev-step">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
             <i class="ph-bold ph-x"></i>
           </button>
         </div>
 
         <div class="auth-body-section">
-          <div class="auth-top-section">
-            <h2 class="auth-title">Mari buat akun anda</h2>
-            <p class="auth-subtitle">
-              Informasi ini diperlukan untuk memesan atau menjadi host.
-            </p>
+
+          <div>
+            <h2 class="auth-title">Masuk</h2>
+            <p class="auth-subtitle">Masukkan email dan password kamu.</p>
           </div>
 
-          <div class="auth-bottom-section">
-            <fieldset class="auth-field">
-              <legend class="auth-input-label">Nama lengkap</legend>
-              <div class="auth-input-group">
-                <input
-                  type="text"
-                  class="auth-input"
-                  placeholder="Masukkan nama depan"
-                  required />
-                <input
-                  type="text"
-                  class="auth-input"
-                  placeholder="Masukkan nama belakang"
-                  required />
-              </div>
-            </fieldset>
-
-            <fieldset class="auth-field">
-              <legend class="auth-input-label">Tanggal Lahir</legend>
-              <div class="auth-input-group">
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  class="auth-input"
-                  placeholder="Masukkan tanggal lahir"
-                  required />
-              </div>
-            </fieldset>
+          <div class="auth-fields">
 
             <fieldset class="auth-field">
               <legend class="auth-input-label">Email</legend>
-              <div class="auth-input-group">
-                <input
-                  type="email"
-                  class="auth-input"
-                  value="akhmaddaqiqulm@gmail.com"
-                  disabled
-                  style="cursor: not-allowed" />
+              <input type="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+            </fieldset>
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Password</legend>
+              <div class="auth-password-wrap">
+                <input type="password" id="loginPassword" class="auth-input" placeholder="Masukkan password" autocomplete="current-password" required />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                  <i class="ph-bold ph-eye"></i>
+                </button>
               </div>
             </fieldset>
+
+            <button type="button" class="auth-forgot-link" id="btnLupaPassword">Lupa password?</button>
+
           </div>
         </div>
 
         <div class="auth-footer-section">
-          <button class="auth-submit-button" type="submit">Lanjutkan</button>
+          <button class="auth-submit-button" type="button" id="btnSubmitLogin">Masuk</button>
+          <p class="auth-switch-text">
+            Belum punya akun?
+            <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button>
+          </p>
         </div>
+
       </div>
 
-      <div class="auth-step" id="authStep5">
+      <!-- ══════════════════════════════════════════
+           STEP DAFTAR 1 — Nama & Tanggal Lahir
+      ══════════════════════════════════════════ -->
+      <div class="auth-step" id="authStepDaftar1">
+
         <div class="auth-header-section">
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Kembali"
-            data-action="prev-step">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
             <i class="ph-bold ph-caret-left"></i>
           </button>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
             <i class="ph-bold ph-x"></i>
           </button>
         </div>
 
         <div class="auth-body-section">
-          <div class="auth-top-section">
-            <svg
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-              focusable="false"
-              style="display: block; height: 40px; width: 40px; margin: 0 auto">
-              <g fill="none">
-                <path
-                  d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
-                  fill="#4285f4" />
-                <path
-                  d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
-                  fill="#34a853" />
-                <path
-                  d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
-                  fill="#fbbc04" />
-                <path
-                  d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
-                  fill="#e94235" />
-              </g>
-            </svg>
-            <h2 class="auth-title">Masuk dengan Google</h2>
-            <p class="auth-subtitle">
-              Anda pernah masuk ke Teman Singgah dengan cara ini sebelumnya.
-            </p>
-          </div>
-        </div>
 
-        <div class="auth-footer-section">
-          <button class="auth-submit-button" type="submit">
-            <svg
-              viewBox="0 0 32 32"
-              xmlns="http://www.w3.org/2000/svg"
-              focusable="false"
-              style="display: block; height: 16px; width: 16px">
-              <g fill="none">
-                <path
-                  d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
-                  fill="#4285f4" />
-                <path
-                  d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
-                  fill="#34a853" />
-                <path
-                  d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
-                  fill="#fbbc04" />
-                <path
-                  d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
-                  fill="#e94235" />
-              </g>
-            </svg>
-            Lanjutkan dengan Google
-          </button>
-          <button
-            class="auth-submit-button outline"
-            type="button"
-            data-action="next-step"
-            data-target="authStep6">
-            Coba cara lain
-          </button>
-        </div>
-      </div>
-
-      <div class="auth-step small" id="authStep6">
-        <div class="auth-header-section">
-          <div class="empty-div"></div>
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Tutup"
-            data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="auth-body-section">
-          <div class="auth-top-section">
-            <h2 class="auth-title">Coba cara lain</h2>
-          </div>
-
-          <div class="auth-option-list">
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-icon">
-                <svg
-                  viewBox="0 0 32 32"
-                  xmlns="http://www.w3.org/2000/svg"
-                  focusable="false"
-                  style="display: block; height: 16px; width: 16px">
-                  <g fill="none">
-                    <path
-                      d="m30.7 16.340875c0-1.0635937-.0954375-2.0863125-.2727187-3.06825h-14.1272813v5.8022813h8.0727188c-.3477188 1.8749999-1.4044688 3.4636874-2.9931563 4.527375v3.7635937h4.8477188c2.8364062-2.6113125 4.4727187-6.4568438 4.4727187-11.025z"
-                      fill="#4285f4" />
-                    <path
-                      d="m16.3 31c4.05 0 7.4454375-1.34325 9.9271875-3.6340312l-4.8477187-3.7635938c-1.3430626.9-3.0613126 1.43175-5.0794688 1.43175-3.9068438 0-7.21363125-2.6386875-8.39323125-6.184125h-5.01135v3.8864063c2.46825 4.9022812 7.54094995 8.2635937 13.40458125 8.2635937z"
-                      fill="#34a853" />
-                    <path
-                      d="m7.90675 18.8499062c-.3-.9-.4704-1.8613125-.4704-2.85s.1704-1.95.4704-2.85v-3.88635933h-5.01135c-1.0158 2.02504693-1.5954 4.31592183-1.5954 6.73635933 0 2.4204376.5796 4.7113126 1.5954 6.7363125z"
-                      fill="#fbbc04" />
-                    <path
-                      d="m16.3 6.96595c2.2021875 0 4.1794688.75675 5.7340313 2.2431l4.3023749-4.3023c-2.5977187-2.4204-5.9932499-3.90675-10.0364062-3.90675-5.8636313 0-10.93633125 3.36135-13.40458125 8.26365l5.01135 3.88635c1.1796-3.5454 4.48638745-6.18405 8.39323125-6.18405z"
-                      fill="#e94235" />
-                  </g>
-                </svg>
-              </div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">Lanjutkan dengan Google</span>
-              </div>
-            </button>
-
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-icon">
-                <i class="ph-bold ph-device-mobile-camera"></i>
-              </div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">Dapatkan kode via SMS</span>
-                <span class="auth-option-sub">+62 812-3130-3690</span>
-              </div>
-            </button>
-
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-icon">
-                <svg
-                  viewBox="0 0 32 32"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                  focusable="false"
-                  style="
-                    display: block;
-                    height: 24px;
-                    width: 24px;
-                    fill: currentcolor;
-                  ">
-                  <path
-                    d="m26.4996694 5.42690083c-2.7964463-2.80004133-6.5157025-4.34283558-10.4785124-4.3442562-8.16570245 0-14.81136692 6.64495868-14.81420824 14.81280987-.00142066 2.6110744.68118843 5.1596695 1.97750579 7.4057025l-2.10180992 7.6770248 7.85319008-2.0599173c2.16358679 1.1805785 4.59995039 1.8020661 7.07895869 1.8028099h.0063636c8.1642975 0 14.8107438-6.6457025 14.8135547-14.8135537.001404-3.9585124-1.5378522-7.67985954-4.3350423-10.47990913zm-10.4785124 22.79243797h-.0049587c-2.2090909-.0006611-4.3761983-.5945454-6.26702475-1.7161157l-.44965289-.2670248-4.66034711 1.2223967 1.24375207-4.5438843-.29265289-.4659504c-1.23238843-1.9604132-1.8837438-4.2263636-1.88232464-6.552562.0028453-6.78846276 5.5262172-12.31184293 12.31825021-12.31184293 3.2886777.00142149 6.38 1.28353719 8.7047934 3.61122314 2.3248761 2.32698347 3.6041323 5.42111569 3.6027285 8.71053719-.0028938 6.7891736-5.5261995 12.312562-12.3125632 12.312562zm6.7536364-9.2212396c-.3700827-.1853719-2.1898347-1.0804132-2.5294215-1.203967-.3395041-.1236363-.5859504-.1853719-.8324793.1853719-.2464463.3708265-.9560331 1.2047108-1.1719835 1.4511571-.2159504.24719-.4319008.2777686-.8019835.092314-.37-.1853719-1.5626446-.5760331-2.9768595-1.8368595-1.1002479-.9816529-1.8433058-2.1933884-2.0591735-2.5642149-.2159505-.3707438-.0227273-.5710744.1619008-.7550413.1661983-.1661983.3700826-.432562.5554545-.6485124.1854546-.2159504.246529-.3707438.3700827-.6172727.1236363-.2471901.0618182-.4630579-.0304959-.6485124-.0923967-.1853719-.8324793-2.0073554-1.1414876-2.74818183-.3004959-.72166116-.6058678-.62363637-.8324793-.63571075-.2159504-.01066116-.4623967-.01278512-.7095868-.01278512s-.6478512.09233884-.98735538.46312396c-.33950413.37074381-1.29561157 1.26644624-1.29561157 3.08768594s1.32619008 3.5821488 1.51156195 3.8293389c.1853719.24719 2.6103306 3.9855371 6.3231405 5.5894214.8829752.381405 1.5726447.6094215 2.1103306.7799174.8865289.2819835 1.6933884.2422314 2.3312397.1470248.7110744-.1065289 2.1899173-.8957025 2.4981818-1.7601653s.3082645-1.6060331.2159504-1.7601653c-.092314-.1541322-.3395041-.2477687-.7095868-.432562z" />
-                </svg>
-              </div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">
-                  Dapatkan kode via WhatsApp
-                </span>
-                <span class="auth-option-sub">+62 812-3130-3690</span>
-              </div>
-            </button>
-
-            <button type="button" class="auth-option-item">
-              <div class="auth-option-icon">
-                <i class="ph-bold ph-envelope-simple"></i>
-              </div>
-              <div class="auth-option-text">
-                <span class="auth-option-label">Dapatkan kode via Email</span>
-                <span class="auth-option-sub">a***r@gmail.com</span>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="auth-step" id="authStep7">
-        <div class="auth-header-section">
-          <button
-            type="button"
-            class="auth-nav-button"
-            aria-label="Kembali"
-            data-action="prev-step">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <div class="empty-div"></div>
-        </div>
-
-        <div class="auth-body-section community">
-          <div class="auth-top-section">
-            <div class="auth-logo">
-              <img
-                class="auth-logo-image"
-                src="/assets/logo/logo_temansinggah.svg"
-                alt="Teman Singgah" />
+          <div>
+            <div class="auth-step-indicator">
+              <span class="auth-step-dot active"></span>
+              <span class="auth-step-dot"></span>
+              <span class="auth-step-dot"></span>
             </div>
-            <h2 class="auth-title">Semua orang diterima di sini</h2>
+            <h2 class="auth-title">Siapa namamu?</h2>
+            <p class="auth-subtitle">Nama ini akan ditampilkan di profilmu.</p>
           </div>
-          <div class="auth-bottom-section">
-            <p class="auth-community-intro">
-              Saat bergabung dengan Teman Singgah, kami mengajak kamu untuk
-              menyepakati Komitmen Komunitas kami:
-            </p>
-            <p class="auth-community-commitment">
-              Saya berkomitmen untuk memperlakukan setiap orang dalam komunitas
-              ini dengan hormat dan tanpa prasangka, terlepas dari ras, agama,
-              asal negara, suku, warna kulit, disabilitas, jenis kelamin,
-              identitas gender, orientasi seksual, maupun usia mereka.
-            </p>
+
+          <div class="auth-fields">
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Nama depan</legend>
+              <input type="text" id="daftarNamaDepan" class="auth-input" placeholder="Masukkan nama depan" autocomplete="given-name" required />
+            </fieldset>
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Nama belakang</legend>
+              <input type="text" id="daftarNamaBelakang" class="auth-input" placeholder="Masukkan nama belakang" autocomplete="family-name" required />
+            </fieldset>
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Tanggal lahir</legend>
+              <input type="date" id="daftarTanggalLahir" class="auth-input" required />
+            </fieldset>
+
           </div>
         </div>
 
         <div class="auth-footer-section">
-          <button
-            class="auth-submit-button"
-            type="submit"
-            data-action="login-success">
-            Setuju dan lanjutkan
+          <button class="auth-submit-button" type="button" id="btnDaftar1Lanjut">Lanjutkan</button>
+          <p class="auth-switch-text">
+            Sudah punya akun?
+            <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           STEP DAFTAR 2 — Email & Password
+      ══════════════════════════════════════════ -->
+      <div class="auth-step" id="authStepDaftar2">
+
+        <div class="auth-header-section">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-daftar1">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
           </button>
         </div>
+
+        <div class="auth-body-section">
+
+          <div>
+            <div class="auth-step-indicator">
+              <span class="auth-step-dot active"></span>
+              <span class="auth-step-dot active"></span>
+              <span class="auth-step-dot"></span>
+            </div>
+            <h2 class="auth-title">Buat akun</h2>
+            <p class="auth-subtitle">Email dan password untuk masuk ke akun kamu.</p>
+          </div>
+
+          <div class="auth-fields">
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Email</legend>
+              <input type="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+            </fieldset>
+
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Password</legend>
+              <div class="auth-password-wrap">
+                <input type="password" id="daftarPassword" class="auth-input" placeholder="Minimal 8 karakter" autocomplete="new-password" required />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                  <i class="ph-bold ph-eye"></i>
+                </button>
+              </div>
+              <p class="auth-field-hint">Gunakan minimal 8 karakter, kombinasi huruf dan angka.</p>
+            </fieldset>
+
+          </div>
+        </div>
+
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnDaftar2Lanjut">Lanjutkan</button>
+        </div>
+
       </div>
+
+      <!-- ══════════════════════════════════════════
+           STEP DAFTAR 3 — Komitmen komunitas
+      ══════════════════════════════════════════ -->
+      <div class="auth-step" id="authStepDaftar3">
+
+        <div class="auth-header-section">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-daftar2">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+
+        <div class="auth-body-section">
+
+          <div>
+            <div class="auth-step-indicator">
+              <span class="auth-step-dot active"></span>
+              <span class="auth-step-dot active"></span>
+              <span class="auth-step-dot active"></span>
+            </div>
+          </div>
+
+          <div class="auth-logo-container">
+            <div class="auth-logo" style="width:56px;height:56px;border-radius:var(--radius-xl)">
+              <img class="auth-logo-image" src="/assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
+            </div>
+            <h2 class="auth-title center">Semua orang diterima di sini</h2>
+          </div>
+
+          <div class="auth-fields">
+            <p class="auth-community-intro">Saat bergabung dengan Teman Singgah, kami mengajak kamu untuk menyepakati Komitmen Komunitas kami:</p>
+            <p class="auth-community-commitment">Saya berkomitmen untuk memperlakukan setiap orang dalam komunitas ini dengan hormat dan tanpa prasangka, terlepas dari ras, agama, asal negara, suku, warna kulit, disabilitas, jenis kelamin, identitas gender, orientasi seksual, maupun usia mereka.</p>
+          </div>
+
+        </div>
+
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnDaftar3Selesai">
+            Setuju dan buat akun
+          </button>
+        </div>
+
+      </div>
+
     </form>
   </div>
 </div>
