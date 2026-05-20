@@ -1,205 +1,182 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Favorit | Teman Singgah</title>
-    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
-    <link rel="stylesheet" href="/components/root.css" />
-    <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/components/footer.css" />
-    <link rel="stylesheet" href="/popups/auth.css" />
-    <link rel="stylesheet" href="/user/styles/wishlist.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Favorit | Teman Singgah</title>
+  <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet" />
-    <script
-      type="module"
-      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
-  </head>
+  <link rel="stylesheet" href="/components/root.css" />
+  <link rel="stylesheet" href="/components/navbar.css" />
+  <link rel="stylesheet" href="/components/footer.css" />
+  <link rel="stylesheet" href="/popups/auth.css" />
+  <link rel="stylesheet" href="/user/styles/wishlist.css" />
 
-  <body>
-    <header class="navbar">
-      <nav class="navbar-container">
-        <a href="/index.html" class="logo-link"></a>
-        <div class="logo-section">
-          <img
-            src="/assets/logo/logo_temansinggah.svg"
-            alt="Logo Teman Singgah"
-            class="logo-icon" />
-          <img
-            src="/assets/logo/label_temansinggah.svg"
-            alt="Brand Name Teman Singgah"
-            class="logo-name" />
-        </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+</head>
 
-        <ul class="nav-menu">
-          <li class="nav-item">
-            <a href="/index.html" class="nav-link">Cari Penginapan</a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/promo_deals.html" class="nav-link">
-              Promo & Deals
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/become_host.html" class="nav-link">
-              Jadi Host
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/user/pages/about_us.html" class="nav-link">
-              Tentang Kami
-            </a>
-          </li>
+<body>
+  <header class="navbar">
+    <nav class="navbar-container">
+      <a href="/index.html" class="logo-link"></a>
+      <div class="logo-section">
+        <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+        <img src="/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+      </div>
 
-          <div class="nav-indicator"></div>
-        </ul>
-
-        <div class="nav-right">
-          <a href="/host/onboarding/pages/about_place.html">
-            <button class="ghost-button">Ganti ke host</button>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="/index.html" class="nav-link">Cari Penginapan</a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/promo_deals.html" class="nav-link">
+            Promo & Deals
           </a>
-          <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
-            <button class="icon-button hamburger" aria-label="Hamburger">
-              <i class="ph-bold ph-list"></i>
-            </button>
-          </div>
-          <div id="hamburgerDropdown"></div>
-          <div id="languagePopup"></div>
-          <div id="authPopup"></div>
-        </div>
-      </nav>
-    </header>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/become_host.html" class="nav-link">
+            Jadi Host
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/pages/about_us.html" class="nav-link">
+            Tentang Kami
+          </a>
+        </li>
 
-    <main class="main-content">
-      <div class="section-header">
-        <h2 class="section-title">Favorit</h2>
+        <div class="nav-indicator"></div>
+      </ul>
+
+      <div class="nav-right">
+        <a href="/host/onboarding/pages/about_place.html">
+          <button class="ghost-button">Ganti ke host</button>
+        </a>
+        <div class="icon-buttons">
+          <button class="icon-button profile" aria-label="Profile">A</button>
+          <button class="icon-button hamburger" aria-label="Hamburger">
+            <i class="ph-bold ph-list"></i>
+          </button>
+        </div>
+        <div id="hamburgerDropdown"></div>
+        <div id="languagePopup"></div>
+        <div id="authPopup"></div>
       </div>
-      <section class="list-section">
-        <a href="/user/pages/wishlist_detail.html" class="favorite-card">
-          <div class="favorite-card-image-container">
-            <img
-              src="/assets/images/apurva_kempinski_bali.jpg"
-              class="favorite-card-image"
-              alt="Villa Sunset" />
-            <div class="list-remove"><i class="ph-bold ph-x"></i></div>
-          </div>
-          <div class="favorite-card-body">
-            <span class="favorite-card-name">Villa Bali</span>
-            <span class="favorite-card-location"> 5 tersimpan </span>
-          </div>
-        </a>
+    </nav>
+  </header>
 
-        <a href="/user/pages/wishlist_detail.html" class="favorite-card">
-          <div class="favorite-card-image-container">
-            <img
-              src="/assets/images/apurva_kempinski_bali.jpg"
-              class="favorite-card-image"
-              alt="Villa Sunset" />
-            <div class="list-remove"><i class="ph-bold ph-x"></i></div>
-          </div>
-          <div class="favorite-card-body">
-            <span class="favorite-card-name">Villa Bali</span>
-            <span class="favorite-card-location"> 5 tersimpan </span>
-          </div>
-        </a>
+  <main class="main-content">
+    <div class="section-header">
+      <h2 class="section-title">Favorit</h2>
+    </div>
+    <section class="list-section">
+      <a href="/user/pages/wishlist_detail.html" class="favorite-card">
+        <div class="favorite-card-image-container">
+          <img src="/assets/images/apurva_kempinski_bali.jpg" class="favorite-card-image" alt="Villa Sunset" />
+          <div class="list-remove"><i class="ph-bold ph-x"></i></div>
+        </div>
+        <div class="favorite-card-body">
+          <span class="favorite-card-name">Villa Bali</span>
+          <span class="favorite-card-location"> 5 tersimpan </span>
+        </div>
+      </a>
 
-        <a href="/user/pages/wishlist_detail.html" class="favorite-card">
-          <div class="favorite-card-image-container">
-            <img
-              src="/assets/images/apurva_kempinski_bali.jpg"
-              class="favorite-card-image"
-              alt="Villa Sunset" />
-            <div class="list-remove"><i class="ph-bold ph-x"></i></div>
-          </div>
-          <div class="favorite-card-body">
-            <span class="favorite-card-name">Villa Bali</span>
-            <span class="favorite-card-location"> 5 tersimpan </span>
-          </div>
-        </a>
-      </section>
-    </main>
+      <a href="/user/pages/wishlist_detail.html" class="favorite-card">
+        <div class="favorite-card-image-container">
+          <img src="/assets/images/apurva_kempinski_bali.jpg" class="favorite-card-image" alt="Villa Sunset" />
+          <div class="list-remove"><i class="ph-bold ph-x"></i></div>
+        </div>
+        <div class="favorite-card-body">
+          <span class="favorite-card-name">Villa Bali</span>
+          <span class="favorite-card-location"> 5 tersimpan </span>
+        </div>
+      </a>
 
-    <footer class="footer">
-      <div class="footer-grid">
-        <div class="footer-column">
-          <span class="footer-brand">Teman Singgah</span>
-          <p class="footer-description">
-            Platform booking penginapan terpercaya di seluruh Indonesia, dari
-            hotel berbintang hingga homestay lokal.
-          </p>
-          <div class="footer-social">
-            <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
-            <a href="" class="social-link"
-              ><i class="ri-facebook-circle-line"></i
-            ></a>
-            <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
-            <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
-            <a href="" class="social-link"><i class="ri-mail-line"></i></a>
-          </div>
+      <a href="/user/pages/wishlist_detail.html" class="favorite-card">
+        <div class="favorite-card-image-container">
+          <img src="/assets/images/apurva_kempinski_bali.jpg" class="favorite-card-image" alt="Villa Sunset" />
+          <div class="list-remove"><i class="ph-bold ph-x"></i></div>
         </div>
-        <div class="footer-column">
-          <h3 class="footer-title">Navigasi</h3>
-          <ul class="footer-links">
-            <li><a href="/index.html" class="footer-link">Beranda</a></li>
-            <li>
-              <a href="/user/pages/promo_deals.html" class="footer-link"
-                >Promo & Deals</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/become_host.html" class="footer-link"
-                >Jadi Host</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
-            <li>
-              <a href="/user/pages/account.html" class="footer-link">Akun</a>
-            </li>
-          </ul>
+        <div class="favorite-card-body">
+          <span class="favorite-card-name">Villa Bali</span>
+          <span class="favorite-card-location"> 5 tersimpan </span>
         </div>
-        <div class="footer-column">
-          <h3 class="footer-title">Dukungan</h3>
-          <ul class="footer-links">
-            <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
-            <li><a href="#" class="footer-link">FAQ</a></li>
-            <li>
-              <a href="/user/pages/become_host.html" class="footer-link"
-                >Cara Menjadi Host</a
-              >
-            </li>
-            <li><a href="#" class="footer-link">Cara Booking</a></li>
-            <li>
-              <a href="/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="footer-copyright">
-          © 2026 Teman Singgah — All rights reserved.
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-column">
+        <span class="footer-brand">Teman Singgah</span>
+        <p class="footer-description">
+          Platform booking penginapan terpercaya di seluruh Indonesia, dari
+          hotel berbintang hingga homestay lokal.
         </p>
-        <div class="footer-legal">
-          <a href="" class="footer-link bottom">Kebijakan Privasi</a>
-          <span class="footer-dot">•</span>
-          <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+        <div class="footer-social">
+          <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
+          <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
+          <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
+          <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
+          <a href="" class="social-link"><i class="ri-mail-line"></i></a>
         </div>
       </div>
-    </footer>
-  </body>
+      <div class="footer-column">
+        <h3 class="footer-title">Navigasi</h3>
+        <ul class="footer-links">
+          <li><a href="/index.html" class="footer-link">Beranda</a></li>
+          <li>
+            <a href="/user/pages/promo_deals.html" class="footer-link">Promo & Deals</a>
+          </li>
+          <li>
+            <a href="/user/pages/become_host.html" class="footer-link">Jadi Host</a>
+          </li>
+          <li>
+            <a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a>
+          </li>
+          <li>
+            <a href="/user/pages/account.html" class="footer-link">Akun</a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3 class="footer-title">Dukungan</h3>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
+          <li><a href="#" class="footer-link">FAQ</a></li>
+          <li>
+            <a href="/user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a>
+          </li>
+          <li><a href="#" class="footer-link">Cara Booking</a></li>
+          <li>
+            <a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        © 2026 Teman Singgah — All rights reserved.
+      </p>
+      <div class="footer-legal">
+        <a href="" class="footer-link bottom">Kebijakan Privasi</a>
+        <span class="footer-dot">•</span>
+        <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="/user/scripts/home.js"></script>
+  <script src="/popups/auth.js"></script>
+  <script src="/components/navbar.js"></script>
+  <script src="/components/search_bar.js"></script>
+</body>
+
 </html>

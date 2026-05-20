@@ -303,7 +303,7 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-dropdown);
   margin-top: var(--space-6);
-  transform: translateX(-560px);
+  left: -560px;
   display: none;
 }
 

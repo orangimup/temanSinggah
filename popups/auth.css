@@ -1,12 +1,11 @@
-/* ═══════════════════════════════════════════════════════════
-   AUTH POPUP
-═══════════════════════════════════════════════════════════ */
-
 .auth-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: var(--color-bg-overlay);
-  z-index: var(--z-modal);
+  z-index: var(--z-modal, 99999);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,21 +20,20 @@
   pointer-events: all;
 }
 
-/* ── Card ─────────────────────────────────────────────────── */
-
 .auth-form-card {
   background: #fff;
   border-radius: var(--radius-3xl);
   padding: var(--space-32);
   width: 100%;
   max-width: 460px;
-  max-height: 92vh;
+  max-height: 90vh;
   box-shadow: var(--shadow-dropdown);
   position: relative;
   z-index: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  margin: auto;
 }
 
 .auth-form {
@@ -44,8 +42,6 @@
   flex: 1;
   width: 100%;
 }
-
-/* ── Step ─────────────────────────────────────────────────── */
 
 .auth-step {
   display: none;
@@ -57,8 +53,6 @@
   flex-direction: column;
   flex: 1;
 }
-
-/* ── Header (back & close) ────────────────────────────────── */
 
 .auth-header-section {
   display: flex;
@@ -91,16 +85,12 @@
   height: 36px;
 }
 
-/* ── Body ─────────────────────────────────────────────────── */
-
 .auth-body-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-32);
   width: 100%;
 }
-
-/* ── Logo & judul tengah (step pilih) ─────────────────────── */
 
 .auth-logo-container {
   display: flex;
@@ -138,8 +128,6 @@
   object-fit: contain;
 }
 
-/* ── Judul & subjudul ─────────────────────────────────────── */
-
 .auth-title {
   color: var(--color-text-primary);
   font-size: var(--text-2xl);
@@ -159,9 +147,6 @@
 
 .auth-subtitle.center { text-align: center; }
 
-
-/* ── Form fields ──────────────────────────────────────────── */
-
 .auth-fields {
   display: flex;
   flex-direction: column;
@@ -174,6 +159,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
+  margin: 0;
 }
 
 .auth-input-label {
@@ -236,7 +222,6 @@
   -webkit-text-fill-color: var(--color-text-primary);
 }
 
-/* Password — tombol show/hide */
 .auth-password-group {
   position: relative;
 }
@@ -264,7 +249,6 @@
 
 .auth-toggle-password:hover { color: var(--color-text-primary); }
 
-/* Lupa password — rata kanan */
 .auth-forgot-link {
   background: none;
   border: none;
@@ -284,7 +268,6 @@
 .auth-forgot-link:hover  { color: var(--color-primary-hover); }
 .auth-forgot-link:active { color: var(--color-primary-active); }
 
-/* Field hint & error */
 .auth-field-hint {
   font-size: var(--text-xs);
   color: var(--color-text-hint);
@@ -303,8 +286,6 @@
   margin-top: var(--space-6);
   font-weight: var(--font-medium);
 }
-
-/* ── Divider ──────────────────────────────────────────────── */
 
 .auth-divider {
   display: flex;
@@ -325,8 +306,6 @@
   white-space: nowrap;
   font-weight: var(--font-medium);
 }
-
-/* ── Social icons ─────────────────────────────────────────── */
 
 .auth-social-icons {
   display: flex;
@@ -349,8 +328,6 @@
 
 .auth-social-icon:hover  { background: var(--color-bg-section); border-color: var(--color-border-strong); }
 .auth-social-icon:active { background: var(--color-bg-skeleton); transform: scale(0.98); }
-
-/* ── Footer ───────────────────────────────────────────────── */
 
 .auth-footer-section {
   display: flex;
