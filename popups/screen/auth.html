@@ -157,6 +157,67 @@
         </div>
       </div>
 
+      <div class="auth-step" id="authStepLupaPassword">
+        <div class="auth-header-section">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-login">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+
+        <div class="auth-body-section">
+          <div>
+            <h2 class="auth-title">Lupa password?</h2>
+            <p class="auth-subtitle">Masukkan email kamu dan kami akan mengirimkan tautan untuk mengatur ulang password.</p>
+          </div>
+
+          <div class="auth-fields">
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Email</legend>
+              <div class="auth-input-group">
+                <input type="email" id="lupaPasswordEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnKirimResetPassword">Kirim tautan reset</button>
+          <p class="auth-switch-text">
+            Ingat password?
+            <button type="button" class="auth-switch-link" id="btnSwitchKeLoginDariLupa">Masuk</button>
+          </p>
+        </div>
+      </div>
+
+      <div class="auth-step" id="authStepResetSukses">
+        <div class="auth-header-section">
+          <div class="empty-div"></div>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+
+        <div class="auth-body-section">
+          <div class="auth-logo-container">
+            <div class="auth-icon-success">
+              <i class="ph-bold ph-paper-plane-tilt"></i>
+            </div>
+            <h2 class="auth-title center">Cek emailmu</h2>
+            <p class="auth-subtitle center">Kami sudah mengirimkan tautan reset password ke <strong id="lupaPasswordEmailDisplay"></strong>. Tautan berlaku selama 15 menit.</p>
+          </div>
+        </div>
+
+        <div class="auth-footer-section">
+          <button class="auth-submit-button outline" type="button" id="btnKirimUlangReset">Kirim ulang email</button>
+          <p class="auth-switch-text">
+            <button type="button" class="auth-switch-link" id="btnKembaliKeLogin">Kembali ke halaman masuk</button>
+          </p>
+        </div>
+      </div>
+
     </form>
   </div>
 </div>

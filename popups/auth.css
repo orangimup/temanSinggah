@@ -396,5 +396,17 @@
   transition: color var(--transition-fast);
 }
 
+.auth-icon-success {
+  width: 64px;
+  height: 64px;
+  background: #eaf3de;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #3B6D11;
+}
+
 .auth-switch-link:hover  { color: var(--color-primary-hover); }
 .auth-switch-link:active { color: var(--color-primary-active); }

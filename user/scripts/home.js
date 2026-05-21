@@ -7,8 +7,8 @@ saveButton.forEach((saveItem) => {
     const isActive = saveItem.classList.toggle("active");
 
     saveItem.src = isActive
-      ? "/assets/icons/save_fill.svg"
-      : "/assets/icons/save.svg";
+      ? "assets/icons/save_fill.svg"
+      : "assets/icons/save.svg";
   });
 });
 

@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (intentToBeHost) {
       intentToBeHost = false;
       setTimeout(() => {
-        window.location.href = "/host/onboarding/pages/about_place.html";
+        window.location.href = "host/onboarding/pages/about_place.html";
       }, 500);
     }
   };
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/screen/hamburger.html");
+      const res = await fetch("popups/screen/hamburger.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/screen/language.html");
+      const res = await fetch("popups/screen/language.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("/popups/screen/auth.html");
+      const res = await fetch("popups/screen/auth.html");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");

@@ -893,3 +893,232 @@ if (tabItems.length && tabIndicator) {
   const activeTab = document.querySelector(".tab-item.active");
   if (activeTab) moveIndicator(activeTab);
 }
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN TABLE MANAGER – search + numbering + pagination
+   Works alongside existing filter & sort logic.
+   ═══════════════════════════════════════════════════════ */
+(function () {
+  const ROWS_PER_PAGE = 10;
+
+  // Only run on pages that have a table-toolbar (added via HTML)
+  const toolbar = document.querySelector('.table-toolbar');
+  if (!toolbar) return;
+
+  const searchInput = document.getElementById('adminSearch');
+  const resultCount = document.getElementById('searchResultCount');
+
+  // Support multiple tables (e.g. logs page with tabs)
+  // We manage ALL tables present
+  function getAllTables() {
+    return Array.from(document.querySelectorAll('.managed-table'));
+  }
+
+  // ── Numbering ──────────────────────────────────────────
+  function refreshNumbers(table) {
+    const visibleRows = Array.from(table.querySelectorAll('tbody tr'))
+      .filter(r => r.style.display !== 'none');
+    visibleRows.forEach((row, i) => {
+      const numCell = row.querySelector('.col-num');
+      if (numCell) numCell.textContent = i + 1;
+    });
+  }
+
+  // ── Pagination ────────────────────────────────────────
+  function getPaginationEl(table) {
+    // Each managed table has a sibling .table-pagination
+    return table.closest('.table-section')?.querySelector('.table-pagination');
+  }
+
+  function getState(table) {
+    if (!table._adminPage) table._adminPage = 1;
+    return table._adminPage;
+  }
+
+  function setState(table, page) {
+    table._adminPage = page;
+  }
+
+  function getVisibleRows(table) {
+    return Array.from(table.querySelectorAll('tbody tr'))
+      .filter(r => r.dataset.hidden !== 'filter'); // respect filter hide
+  }
+
+  function applyPagination(table) {
+    const page = getState(table);
+    const allRows = Array.from(table.querySelectorAll('tbody tr'));
+    // rows hidden by search or filter have data-hidden set
+    const visibleRows = allRows.filter(r => !r.dataset.hidden);
+    const total = visibleRows.length;
+    const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+    const safePage = Math.min(page, totalPages);
+    if (safePage !== page) setState(table, safePage);
+
+    const start = (safePage - 1) * ROWS_PER_PAGE;
+    const end = start + ROWS_PER_PAGE;
+
+    // Hide all rows first
+    allRows.forEach(r => {
+      if (r.dataset.hidden) {
+        r.style.display = 'none';
+      }
+    });
+
+    // Show only current page slice of visible rows
+    visibleRows.forEach((r, i) => {
+      r.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    renderPagination(table, safePage, totalPages, total);
+    refreshNumbers(table);
+    updateResultCount(table);
+  }
+
+  function renderPagination(table, page, totalPages, total) {
+    const paginEl = getPaginationEl(table);
+    if (!paginEl) return;
+
+    const infoEl = paginEl.querySelector('.pagination-info');
+    const controlsEl = paginEl.querySelector('.pagination-controls');
+    if (!infoEl || !controlsEl) return;
+
+    const start = total === 0 ? 0 : (page - 1) * ROWS_PER_PAGE + 1;
+    const end = Math.min(page * ROWS_PER_PAGE, total);
+    infoEl.textContent = total === 0 ? 'Tidak ada data' : `${start}–${end} dari ${total} data`;
+
+    controlsEl.innerHTML = '';
+
+    // Prev button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn nav-btn';
+    prevBtn.innerHTML = '<i class="ph-bold ph-caret-left"></i>';
+    prevBtn.disabled = page <= 1;
+    prevBtn.addEventListener('click', () => { setState(table, page - 1); applyPagination(table); });
+    controlsEl.appendChild(prevBtn);
+
+    // Page numbers
+    buildPageList(page, totalPages).forEach(p => {
+      if (p === '...') {
+        const el = document.createElement('span');
+        el.className = 'page-ellipsis';
+        el.textContent = '…';
+        controlsEl.appendChild(el);
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (p === page ? ' active' : '');
+        btn.textContent = p;
+        btn.addEventListener('click', () => { setState(table, p); applyPagination(table); });
+        controlsEl.appendChild(btn);
+      }
+    });
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn nav-btn';
+    nextBtn.innerHTML = '<i class="ph-bold ph-caret-right"></i>';
+    nextBtn.disabled = page >= totalPages;
+    nextBtn.addEventListener('click', () => { setState(table, page + 1); applyPagination(table); });
+    controlsEl.appendChild(nextBtn);
+  }
+
+  function buildPageList(current, total) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages = [1];
+    if (current > 3) pages.push('...');
+    for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
+    if (current < total - 2) pages.push('...');
+    pages.push(total);
+    return pages;
+  }
+
+  // ── Search ─────────────────────────────────────────────
+  function applySearch(query) {
+    const q = query.trim().toLowerCase();
+    getAllTables().forEach(table => {
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          delete row.dataset.hiddenSearch;
+        } else {
+          row.dataset.hiddenSearch = '1';
+        }
+        // Combine search + filter hidden flags
+        row.dataset.hidden = (row.dataset.hiddenSearch || row.dataset.hiddenFilter) ? '1' : '';
+        if (!row.dataset.hidden) delete row.dataset.hidden;
+      });
+      setState(table, 1);
+      applyPagination(table);
+    });
+  }
+
+  function updateResultCount(table) {
+    if (!resultCount) return;
+    const total = Array.from(table.querySelectorAll('tbody tr'))
+      .filter(r => !r.dataset.hidden).length;
+    const allTotal = table.querySelectorAll('tbody tr').length;
+    if (searchInput && searchInput.value.trim()) {
+      resultCount.textContent = `${total} dari ${allTotal} hasil`;
+    } else {
+      resultCount.textContent = `${allTotal} data`;
+    }
+  }
+
+  // ── Hook into existing filter logic ───────────────────
+  // Override applyTableFilter to also update hidden flags & pagination
+  const _origFilter = window.applyTableFilter;
+  window.applyTableFilter = function () {
+    if (_origFilter) _origFilter();
+    // After filter hides rows via style.display, translate to data-hidden flags
+    getAllTables().forEach(table => {
+      table.querySelectorAll('tbody tr').forEach(row => {
+        // existing filter sets display:none for non-matching rows
+        const hiddenByFilter = row.style.display === 'none';
+        if (hiddenByFilter) {
+          row.dataset.hiddenFilter = '1';
+        } else {
+          delete row.dataset.hiddenFilter;
+        }
+        // Combine with search
+        const hiddenSearch = !!row.dataset.hiddenSearch;
+        if (hiddenByFilter || hiddenSearch) {
+          row.dataset.hidden = '1';
+          row.style.display = 'none';
+        } else {
+          delete row.dataset.hidden;
+        }
+      });
+      setState(table, 1);
+      applyPagination(table);
+    });
+  };
+
+  // ── Hook into existing sort logic ─────────────────────
+  const _origSort = window.sortTableByColumn;
+  window.sortTableByColumn = function (sortBy, isDescending) {
+    if (_origSort) _origSort(sortBy, isDescending);
+    getAllTables().forEach(table => { setState(table, 1); applyPagination(table); });
+  };
+
+  // ── Event listeners ────────────────────────────────────
+  if (searchInput) {
+    searchInput.addEventListener('input', () => applySearch(searchInput.value));
+  }
+
+  // ── Tab switching – re-paginate active table ──────────
+  document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+      setTimeout(() => {
+        getAllTables().forEach(table => {
+          const section = table.closest('.table-section');
+          if (section && section.style.display !== 'none') {
+            applyPagination(table);
+          }
+        });
+      }, 50);
+    });
+  });
+
+  // ── Init ───────────────────────────────────────────────
+  getAllTables().forEach(table => applyPagination(table));
+})();

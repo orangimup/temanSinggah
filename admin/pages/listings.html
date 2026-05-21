@@ -21,6 +21,72 @@
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+
+    <style>
+      .content-area .table-toolbar .search-row .table-search-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 320px;
+        height: 40px;
+        background: #ffffff;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+        padding: 0;
+      }
+
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        color: var(--color-text-disabled);
+        pointer-events: none;
+        z-index: 2;
+        margin: 0;
+      }
+
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: var(--font-family);
+        font-size: var(--text-sm);
+        color: var(--color-text-primary);
+        padding: 0 12px 0 38px; 
+        box-sizing: border-box;
+      }
+
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-decoration,
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-cancel-button,
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-results-button,
+      .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+      }
+
+      .table-container .managed-table thead tr th.col-num {
+        text-align: center;
+        width: 65px;
+        font-family: var(--font-family);
+        font-size: var(--text-sm);
+        color: var(--color-text-primary);
+        font-weight: var(--font-semibold);
+      }
+
+      .table-container .managed-table tbody tr td.col-num {
+        text-align: center;
+        width: 65px;
+        font-family: var(--font-family);
+        font-size: var(--text-sm);
+        color: var(--color-text-secondary);
+        font-weight: var(--font-regular);
+      }
+    </style>
   </head>
 
   <body>
@@ -115,6 +181,20 @@
         </header>
 
         <main class="content-area">
+          <div class="table-toolbar">
+            <div class="search-row">
+              <div class="table-search-wrap">
+                <i class="ph-bold ph-magnifying-glass table-search-icon"></i>
+                <input
+                  type="search"
+                  id="adminSearch"
+                  class="table-search-input"
+                  placeholder="Cari data..."
+                  onkeyup="refreshTable()" />
+              </div>
+            </div>
+          </div>
+          
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
               <button class="filter-item active">Semua</button>
@@ -123,9 +203,6 @@
               </button>
               <button class="filter-item" data-filter="listing_status:Nonaktif">
                 Nonaktif
-              </button>
-              <button class="filter-item" data-filter="listing_status:Pending">
-                Pending Review
               </button>
             </div>
             <div class="sort-dropdown">
@@ -143,9 +220,10 @@
 
           <section class="table-section">
             <div class="table-container">
-              <table>
+              <table class="managed-table" id="listingTable">
                 <thead>
                   <tr>
+                    <th class="col-num">No.</th>
                     <th>Nama Listing</th>
                     <th>Host</th>
                     <th>Lokasi</th>
@@ -157,6 +235,7 @@
                 </thead>
                 <tbody>
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -206,6 +285,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -255,6 +335,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -304,6 +385,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <div class="table-thumbnail"></div>
@@ -350,6 +432,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -399,6 +482,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -448,6 +532,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -497,6 +582,7 @@
                   </tr>
 
                   <tr>
+                    <td class="col-num"></td>
                     <td>
                       <div class="table-cell">
                         <img
@@ -546,12 +632,70 @@
                   </tr>
                 </tbody>
               </table>
+              <div class="table-pagination">
+                <span class="pagination-info" id="paginationInfo"></span>
+                <div class="pagination-controls"></div>
+              </div>
             </div>
           </section>
         </main>
       </div>
     </div>
 
+    <script>
+      function refreshTable() {
+        const input = document.getElementById("adminSearch");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("listingTable");
+        const tr = table.getElementsByTagName("tr");
+        
+        let numCounter = 1;
+
+        for (let i = 1; i < tr.length; i++) {
+          let match = false;
+          const nameCell = tr[i].getElementsByTagName("td")[1];
+          const hostCell = tr[i].getElementsByTagName("td")[2];
+          const locationCell = tr[i].getElementsByTagName("td")[3];
+          const numCell = tr[i].getElementsByTagName("td")[0];
+          
+          if (nameCell || hostCell || locationCell) {
+            const nameText = nameCell.querySelector('.table-name')?.textContent || nameCell.textContent || "";
+            const hostText = hostCell.querySelector('.table-name')?.textContent || hostCell.textContent || "";
+            const locationText = locationCell.textContent || locationCell.innerText || "";
+            
+            if (
+              nameText.toLowerCase().indexOf(filter) > -1 || 
+              hostText.toLowerCase().indexOf(filter) > -1 ||
+              locationText.toLowerCase().indexOf(filter) > -1
+            ) {
+              match = true;
+            }
+          }
+
+          if (match) {
+            tr[i].style.display = "";
+            numCell.innerText = numCounter; 
+            numCounter++;
+          } else {
+            tr[i].style.display = "none";
+            numCell.innerText = "";
+          }
+        }
+
+        const totalVisible = numCounter - 1;
+        const paginationInfo = document.getElementById("paginationInfo");
+        
+        if (filter === "") {
+          paginationInfo.innerText = `Menampilkan 1-${totalVisible} dari ${totalVisible} listing`;
+        } else {
+          paginationInfo.innerText = `Menampilkan ${totalVisible} hasil pencarian`;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        refreshTable();
+      });
+    </script>
     <script src="/admin/dashboard.js"></script>
   </body>
 </html>

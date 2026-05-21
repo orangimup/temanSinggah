@@ -120,8 +120,74 @@ window.bindAuthPopupEvents = function () {
   form.querySelector("#btnSwitchKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
 
   form.querySelector("#btnLupaPassword")?.addEventListener("click", () => {
-    alert("Fitur lupa password akan segera tersedia.");
+    showStep("authStepLupaPassword");
   });
+
+  // ══════════════════════════════════════════════════════════════
+  // STEP LUPA PASSWORD
+  // ══════════════════════════════════════════════════════════════
+  form.querySelectorAll("[data-action='ke-login']").forEach((btn) => {
+    btn.addEventListener("click", () => showStep("authStepLogin"));
+  });
+
+  form.querySelector("#btnSwitchKeLoginDariLupa")?.addEventListener("click", () => showStep("authStepLogin"));
+
+  form.querySelector("#btnKirimResetPassword")?.addEventListener("click", async () => {
+    const email = form.querySelector("#lupaPasswordEmail")?.value.trim();
+
+    if (!email) { showInputError("lupaPasswordEmail", "Masukkan email kamu"); return; }
+
+    clearFormError("authStepLupaPassword");
+    const btn = form.querySelector("#btnKirimResetPassword");
+    setLoading(btn, true);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+
+      const res = await fetch("/auth/proses_lupa_password.php", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (data.status === "success") {
+        const display = form.querySelector("#lupaPasswordEmailDisplay");
+        if (display) display.textContent = email;
+        showStep("authStepResetSukses");
+      } else {
+        showFormError("authStepLupaPassword", data.message || "Email tidak ditemukan.");
+      }
+    } catch (err) {
+      showFormError("authStepLupaPassword", "Terjadi kesalahan. Coba lagi.");
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+
+  // ══════════════════════════════════════════════════════════════
+  // STEP RESET SUKSES
+  // ══════════════════════════════════════════════════════════════
+  form.querySelector("#btnKirimUlangReset")?.addEventListener("click", async () => {
+    const email = form.querySelector("#lupaPasswordEmailDisplay")?.textContent?.trim();
+    if (!email) { showStep("authStepLupaPassword"); return; }
+
+    const btn = form.querySelector("#btnKirimUlangReset");
+    setLoading(btn, true);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      await fetch("/auth/proses_lupa_password.php", { method: "POST", body: formData });
+      btn.textContent = "Email terkirim!";
+      setTimeout(() => {
+        btn.textContent = "Kirim ulang email";
+        btn.disabled = false;
+        delete btn.dataset.originalText;
+      }, 3000);
+    } catch (err) {
+      setLoading(btn, false);
+    }
+  });
+
+  form.querySelector("#btnKembaliKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
 
   // ══════════════════════════════════════════════════════════════
   // STEP DAFTAR — Nama, Email & Password
@@ -184,6 +250,7 @@ window.bindAuthPopupEvents = function () {
     const map = {
       authStepLogin: "#btnSubmitLogin",
       authStepDaftar1: "#btnDaftar1Lanjut",
+      authStepLupaPassword: "#btnKirimResetPassword",
     };
     const sel = map[activeStep.id];
     if (sel) form.querySelector(sel)?.click();
