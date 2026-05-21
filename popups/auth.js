@@ -14,6 +14,30 @@ window.bindAuthPopupEvents = function () {
     if (target) target.classList.add("active");
   };
 
+  // ── helper: loading state pada tombol ──────────────────────
+  const setLoading = (btn, loading) => {
+    btn.disabled = loading;
+    btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
+    btn.textContent = loading ? "Memproses..." : btn.dataset.originalText;
+  };
+
+  // ── helper: pesan error umum (bukan per-field) ─────────────
+  const showFormError = (stepId, message) => {
+    const step = form.querySelector(`#${stepId}`);
+    if (!step) return;
+    let errBox = step.querySelector(".auth-form-error");
+    if (!errBox) {
+      errBox = document.createElement("p");
+      errBox.className = "auth-form-error auth-error-msg";
+      step.querySelector(".auth-footer-section")?.prepend(errBox);
+    }
+    errBox.textContent = message;
+  };
+
+  const clearFormError = (stepId) => {
+    form.querySelector(`#${stepId} .auth-form-error`)?.remove();
+  };
+
   // ── tutup overlay ───────────────────────────────────────────
   authOverlay.querySelectorAll("[data-action='close-auth']").forEach((btn) => {
     btn.addEventListener("click", () => window.closeAuthPopup?.());
@@ -40,10 +64,16 @@ window.bindAuthPopupEvents = function () {
   form.querySelector("#btnKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
   form.querySelector("#btnKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
 
-  ["#btnSocialGoogle", "#btnSocialApple", "#btnSocialFacebook"].forEach((sel) => {
-    form.querySelector(sel)?.addEventListener("click", () => {
-      window.onLoginSuccess?.("S");
-    });
+  form.querySelector("#btnSocialGoogle")?.addEventListener("click", () => {
+    window.location.href = "/auth/google_redirect.php";
+  });
+
+  form.querySelector("#btnSocialApple")?.addEventListener("click", () => {
+    alert("Login dengan Apple akan segera tersedia.");
+  });
+
+  form.querySelector("#btnSocialFacebook")?.addEventListener("click", () => {
+    alert("Login dengan Facebook akan segera tersedia.");
   });
 
   // ══════════════════════════════════════════════════════════════
@@ -53,15 +83,38 @@ window.bindAuthPopupEvents = function () {
     btn.addEventListener("click", () => showStep("authStepPilih"));
   });
 
-  form.querySelector("#btnSubmitLogin")?.addEventListener("click", () => {
+  form.querySelector("#btnSubmitLogin")?.addEventListener("click", async () => {
     const email    = form.querySelector("#loginEmail")?.value.trim();
     const password = form.querySelector("#loginPassword")?.value;
 
     if (!email)    { showInputError("loginEmail",    "Masukkan email kamu"); return; }
     if (!password) { showInputError("loginPassword", "Masukkan password kamu"); return; }
 
-    // TODO: hubungkan ke POST /auth/login
-    window.onLoginSuccess?.(email.charAt(0).toUpperCase());
+    clearFormError("authStepLogin");
+    const btn = form.querySelector("#btnSubmitLogin");
+    setLoading(btn, true);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+
+      const res  = await fetch("/auth/proses_login.php", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (data.status === "success") {
+        window.onLoginSuccess?.(data.user.nama.charAt(0).toUpperCase());
+        window.closeAuthPopup?.();
+        // Opsional: reload halaman untuk update UI navbar dll
+        // window.location.reload();
+      } else {
+        showFormError("authStepLogin", data.message);
+      }
+    } catch (err) {
+      showFormError("authStepLogin", "Terjadi kesalahan. Coba lagi.");
+    } finally {
+      setLoading(btn, false);
+    }
   });
 
   form.querySelector("#btnSwitchKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
@@ -73,7 +126,7 @@ window.bindAuthPopupEvents = function () {
   // ══════════════════════════════════════════════════════════════
   // STEP DAFTAR — Nama, Email & Password
   // ══════════════════════════════════════════════════════════════
-  form.querySelector("#btnDaftar1Lanjut")?.addEventListener("click", () => {
+  form.querySelector("#btnDaftar1Lanjut")?.addEventListener("click", async () => {
     const nama     = form.querySelector("#daftarNama")?.value.trim();
     const email    = form.querySelector("#daftarEmail")?.value.trim();
     const password = form.querySelector("#daftarPassword")?.value;
@@ -85,8 +138,36 @@ window.bindAuthPopupEvents = function () {
       return;
     }
 
-    // TODO: hubungkan ke POST /auth/register
-    window.onLoginSuccess?.(nama.charAt(0).toUpperCase());
+    clearFormError("authStepDaftar1");
+    const btn = form.querySelector("#btnDaftar1Lanjut");
+    setLoading(btn, true);
+
+    try {
+      const formData = new FormData();
+      formData.append("nama", nama);
+      formData.append("email", email);
+      formData.append("password", password);
+
+      const res  = await fetch("/auth/proses_register.php", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (data.status === "success") {
+        // Langsung arahkan ke step login setelah daftar berhasil
+        showStep("authStepLogin");
+        // Tampilkan pesan sukses di step login
+        const successMsg = document.createElement("p");
+        successMsg.className = "auth-success-msg";
+        successMsg.textContent = "Akun berhasil dibuat! Silakan masuk.";
+        form.querySelector("#authStepLogin .auth-body-section")?.prepend(successMsg);
+        setTimeout(() => successMsg.remove(), 4000);
+      } else {
+        showFormError("authStepDaftar1", data.message);
+      }
+    } catch (err) {
+      showFormError("authStepDaftar1", "Terjadi kesalahan. Coba lagi.");
+    } finally {
+      setLoading(btn, false);
+    }
   });
 
   form.querySelector("#btnSwitchKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));

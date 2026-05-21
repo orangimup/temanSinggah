@@ -367,6 +367,15 @@
 .auth-submit-button.outline:hover  { background: var(--color-bg-section); }
 .auth-submit-button.outline:active { background: var(--color-bg-skeleton); transform: scale(0.99); }
 
+.auth-success-msg {
+  background: #eaf3de;
+  color: #27500a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
 .auth-switch-text {
   text-align: center;
   font-size: var(--text-sm);
