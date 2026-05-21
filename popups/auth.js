@@ -84,10 +84,10 @@ window.bindAuthPopupEvents = function () {
   });
 
   form.querySelector("#btnSubmitLogin")?.addEventListener("click", async () => {
-    const email    = form.querySelector("#loginEmail")?.value.trim();
+    const email = form.querySelector("#loginEmail")?.value.trim();
     const password = form.querySelector("#loginPassword")?.value;
 
-    if (!email)    { showInputError("loginEmail",    "Masukkan email kamu"); return; }
+    if (!email) { showInputError("loginEmail", "Masukkan email kamu"); return; }
     if (!password) { showInputError("loginPassword", "Masukkan password kamu"); return; }
 
     clearFormError("authStepLogin");
@@ -99,7 +99,7 @@ window.bindAuthPopupEvents = function () {
       formData.append("email", email);
       formData.append("password", password);
 
-      const res  = await fetch("/auth/proses_login.php", { method: "POST", body: formData });
+      const res = await fetch("/auth/proses_login.php", { method: "POST", body: formData });
       const data = await res.json();
 
       if (data.status === "success") {
@@ -127,12 +127,12 @@ window.bindAuthPopupEvents = function () {
   // STEP DAFTAR — Nama, Email & Password
   // ══════════════════════════════════════════════════════════════
   form.querySelector("#btnDaftar1Lanjut")?.addEventListener("click", async () => {
-    const nama     = form.querySelector("#daftarNama")?.value.trim();
-    const email    = form.querySelector("#daftarEmail")?.value.trim();
+    const nama = form.querySelector("#daftarNama")?.value.trim();
+    const email = form.querySelector("#daftarEmail")?.value.trim();
     const password = form.querySelector("#daftarPassword")?.value;
 
-    if (!nama)     { showInputError("daftarNama",     "Masukkan namamu"); return; }
-    if (!email)    { showInputError("daftarEmail",    "Masukkan email yang valid"); return; }
+    if (!nama) { showInputError("daftarNama", "Masukkan namamu"); return; }
+    if (!email) { showInputError("daftarEmail", "Masukkan email yang valid"); return; }
     if (!password || password.length < 8) {
       showInputError("daftarPassword", "Password minimal 8 karakter");
       return;
@@ -148,7 +148,7 @@ window.bindAuthPopupEvents = function () {
       formData.append("email", email);
       formData.append("password", password);
 
-      const res  = await fetch("/auth/proses_register.php", { method: "POST", body: formData });
+      const res = await fetch("/auth/proses_register.php", { method: "POST", body: formData });
       const data = await res.json();
 
       if (data.status === "success") {
@@ -164,7 +164,7 @@ window.bindAuthPopupEvents = function () {
         showFormError("authStepDaftar1", data.message);
       }
     } catch (err) {
-      showFormError("authStepDaftar1", "Terjadi kesalahan. Coba lagi.");
+      showFormError("authStepDaftar1", err.message || "Terjadi kesalahan. Coba lagi.");
     } finally {
       setLoading(btn, false);
     }
@@ -182,7 +182,7 @@ window.bindAuthPopupEvents = function () {
     const activeStep = form.querySelector(".auth-step.active");
     if (!activeStep) return;
     const map = {
-      authStepLogin:   "#btnSubmitLogin",
+      authStepLogin: "#btnSubmitLogin",
       authStepDaftar1: "#btnDaftar1Lanjut",
     };
     const sel = map[activeStep.id];
