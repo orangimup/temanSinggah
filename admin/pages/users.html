@@ -4,23 +4,17 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>
-    Dashboard | Admin Teman Singgah
-  </title>
-  <link href="/assets/logo/logo_temansinggah.svg" rel="icon" />
-  <link href="/components/root.css" rel="stylesheet" />
-  <link href="/admin/dashboard.css" rel="stylesheet" />
+  <title>Dashboard | Admin Teman Singgah</title>
+  <link rel="icon" href="/teman_singgah/assets/logo/logo_temansinggah.svg" />
+  <link rel="stylesheet" href="/teman_singgah/components/root.css" />
+  <link rel="stylesheet" href="/teman_singgah/admin/dashboard.css" />
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
-    rel="stylesheet" />
-  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module">
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
   
   <style>
-    /* Menggunakan selektor spesifik tingkat tinggi untuk menimpa CSS dashboard.css tanpa !important */
     .content-area .table-toolbar .search-row .table-search-wrap {
       position: relative;
       display: flex;
@@ -34,7 +28,6 @@
       box-sizing: border-box;
       padding: 0;
     }
-
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-icon {
       position: absolute;
       left: 12px;
@@ -46,7 +39,6 @@
       z-index: 2;
       margin: 0;
     }
-
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-input {
       width: 100%;
       height: 100%;
@@ -56,19 +48,15 @@
       font-family: var(--font-family);
       font-size: var(--text-sm);
       color: var(--color-text-primary);
-      padding: 0 12px 0 38px; 
+      padding: 0 12px 0 38px;
       box-sizing: border-box;
     }
-
-    /* Menghilangkan tombol x bawaan browser agar tidak merusak posisi teks */
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-decoration,
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-cancel-button,
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-results-button,
     .content-area .table-toolbar .search-row .table-search-wrap .table-search-input::-webkit-search-results-decoration {
       -webkit-appearance: none;
     }
-
-    /* Sinkronisasi Kolom Nomor urut agar sama persis ukuran, warna, & font-family dengan kolom ID User */
     .table-container .managed-table thead tr th.col-num {
       text-align: center;
       width: 65px;
@@ -77,7 +65,6 @@
       color: var(--color-text-primary);
       font-weight: var(--font-semibold);
     }
-
     .table-container .managed-table tbody tr td.col-num {
       text-align: center;
       width: 65px;
@@ -93,146 +80,73 @@
   <div class="admin-layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <a class="logo-link" href="/admin/pages/dashboard.html">
-        </a>
+        <a class="logo-link" href="/teman_singgah/admin/pages/dashboard.html"></a>
         <div class="logo-section">
-          <img alt="Logo Teman Singgah" class="logo-icon" src="/assets/logo/logo_temansinggah.svg" />
-          <img alt="Brand Name Teman Singgah" class="logo-name" src="/assets/logo/label_temansinggah.svg" />
+          <img alt="Logo Teman Singgah" class="logo-icon" src="/teman_singgah/assets/logo/logo_temansinggah.svg" />
+          <img alt="Brand Name Teman Singgah" class="logo-name" src="/teman_singgah/assets/logo/label_temansinggah.svg" />
         </div>
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">
-          <div class="nav-section-title">
-            Halaman Utama
-          </div>
-          <a class="nav-item" href="/admin/pages/dashboard.html">
-            <i class="ph-bold ph-squares-four">
-            </i>
-            Dashboard
-          </a>
+          <div class="nav-section-title">Halaman Utama</div>
+          <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.html"><i class="ph-bold ph-squares-four"></i>Dashboard</a>
         </div>
         <div class="nav-section">
-          <div class="nav-section-title">
-            Manajemen
-          </div>
-          <a class="nav-item active" href="/admin/pages/users.html">
-            <i class="ph-bold ph-users">
-            </i>
-            Pengguna
-          </a>
-          <a class="nav-item" href="/admin/pages/listings.html">
-            <i class="ph-bold ph-house">
-            </i>
-            Properti
-          </a>
-          <a class="nav-item" href="/admin/pages/reservations.html">
-            <i class="ph-bold ph-calendar-check">
-            </i>
-            Reservasi
-          </a>
-          <a class="nav-item" href="/admin/pages/transactions.html">
-            <i class="ph-bold ph-currency-circle-dollar">
-            </i>
-            Transaksi
-          </a>
+          <div class="nav-section-title">Manajemen</div>
+          <a class="nav-item active" href="/teman_singgah/admin/pages/users.html"><i class="ph-bold ph-users"></i>Pengguna</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/listings.html"><i class="ph-bold ph-house"></i>Properti</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/reservations.html"><i class="ph-bold ph-calendar-check"></i>Reservasi</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/transactions.html"><i class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
         </div>
         <div class="nav-section">
-          <div class="nav-section-title">
-            Moderasi
-          </div>
-          <a class="nav-item" href="/admin/pages/reviews.html">
-            <i class="ph-bold ph-star">
-            </i>
-            Ulasan
-          </a>
-          <a class="nav-item" href="/admin/pages/reports.html">
-            <i class="ph-bold ph-flag">
-            </i>
-            Laporan
-          </a>
+          <div class="nav-section-title">Moderasi</div>
+          <a class="nav-item" href="/teman_singgah/admin/pages/reviews.html"><i class="ph-bold ph-star"></i>Ulasan</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/reports.html"><i class="ph-bold ph-flag"></i>Laporan</a>
         </div>
         <div class="nav-section">
-          <div class="nav-section-title">
-            Keuangan
-          </div>
-          <a class="nav-item" href="/admin/pages/payouts.html">
-            <i class="ph-bold ph-money">
-            </i>
-            Pembayaran
-          </a>
+          <div class="nav-section-title">Keuangan</div>
+          <a class="nav-item" href="/teman_singgah/admin/pages/payouts.html"><i class="ph-bold ph-money"></i>Pembayaran</a>
         </div>
         <div class="nav-section">
-          <div class="nav-section-title">
-            Sistem
-          </div>
-          <a class="nav-item" href="/admin/pages/settings.html">
-            <i class="ph-bold ph-gear">
-            </i>
-            Pengaturan
-          </a>
-          <a class="nav-item" href="/admin/pages/logs.html">
-            <i class="ph-bold ph-notepad">
-            </i>
-            Aktivitas
-          </a>
+          <div class="nav-section-title">Sistem</div>
+          <a class="nav-item" href="/teman_singgah/admin/pages/settings.html"><i class="ph-bold ph-gear"></i>Pengaturan</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/logs.html"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
     </aside>
+
     <div class="main-container">
       <header class="topbar">
         <div class="topbar-left">
-          <h1 class="page-title">
-            Manajemen User
-          </h1>
+          <h1 class="page-title">Manajemen User</h1>
         </div>
         <div class="topbar-right">
-          <span class="user-name">
-            Admin utama
-          </span>
-          <div class="user-avatar">
-            A
-          </div>
+          <span class="user-name">Admin utama</span>
+          <div class="user-avatar">A</div>
         </div>
       </header>
+
       <main class="content-area">
         <div class="table-toolbar">
           <div class="search-row">
             <div class="table-search-wrap">
               <i class="ph-bold ph-magnifying-glass table-search-icon"></i>
-              <input
-                type="search"
-                id="adminSearch"
-                class="table-search-input"
-                placeholder="Cari ID, nama, atau email..." 
-                onkeyup="refreshTable()" />
+              <input type="search" id="adminSearch" class="table-search-input" placeholder="Cari ID, nama, atau email..." onkeyup="refreshTable()" />
             </div>
           </div>
         </div>
         <div class="filter-container">
           <div class="filter-group" id="filterGroup">
-            <button class="filter-item active">
-              Semua
-            </button>
-            <button class="filter-item" data-filter="role:Host">
-              Host
-            </button>
-            <button class="filter-item" data-filter="role:User">
-              User
-            </button>
-            <button class="filter-item" data-filter="account_status:Nonaktif">
-              Nonaktif
-            </button>
+            <button class="filter-item active">Semua</button>
+            <button class="filter-item" data-filter="role:Host">Host</button>
+            <button class="filter-item" data-filter="role:User">User</button>
+            <button class="filter-item" data-filter="account_status:Nonaktif">Nonaktif</button>
           </div>
           <div class="sort-dropdown">
-            <button class="sort-button" data-active="Urutkan: Tanggal Daftar" data-inactive="Urutkan: Nama Pengguna"
-              data-sort="user">
-              <i class="ph-bold ph-faders-horizontal">
-              </i>
-              <span>
-                Urutkan: Nama Pengguna
-              </span>
-              <i class="ph-bold ph-caret-down">
-              </i>
+            <button class="sort-button" data-active="Urutkan: Tanggal Daftar" data-inactive="Urutkan: Nama Pengguna" data-sort="user">
+              <i class="ph-bold ph-faders-horizontal"></i>
+              <span>Urutkan: Nama Pengguna</span>
+              <i class="ph-bold ph-caret-down"></i>
             </button>
           </div>
         </div>
@@ -255,154 +169,82 @@
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-001</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-002</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Acep Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Acep Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-003</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-004</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-005</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-006</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-007</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
                 <tr>
                   <td class="col-num"></td>
                   <td>USR-008</td>
-                  <td>
-                    <div class="table-cell">
-                      <div class="table-avatar">BS</div>
-                      <h3 class="table-name">Budi Santoso</h3>
-                    </div>
-                  </td>
+                  <td><div class="table-cell"><div class="table-avatar">BS</div><h3 class="table-name">Budi Santoso</h3></div></td>
                   <td>budi.santoso@email.com</td>
                   <td><span class="table-badge neutral">Host</span></td>
                   <td><span class="table-badge success"><span class="badge-dot"></span>Aktif</span></td>
                   <td>15 Jan 2025</td>
-                  <td>
-                    <button aria-label="Edit listing" class="action-button warning" title="Edit">
-                      <i class="ph-bold ph-pencil"></i>
-                    </button>
-                  </td>
+                  <td><button aria-label="Edit listing" class="action-button warning" title="Edit"><i class="ph-bold ph-pencil"></i></button></td>
                 </tr>
               </tbody>
             </table>
@@ -422,55 +264,40 @@
       const filter = input.value.toLowerCase();
       const table = document.getElementById("userTable");
       const tr = table.getElementsByTagName("tr");
-      
       let numCounter = 1;
-
       for (let i = 1; i < tr.length; i++) {
         let match = false;
         const idCell = tr[i].getElementsByTagName("td")[1];
         const nameCell = tr[i].getElementsByTagName("td")[2];
         const emailCell = tr[i].getElementsByTagName("td")[3];
         const numCell = tr[i].getElementsByTagName("td")[0];
-        
         if (idCell || nameCell || emailCell) {
           const idText = idCell.textContent || idCell.innerText;
           const nameText = nameCell.querySelector('.table-name').textContent || nameCell.querySelector('.table-name').innerText;
           const emailText = emailCell.textContent || emailCell.innerText;
-          
-          if (
-            idText.toLowerCase().indexOf(filter) > -1 || 
-            nameText.toLowerCase().indexOf(filter) > -1 ||
-            emailText.toLowerCase().indexOf(filter) > -1
-          ) {
+          if (idText.toLowerCase().indexOf(filter) > -1 || nameText.toLowerCase().indexOf(filter) > -1 || emailText.toLowerCase().indexOf(filter) > -1) {
             match = true;
           }
         }
-
         if (match) {
           tr[i].style.display = "";
-          numCell.innerText = numCounter; 
+          numCell.innerText = numCounter;
           numCounter++;
         } else {
           tr[i].style.display = "none";
           numCell.innerText = "";
         }
       }
-
       const totalVisible = numCounter - 1;
       const paginationInfo = document.getElementById("paginationInfo");
-      
       if (filter === "") {
         paginationInfo.innerText = `Menampilkan 1-${totalVisible} dari ${totalVisible} pengguna`;
       } else {
         paginationInfo.innerText = `Menampilkan ${totalVisible} hasil pencarian`;
       }
     }
-
-    document.addEventListener("DOMContentLoaded", function() {
-      refreshTable();
-    });
+    document.addEventListener("DOMContentLoaded", function() { refreshTable(); });
   </script>
-  <script src="/admin/dashboard.js"></script>
+  <script src="/teman_singgah/admin/dashboard.js"></script>
 </body>
-
 </html>

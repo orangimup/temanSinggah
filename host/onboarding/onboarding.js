@@ -84,6 +84,8 @@ function initializeMap() {
   const mapElement = document.getElementById("propertyMap");
   if (!mapElement) return;
 
+  if (mapElement._leaflet_id) return;
+
   try {
     const map = L.map("propertyMap", {
       center: [-7.9797, 112.6304],
@@ -92,13 +94,10 @@ function initializeMap() {
       zoomControl: false,
     });
 
-    L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        attribution: "© OpenStreetMap contributors",
-        maxZoom: 19,
-      },
-    ).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors",
+      maxZoom: 19,
+    }).addTo(map);
 
     const icon = L.divIcon({
       html: `<i class="ph-fill ph-map-pin" style="font-size:40px;color:#8b2500;display:block;cursor:pointer;"></i>`,
@@ -128,8 +127,7 @@ function initializeMap() {
           if (input && data.display_name) {
             input.value = data.display_name;
           }
-        } catch (err) {
-        }
+        } catch (err) {}
       }, 250);
     });
 
@@ -157,17 +155,12 @@ function initializeMap() {
         map.zoomOut();
       });
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeMap);
-} else {
+document.addEventListener("DOMContentLoaded", function () {
   initializeMap();
-}
-
-window.addEventListener("load", initializeMap);
+});
 
 const input = document.querySelector('.photo-upload-area input[type="file"]');
 
@@ -203,7 +196,6 @@ if (grid) {
   const fotos = JSON.parse(localStorage.getItem("fotoProperti") || "[]");
 
   if (fotos.length > 0) {
-
     grid.innerHTML = "";
 
     fotos.forEach((src, index) => {
