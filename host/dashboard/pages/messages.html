@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pesan | Teman Singgah</title>
-    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+    <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
 
-    <link rel="stylesheet" href="/components/root.css" />
-    <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/popups/auth.css" />
-    <link rel="stylesheet" href="/host/dashboard/styles/messages.css" />
+    <link rel="stylesheet" href="../../../components/root.css" />
+    <link rel="stylesheet" href="../../../components/navbar.css" />
+    <link rel="stylesheet" href="../../../popups/auth.css" />
+    <link rel="stylesheet" href="../styles/messages.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,49 +28,36 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="/host/dashboard/pages/reservations.html" class="logo-link"></a>
+        <a href="reservations.html" class="logo-link"></a>
         <div class="logo-section">
           <img
-            src="/assets/logo/logo_temansinggah.svg"
+            src="../../../assets/logo/logo_temansinggah.svg"
             alt="Logo Teman Singgah"
             class="logo-icon" />
           <img
-            src="/assets/logo/label_temansinggah.svg"
+            src="../../../assets/logo/label_temansinggah.svg"
             alt="Brand Name Teman Singgah"
             class="logo-name" />
         </div>
 
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="/host/dashboard/pages/reservations.html" class="nav-link">
-              Reservasi
-            </a>
+            <a href="reservations.html" class="nav-link">Reservasi</a>
           </li>
           <li class="nav-item">
-            <a
-              href="/host/dashboard/pages/calendar_router.html"
-              class="nav-link">
-              Kalender
-            </a>
+            <a href="calendar_router.html" class="nav-link">Kalender</a>
           </li>
           <li class="nav-item">
-            <a href="/host/dashboard/pages/listing.html" class="nav-link">
-              Listing
-            </a>
+            <a href="listing.html" class="nav-link">Listing</a>
           </li>
           <li class="nav-item">
-            <a
-              href="/host/dashboard/pages/messages.html"
-              class="nav-link active">
-              Pesan
-            </a>
+            <a href="messages.html" class="nav-link active">Pesan</a>
           </li>
-
           <div class="nav-indicator"></div>
         </ul>
 
         <div class="nav-right">
-          <a href="/index.html">
+          <a href="../../../index.html">
             <button class="ghost-button">Ganti ke pengunjung</button>
           </a>
           <div class="icon-buttons">
@@ -119,7 +106,6 @@
               <span class="thread-role">Admin</span>
             </div>
           </a>
-
           <a href="#" class="thread-item">
             <div class="thread-avatar">A</div>
             <div class="thread-info">
@@ -145,12 +131,8 @@
 
         <div class="chat-messages">
           <div class="bubble you">
-            <p>
-              Halo, apakah properti tersedia untuk akhir pekan
-              ini????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
-            </p>
+            <p>Halo, apakah properti tersedia untuk akhir pekan ini?</p>
           </div>
-
           <div class="bubble me">
             <p>Halo! Ya, masih tersedia. Silakan lanjutkan pemesanan.</p>
           </div>
@@ -199,8 +181,8 @@
       </section>
     </main>
 
-    <script src="/host/dashboard/scripts/messages.js"></script>
-    <script src="/components/navbar.js"></script>
-    <script src="/popups/auth.js"></script>
+    <script src="../scripts/messages.js"></script>
+    <script src="../../../components/navbar.js"></script>
+    <script src="../../../popups/auth.js"></script>
   </body>
 </html>

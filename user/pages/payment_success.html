@@ -5,13 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Konfirmasi & Pembayaran | Teman Singgah</title>
-  <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+  <link rel="icon" href="../../assets/logo/logo_temansinggah.svg" />
 
-  <link rel="stylesheet" href="/components/root.css" />
-  <link rel="stylesheet" href="/components/navbar.css" />
-  <link rel="stylesheet" href="/components/search_bar.css" />
-  <link rel="stylesheet" href="/popups/auth.css" />
-  <link rel="stylesheet" href="/user/styles/payment_success.css" />
+  <link rel="stylesheet" href="../../components/root.css" />
+  <link rel="stylesheet" href="../../components/navbar.css" />
+  <link rel="stylesheet" href="../../components/search_bar.css" />
+  <link rel="stylesheet" href="../../popups/auth.css" />
+  <link rel="stylesheet" href="../styles/payment_success.css" />
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
@@ -20,37 +20,30 @@
 <body>
   <header class="navbar">
     <nav class="navbar-container">
-      <a href="/index.html" class="logo-link"></a>
+      <a href="../../index.html" class="logo-link"></a>
       <div class="logo-section">
-        <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
-        <img src="/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+        <img src="../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+        <img src="../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
       </div>
 
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="/index.html" class="nav-link">Cari Penginapan</a>
+          <a href="../../index.html" class="nav-link">Cari Penginapan</a>
         </li>
         <li class="nav-item">
-          <a href="/user/pages/promo_deals.html" class="nav-link">
-            Promo & Deals
-          </a>
+          <a href="./promo_deals.html" class="nav-link">Promo & Deals</a>
         </li>
         <li class="nav-item">
-          <a href="/user/pages/become_host.html" class="nav-link">
-            Jadi Host
-          </a>
+          <a href="./become_host.html" class="nav-link">Jadi Host</a>
         </li>
         <li class="nav-item">
-          <a href="/user/pages/about_us.html" class="nav-link">
-            Tentang Kami
-          </a>
+          <a href="./about_us.html" class="nav-link">Tentang Kami</a>
         </li>
-
         <div class="nav-indicator"></div>
       </ul>
 
       <div class="nav-right">
-        <a href="/host/onboarding/pages/about_place.html">
+        <a href="../../host/onboarding/pages/about_place.html">
           <button class="ghost-button">Ganti ke host</button>
         </a>
         <div class="icon-buttons">
@@ -137,11 +130,11 @@
       </div>
 
       <div class="success-actions">
-        <a href="history.html" class="btn btn-primary">
+        <a href="./history.html" class="btn btn-primary">
           <i class="ph-bold ph-receipt"></i>
           Lihat Riwayat
         </a>
-        <a href="/index.html" class="btn btn-secondary">
+        <a href="../../index.html" class="btn btn-secondary">
           <i class="ph-bold ph-house"></i>
           Kembali Beranda
         </a>
@@ -153,13 +146,12 @@
     </section>
   </main>
 
-  <!-- Toast -->
   <div class="toast" id="toast">
     <i class="ph-fill ph-check-circle"></i>
     <span id="toastText">ID berhasil disalin</span>
   </div>
 
-  <script src="/user/scripts/payment_success.js"></script>
+  <script src="../scripts/payment_success.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Deteksi otomatis base path — works di XAMPP (/teman_singgah/) maupun root deployment (/)
+  const BASE_URL = (() => {
+    const parts = location.pathname.split("/").filter(Boolean);
+    // Kalau dijalankan dari subfolder XAMPP seperti /teman_singgah/..., ambil bagian pertama
+    // Kalau di root (Live Server / deploy), hasilnya string kosong
+    if (parts.length > 0 && !parts[0].includes(".html")) {
+      return `${location.origin}/${parts[0]}`;
+    }
+    return location.origin;
+  })();
+
   function closeAllDropdowns() {
     document.getElementById("destinationDropdown")?.classList.remove("open");
     document.getElementById("calendarDropdown")?.classList.remove("open");
@@ -58,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadDestinationDropdown() {
     try {
-      const res = await fetch("/popups/screen/destinations.html");
+      const res = await fetch(`${BASE_URL}/popups/screen/destinations.html`);
       const html = await res.text();
       destinationDropdown.innerHTML = html;
       destinationLoaded = true;
@@ -133,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadGuestDropdown() {
     try {
-      const res = await fetch("/popups/screen/guest_counter.html");
+      const res = await fetch(`${BASE_URL}/popups/screen/guest_counter.html`);
       const html = await res.text();
       guestDropdown.innerHTML = html;
       isLoaded = true;
@@ -400,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadCalendarDropdown() {
     try {
-      const res = await fetch("/popups/screen/calendar.html");
+      const res = await fetch(`${BASE_URL}/popups/screen/calendar.html`);
       const html = await res.text();
       calendarDropdown.innerHTML = html;
       calendarLoaded = true;

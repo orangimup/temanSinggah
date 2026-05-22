@@ -93,12 +93,10 @@ function initializeMap() {
     });
 
     L.tileLayer(
-      "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
-        attribution: "© MapTiler © OpenStreetMap",
-        tileSize: 512,
-        zoomOffset: -1,
-        maxZoom: 20,
+        attribution: "© OpenStreetMap contributors",
+        maxZoom: 19,
       },
     ).addTo(map);
 
@@ -123,7 +121,7 @@ function initializeMap() {
         const { lat, lng } = e.latlng;
         try {
           const res = await fetch(
-            `https:
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
           );
           const data = await res.json();
           const input = document.querySelector(".location-search input");

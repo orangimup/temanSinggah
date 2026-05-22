@@ -5,14 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pengaturan | Teman Singgah</title>
-    <link rel="icon" href="/assets/logo/logo_temansinggah.svg" />
+    <link rel="icon" href="../../assets/logo/logo_temansinggah.svg" />
 
-    <link rel="stylesheet" href="/components/root.css" />
-    <link rel="stylesheet" href="/components/navbar.css" />
-    <link rel="stylesheet" href="/components/footer.css" />
-    <link rel="stylesheet" href="/popups/auth.css" />
-    <link rel="stylesheet" href="/user/styles/account.css" />
-    <link rel="stylesheet" href="/user/styles/settings.css" />
+    <link rel="stylesheet" href="../../components/root.css" />
+    <link rel="stylesheet" href="../../components/navbar.css" />
+    <link rel="stylesheet" href="../../components/footer.css" />
+    <link rel="stylesheet" href="../../popups/auth.css" />
+    <link rel="stylesheet" href="../styles/account.css" />
+    <link rel="stylesheet" href="../styles/settings.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,28 +27,28 @@
 <body>
     <header class="navbar">
         <nav class="navbar-container">
-            <a href="/index.html" class="logo-link"></a>
+            <a href="../../index.html" class="logo-link"></a>
             <div class="logo-section">
-                <img src="/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
-                <img src="/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+                <img src="../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+                <img src="../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
             </div>
 
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="/index.html" class="nav-link">Cari Penginapan</a>
+                    <a href="../../index.html" class="nav-link">Cari Penginapan</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/user/pages/promo_deals.html" class="nav-link">
+                    <a href="promo_deals.html" class="nav-link">
                         Promo &amp; Deals
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/user/pages/become_host.html" class="nav-link">
+                    <a href="become_host.html" class="nav-link">
                         Jadi Host
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/user/pages/about_us.html" class="nav-link">
+                    <a href="about_us.html" class="nav-link">
                         Tentang Kami
                     </a>
                 </li>
@@ -91,15 +91,15 @@
                 <aside class="account-sidebar">
                     <h2 class="sidebar-title">Profil</h2>
                     <nav class="sidebar-nav">
-                        <a href="/user/pages/account.html" class="sidebar-link">
+                        <a href="account.html" class="sidebar-link">
                             <div class="link-icon primary-avatar" id="sidebarAvatar">K</div>
                             <span>Tentang Saya</span>
                         </a>
-                        <a href="/user/pages/history.html" class="sidebar-link">
+                        <a href="history.html" class="sidebar-link">
                             <div class="link-icon"><i class="ph-bold ph-suitcase"></i></div>
                             <span>Riwayat Perjalanan</span>
                         </a>
-                        <a href="/user/pages/settings.html" class="sidebar-link active">
+                        <a href="settings.html" class="sidebar-link active">
                             <div class="link-icon"><i class="ph-bold ph-gear"></i></div>
                             <span>Pengaturan</span>
                         </a>
@@ -224,7 +224,6 @@
                     <div class="section-divider"></div>
 
                     <!-- ─── Zona Bahaya ─── -->
-
                     <div class="settings-item">
                         <div class="settings-item-info">
                             <span class="settings-item-label">Hapus Akun</span>
@@ -323,8 +322,7 @@
             </div>
             <div class="settings-modal-footer">
                 <button class="settings-btn-outline" data-close-modal>Batal</button>
-                <button class="settings-btn-primary" onclick="showToast('Kode OTP telah dikirim ke nomor baru.')">Kirim
-                    OTP</button>
+                <button class="settings-btn-primary" onclick="showToast('Kode OTP telah dikirim ke nomor baru.')">Kirim OTP</button>
             </div>
         </div>
     </div>
@@ -369,10 +367,10 @@
             <div class="footer-column">
                 <h3 class="footer-title">Navigasi</h3>
                 <ul class="footer-links">
-                    <li><a href="/index.html" class="footer-link">Beranda</a></li>
-                    <li><a href="/user/pages/promo_deals.html" class="footer-link">Promo &amp; Deals</a></li>
-                    <li><a href="/user/pages/become_host.html" class="footer-link">Jadi Host</a></li>
-                    <li><a href="/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
+                    <li><a href="../../index.html" class="footer-link">Beranda</a></li>
+                    <li><a href="promo_deals.html" class="footer-link">Promo &amp; Deals</a></li>
+                    <li><a href="become_host.html" class="footer-link">Jadi Host</a></li>
+                    <li><a href="about_us.html" class="footer-link">Tentang Kami</a></li>
                 </ul>
             </div>
             <div class="footer-column">
@@ -389,9 +387,9 @@
         </div>
     </footer>
 
-    <script src="/components/navbar.js"></script>
-    <script src="/popups/auth.js"></script>
-    <script src="/user/scripts/settings.js"></script>
+    <script src="../../components/navbar.js"></script>
+    <script src="../../popups/auth.js"></script>
+    <script src="../scripts/settings.js"></script>
 </body>
 
 </html>

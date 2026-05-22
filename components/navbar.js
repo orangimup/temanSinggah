@@ -34,6 +34,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let isLoaded = false;
   let intentToBeHost = false;
 
+  // ── Deteksi base path otomatis berdasarkan lokasi file HTML ──
+  function getBasePath() {
+    const path = window.location.pathname;
+    if (path.includes("/host/onboarding/pages/")) return "../../../";
+    if (path.includes("/host/dashboard/pages/")) return "../../../";
+    if (path.includes("/host/")) return "../../";
+    if (path.includes("/user/pages/")) return "../../";
+    if (path.includes("/admin/pages/")) return "../../";
+    if (path.includes("/popups/screen/")) return "../../";
+    return ""; // root / index.html
+  }
+  const BASE = getBasePath();
+
   function isHostPage() {
     return window.location.pathname.includes("/host/");
   }
@@ -55,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyAuthState();
 
-  // Restore inisial dari localStorage saat halaman load
   const savedInitial = localStorage.getItem("userInitial");
   if (savedInitial && profileBtn) profileBtn.textContent = savedInitial;
 
@@ -73,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (intentToBeHost) {
       intentToBeHost = false;
       setTimeout(() => {
-        window.location.href = "host/onboarding/pages/about_place.html";
+        window.location.href = `${BASE}host/onboarding/pages/about_place.html`;
       }, 500);
     }
   };
@@ -97,25 +109,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadDropdown() {
     const userType = getUserType();
-    const inlineTemplate = document.querySelector(
-      `#dropdownTemplates [data-type="${userType}"]`,
-    );
 
+    const inlineTemplate = document.querySelector(
+      `#dropdownTemplates [data-type="${userType}"]`
+    );
     if (inlineTemplate) {
       injectDropdown(inlineTemplate.innerHTML);
       return;
     }
 
     try {
-      const res = await fetch("popups/screen/hamburger.html");
+      const res = await fetch(`${BASE}popups/screen/hamburger.html`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
       const template = doc.querySelector(`[data-type="${userType}"]`);
       if (!template) {
-        console.warn(
-          `[navbar] Template [data-type="${userType}"] tidak ditemukan`,
-        );
+        console.warn(`[navbar] Template [data-type="${userType}"] tidak ditemukan`);
         return;
       }
       injectDropdown(template.innerHTML);
@@ -139,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("popups/screen/language.html");
+      const res = await fetch(`${BASE}popups/screen/language.html`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -154,9 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
           console.warn("[navbar] #languagePopup container tidak ditemukan");
         }
       } else {
-        console.warn(
-          "[navbar] #languageOverlay tidak ditemukan di language.html",
-        );
+        console.warn("[navbar] #languageOverlay tidak ditemukan di language.html");
       }
     } catch (err) {
       console.error("[navbar] Error loading language popup:", err);
@@ -170,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("popups/screen/auth.html");
+      const res = await fetch(`${BASE}popups/screen/auth.html`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
@@ -239,12 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-
-        if (el.textContent.includes("Host")) {
-          intentToBeHost = true;
-        } else {
-          intentToBeHost = false;
-        }
+        intentToBeHost = el.textContent.includes("Host");
         window.openAuthPopup();
       });
     });
@@ -264,10 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const langOverlay = document.getElementById("languageOverlay");
     if (!langOverlay) return;
 
-    langOverlay
-      .querySelector(".close-button")
-      ?.addEventListener("click", closeLanguagePopup);
-
+    langOverlay.querySelector(".close-button")?.addEventListener("click", closeLanguagePopup);
     langOverlay.addEventListener("click", (e) => {
       if (e.target === langOverlay) closeLanguagePopup();
     });
@@ -321,10 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeDropdown();
     const authOverlay = document.getElementById("authOverlay");
     if (!authOverlay) return;
-
-    authOverlay
-      .querySelectorAll(".auth-step")
-      .forEach((el) => el.classList.remove("active"));
+    authOverlay.querySelectorAll(".auth-step").forEach((el) => el.classList.remove("active"));
     const defaultStep = authOverlay.querySelector("#authStepPilih");
     if (defaultStep) defaultStep.classList.add("active");
     authOverlay.classList.add("open");
