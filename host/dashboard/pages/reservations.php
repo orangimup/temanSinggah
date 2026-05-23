@@ -1,3 +1,5 @@
+<?php require_once '../../../auth/guard_host.php'; ?>
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -29,7 +31,7 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="/teman_singgah/host/dashboard/pages/reservations.html" class="logo-link"></a>
+        <a href="/teman_singgah/host/dashboard/pages/reservations.php" class="logo-link"></a>
         <div class="logo-section">
           <img
             src="/teman_singgah/assets/logo/logo_temansinggah.svg"
@@ -44,25 +46,25 @@
         <ul class="nav-menu">
           <li class="nav-item">
             <a
-              href="/teman_singgah/host/dashboard/pages/reservations.html"
+              href="/teman_singgah/host/dashboard/pages/reservations.php"
               class="nav-link active"
               >Reservasi</a
             >
           </li>
           <li class="nav-item">
             <a
-              href="/teman_singgah/host/dashboard/pages/calendar_router.html"
+              href="/teman_singgah/host/dashboard/pages/calendar_router.php"
               class="nav-link"
               >Kalender</a
             >
           </li>
           <li class="nav-item">
-            <a href="/teman_singgah/host/dashboard/pages/listing.html" class="nav-link"
+            <a href="/teman_singgah/host/dashboard/pages/listing.php" class="nav-link"
               >Listing</a
             >
           </li>
           <li class="nav-item">
-            <a href="/teman_singgah/host/dashboard/pages/messages.html" class="nav-link"
+            <a href="/teman_singgah/host/dashboard/pages/messages.php" class="nav-link"
               >Pesan</a
             >
           </li>

@@ -16,6 +16,24 @@ function tampilStep(stepId) {
   if (target) target.classList.add('active');
 }
 
+// ── Tampilkan pesan error / sukses di dalam step ────────────
+function tampilPesan(stepId, pesan, tipe) {
+  const step = document.getElementById(stepId);
+  if (!step) return;
+
+  let box = step.querySelector('.auth-pesan');
+  if (!box) {
+    box = document.createElement('p');
+    box.className = 'auth-pesan';
+    step.querySelector('.auth-footer-section')?.prepend(box);
+  }
+
+  box.textContent = pesan;
+  box.style.cssText = tipe === 'error'
+    ? 'color:#cc2b2b;font-size:13px;margin-bottom:8px;'
+    : 'color:#27500a;background:#eaf3de;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:8px;';
+}
+
 // ── Navigasi tombol ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -35,12 +53,17 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('btnSwitchKeDaftar')?.addEventListener('click', () => tampilStep('authStepDaftar1'));
   document.getElementById('btnSwitchKeLogin')?.addEventListener('click', () => tampilStep('authStepLogin'));
   document.getElementById('btnLupaPassword')?.addEventListener('click', () => tampilStep('authStepLupaPassword'));
+  document.getElementById('btnSwitchKeLoginDariLupa')?.addEventListener('click', () => tampilStep('authStepLogin'));
+  document.getElementById('btnKeLoginDariSukses')?.addEventListener('click', () => tampilStep('authStepLogin'));
 
   document.querySelectorAll('[data-action="ke-pilih"]').forEach(btn => {
     btn.addEventListener('click', () => tampilStep('authStepPilih'));
   });
   document.querySelectorAll('[data-action="ke-login"]').forEach(btn => {
     btn.addEventListener('click', () => tampilStep('authStepLogin'));
+  });
+  document.querySelectorAll('[data-action="ke-lupa"]').forEach(btn => {
+    btn.addEventListener('click', () => tampilStep('authStepLupaPassword'));
   });
 
   // Toggle show/hide password
@@ -51,6 +74,37 @@ document.addEventListener('DOMContentLoaded', function () {
       input.type = isHidden ? 'text' : 'password';
       btn.querySelector('i').className = isHidden ? 'ph-bold ph-eye-slash' : 'ph-bold ph-eye';
     });
+  });
+
+  // ── Reset password flow (pure frontend) ──────────────────
+
+  // Step 1: email → langsung ke password baru
+  document.getElementById('btnLanjutKeToken')?.addEventListener('click', () => {
+    const email = document.getElementById('lupaEmail')?.value.trim();
+    if (!email) {
+      tampilPesan('authStepLupaPassword', 'Masukkan email kamu terlebih dahulu.', 'error');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      tampilPesan('authStepLupaPassword', 'Format email tidak valid.', 'error');
+      return;
+    }
+    tampilStep('authStepPasswordBaru');
+  });
+
+  // Step 2: simpan password baru
+  document.getElementById('btnSimpanPasswordBaru')?.addEventListener('click', () => {
+    const pass = document.getElementById('passwordBaru')?.value;
+    const konfirmasi = document.getElementById('passwordKonfirmasi')?.value;
+    if (!pass || pass.length < 8) {
+      tampilPesan('authStepPasswordBaru', 'Password minimal 8 karakter.', 'error');
+      return;
+    }
+    if (pass !== konfirmasi) {
+      tampilPesan('authStepPasswordBaru', 'Password dan konfirmasi tidak cocok.', 'error');
+      return;
+    }
+    tampilStep('authStepResetSukses');
   });
 
   // ── Baca query param → buka modal + tampilkan pesan ───────
@@ -73,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (authStep === 'daftar') {
     bukaModal('authStepDaftar1');
     if (error) tampilPesan('authStepDaftar1', pesanError[error] || error, 'error');
+
   } else if (authStep === 'login') {
     bukaModal('authStepLogin');
     if (error)   tampilPesan('authStepLogin', pesanError[error] || error, 'error');
@@ -88,21 +143,3 @@ document.addEventListener('DOMContentLoaded', function () {
     window.history.replaceState({}, '', url);
   }
 });
-
-// ── Tampilkan pesan error / sukses di dalam step ────────────
-function tampilPesan(stepId, pesan, tipe) {
-  const step = document.getElementById(stepId);
-  if (!step) return;
-
-  let box = step.querySelector('.auth-pesan');
-  if (!box) {
-    box = document.createElement('p');
-    box.className = 'auth-pesan';
-    step.querySelector('.auth-footer-section')?.prepend(box);
-  }
-
-  box.textContent = pesan;
-  box.style.cssText = tipe === 'error'
-    ? 'color:#cc2b2b;font-size:13px;margin-bottom:8px;'
-    : 'color:#27500a;background:#eaf3de;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:8px;';
-}

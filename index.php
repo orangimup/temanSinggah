@@ -958,20 +958,21 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Email</legend>
                 <div class="auth-input-group">
-                  <input type="email" name="email" class="auth-input" placeholder="contoh@email.com"
+                  <input type="email" name="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com"
                     autocomplete="email" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
-                  <input type="password" name="password" class="auth-input" placeholder="Masukkan password"
-                    autocomplete="current-password" required />
+                  <input type="password" name="password" id="loginPassword" class="auth-input"
+                    placeholder="Masukkan password" autocomplete="current-password" required />
                   <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
                     <i class="ph-bold ph-eye"></i>
                   </button>
                 </div>
               </fieldset>
+              <button type="button" class="auth-forgot-link" id="btnLupaPassword">Lupa password?</button>
             </div>
           </div>
           <div class="auth-footer-section">
@@ -1021,22 +1022,22 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Nama</legend>
                 <div class="auth-input-group">
-                  <input type="text" name="nama" class="auth-input" placeholder="Masukkan namamu" autocomplete="name"
-                    required />
+                  <input type="text" name="nama" id="daftarNama" class="auth-input" placeholder="Masukkan namamu"
+                    autocomplete="name" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Email</legend>
                 <div class="auth-input-group">
-                  <input type="email" name="email" class="auth-input" placeholder="contoh@email.com"
+                  <input type="email" name="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com"
                     autocomplete="email" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
-                  <input type="password" name="password" class="auth-input" placeholder="Minimal 8 karakter"
-                    autocomplete="new-password" required />
+                  <input type="password" name="password" id="daftarPassword" class="auth-input"
+                    placeholder="Minimal 8 karakter" autocomplete="new-password" required />
                   <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
                     <i class="ph-bold ph-eye"></i>
                   </button>
@@ -1046,8 +1047,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
             </div>
           </div>
           <div class="auth-footer-section">
-            <div id="pesanLogin"></div>
-            <button class="auth-submit-button" type="submit">Masuk</button>
+            <div id="pesanDaftar"></div>
+            <button class="auth-submit-button" type="submit">Buat akun</button>
             <div class="auth-divider">
               <span class="auth-divider-line"></span>
               <span class="auth-divider-text">atau lanjutkan dengan</span>
@@ -1065,15 +1066,114 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               </button>
             </div>
             <p class="auth-switch-text">
-              Belum punya akun?
-              <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button>
+              Sudah punya akun?
+              <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
             </p>
           </div>
+        </form>
       </div>
-      </form>
-    </div>
 
-  </div>
+      <!-- STEP LUPA PASSWORD -->
+      <div class="auth-step" id="authStepLupaPassword">
+        <div class="auth-header-section">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-login">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+        <div class="auth-body-section">
+          <div>
+            <h2 class="auth-title">Lupa password?</h2>
+            <p class="auth-subtitle">Masukkan email akunmu untuk melanjutkan.</p>
+          </div>
+          <div class="auth-fields">
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Email</legend>
+              <div class="auth-input-group">
+                <input type="email" id="lupaEmail" class="auth-input" placeholder="contoh@email.com"
+                  autocomplete="email" />
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnLanjutKeToken">Lanjutkan</button>
+          <p class="auth-switch-text">
+            Ingat password?
+            <button type="button" class="auth-switch-link" id="btnSwitchKeLoginDariLupa">Kembali masuk</button>
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP PASSWORD BARU -->
+      <div class="auth-step" id="authStepPasswordBaru">
+        <div class="auth-header-section">
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-token">
+            <i class="ph-bold ph-caret-left"></i>
+          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+        <div class="auth-body-section">
+          <div>
+            <h2 class="auth-title">Password baru</h2>
+            <p class="auth-subtitle">Buat password baru untuk akunmu.</p>
+          </div>
+          <div class="auth-fields">
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Password Baru</legend>
+              <div class="auth-input-group auth-password-group">
+                <input type="password" id="passwordBaru" class="auth-input" placeholder="Minimal 8 karakter"
+                  autocomplete="new-password" />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                  <i class="ph-bold ph-eye"></i>
+                </button>
+              </div>
+            </fieldset>
+            <fieldset class="auth-field">
+              <legend class="auth-input-label">Konfirmasi Password</legend>
+              <div class="auth-input-group auth-password-group">
+                <input type="password" id="passwordKonfirmasi" class="auth-input" placeholder="Ulangi password baru"
+                  autocomplete="new-password" />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
+                  <i class="ph-bold ph-eye"></i>
+                </button>
+              </div>
+              <p class="auth-field-hint">Gunakan minimal 8 karakter, kombinasi huruf dan angka.</p>
+            </fieldset>
+          </div>
+        </div>
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnSimpanPasswordBaru">Simpan password baru</button>
+        </div>
+      </div>
+
+      <!-- STEP RESET SUKSES -->
+      <div class="auth-step" id="authStepResetSukses">
+        <div class="auth-header-section">
+          <div class="empty-div"></div>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+        <div class="auth-body-section">
+          <div class="auth-logo-container">
+            <div class="auth-icon-success">
+              <i class="ph-bold ph-check-circle"></i>
+            </div>
+            <h2 class="auth-title center">Password berhasil diubah!</h2>
+            <p class="auth-subtitle center">Kamu sekarang bisa masuk menggunakan password baru.</p>
+          </div>
+        </div>
+        <div class="auth-footer-section">
+          <button class="auth-submit-button" type="button" id="btnKeLoginDariSukses">Masuk sekarang</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 </body>

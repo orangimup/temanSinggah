@@ -1,3 +1,5 @@
+<?php require_once '../../../auth/guard_host.php'; ?>
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -29,7 +31,7 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="reservations.html" class="logo-link"></a>
+        <a href="reservations.php" class="logo-link"></a>
         <div class="logo-section">
           <img
             src="../../../assets/logo/logo_temansinggah.svg"
@@ -43,22 +45,22 @@
 
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="reservations.html" class="nav-link">
+            <a href="reservations.php" class="nav-link">
               Reservasi
             </a>
           </li>
           <li class="nav-item">
-            <a href="calendar_router.html" class="nav-link">
+            <a href="calendar_router.php" class="nav-link">
               Kalender
             </a>
           </li>
           <li class="nav-item">
-            <a href="listing.html" class="nav-link active">
+            <a href="listing.php" class="nav-link active">
               Listing
             </a>
           </li>
           <li class="nav-item">
-            <a href="messages.html" class="nav-link">
+            <a href="messages.php" class="nav-link">
               Pesan
             </a>
           </li>

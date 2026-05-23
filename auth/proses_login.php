@@ -49,7 +49,7 @@ $_SESSION['role'] = $data['role'];
 if ($data['role'] === 'Admin') {
     header("Location: /teman_singgah/admin/pages/dashboard.html");
 } elseif ($data['role'] === 'Host') {
-    header("Location: /teman_singgah/host/dashboard/pages/listing.html");
+    header("Location: /teman_singgah/host/dashboard/pages/reservations.php");
 } else {
     header("Location: /teman_singgah/index.php");
 }

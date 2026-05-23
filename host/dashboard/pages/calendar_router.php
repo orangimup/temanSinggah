@@ -1,3 +1,5 @@
+<?php require_once '../../../auth/guard_host.php'; ?>
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -29,7 +31,7 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="reservations.html" class="logo-link"></a>
+        <a href="reservations.php" class="logo-link"></a>
         <div class="logo-section">
           <img
             src="../../../assets/logo/logo_temansinggah.svg"
@@ -43,22 +45,22 @@
 
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="reservations.html" class="nav-link">
+            <a href="reservations.php" class="nav-link">
               Reservasi
             </a>
           </li>
           <li class="nav-item">
-            <a href="calendar_router.html" class="nav-link active">
+            <a href="calendar_router.php" class="nav-link active">
               Kalender
             </a>
           </li>
           <li class="nav-item">
-            <a href="listing.html" class="nav-link">
+            <a href="listing.php" class="nav-link">
               Listing
             </a>
           </li>
           <li class="nav-item">
-            <a href="messages.html" class="nav-link">
+            <a href="messages.php" class="nav-link">
               Pesan
             </a>
           </li>
@@ -71,7 +73,7 @@
             <button class="ghost-button">Ganti ke pengunjung</button>
           </a>
           <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
+            <?= htmlspecialchars($userInitial) ?>
             <button class="icon-button hamburger" aria-label="Hamburger">
               <i class="ph-bold ph-list"></i>
             </button>
