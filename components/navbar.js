@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (path.includes("/user/pages/")) return "../../";
     if (path.includes("/admin/pages/")) return "../../";
     if (path.includes("/popups/screen/")) return "../../";
-    return ""; // root / index.html
+    return "";
   }
   const BASE = getBasePath();
 
@@ -91,20 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function onLogout() {
-    isLoggedIn = false;
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userInitial");
-    closeDropdown();
-    applyAuthState();
-    isLoaded = false;
-    dropdown.innerHTML = "";
-    loadDropdown();
-
-    if (isHostPage()) {
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 300);
-    }
+    localStorage.removeItem("userName");
+    window.location.href = "/teman_singgah/auth/proses_logout.php";
   }
 
   async function loadDropdown() {

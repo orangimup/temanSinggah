@@ -1,67 +1,62 @@
 <?php
-header('Content-Type: application/json');
+session_start();
+include "../koneksi.php";
 
-// Mematikan tampilan error mentah HTML agar tidak merusak JSON parser di auth.js
-error_reporting(0);
-ini_set('display_errors', 0);
-
-require_once '../koneksi.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama     = isset($_POST['nama']) ? trim($_POST['nama']) : '';
-    $email    = isset($_POST['email']) ? trim($_POST['email']) : '';
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
-
-    if (empty($nama) || empty($email) || empty($password)) {
-        echo json_encode(["status" => "error", "message" => "Semua kolom pendaftaran wajib diisi."]);
-        exit();
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["status" => "error", "message" => "Format email tidak valid."]);
-        exit();
-    }
-
-    if (strlen($password) < 8) {
-        echo json_encode(["status" => "error", "message" => "Password minimal harus 8 karakter."]);
-        exit();
-    }
-
-    // 1. Periksa apakah email sudah terdaftar sebelumnya
-    $cekEmail = mysqli_prepare($koneksi, "SELECT email FROM users WHERE email = ?");
-    mysqli_stmt_bind_param($cekEmail, "s", $email);
-    mysqli_stmt_execute($cekEmail);
-    mysqli_stmt_store_result($cekEmail);
-
-    if (mysqli_stmt_num_rows($cekEmail) > 0) {
-        echo json_encode(["status" => "error", "message" => "Email ini sudah terdaftar."]);
-        mysqli_stmt_close($cekEmail);
-        exit();
-    }
-    mysqli_stmt_close($cekEmail);
-
-    // 2. Membuat user_id kustom secara otomatis (Contoh: USR-001)
-    $queryMax  = mysqli_query($koneksi, "SELECT id FROM users ORDER BY id DESC LIMIT 1");
-    $increment = 1;
-    if ($row = mysqli_fetch_assoc($queryMax)) {
-        $increment = $row['id'] + 1;
-    }
-    $userIdCustom = "USR-" . str_pad($increment, 3, "0", STR_PAD_LEFT);
-
-    // 3. Mengamankan password dengan enkripsi BCRYPT hash
-    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-
-    // 4. Masukkan data ke database sesuai struktur tabel kamu (menggunakan kolom 'status')
-    $insertData = mysqli_prepare($koneksi, "INSERT INTO users (user_id, nama, email, password, role, status) VALUES (?, ?, ?, ?, 'User', 'Aktif')");
-    mysqli_stmt_bind_param($insertData, "ssss", $userIdCustom, $nama, $email, $passwordHash);
-
-    if (mysqli_stmt_execute($insertData)) {
-        echo json_encode(["status" => "success", "message" => "Registrasi akun berhasil!"]);
-    } else {
-        echo json_encode(["status" => "error", "message" => "Gagal mendaftarkan pengguna baru."]);
-    }
-    mysqli_stmt_close($insertData);
-
-} else {
-    echo json_encode(["status" => "error", "message" => "Metode akses tidak diizinkan."]);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: /teman_singgah/index.php");
+    exit;
 }
+
+$nama = trim($_POST['nama'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
+
+// Validasi kosong
+if (empty($nama) || empty($email) || empty($password)) {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=field_kosong");
+    exit;
+}
+
+// Validasi email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=email_invalid");
+    exit;
+}
+
+// Validasi panjang password
+if (strlen($password) < 8) {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=password_pendek");
+    exit;
+}
+
+// Cek email duplikat
+$cek = mysqli_prepare($koneksi, "SELECT id FROM users WHERE email = ?");
+mysqli_stmt_bind_param($cek, "s", $email);
+mysqli_stmt_execute($cek);
+mysqli_stmt_store_result($cek);
+
+if (mysqli_stmt_num_rows($cek) > 0) {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=email_exists");
+    exit;
+}
+mysqli_stmt_close($cek);
+
+// Generate user_id
+$user_id = 'USR-' . strtoupper(substr(uniqid(), -6));
+$hash = password_hash($password, PASSWORD_DEFAULT);
+$role = 'User';
+$status = 'Aktif';
+
+$stmt = mysqli_prepare($koneksi, "INSERT INTO users (user_id, nama, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, "ssssss", $user_id, $nama, $email, $hash, $role, $status);
+
+if (mysqli_stmt_execute($stmt)) {
+    header("Location: /teman_singgah/index.php?auth=login&success=registered");
+} else {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=gagal");
+}
+
+mysqli_stmt_close($stmt);
+mysqli_close($koneksi);
+exit;
+?>

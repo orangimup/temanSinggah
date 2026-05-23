@@ -1,282 +1,108 @@
-window.bindAuthPopupEvents = function () {
-  const authOverlay = document.getElementById("authOverlay");
-  if (!authOverlay) return;
-  if (authOverlay.dataset.bound === "true") return;
-  authOverlay.dataset.bound = "true";
+// ── Buka / tutup modal ──────────────────────────────────────
+function bukaModal(step) {
+  const overlay = document.getElementById('authOverlay');
+  overlay.classList.add('open');
+  tampilStep(step || 'authStepPilih');
+}
 
-  const form = authOverlay.querySelector(".auth-form");
-  if (!form) return;
+function tutupModal() {
+  const overlay = document.getElementById('authOverlay');
+  overlay.classList.remove('open');
+}
 
-  // ── helper: tampilkan step ──────────────────────────────────
-  const showStep = (stepId) => {
-    form.querySelectorAll(".auth-step").forEach((s) => s.classList.remove("active"));
-    const target = form.querySelector(`#${stepId}`);
-    if (target) target.classList.add("active");
-  };
+function tampilStep(stepId) {
+  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(stepId);
+  if (target) target.classList.add('active');
+}
 
-  // ── helper: loading state pada tombol ──────────────────────
-  const setLoading = (btn, loading) => {
-    btn.disabled = loading;
-    btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
-    btn.textContent = loading ? "Memproses..." : btn.dataset.originalText;
-  };
+// ── Navigasi tombol ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
 
-  // ── helper: pesan error umum (bukan per-field) ─────────────
-  const showFormError = (stepId, message) => {
-    const step = form.querySelector(`#${stepId}`);
-    if (!step) return;
-    let errBox = step.querySelector(".auth-form-error");
-    if (!errBox) {
-      errBox = document.createElement("p");
-      errBox.className = "auth-form-error auth-error-msg";
-      step.querySelector(".auth-footer-section")?.prepend(errBox);
-    }
-    errBox.textContent = message;
-  };
-
-  const clearFormError = (stepId) => {
-    form.querySelector(`#${stepId} .auth-form-error`)?.remove();
-  };
-
-  // ── tutup overlay ───────────────────────────────────────────
-  authOverlay.querySelectorAll("[data-action='close-auth']").forEach((btn) => {
-    btn.addEventListener("click", () => window.closeAuthPopup?.());
-  });
-  authOverlay.addEventListener("click", (e) => {
-    if (e.target === authOverlay) window.closeAuthPopup?.();
+  // Tutup modal
+  document.querySelectorAll('[data-action="close-auth"]').forEach(btn => {
+    btn.addEventListener('click', tutupModal);
   });
 
-  // ── toggle show/hide password ───────────────────────────────
-  authOverlay.querySelectorAll(".auth-toggle-password").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const input = btn.closest(".auth-password-group").querySelector("input");
-      const isHidden = input.type === "password";
-      input.type = isHidden ? "text" : "password";
-      btn.querySelector("i").className = isHidden
-        ? "ph-bold ph-eye-slash"
-        : "ph-bold ph-eye";
+  // Klik backdrop
+  document.getElementById('authOverlay')?.addEventListener('click', function (e) {
+    if (e.target === this) tutupModal();
+  });
+
+  // Navigasi antar step
+  document.getElementById('btnKeLogin')?.addEventListener('click', () => tampilStep('authStepLogin'));
+  document.getElementById('btnKeDaftar')?.addEventListener('click', () => tampilStep('authStepDaftar1'));
+  document.getElementById('btnSwitchKeDaftar')?.addEventListener('click', () => tampilStep('authStepDaftar1'));
+  document.getElementById('btnSwitchKeLogin')?.addEventListener('click', () => tampilStep('authStepLogin'));
+  document.getElementById('btnLupaPassword')?.addEventListener('click', () => tampilStep('authStepLupaPassword'));
+
+  document.querySelectorAll('[data-action="ke-pilih"]').forEach(btn => {
+    btn.addEventListener('click', () => tampilStep('authStepPilih'));
+  });
+  document.querySelectorAll('[data-action="ke-login"]').forEach(btn => {
+    btn.addEventListener('click', () => tampilStep('authStepLogin'));
+  });
+
+  // Toggle show/hide password
+  document.querySelectorAll('.auth-toggle-password').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.closest('.auth-password-group').querySelector('input');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.querySelector('i').className = isHidden ? 'ph-bold ph-eye-slash' : 'ph-bold ph-eye';
     });
   });
 
-  // ══════════════════════════════════════════════════════════════
-  // STEP PILIH — tombol Masuk / Daftar / Social
-  // ══════════════════════════════════════════════════════════════
-  form.querySelector("#btnKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
-  form.querySelector("#btnKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
+  // ── Baca query param → buka modal + tampilkan pesan ───────
+  const params = new URLSearchParams(window.location.search);
+  const authStep = params.get('auth');
+  const error = params.get('error');
+  const success = params.get('success');
 
-  form.querySelector("#btnSocialGoogle")?.addEventListener("click", () => {
-    window.location.href = "/auth/google_redirect.php";
-  });
+  const pesanError = {
+    field_kosong:    'Semua field harus diisi.',
+    email_invalid:   'Format email tidak valid.',
+    password_pendek: 'Password minimal 8 karakter.',
+    email_exists:    'Email sudah digunakan, coba email lain.',
+    email_notfound:  'Email tidak ditemukan.',
+    password_salah:  'Password salah.',
+    nonaktif:        'Akun kamu telah dinonaktifkan.',
+    gagal:           'Terjadi kesalahan, coba lagi.',
+  };
 
-  form.querySelector("#btnSocialApple")?.addEventListener("click", () => {
-    alert("Login dengan Apple akan segera tersedia.");
-  });
+  if (authStep === 'daftar') {
+    bukaModal('authStepDaftar1');
+    if (error) tampilPesan('authStepDaftar1', pesanError[error] || error, 'error');
+  } else if (authStep === 'login') {
+    bukaModal('authStepLogin');
+    if (error)   tampilPesan('authStepLogin', pesanError[error] || error, 'error');
+    if (success === 'registered') tampilPesan('authStepLogin', 'Akun berhasil dibuat! Silakan masuk.', 'success');
+  }
 
-  form.querySelector("#btnSocialFacebook")?.addEventListener("click", () => {
-    alert("Login dengan Facebook akan segera tersedia.");
-  });
+  // Hapus query param dari URL tanpa reload
+  if (authStep) {
+    const url = new URL(window.location);
+    url.searchParams.delete('auth');
+    url.searchParams.delete('error');
+    url.searchParams.delete('success');
+    window.history.replaceState({}, '', url);
+  }
+});
 
-  // ══════════════════════════════════════════════════════════════
-  // STEP LOGIN
-  // ══════════════════════════════════════════════════════════════
-  form.querySelectorAll("[data-action='ke-pilih']").forEach((btn) => {
-    btn.addEventListener("click", () => showStep("authStepPilih"));
-  });
+// ── Tampilkan pesan error / sukses di dalam step ────────────
+function tampilPesan(stepId, pesan, tipe) {
+  const step = document.getElementById(stepId);
+  if (!step) return;
 
-  form.querySelector("#btnSubmitLogin")?.addEventListener("click", async () => {
-    const email = form.querySelector("#loginEmail")?.value.trim();
-    const password = form.querySelector("#loginPassword")?.value;
+  let box = step.querySelector('.auth-pesan');
+  if (!box) {
+    box = document.createElement('p');
+    box.className = 'auth-pesan';
+    step.querySelector('.auth-footer-section')?.prepend(box);
+  }
 
-    if (!email) { showInputError("loginEmail", "Masukkan email kamu"); return; }
-    if (!password) { showInputError("loginPassword", "Masukkan password kamu"); return; }
-
-    clearFormError("authStepLogin");
-    const btn = form.querySelector("#btnSubmitLogin");
-    setLoading(btn, true);
-
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-
-      const res = await fetch("/auth/proses_login.php", { method: "POST", body: formData });
-      const data = await res.json();
-
-      if (data.status === "success") {
-        window.onLoginSuccess?.(data.user.nama.charAt(0).toUpperCase());
-        window.closeAuthPopup?.();
-        // Opsional: reload halaman untuk update UI navbar dll
-        // window.location.reload();
-      } else {
-        showFormError("authStepLogin", data.message);
-      }
-    } catch (err) {
-      showFormError("authStepLogin", "Terjadi kesalahan. Coba lagi.");
-    } finally {
-      setLoading(btn, false);
-    }
-  });
-
-  form.querySelector("#btnSwitchKeDaftar")?.addEventListener("click", () => showStep("authStepDaftar1"));
-
-  form.querySelector("#btnLupaPassword")?.addEventListener("click", () => {
-    showStep("authStepLupaPassword");
-  });
-
-  // ══════════════════════════════════════════════════════════════
-  // STEP LUPA PASSWORD
-  // ══════════════════════════════════════════════════════════════
-  form.querySelectorAll("[data-action='ke-login']").forEach((btn) => {
-    btn.addEventListener("click", () => showStep("authStepLogin"));
-  });
-
-  form.querySelector("#btnSwitchKeLoginDariLupa")?.addEventListener("click", () => showStep("authStepLogin"));
-
-  form.querySelector("#btnKirimResetPassword")?.addEventListener("click", async () => {
-    const email = form.querySelector("#lupaPasswordEmail")?.value.trim();
-
-    if (!email) { showInputError("lupaPasswordEmail", "Masukkan email kamu"); return; }
-
-    clearFormError("authStepLupaPassword");
-    const btn = form.querySelector("#btnKirimResetPassword");
-    setLoading(btn, true);
-
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-
-      const res = await fetch("/auth/proses_lupa_password.php", { method: "POST", body: formData });
-      const data = await res.json();
-
-      if (data.status === "success") {
-        const display = form.querySelector("#lupaPasswordEmailDisplay");
-        if (display) display.textContent = email;
-        showStep("authStepResetSukses");
-      } else {
-        showFormError("authStepLupaPassword", data.message || "Email tidak ditemukan.");
-      }
-    } catch (err) {
-      showFormError("authStepLupaPassword", "Terjadi kesalahan. Coba lagi.");
-    } finally {
-      setLoading(btn, false);
-    }
-  });
-
-  // ══════════════════════════════════════════════════════════════
-  // STEP RESET SUKSES
-  // ══════════════════════════════════════════════════════════════
-  form.querySelector("#btnKirimUlangReset")?.addEventListener("click", async () => {
-    const email = form.querySelector("#lupaPasswordEmailDisplay")?.textContent?.trim();
-    if (!email) { showStep("authStepLupaPassword"); return; }
-
-    const btn = form.querySelector("#btnKirimUlangReset");
-    setLoading(btn, true);
-
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      await fetch("/auth/proses_lupa_password.php", { method: "POST", body: formData });
-      btn.textContent = "Email terkirim!";
-      setTimeout(() => {
-        btn.textContent = "Kirim ulang email";
-        btn.disabled = false;
-        delete btn.dataset.originalText;
-      }, 3000);
-    } catch (err) {
-      setLoading(btn, false);
-    }
-  });
-
-  form.querySelector("#btnKembaliKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
-
-  // ══════════════════════════════════════════════════════════════
-  // STEP DAFTAR — Nama, Email & Password
-  // ══════════════════════════════════════════════════════════════
-  form.querySelector("#btnDaftar1Lanjut")?.addEventListener("click", async () => {
-    const nama = form.querySelector("#daftarNama")?.value.trim();
-    const email = form.querySelector("#daftarEmail")?.value.trim();
-    const password = form.querySelector("#daftarPassword")?.value;
-
-    if (!nama) { showInputError("daftarNama", "Masukkan namamu"); return; }
-    if (!email) { showInputError("daftarEmail", "Masukkan email yang valid"); return; }
-    if (!password || password.length < 8) {
-      showInputError("daftarPassword", "Password minimal 8 karakter");
-      return;
-    }
-
-    clearFormError("authStepDaftar1");
-    const btn = form.querySelector("#btnDaftar1Lanjut");
-    setLoading(btn, true);
-
-    try {
-      const formData = new FormData();
-      formData.append("nama", nama);
-      formData.append("email", email);
-      formData.append("password", password);
-
-      const res = await fetch("/auth/proses_register.php", { method: "POST", body: formData });
-      const data = await res.json();
-
-      if (data.status === "success") {
-        // Langsung arahkan ke step login setelah daftar berhasil
-        showStep("authStepLogin");
-        // Tampilkan pesan sukses di step login
-        const successMsg = document.createElement("p");
-        successMsg.className = "auth-success-msg";
-        successMsg.textContent = "Akun berhasil dibuat! Silakan masuk.";
-        form.querySelector("#authStepLogin .auth-body-section")?.prepend(successMsg);
-        setTimeout(() => successMsg.remove(), 4000);
-      } else {
-        showFormError("authStepDaftar1", data.message);
-      }
-    } catch (err) {
-      showFormError("authStepDaftar1", err.message || "Terjadi kesalahan. Coba lagi.");
-    } finally {
-      setLoading(btn, false);
-    }
-  });
-
-  form.querySelector("#btnSwitchKeLogin")?.addEventListener("click", () => showStep("authStepLogin"));
-
-  // ── cegah submit HTML form biasa ───────────────────────────
-  form.addEventListener("submit", (e) => e.preventDefault());
-
-  // ── Enter key shortcut ──────────────────────────────────────
-  form.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    const activeStep = form.querySelector(".auth-step.active");
-    if (!activeStep) return;
-    const map = {
-      authStepLogin: "#btnSubmitLogin",
-      authStepDaftar1: "#btnDaftar1Lanjut",
-      authStepLupaPassword: "#btnKirimResetPassword",
-    };
-    const sel = map[activeStep.id];
-    if (sel) form.querySelector(sel)?.click();
-  });
-
-  // ── mulai dari step pilih ───────────────────────────────────
-  showStep("authStepPilih");
-};
-
-// ── helper: tampilkan error pada input ──────────────────────
-function showInputError(inputId, message) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
-  input.classList.add("input-error");
-  input.focus();
-
-  const existingMsg = input.parentElement.querySelector(".auth-error-msg");
-  if (existingMsg) existingMsg.remove();
-
-  const msg = document.createElement("p");
-  msg.className = "auth-error-msg";
-  msg.textContent = message;
-  input.parentElement.insertAdjacentElement("afterend", msg);
-
-  input.addEventListener("input", () => {
-    input.classList.remove("input-error");
-    msg.remove();
-  }, { once: true });
+  box.textContent = pesan;
+  box.style.cssText = tipe === 'error'
+    ? 'color:#cc2b2b;font-size:13px;margin-bottom:8px;'
+    : 'color:#27500a;background:#eaf3de;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:8px;';
 }
