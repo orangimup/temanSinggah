@@ -432,7 +432,7 @@ function potong_teks(string $teks, int $maks = 80): string
     <!-- ── Sidebar ── -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <a href="/teman_singgah/admin/pages/dashboard.html" class="logo-link"></a>
+        <a href="/teman_singgah/admin/pages/dashboard.php" class="logo-link"></a>
         <div class="logo-section">
           <img src="/teman_singgah/assets/logo/logo_temansinggah.svg" alt="Logo" class="logo-icon" />
           <img src="/teman_singgah/assets/logo/label_temansinggah.svg" alt="Brand" class="logo-name" />
@@ -441,7 +441,7 @@ function potong_teks(string $teks, int $maks = 80): string
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Halaman Utama</div>
-          <a href="/teman_singgah/admin/pages/dashboard.html" class="nav-item"><i class="ph-bold ph-squares-four"></i>
+          <a href="/teman_singgah/admin/pages/dashboard.php" class="nav-item"><i class="ph-bold ph-squares-four"></i>
             Dashboard</a>
         </div>
         <div class="nav-section">
@@ -449,27 +449,27 @@ function potong_teks(string $teks, int $maks = 80): string
           <a href="/teman_singgah/admin/pages/users.php" class="nav-item"><i class="ph-bold ph-users"></i> Pengguna</a>
           <a href="/teman_singgah/admin/pages/listings.php" class="nav-item"><i class="ph-bold ph-house"></i>
             Properti</a>
-          <a href="/teman_singgah/admin/pages/reservations.html" class="nav-item"><i
+          <a href="/teman_singgah/admin/pages/reservations.php" class="nav-item"><i
               class="ph-bold ph-calendar-check"></i> Reservasi</a>
-          <a href="/teman_singgah/admin/pages/transactions.html" class="nav-item"><i
+          <a href="/teman_singgah/admin/pages/transactions.php" class="nav-item"><i
               class="ph-bold ph-currency-circle-dollar"></i> Transaksi</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
           <a href="/teman_singgah/admin/pages/reviews.php" class="nav-item active"><i class="ph-bold ph-star"></i>
             Ulasan</a>
-          <a href="/teman_singgah/admin/pages/reports.html" class="nav-item"><i class="ph-bold ph-flag"></i> Laporan</a>
+          <a href="/teman_singgah/admin/pages/reports.php" class="nav-item"><i class="ph-bold ph-flag"></i> Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>
-          <a href="/teman_singgah/admin/pages/payouts.html" class="nav-item"><i class="ph-bold ph-money"></i>
+          <a href="/teman_singgah/admin/pages/payouts.php" class="nav-item"><i class="ph-bold ph-money"></i>
             Pembayaran</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Sistem</div>
-          <a href="/teman_singgah/admin/pages/settings.html" class="nav-item"><i class="ph-bold ph-gear"></i>
+          <a href="/teman_singgah/admin/pages/settings.php" class="nav-item"><i class="ph-bold ph-gear"></i>
             Pengaturan</a>
-          <a href="/teman_singgah/admin/pages/logs.html" class="nav-item"><i class="ph-bold ph-notepad"></i>
+          <a href="/teman_singgah/admin/pages/logs.php" class="nav-item"><i class="ph-bold ph-notepad"></i>
             Aktivitas</a>
         </div>
       </nav>

@@ -1,3 +1,13 @@
+<?php
+session_start();
+require_once '../../koneksi.php';
+
+if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
+  header('Location: /teman_singgah/index.php?auth=login');
+  exit;
+}
+?>
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -28,7 +38,7 @@
     <div class="admin-layout">
       <aside class="sidebar">
         <div class="sidebar-header">
-          <a href="../dashboard.html" class="logo-link"></a>
+          <a href="../dashboard.php" class="logo-link"></a>
           <div class="logo-section">
             <img
               src="../../assets/logo/logo_temansinggah.svg"
@@ -44,7 +54,7 @@
         <nav class="sidebar-nav">
           <div class="nav-section">
             <div class="nav-section-title">Halaman Utama</div>
-            <a href="../dashboard.html" class="nav-item active">
+            <a href="../dashboard.php" class="nav-item active">
               <i class="ph-bold ph-squares-four"></i>
               Dashboard
             </a>
@@ -60,11 +70,11 @@
               <i class="ph-bold ph-house"></i>
               Properti
             </a>
-            <a href="../pages/reservations.html" class="nav-item">
+            <a href="../pages/reservations.php" class="nav-item">
               <i class="ph-bold ph-calendar-check"></i>
               Reservasi
             </a>
-            <a href="../pages/transactions.html" class="nav-item">
+            <a href="../pages/transactions.php" class="nav-item">
               <i class="ph-bold ph-currency-circle-dollar"></i>
               Transaksi
             </a>
@@ -76,7 +86,7 @@
               <i class="ph-bold ph-star"></i>
               Ulasan
             </a>
-            <a href="../pages/reports.html" class="nav-item">
+            <a href="../pages/reports.php" class="nav-item">
               <i class="ph-bold ph-flag"></i>
               Laporan
             </a>
@@ -84,7 +94,7 @@
 
           <div class="nav-section">
             <div class="nav-section-title">Keuangan</div>
-            <a href="../pages/payouts.html" class="nav-item">
+            <a href="../pages/payouts.php" class="nav-item">
               <i class="ph-bold ph-money"></i>
               Pembayaran
             </a>
@@ -92,11 +102,11 @@
 
           <div class="nav-section">
             <div class="nav-section-title">Sistem</div>
-            <a href="../pages/settings.html" class="nav-item">
+            <a href="../pages/settings.php" class="nav-item">
               <i class="ph-bold ph-gear"></i>
               Pengaturan
             </a>
-            <a href="../pages/logs.html" class="nav-item">
+            <a href="../pages/logs.php" class="nav-item">
               <i class="ph-bold ph-notepad"></i>
               Aktivitas
             </a>
@@ -190,7 +200,7 @@
           <section class="table-section">
             <div class="section-header">
               <h2 class="section-title">Reservasi Terbaru</h2>
-              <a href="../reservations.html" class="section-link">Lihat Semua</a>
+              <a href="../reservations.php" class="section-link">Lihat Semua</a>
             </div>
             <div class="table-container">
               <table>

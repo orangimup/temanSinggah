@@ -1,6 +1,11 @@
 <?php
 session_start();
-include "../../koneksi.php";
+require_once '../../koneksi.php';
+
+if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
+  header('Location: /teman_singgah/index.php?auth=login');
+  exit;
+}
 
 $result = mysqli_query($koneksi, "
     SELECT
@@ -254,7 +259,7 @@ $result = mysqli_query($koneksi, "
   <div class="admin-layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <a class="logo-link" href="/teman_singgah/admin/pages/dashboard.html"></a>
+        <a class="logo-link" href="/teman_singgah/admin/pages/dashboard.php"></a>
         <div class="logo-section">
           <img alt="Logo Teman Singgah" class="logo-icon" src="/teman_singgah/assets/logo/logo_temansinggah.svg" />
           <img alt="Brand Name Teman Singgah" class="logo-name"
@@ -264,7 +269,7 @@ $result = mysqli_query($koneksi, "
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Halaman Utama</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.php"><i
               class="ph-bold ph-squares-four"></i>Dashboard</a>
         </div>
         <div class="nav-section">
@@ -272,26 +277,26 @@ $result = mysqli_query($koneksi, "
           <a class="nav-item" href="/teman_singgah/admin/pages/users.php"><i class="ph-bold ph-users"></i>Pengguna</a>
           <a class="nav-item active" href="/teman_singgah/admin/pages/listings.php"><i
               class="ph-bold ph-house"></i>Properti</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/reservations.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/reservations.php"><i
               class="ph-bold ph-calendar-check"></i>Reservasi</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/transactions.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i
               class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
           <a class="nav-item" href="/teman_singgah/admin/pages/reviews.php"><i class="ph-bold ph-star"></i>Ulasan</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/reports.html"><i class="ph-bold ph-flag"></i>Laporan</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/reports.php"><i class="ph-bold ph-flag"></i>Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/payouts.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/payouts.php"><i
               class="ph-bold ph-money"></i>Pembayaran</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Sistem</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/settings.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i
               class="ph-bold ph-gear"></i>Pengaturan</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/logs.html"><i
+          <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i
               class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
