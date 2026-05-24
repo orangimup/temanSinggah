@@ -29,23 +29,34 @@ $sql = "
     LEFT JOIN listings l ON r.listing_id = l.id
     ORDER BY r.dibuat_pada DESC
 ";
-$result  = mysqli_query($koneksi, $sql);
+$result = mysqli_query($koneksi, $sql);
 $reviews = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 $bulan_id = [
-  'January' => 'Januari', 'February' => 'Februari', 'March'    => 'Maret',
-  'April'   => 'April',   'May'      => 'Mei',       'June'     => 'Juni',
-  'July'    => 'Juli',    'August'   => 'Agustus',   'September'=> 'September',
-  'October' => 'Oktober', 'November' => 'November',  'December' => 'Desember'
+  'January' => 'Januari',
+  'February' => 'Februari',
+  'March' => 'Maret',
+  'April' => 'April',
+  'May' => 'Mei',
+  'June' => 'Juni',
+  'July' => 'Juli',
+  'August' => 'Agustus',
+  'September' => 'September',
+  'October' => 'Oktober',
+  'November' => 'November',
+  'December' => 'Desember'
 ];
 
-function potong_teks(string $teks, int $maks = 80): string {
-  if (mb_strlen($teks) <= $maks) return htmlspecialchars($teks);
+function potong_teks(string $teks, int $maks = 80): string
+{
+  if (mb_strlen($teks) <= $maks)
+    return htmlspecialchars($teks);
   return htmlspecialchars(mb_substr($teks, 0, $maks)) . '...';
 }
 ?>
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -55,7 +66,9 @@ function potong_teks(string $teks, int $maks = 80): string {
   <link rel="stylesheet" href="/teman_singgah/admin/dashboard.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   <style>
@@ -137,7 +150,9 @@ function potong_teks(string $teks, int $maks = 80): string {
       overflow: hidden;
     }
 
-    .sort-menu.open { display: block !important; }
+    .sort-menu.open {
+      display: block !important;
+    }
 
     .sort-menu-item {
       display: flex;
@@ -153,7 +168,10 @@ function potong_teks(string $teks, int $maks = 80): string {
       user-select: none;
     }
 
-    .sort-menu-item:hover { background: var(--color-bg-section); color: var(--color-text-primary); }
+    .sort-menu-item:hover {
+      background: var(--color-bg-section);
+      color: var(--color-text-primary);
+    }
 
     .sort-menu-item.active {
       color: var(--color-primary);
@@ -181,45 +199,39 @@ function potong_teks(string $teks, int $maks = 80): string {
       display: none;
       position: fixed;
       inset: 0;
-      background: var(--color-bg-overlay);
+      background: rgba(0, 0, 0, 0.35);
       z-index: var(--z-modal);
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(3px);
     }
 
-    .confirm-overlay.show { display: flex; }
+    .confirm-overlay.show {
+      display: flex;
+    }
 
     .confirm-box {
       background: var(--color-bg-card);
-      border-radius: var(--radius-3xl);
+      border-radius: var(--radius-2xl);
       padding: var(--space-32);
-      max-width: 420px;
+      max-width: 400px;
       width: 90%;
-      box-shadow: var(--shadow-dropdown);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.14);
       border: 1.5px solid var(--color-border-subtle);
       display: flex;
       flex-direction: column;
-      gap: var(--space-20);
+      gap: var(--space-24);
     }
 
-    .confirm-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-xl);
-      background: var(--color-error-light);
+    .confirm-body {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-error);
-      font-size: var(--text-xl);
+      flex-direction: column;
+      gap: var(--space-8);
     }
-
-    .confirm-body { display: flex; flex-direction: column; gap: var(--space-6); }
 
     .confirm-box h3 {
       font-family: var(--font-display);
-      font-size: var(--text-lg);
+      font-size: var(--text-xl);
       font-weight: var(--font-bold);
       color: var(--color-text-primary);
       margin: 0;
@@ -229,22 +241,16 @@ function potong_teks(string $teks, int $maks = 80): string {
       font-size: var(--text-sm);
       color: var(--color-text-secondary);
       margin: 0;
-      line-height: 1.6;
-    }
-
-    .confirm-divider {
-      height: 1.5px;
-      background: var(--color-border-subtle);
-      margin: 0 calc(var(--space-32) * -1);
+      line-height: 1.65;
     }
 
     .confirm-actions {
       display: flex;
-      gap: var(--space-12);
-      justify-content: flex-end;
+      gap: var(--space-10);
     }
 
     .btn-batal {
+      flex: 1;
       padding: var(--space-12) var(--space-20);
       border-radius: var(--radius-xl);
       border: 1.5px solid var(--color-border);
@@ -255,9 +261,6 @@ function potong_teks(string $teks, int $maks = 80): string {
       cursor: pointer;
       font-family: var(--font-family);
       transition: all var(--transition-base);
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-8);
     }
 
     .btn-batal:hover {
@@ -266,42 +269,28 @@ function potong_teks(string $teks, int $maks = 80): string {
       background: var(--color-bg-section);
     }
 
-    .btn-lihat {
-      padding: var(--space-12) var(--space-20);
-      border-radius: var(--radius-xl);
-      border: 1.5px solid transparent;
-      background: var(--color-info-light);
-      color: var(--color-info);
-      font-size: var(--text-sm);
-      font-weight: var(--font-semibold);
-      cursor: pointer;
-      font-family: var(--font-family);
-      transition: all var(--transition-base);
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-8);
-    }
-
-    .btn-lihat:hover { background: var(--color-info-light-hover); }
-
-    .btn-tolak {
+    .btn-tolak-confirm {
+      flex: 1;
       padding: var(--space-12) var(--space-20);
       border-radius: var(--radius-xl);
       border: none;
-      background: var(--color-error);
-      color: var(--color-text-inverse);
+      background: var(--color-primary);
+      color: #fff;
       font-size: var(--text-sm);
       font-weight: var(--font-semibold);
       cursor: pointer;
       font-family: var(--font-family);
       transition: all var(--transition-base);
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-8);
     }
 
-    .btn-tolak:hover  { background: var(--color-error-hover); }
-    .btn-tolak:active { background: var(--color-error-active); transform: scale(0.99); }
+    .btn-tolak-confirm:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-tolak-confirm:active {
+      background: var(--color-error-active);
+      transform: scale(0.99);
+    }
 
     /* ── Detail panel ── */
     .detail-panel {
@@ -321,7 +310,9 @@ function potong_teks(string $teks, int $maks = 80): string {
       overflow: hidden;
     }
 
-    .detail-panel.show { transform: translateX(0); }
+    .detail-panel.show {
+      transform: translateX(0);
+    }
 
     .detail-panel-header {
       display: flex;
@@ -405,7 +396,9 @@ function potong_teks(string $teks, int $maks = 80): string {
       gap: var(--space-8);
     }
 
-    .detail-rating .star-rating { font-size: var(--text-base); }
+    .detail-rating .star-rating {
+      font-size: var(--text-base);
+    }
 
     .detail-rating span {
       font-size: var(--text-sm);
@@ -430,33 +423,6 @@ function potong_teks(string $teks, int $maks = 80): string {
       align-items: center;
       gap: var(--space-8);
     }
-
-    .detail-panel-footer {
-      padding: var(--space-24) var(--space-32);
-      border-top: 1.5px solid var(--color-border-subtle);
-      flex-shrink: 0;
-    }
-
-    .detail-delete-btn {
-      width: 100%;
-      padding: var(--space-14) var(--space-20);
-      background: var(--color-error);
-      color: var(--color-text-inverse);
-      border: none;
-      border-radius: var(--radius-xl);
-      font-size: var(--text-base);
-      font-weight: var(--font-semibold);
-      cursor: pointer;
-      font-family: var(--font-family);
-      transition: all var(--transition-base);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-8);
-    }
-
-    .detail-delete-btn:hover  { background: var(--color-error-hover); }
-    .detail-delete-btn:active { background: var(--color-error-active); transform: scale(0.99); }
   </style>
 </head>
 
@@ -475,28 +441,36 @@ function potong_teks(string $teks, int $maks = 80): string {
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Halaman Utama</div>
-          <a href="/teman_singgah/admin/pages/dashboard.html" class="nav-item"><i class="ph-bold ph-squares-four"></i> Dashboard</a>
+          <a href="/teman_singgah/admin/pages/dashboard.html" class="nav-item"><i class="ph-bold ph-squares-four"></i>
+            Dashboard</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Manajemen</div>
-          <a href="/teman_singgah/admin/pages/users.php"         class="nav-item"><i class="ph-bold ph-users"></i> Pengguna</a>
-          <a href="/teman_singgah/admin/pages/listings.php"      class="nav-item"><i class="ph-bold ph-house"></i> Properti</a>
-          <a href="/teman_singgah/admin/pages/reservations.html" class="nav-item"><i class="ph-bold ph-calendar-check"></i> Reservasi</a>
-          <a href="/teman_singgah/admin/pages/transactions.html" class="nav-item"><i class="ph-bold ph-currency-circle-dollar"></i> Transaksi</a>
+          <a href="/teman_singgah/admin/pages/users.php" class="nav-item"><i class="ph-bold ph-users"></i> Pengguna</a>
+          <a href="/teman_singgah/admin/pages/listings.php" class="nav-item"><i class="ph-bold ph-house"></i>
+            Properti</a>
+          <a href="/teman_singgah/admin/pages/reservations.html" class="nav-item"><i
+              class="ph-bold ph-calendar-check"></i> Reservasi</a>
+          <a href="/teman_singgah/admin/pages/transactions.html" class="nav-item"><i
+              class="ph-bold ph-currency-circle-dollar"></i> Transaksi</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
-          <a href="/teman_singgah/admin/pages/reviews.php" class="nav-item active"><i class="ph-bold ph-star"></i> Ulasan</a>
-          <a href="/teman_singgah/admin/pages/reports.html"      class="nav-item"><i class="ph-bold ph-flag"></i> Laporan</a>
+          <a href="/teman_singgah/admin/pages/reviews.php" class="nav-item active"><i class="ph-bold ph-star"></i>
+            Ulasan</a>
+          <a href="/teman_singgah/admin/pages/reports.html" class="nav-item"><i class="ph-bold ph-flag"></i> Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>
-          <a href="/teman_singgah/admin/pages/payouts.html" class="nav-item"><i class="ph-bold ph-money"></i> Pembayaran</a>
+          <a href="/teman_singgah/admin/pages/payouts.html" class="nav-item"><i class="ph-bold ph-money"></i>
+            Pembayaran</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Sistem</div>
-          <a href="/teman_singgah/admin/pages/settings.html" class="nav-item"><i class="ph-bold ph-gear"></i> Pengaturan</a>
-          <a href="/teman_singgah/admin/pages/logs.html"     class="nav-item"><i class="ph-bold ph-notepad"></i> Aktivitas</a>
+          <a href="/teman_singgah/admin/pages/settings.html" class="nav-item"><i class="ph-bold ph-gear"></i>
+            Pengaturan</a>
+          <a href="/teman_singgah/admin/pages/logs.html" class="nav-item"><i class="ph-bold ph-notepad"></i>
+            Aktivitas</a>
         </div>
       </nav>
     </aside>
@@ -571,20 +545,19 @@ function potong_teks(string $teks, int $maks = 80): string {
                   </tr>
                 <?php else: ?>
                   <?php foreach ($reviews as $rv):
-                    $initials  = strtoupper(mb_substr($rv['user_nama'] ?? 'T', 0, 2));
-                    $tanggal   = strtr(date('j F Y', strtotime($rv['dibuat_pada'])), $bulan_id);
-                    $preview   = potong_teks($rv['komentar'], 80);
+                    $initials = strtoupper(mb_substr($rv['user_nama'] ?? 'T', 0, 2));
+                    $tanggal = strtr(date('j F Y', strtotime($rv['dibuat_pada'])), $bulan_id);
+                    $preview = potong_teks($rv['komentar'], 80);
                     $photo_url = null;
                     if (!empty($rv['user_photo'])) {
                       $path = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $rv['user_photo'];
                       if (file_exists($path))
                         $photo_url = '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($rv['user_photo']);
                     }
-                  ?>
+                    ?>
                     <tr data-nama="<?= htmlspecialchars($rv['user_nama'] ?? '') ?>"
-                        data-listing="<?= htmlspecialchars($rv['listing_judul'] ?? '') ?>"
-                        data-rating="<?= (int) $rv['rating'] ?>"
-                        data-tanggal="<?= htmlspecialchars($rv['dibuat_pada']) ?>">
+                      data-listing="<?= htmlspecialchars($rv['listing_judul'] ?? '') ?>"
+                      data-rating="<?= (int) $rv['rating'] ?>" data-tanggal="<?= htmlspecialchars($rv['dibuat_pada']) ?>">
                       <td class="col-num"></td>
                       <td>
                         <div class="table-cell">
@@ -612,13 +585,11 @@ function potong_teks(string $teks, int $maks = 80): string {
                       <td><?= $tanggal ?></td>
                       <td>
                         <div class="action-group">
-                          <button class="action-button info" title="Lihat Detail"
-                            data-id="<?= $rv['id'] ?>"
+                          <button class="action-button info" title="Lihat Detail" data-id="<?= $rv['id'] ?>"
                             data-nama="<?= htmlspecialchars($rv['user_nama'] ?? 'Tamu') ?>">
                             <i class="ph-bold ph-eye"></i>
                           </button>
-                          <button class="action-button error" title="Tolak & Hapus"
-                            data-id="<?= $rv['id'] ?>"
+                          <button class="action-button error" title="Tolak & Hapus" data-id="<?= $rv['id'] ?>"
                             data-nama="<?= htmlspecialchars($rv['user_nama'] ?? 'Tamu') ?>">
                             <i class="ph-bold ph-trash"></i>
                           </button>
@@ -644,27 +615,16 @@ function potong_teks(string $teks, int $maks = 80): string {
   <!-- ── Confirm overlay ── -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
-      <div class="confirm-icon">
-        <i class="ph-bold ph-trash"></i>
-      </div>
       <div class="confirm-body">
         <h3>Tolak Ulasan?</h3>
         <p id="confirmMsg"></p>
       </div>
-      <div class="confirm-divider"></div>
       <div class="confirm-actions">
-        <button class="btn-batal" id="btnBatal" type="button">
-          <i class="ph-bold ph-x"></i> Batal
-        </button>
-        <button class="btn-lihat" id="btnLihat" type="button">
-          <i class="ph-bold ph-eye"></i> Lihat Detail
-        </button>
-        <form method="POST" style="display:inline;">
+        <button class="btn-batal" id="btnBatal" type="button">Batal</button>
+        <form method="POST" style="flex:1;margin:0;">
           <input type="hidden" name="aksi" value="tolak" />
           <input type="hidden" name="review_id" id="confirmReviewId" />
-          <button type="submit" class="btn-tolak">
-            <i class="ph-bold ph-trash"></i> Ya, Hapus
-          </button>
+          <button type="submit" class="btn-tolak-confirm" style="width:100%;">Ya, Hapus</button>
         </form>
       </div>
     </div>
@@ -705,27 +665,18 @@ function potong_teks(string $teks, int $maks = 80): string {
         </div>
       </div>
     </div>
-    <div class="detail-panel-footer">
-      <form method="POST">
-        <input type="hidden" name="aksi" value="tolak" />
-        <input type="hidden" name="review_id" id="detailDeleteId" />
-        <button type="submit" class="detail-delete-btn">
-          <i class="ph-bold ph-trash"></i> Tolak & Hapus Ulasan
-        </button>
-      </form>
-    </div>
+    <!-- footer dihapus, tombol hapus sudah ada di kolom aksi tabel -->
   </div>
 
   <script src="/teman_singgah/admin/dashboard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const ROWS_PER_PAGE = 10;
-      const table      = document.getElementById('reviewTable');
-      const tbody      = table.querySelector('tbody');
+      const table = document.getElementById('reviewTable');
+      const tbody = table.querySelector('tbody');
       const masterRows = Array.from(tbody.querySelectorAll('tr[data-tanggal]'));
 
-      let state     = { sort: 'date_newest', search: '', page: 1 };
-      let activeRow = null;
+      let state = { sort: 'date_newest', search: '', page: 1 };
 
       /* ── Render ── */
       function render() {
@@ -733,7 +684,7 @@ function potong_teks(string $teks, int $maks = 80): string {
 
         let rows = masterRows.filter(row =>
           !q ||
-          (row.dataset.nama    || '').toLowerCase().includes(q) ||
+          (row.dataset.nama || '').toLowerCase().includes(q) ||
           (row.dataset.listing || '').toLowerCase().includes(q)
         );
 
@@ -741,16 +692,16 @@ function potong_teks(string $teks, int $maks = 80): string {
           switch (state.sort) {
             case 'date_newest': return new Date(b.dataset.tanggal) - new Date(a.dataset.tanggal);
             case 'date_oldest': return new Date(a.dataset.tanggal) - new Date(b.dataset.tanggal);
-            case 'rating_high': return Number(b.dataset.rating)    - Number(a.dataset.rating);
-            case 'rating_low':  return Number(a.dataset.rating)    - Number(b.dataset.rating);
+            case 'rating_high': return Number(b.dataset.rating) - Number(a.dataset.rating);
+            case 'rating_low': return Number(a.dataset.rating) - Number(b.dataset.rating);
             default: return 0;
           }
         });
 
-        const total      = rows.length;
+        const total = rows.length;
         const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
         if (state.page > totalPages) state.page = totalPages;
-        const start    = (state.page - 1) * ROWS_PER_PAGE;
+        const start = (state.page - 1) * ROWS_PER_PAGE;
         const pageRows = rows.slice(start, start + ROWS_PER_PAGE);
 
         masterRows.forEach(r => { r.style.display = 'none'; });
@@ -771,13 +722,13 @@ function potong_teks(string $teks, int $maks = 80): string {
         const s = total === 0 ? 0 : (state.page - 1) * ROWS_PER_PAGE + 1;
         const e = Math.min(state.page * ROWS_PER_PAGE, total);
         infoEl.textContent = total === 0 ? 'Tidak ada data' : `${s}–${e} dari ${total} ulasan`;
-        ctrlEl.innerHTML   = '';
+        ctrlEl.innerHTML = '';
 
         function mkBtn(html, disabled, cb) {
           const btn = document.createElement('button');
           btn.className = 'page-btn nav-btn';
           btn.innerHTML = html;
-          btn.disabled  = disabled;
+          btn.disabled = disabled;
           if (!disabled) btn.addEventListener('click', () => { cb(); render(); });
           return btn;
         }
@@ -787,12 +738,12 @@ function potong_teks(string $teks, int $maks = 80): string {
         buildPageList(state.page, totalPages).forEach(p => {
           if (p === '...') {
             const sp = document.createElement('span');
-            sp.className   = 'page-ellipsis';
+            sp.className = 'page-ellipsis';
             sp.textContent = '…';
             ctrlEl.appendChild(sp);
           } else {
             const btn = document.createElement('button');
-            btn.className   = 'page-btn' + (p === state.page ? ' active' : '');
+            btn.className = 'page-btn' + (p === state.page ? ' active' : '');
             btn.textContent = p;
             btn.addEventListener('click', () => { state.page = p; render(); });
             ctrlEl.appendChild(btn);
@@ -813,13 +764,13 @@ function potong_teks(string $teks, int $maks = 80): string {
       }
 
       /* ── Sort dropdown ── */
-      const sortDropdown  = document.getElementById('sortDropdown');
+      const sortDropdown = document.getElementById('sortDropdown');
       const sortToggleBtn = document.getElementById('sortToggleBtn');
-      const sortMenu      = document.getElementById('sortMenu');
-      const sortLabel     = document.getElementById('sortLabel');
+      const sortMenu = document.getElementById('sortMenu');
+      const sortLabel = document.getElementById('sortLabel');
       let sortOpen = false;
 
-      function openSort()  { sortOpen = true;  sortMenu.classList.add('open'); }
+      function openSort() { sortOpen = true; sortMenu.classList.add('open'); }
       function closeSort() { sortOpen = false; sortMenu.classList.remove('open'); }
 
       sortToggleBtn.addEventListener('mousedown', function (e) {
@@ -832,8 +783,8 @@ function potong_teks(string $teks, int $maks = 80): string {
         item.addEventListener('mousedown', function (e) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          state.sort  = this.dataset.sort;
-          state.page  = 1;
+          state.sort = this.dataset.sort;
+          state.page = 1;
           sortLabel.textContent = 'Urutkan: ' + this.dataset.label;
           sortMenu.querySelectorAll('.sort-menu-item').forEach(i => i.classList.remove('active'));
           this.classList.add('active');
@@ -849,20 +800,19 @@ function potong_teks(string $teks, int $maks = 80): string {
       /* ── Search ── */
       document.getElementById('adminSearch').addEventListener('input', function () {
         state.search = this.value.trim().toLowerCase();
-        state.page   = 1;
+        state.page = 1;
         render();
       });
 
       /* ── Detail panel ── */
       function openDetail(row) {
-        const deletBtn  = row.querySelector('.action-button.error');
-        const id        = deletBtn.dataset.id;
-        const nama      = row.dataset.nama;
-        const listing   = row.dataset.listing;
-        const rating    = Number(row.dataset.rating);
-        const tgl       = row.querySelector('td:nth-child(6)').textContent.trim();
-        const komentar  = row.querySelector('.table-description').getAttribute('title');
-        const photoEl   = row.querySelector('.review-photo');
+        const btnHapus = row.querySelector('.action-button.error');
+        const nama = row.dataset.nama;
+        const listing = row.dataset.listing;
+        const rating = Number(row.dataset.rating);
+        const tgl = row.querySelector('td:nth-child(6)').textContent.trim();
+        const komentar = row.querySelector('.table-description').getAttribute('title');
+        const photoEl = row.querySelector('.review-photo');
 
         const avatarWrap = document.getElementById('detailAvatar');
         if (photoEl) {
@@ -872,12 +822,11 @@ function potong_teks(string $teks, int $maks = 80): string {
           avatarWrap.innerHTML = `<div class="table-avatar" style="width:48px;height:48px;font-size:1rem;">${initials}</div>`;
         }
 
-        document.getElementById('detailNama').textContent         = nama    || 'Tamu';
+        document.getElementById('detailNama').textContent = nama || 'Tamu';
         document.getElementById('detailListingLabel').textContent = listing || '—';
-        document.getElementById('detailKomentar').textContent     = komentar || '';
-        document.getElementById('detailTanggal').textContent      = tgl;
-        document.getElementById('detailDeleteId').value           = id;
-        document.getElementById('detailRatingNum').textContent    = rating + '/5';
+        document.getElementById('detailKomentar').textContent = komentar || '';
+        document.getElementById('detailTanggal').textContent = tgl;
+        document.getElementById('detailRatingNum').textContent = rating + '/5';
 
         let stars = '';
         for (let i = 1; i <= 5; i++)
@@ -889,17 +838,14 @@ function potong_teks(string $teks, int $maks = 80): string {
 
       /* ── Event: tombol di tabel ── */
       tbody.addEventListener('click', e => {
-        // Tombol lihat
         const btnLihat = e.target.closest('.action-button.info');
         if (btnLihat) {
-          activeRow = btnLihat.closest('tr');
-          openDetail(activeRow);
+          openDetail(btnLihat.closest('tr'));
           return;
         }
-        // Tombol hapus
+
         const btnHapus = e.target.closest('.action-button.error');
         if (btnHapus) {
-          activeRow = btnHapus.closest('tr');
           document.getElementById('confirmReviewId').value = btnHapus.dataset.id;
           document.getElementById('confirmMsg').textContent =
             'Ulasan dari "' + btnHapus.dataset.nama + '" akan dihapus permanen dan tidak bisa dikembalikan.';
@@ -911,11 +857,6 @@ function potong_teks(string $teks, int $maks = 80): string {
       document.getElementById('btnBatal').addEventListener('click', () =>
         document.getElementById('confirmOverlay').classList.remove('show')
       );
-
-      document.getElementById('btnLihat').addEventListener('click', () => {
-        document.getElementById('confirmOverlay').classList.remove('show');
-        if (activeRow) openDetail(activeRow);
-      });
 
       document.getElementById('confirmOverlay').addEventListener('click', e => {
         if (e.target === document.getElementById('confirmOverlay'))
@@ -932,4 +873,5 @@ function potong_teks(string $teks, int $maks = 80): string {
     });
   </script>
 </body>
+
 </html>
