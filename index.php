@@ -3,6 +3,12 @@ session_start();
 $isLoggedIn = isset($_SESSION['nama']);
 $userInitial = $isLoggedIn ? strtoupper(mb_substr($_SESSION['nama'], 0, 1)) : '';
 $userName = $isLoggedIn ? $_SESSION['nama'] : '';
+
+// PERBAIKAN: definisikan $userPhoto dari session
+$userPhoto = '';
+if (!empty($_SESSION['photo']) && file_exists("assets/uploads/photos/" . $_SESSION['photo'])) {
+    $userPhoto = "/teman_singgah/assets/uploads/photos/" . htmlspecialchars($_SESSION['photo']);
+}
 ?>
 
 <!doctype html>
@@ -33,7 +39,7 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
 <body>
   <header class="navbar">
     <nav class="navbar-container">
-      <a href="index.html" class="logo-link"></a>
+      <a href="index.php" class="logo-link"></a>
       <div class="logo-section">
         <img src="assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
         <img src="assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
@@ -41,24 +47,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
 
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="index.html" class="nav-link active">Cari Penginapan</a>
+          <a href="index.php" class="nav-link active">Cari Penginapan</a>
         </li>
         <li class="nav-item">
-          <a href="user/pages/promo_deals.html" class="nav-link">
-            Promo & Deals
-          </a>
+          <a href="user/pages/promo_deals.php" class="nav-link">Promo & Deals</a>
         </li>
         <li class="nav-item">
-          <a href="user/pages/become_host.html" class="nav-link">
-            Jadi Host
-          </a>
+          <a href="user/pages/become_host.php" class="nav-link">Jadi Host</a>
         </li>
         <li class="nav-item">
-          <a href="user/pages/about_us.html" class="nav-link">
-            Tentang Kami
-          </a>
+          <a href="user/pages/about_us.php" class="nav-link">Tentang Kami</a>
         </li>
-
         <div class="nav-indicator"></div>
       </ul>
 
@@ -67,16 +66,25 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <button class="ghost-button">Ganti ke host</button>
         </a>
         <div class="icon-buttons">
-          <button class="icon-button profile <?= $isLoggedIn ? '' : 'hidden' ?>" aria-label="Profile">
-            <?= htmlspecialchars($userInitial) ?>
-          </button>
+          <?php if ($isLoggedIn): ?>
+            <button class="icon-button profile" aria-label="Profile" <?= $userPhoto ? 'style="padding:0;overflow:hidden;"' : '' ?>>
+              <?php if ($userPhoto): ?>
+                <img src="<?= $userPhoto ?>" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+              <?php else: ?>
+                <?= htmlspecialchars($userInitial) ?>
+              <?php endif; ?>
+            </button>
+          <?php else: ?>
+            <button class="icon-button profile hidden" aria-label="Profile">
+              <?= htmlspecialchars($userInitial) ?>
+            </button>
+          <?php endif; ?>
           <button class="icon-button hamburger <?= $isLoggedIn ? 'hidden' : '' ?>" aria-label="Hamburger">
             <i class="ph-bold ph-list"></i>
           </button>
         </div>
         <div id="hamburgerDropdown"></div>
         <div id="languagePopup"></div>
-
       </div>
     </nav>
   </header>
@@ -97,9 +105,7 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           </p>
           <div class="hero-buttons" id="hero-buttons">
             <a href="#hero-buttons">
-              <button class="hero-button primary-button">
-                Cari Penginapan
-              </button>
+              <button class="hero-button primary-button">Cari Penginapan</button>
             </a>
             <a href="user/pages/become_host.html">
               <button class="hero-button secondary-button">Jadi Host</button>
@@ -115,8 +121,7 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <i class="ph-bold ph-map-pin"></i>
           <div class="field-text">
             <span class="field-label">Mau Kemana?</span>
-            <input type="text" id="destinationInput" class="field-value input" placeholder="Cari Tempatnya"
-              autocomplete="off" />
+            <input type="text" id="destinationInput" class="field-value input" placeholder="Cari Tempatnya" autocomplete="off" />
           </div>
         </div>
         <div class="search-field">
@@ -130,13 +135,13 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <i class="ph-bold ph-users-three"></i>
           <div class="field-text">
             <span class="field-label">Siapa Saja?</span>
-            <span class="field-value" id="guestSummary">
-              Tambahkan Pengunjung
-            </span>
+            <span class="field-value" id="guestSummary">Tambahkan Pengunjung</span>
           </div>
           <a href="user/pages/search_result.html">
             <button class="search-button" type="button">
-              <i class="ph-bold ph-magnifying-glass"></i></button></a>
+              <i class="ph-bold ph-magnifying-glass"></i>
+            </button>
+          </a>
         </div>
       </div>
     </section>
@@ -196,12 +201,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="section-header">
         <h2 class="section-title">Penginapan di Dekat Anda</h2>
         <div class="section-controls">
-          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button class="control-button next-button" aria-label="Selanjutnya">
-            <i class="ph-bold ph-caret-right"></i>
-          </button>
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya"><i class="ph-bold ph-caret-left"></i></button>
+          <button class="control-button next-button" aria-label="Selanjutnya"><i class="ph-bold ph-caret-right"></i></button>
         </div>
       </div>
       <div class="card-list">
@@ -213,22 +214,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -237,22 +233,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -261,22 +252,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -285,22 +271,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -309,22 +290,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -333,22 +309,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -357,22 +328,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -381,22 +347,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -405,22 +366,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/search_result.html" class="see-all-card">
           <div class="see-all-photos">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
@@ -436,12 +392,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="section-header">
         <h2 class="section-title">Rekomendasi Untukmu</h2>
         <div class="section-controls">
-          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button class="control-button next-button" aria-label="Selanjutnya">
-            <i class="ph-bold ph-caret-right"></i>
-          </button>
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya"><i class="ph-bold ph-caret-left"></i></button>
+          <button class="control-button next-button" aria-label="Selanjutnya"><i class="ph-bold ph-caret-right"></i></button>
         </div>
       </div>
       <div class="card-list">
@@ -453,22 +405,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -477,22 +424,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -501,22 +443,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -525,22 +462,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -549,22 +481,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -573,22 +500,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -597,22 +519,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/search_result.html" class="see-all-card">
           <div class="see-all-photos">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
@@ -628,12 +545,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="section-header">
         <h2 class="section-title">Penginapan Terpopuler</h2>
         <div class="section-controls">
-          <button class="control-button prev-button disabled" aria-label="Sebelumnya">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button class="control-button next-button" aria-label="Selanjutnya">
-            <i class="ph-bold ph-caret-right"></i>
-          </button>
+          <button class="control-button prev-button disabled" aria-label="Sebelumnya"><i class="ph-bold ph-caret-left"></i></button>
+          <button class="control-button next-button" aria-label="Selanjutnya"><i class="ph-bold ph-caret-right"></i></button>
         </div>
       </div>
       <div class="card-list">
@@ -645,22 +558,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -669,22 +577,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -693,22 +596,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -717,22 +615,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -741,22 +634,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -765,22 +653,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/detail_card.html" class="hotel-card">
           <div class="card-image-wrapper">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -789,22 +672,17 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <div class="card-content">
             <div class="card-top">
               <h3 class="card-title">Apurva Kempinski</h3>
-              <span class="card-location-text">
-                <i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali
-              </span>
+              <span class="card-location-text"><i class="ph-bold ph-map-pin"></i>Nusa Dua, Bali</span>
             </div>
             <div class="card-bottom">
               <div class="price-section">
                 <span class="card-price">Rp 850.000</span>
                 <span class="price-unit">/ malam</span>
               </div>
-              <span class="card-rating">
-                <i class="ph-fill ph-star"></i>4.9
-              </span>
+              <span class="card-rating"><i class="ph-fill ph-star"></i>4.9</span>
             </div>
           </div>
         </a>
-
         <a href="user/pages/search_result.html" class="see-all-card">
           <div class="see-all-photos">
             <img src="assets/images/apurva_kempinski_bali.jpg" alt="" class="see-all-photo" />
@@ -836,19 +714,11 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="footer-column">
         <h3 class="footer-title">Navigasi</h3>
         <ul class="footer-links">
-          <li><a href="index.html" class="footer-link">Beranda</a></li>
-          <li>
-            <a href="user/pages/promo_deals.html" class="footer-link">Promo & Deals</a>
-          </li>
-          <li>
-            <a href="user/pages/become_host.html" class="footer-link">Jadi Host</a>
-          </li>
-          <li>
-            <a href="user/pages/about_us.html" class="footer-link">Tentang Kami</a>
-          </li>
-          <li>
-            <a href="user/pages/account.html" class="footer-link">Akun</a>
-          </li>
+          <li><a href="index.php" class="footer-link">Beranda</a></li>
+          <li><a href="user/pages/promo_deals.php" class="footer-link">Promo & Deals</a></li>
+          <li><a href="user/pages/become_host.php" class="footer-link">Jadi Host</a></li>
+          <li><a href="user/pages/about_us.php" class="footer-link">Tentang Kami</a></li>
+          <li><a href="user/pages/account.php" class="footer-link">Akun</a></li>
         </ul>
       </div>
       <div class="footer-column">
@@ -856,20 +726,14 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
         <ul class="footer-links">
           <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
           <li><a href="#" class="footer-link">FAQ</a></li>
-          <li>
-            <a href="user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a>
-          </li>
+          <li><a href="user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a></li>
           <li><a href="#" class="footer-link">Cara Booking</a></li>
-          <li>
-            <a href="user/pages/about_us.html" class="footer-link">Tentang Kami</a>
-          </li>
+          <li><a href="user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p class="footer-copyright">
-        © 2026 Teman Singgah — All rights reserved.
-      </p>
+      <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
       <div class="footer-legal">
         <a href="" class="footer-link bottom">Kebijakan Privasi</a>
         <span class="footer-dot">•</span>
@@ -881,24 +745,23 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
   <script src="user/scripts/home.js"></script>
   <script src="popups/auth.js"></script>
   <script>
-    // Inject session PHP ke localStorage supaya navbar.js tahu status login
     <?php if ($isLoggedIn): ?>
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userInitial', '<?= htmlspecialchars($userInitial) ?>');
       localStorage.setItem('userName', '<?= htmlspecialchars($userName) ?>');
+      localStorage.setItem('userPhoto', '<?= $userPhoto ?>');
     <?php else: ?>
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userInitial');
       localStorage.removeItem('userName');
+      localStorage.removeItem('userPhoto');
     <?php endif; ?>
-
   </script>
   <script src="components/navbar.js"></script>
   <script src="components/search_bar.js"></script>
+
   <div id="authOverlay" class="auth-overlay">
     <div class="auth-form-card">
-
-      <!-- STEP PILIH -->
       <div class="auth-step active" id="authStepPilih">
         <div class="auth-header-section">
           <div class="empty-div"></div>
@@ -930,8 +793,7 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
             <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Apple" id="btnSocialApple">
               <img src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" />
             </button>
-            <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Facebook"
-              id="btnSocialFacebook">
+            <button type="button" class="auth-social-icon" aria-label="Lanjutkan dengan Facebook" id="btnSocialFacebook">
               <img src="assets/icons/facebook.svg" alt="Facebook" style="width:22px;height:22px;" />
             </button>
           </div>
@@ -942,12 +804,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="auth-step" id="authStepLogin">
         <form action="/teman_singgah/auth/proses_login.php" method="POST" autocomplete="off">
           <div class="auth-header-section">
-            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
-              <i class="ph-bold ph-caret-left"></i>
-            </button>
-            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-              <i class="ph-bold ph-x"></i>
-            </button>
+            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih"><i class="ph-bold ph-caret-left"></i></button>
+            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
           </div>
           <div class="auth-body-section">
             <div>
@@ -958,18 +816,14 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Email</legend>
                 <div class="auth-input-group">
-                  <input type="email" name="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com"
-                    autocomplete="email" required />
+                  <input type="email" name="email" id="loginEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
-                  <input type="password" name="password" id="loginPassword" class="auth-input"
-                    placeholder="Masukkan password" autocomplete="current-password" required />
-                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
-                    <i class="ph-bold ph-eye"></i>
-                  </button>
+                  <input type="password" name="password" id="loginPassword" class="auth-input" placeholder="Masukkan password" autocomplete="current-password" required />
+                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password"><i class="ph-bold ph-eye"></i></button>
                 </div>
               </fieldset>
               <button type="button" class="auth-forgot-link" id="btnLupaPassword">Lupa password?</button>
@@ -984,34 +838,21 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <span class="auth-divider-line"></span>
             </div>
             <div class="auth-social-icons">
-              <button type="button" class="auth-social-icon" aria-label="Google">
-                <img src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" />
-              </button>
-              <button type="button" class="auth-social-icon" aria-label="Apple">
-                <img src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" />
-              </button>
-              <button type="button" class="auth-social-icon" aria-label="Facebook">
-                <img src="assets/icons/facebook.svg" alt="Facebook" style="width:22px;height:22px;" />
-              </button>
+              <button type="button" class="auth-social-icon" aria-label="Google"><img src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
+              <button type="button" class="auth-social-icon" aria-label="Apple"><img src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
+              <button type="button" class="auth-social-icon" aria-label="Facebook"><img src="assets/icons/facebook.svg" alt="Facebook" style="width:22px;height:22px;" /></button>
             </div>
-            <p class="auth-switch-text">
-              Belum punya akun?
-              <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button>
-            </p>
+            <p class="auth-switch-text">Belum punya akun? <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button></p>
           </div>
         </form>
       </div>
-
+      
       <!-- STEP DAFTAR -->
       <div class="auth-step" id="authStepDaftar1">
         <form action="/teman_singgah/auth/proses_register.php" method="POST" autocomplete="off">
           <div class="auth-header-section">
-            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih">
-              <i class="ph-bold ph-caret-left"></i>
-            </button>
-            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-              <i class="ph-bold ph-x"></i>
-            </button>
+            <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-pilih"><i class="ph-bold ph-caret-left"></i></button>
+            <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
           </div>
           <div class="auth-body-section">
             <div>
@@ -1022,25 +863,20 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Nama</legend>
                 <div class="auth-input-group">
-                  <input type="text" name="nama" id="daftarNama" class="auth-input" placeholder="Masukkan namamu"
-                    autocomplete="name" required />
+                  <input type="text" name="nama" id="daftarNama" class="auth-input" placeholder="Masukkan namamu" autocomplete="name" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Email</legend>
                 <div class="auth-input-group">
-                  <input type="email" name="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com"
-                    autocomplete="email" required />
+                  <input type="email" name="email" id="daftarEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" required />
                 </div>
               </fieldset>
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
-                  <input type="password" name="password" id="daftarPassword" class="auth-input"
-                    placeholder="Minimal 8 karakter" autocomplete="new-password" required />
-                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
-                    <i class="ph-bold ph-eye"></i>
-                  </button>
+                  <input type="password" name="password" id="daftarPassword" class="auth-input" placeholder="Minimal 8 karakter" autocomplete="new-password" required />
+                  <button type="button" class="auth-toggle-password" aria-label="Tampilkan password"><i class="ph-bold ph-eye"></i></button>
                 </div>
                 <p class="auth-field-hint">Gunakan minimal 8 karakter, kombinasi huruf dan angka.</p>
               </fieldset>
@@ -1055,20 +891,11 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
               <span class="auth-divider-line"></span>
             </div>
             <div class="auth-social-icons">
-              <button type="button" class="auth-social-icon" aria-label="Google">
-                <img src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" />
-              </button>
-              <button type="button" class="auth-social-icon" aria-label="Apple">
-                <img src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" />
-              </button>
-              <button type="button" class="auth-social-icon" aria-label="Facebook">
-                <img src="assets/icons/facebook.svg" alt="Facebook" style="width:22px;height:22px;" />
-              </button>
+              <button type="button" class="auth-social-icon" aria-label="Google"><img src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
+              <button type="button" class="auth-social-icon" aria-label="Apple"><img src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
+              <button type="button" class="auth-social-icon" aria-label="Facebook"><img src="assets/icons/facebook.svg" alt="Facebook" style="width:22px;height:22px;" /></button>
             </div>
-            <p class="auth-switch-text">
-              Sudah punya akun?
-              <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button>
-            </p>
+            <p class="auth-switch-text">Sudah punya akun? <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button></p>
           </div>
         </form>
       </div>
@@ -1076,12 +903,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <!-- STEP LUPA PASSWORD -->
       <div class="auth-step" id="authStepLupaPassword">
         <div class="auth-header-section">
-          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-login">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-login"><i class="ph-bold ph-caret-left"></i></button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="auth-body-section">
           <div>
@@ -1092,30 +915,22 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
             <fieldset class="auth-field">
               <legend class="auth-input-label">Email</legend>
               <div class="auth-input-group">
-                <input type="email" id="lupaEmail" class="auth-input" placeholder="contoh@email.com"
-                  autocomplete="email" />
+                <input type="email" id="lupaEmail" class="auth-input" placeholder="contoh@email.com" autocomplete="email" />
               </div>
             </fieldset>
           </div>
         </div>
         <div class="auth-footer-section">
           <button class="auth-submit-button" type="button" id="btnLanjutKeToken">Lanjutkan</button>
-          <p class="auth-switch-text">
-            Ingat password?
-            <button type="button" class="auth-switch-link" id="btnSwitchKeLoginDariLupa">Kembali masuk</button>
-          </p>
+          <p class="auth-switch-text">Ingat password? <button type="button" class="auth-switch-link" id="btnSwitchKeLoginDariLupa">Kembali masuk</button></p>
         </div>
       </div>
 
       <!-- STEP PASSWORD BARU -->
       <div class="auth-step" id="authStepPasswordBaru">
         <div class="auth-header-section">
-          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-token">
-            <i class="ph-bold ph-caret-left"></i>
-          </button>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
+          <button type="button" class="auth-nav-button" aria-label="Kembali" data-action="ke-token"><i class="ph-bold ph-caret-left"></i></button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="auth-body-section">
           <div>
@@ -1126,21 +941,15 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
             <fieldset class="auth-field">
               <legend class="auth-input-label">Password Baru</legend>
               <div class="auth-input-group auth-password-group">
-                <input type="password" id="passwordBaru" class="auth-input" placeholder="Minimal 8 karakter"
-                  autocomplete="new-password" />
-                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
-                  <i class="ph-bold ph-eye"></i>
-                </button>
+                <input type="password" id="passwordBaru" class="auth-input" placeholder="Minimal 8 karakter" autocomplete="new-password" />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password"><i class="ph-bold ph-eye"></i></button>
               </div>
             </fieldset>
             <fieldset class="auth-field">
               <legend class="auth-input-label">Konfirmasi Password</legend>
               <div class="auth-input-group auth-password-group">
-                <input type="password" id="passwordKonfirmasi" class="auth-input" placeholder="Ulangi password baru"
-                  autocomplete="new-password" />
-                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password">
-                  <i class="ph-bold ph-eye"></i>
-                </button>
+                <input type="password" id="passwordKonfirmasi" class="auth-input" placeholder="Ulangi password baru" autocomplete="new-password" />
+                <button type="button" class="auth-toggle-password" aria-label="Tampilkan password"><i class="ph-bold ph-eye"></i></button>
               </div>
               <p class="auth-field-hint">Gunakan minimal 8 karakter, kombinasi huruf dan angka.</p>
             </fieldset>
@@ -1155,15 +964,11 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
       <div class="auth-step" id="authStepResetSukses">
         <div class="auth-header-section">
           <div class="empty-div"></div>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
         </div>
         <div class="auth-body-section">
           <div class="auth-logo-container">
-            <div class="auth-icon-success">
-              <i class="ph-bold ph-check-circle"></i>
-            </div>
+            <div class="auth-icon-success"><i class="ph-bold ph-check-circle"></i></div>
             <h2 class="auth-title center">Password berhasil diubah!</h2>
             <p class="auth-subtitle center">Kamu sekarang bisa masuk menggunakan password baru.</p>
           </div>
@@ -1172,10 +977,8 @@ $userName = $isLoggedIn ? $_SESSION['nama'] : '';
           <button class="auth-submit-button" type="button" id="btnKeLoginDariSukses">Masuk sekarang</button>
         </div>
       </div>
-
     </div>
   </div>
 
 </body>
-
 </html>

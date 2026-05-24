@@ -1,0 +1,250 @@
+<?php include '../../auth/auth_session.php'; ?>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tentang Kami | Teman Singgah</title>
+    <link rel="icon" href="/teman_singgah/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/teman_singgah/components/root.css" />
+    <link rel="stylesheet" href="/teman_singgah/components/navbar.css" />
+    <link rel="stylesheet" href="/teman_singgah/components/footer.css" />
+    <link rel="stylesheet" href="/teman_singgah/popups/auth.css" />
+    <link rel="stylesheet" href="/teman_singgah/user/styles/about_us.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/teman_singgah/index.php" class="logo-link"></a>
+        <div class="logo-section">
+          <img src="/teman_singgah/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+          <img src="/teman_singgah/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/teman_singgah/index.php" class="nav-link">Cari Penginapan</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/promo_deals.php" class="nav-link">Promo & Deals</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/become_host.php" class="nav-link">Jadi Host</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/about_us.php" class="nav-link active">Tentang Kami</a></li>
+          <div class="nav-indicator"></div>
+        </ul>
+
+        <div class="nav-right">
+          <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
+          <?php include '../../components/navbar_profile.php'; ?>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-section">
+        <div class="hero-container">
+          <div class="hero-badge">
+            <i class="ph-fill ph-heart"></i>
+            <span>Dari Indonesia, Untuk Indonesia</span>
+          </div>
+          <h1 class="hero-title">Tentang Teman Singgah</h1>
+          <p class="hero-subtitle">
+            Kami percaya setiap perjalanan layak mendapatkan tempat singgah yang hangat, aman, dan berkesan.
+          </p>
+        </div>
+      </section>
+
+      <section class="story-section">
+        <div class="story-container">
+          <div class="story-content">
+            <h2 class="section-title">Cerita Kami Membangun Ruang untuk Traveler dan Host Lokal</h2>
+            <p class="story-text">
+              Teman Singgah lahir dari ketertarikan kami terhadap dunia hospitality dan bagaimana teknologi bisa mempertemukan traveler dengan penginapan lokal yang autentik. Platform ini kami rancang untuk mensimulasikan pengalaman memesan penginapan dari pencarian properti, pemilihan tanggal, hingga proses reservasi.
+            </p>
+            <p class="story-text">
+              Dibangun pada 2025 sebagai bagian dari proyek sekolah, proyek ini jadi ruang bagi kami untuk belajar merancang produk digital dari nol. Kami ingin Teman Singgah jadi bukti bahwa ide sederhana pun bisa dieksekusi dengan serius.
+            </p>
+          </div>
+          <div class="story-image">
+            <img src="/teman_singgah/assets/images/nihi_sumba.webp" alt="Teman Singgah Team" />
+            <div class="image-caption">
+              <i class="ph-fill ph-map-pin"></i>
+              <span>Beroperasi di seluruh Indonesia</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="values-section">
+        <div class="values-container">
+          <div class="values-header">
+            <h2 class="section-title">Nilai-Nilai yang Kami Junjung Tinggi</h2>
+          </div>
+          <div class="values-grid">
+            <div class="value-card">
+              <div class="value-icon"><i class="ph-bold ph-hand-heart"></i></div>
+              <h3>Kehangatan Lokal</h3>
+              <p>Kami percaya keramahan terbaik datang dari yang paling dekat. Setiap host membawa karakter dan budaya daerahnya masing-masing.</p>
+            </div>
+            <div class="value-card">
+              <div class="value-icon"><i class="ph-bold ph-shield-check"></i></div>
+              <h3>Keamanan Terjamin</h3>
+              <p>Kenyamanan tamu dan host adalah prioritas kami. Didukung proses verifikasi yang teliti dan layanan bantuan yang siap kapan saja.</p>
+            </div>
+            <div class="value-card">
+              <div class="value-icon"><i class="ph-bold ph-users"></i></div>
+              <h3>Komunitas Inklusif</h3>
+              <p>Dari homestay sederhana hingga villa, semua jenis properti punya tempat di Teman Singgah.</p>
+            </div>
+            <div class="value-card">
+              <div class="value-icon"><i class="ph-bold ph-plant"></i></div>
+              <h3>Berkelanjutan</h3>
+              <p>Kami mendukung cara berwisata yang bertanggung jawab dan turut membantu menghidupkan ekonomi lokal.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="team-section">
+        <div class="team-container">
+          <div class="team-header">
+            <h2 class="section-title">Tim di Balik Teman Singgah</h2>
+          </div>
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar">AD</div>
+              <h3>Akhmad Dakhir</h3>
+              <span class="team-role">Senior Software Engineer</span>
+              <p class="team-bio">Orang jago</p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">KM</div>
+              <h3>keysha Marsha</h3>
+              <span class="team-role">Prompt Engineer</span>
+              <p class="team-bio">Orang aring</p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">HL</div>
+              <h3>Host Lokal</h3>
+              <span class="team-role">CEO</span>
+              <p class="team-bio">pengelola penginapan lokal yang melestarikan budaya Indonesia.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact-section">
+        <div class="contact-header">
+          <h2 class="section-title">Mari Berkenalan Lebih Dekat</h2>
+        </div>
+        <div class="contact-container">
+          <div class="contact-info">
+            <div class="contact-details">
+              <div class="contact-item">
+                <div class="contact-icon"><i class="ph-bold ph-envelope"></i></div>
+                <div class="contact-text">
+                  <span class="contact-label">Email</span>
+                  <span class="contact-value">halo@temansinggah.id</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-icon"><i class="ph-bold ph-phone"></i></div>
+                <div class="contact-text">
+                  <span class="contact-label">Telepon</span>
+                  <span class="contact-value">+62 21 1234 5678</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-icon"><i class="ph-bold ph-map-pin"></i></div>
+                <div class="contact-text">
+                  <span class="contact-label">Kantor Pusat</span>
+                  <span class="contact-value">Jl. Sudirman No. 88, Jakarta Selatan</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="contact-panel">
+            <div class="panel-card">
+              <i class="ph-fill ph-chats-circle"></i>
+              <h3>Butuh Bantuan Cepat?</h3>
+              <p>Tim support kami online 24 jam untuk membantu Anda.</p>
+              <a href="#"><button class="panel-button">Chat dengan Kami</button></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="invite-section">
+        <div class="invite-container">
+          <div class="invite-text">
+            <h2>Jadi Bagian dari Cerita Kami</h2>
+            <p>Baik sebagai tamu mencari penginapan atau host membuka pintu, Teman Singgah adalah rumah bagi semua yang percaya pada kehangatan Indonesia.</p>
+          </div>
+          <div class="invite-actions">
+            <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+              <button class="invite-button primary"><i class="ph-bold ph-plus-circle"></i> Mulai Jadi Host</button>
+            </a>
+            <a href="/teman_singgah/index.php">
+              <button class="invite-button secondary">Cari Penginapan</button>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <span class="footer-brand">Teman Singgah</span>
+          <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+          <div class="footer-social">
+            <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
+            <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
+            <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
+            <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
+            <a href="" class="social-link"><i class="ri-mail-line"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Navigasi</h3>
+          <ul class="footer-links">
+            <li><a href="/teman_singgah/index.php" class="footer-link">Beranda</a></li>
+            <li><a href="/teman_singgah/user/pages/promo_deals.php" class="footer-link">Promo & Deals</a></li>
+            <li><a href="/teman_singgah/user/pages/become_host.php" class="footer-link">Jadi Host</a></li>
+            <li><a href="/teman_singgah/user/pages/about_us.php" class="footer-link">Tentang Kami</a></li>
+            <li><a href="/teman_singgah/user/pages/account.php" class="footer-link">Akun</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Dukungan</h3>
+          <ul class="footer-links">
+            <li><a href="" class="footer-link">Pusat Bantuan</a></li>
+            <li><a href="" class="footer-link">FAQ</a></li>
+            <li><a href="" class="footer-link">Cara Menjadi Host</a></li>
+            <li><a href="" class="footer-link">Cara Booking</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="" class="footer-link bottom">Kebijakan Privasi</a>
+          <span class="footer-dot">•</span>
+          <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+        </div>
+      </div>
+    </footer>
+
+    <?php include '../../popups/auth_overlay.php'; ?>
+
+    <script src="/teman_singgah/components/navbar.js"></script>
+    <script src="/teman_singgah/popups/auth.js"></script>
+  </body>
+</html>

@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$email = trim($_POST['email'] ?? '');
+$email    = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
 // Validasi kosong
@@ -21,7 +21,7 @@ $stmt = mysqli_prepare($koneksi, "SELECT * FROM users WHERE email = ?");
 mysqli_stmt_bind_param($stmt, "s", $email);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$data = mysqli_fetch_assoc($result);
+$data   = mysqli_fetch_assoc($result);
 
 if (!$data) {
     header("Location: /teman_singgah/index.php?auth=login&error=email_notfound");
@@ -38,12 +38,13 @@ if ($data['status'] === 'Nonaktif') {
     exit;
 }
 
-// Simpan session
-$_SESSION['id'] = $data['id'];
+// Simpan session — photo di-set di sini setelah $data tersedia
+$_SESSION['id']      = $data['id'];
 $_SESSION['user_id'] = $data['user_id'];
-$_SESSION['nama'] = $data['nama'];
-$_SESSION['email'] = $data['email'];
-$_SESSION['role'] = $data['role'];
+$_SESSION['nama']    = $data['nama'];
+$_SESSION['email']   = $data['email'];
+$_SESSION['role']    = $data['role'];
+$_SESSION['photo']   = $data['photo'] ?? '';
 
 // Redirect sesuai role
 if ($data['role'] === 'Admin') {

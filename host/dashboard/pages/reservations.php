@@ -47,44 +47,32 @@
           <li class="nav-item">
             <a
               href="/teman_singgah/host/dashboard/pages/reservations.php"
-              class="nav-link active"
-              >Reservasi</a
-            >
+              class="nav-link active">
+              Reservasi
+            </a>
           </li>
           <li class="nav-item">
             <a
               href="/teman_singgah/host/dashboard/pages/calendar_router.php"
-              class="nav-link"
-              >Kalender</a
-            >
+              class="nav-link">
+              Kalender
+            </a>
           </li>
           <li class="nav-item">
-            <a href="/teman_singgah/host/dashboard/pages/listing.php" class="nav-link"
-              >Listing</a
-            >
+            <a href="/teman_singgah/host/dashboard/pages/listing.php" class="nav-link">
+              Listing
+            </a>
           </li>
           <li class="nav-item">
-            <a href="/teman_singgah/host/dashboard/pages/messages.php" class="nav-link"
-              >Pesan</a
-            >
+            <a href="/teman_singgah/host/dashboard/pages/messages.php" class="nav-link">
+              Pesan
+            </a>
           </li>
           <div class="nav-indicator"></div>
         </ul>
 
-        <div class="nav-right">
-          <a href="../../../index.php">
-            <button class="ghost-button">Ganti ke pengunjung</button>
-          </a>
-          <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
-            <button class="icon-button hamburger" aria-label="Hamburger">
-              <i class="ph-bold ph-list"></i>
-            </button>
-          </div>
-          <div id="hamburgerDropdown"></div>
-          <div id="languagePopup"></div>
-          <div id="authPopup"></div>
-        </div>
+        <?php include '/teman_singgah/components/navbar_profile_host.php'; ?>
+
       </nav>
     </header>
 
@@ -328,9 +316,7 @@
           </p>
           <div class="footer-social">
             <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
-            <a href="" class="social-link"
-              ><i class="ri-facebook-circle-line"></i
-            ></a>
+            <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
             <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
             <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
             <a href="" class="social-link"><i class="ri-mail-line"></i></a>
@@ -340,24 +326,10 @@
           <h3 class="footer-title">Navigasi</h3>
           <ul class="footer-links">
             <li><a href="/teman_singgah/index.html" class="footer-link">Beranda</a></li>
-            <li>
-              <a href="/teman_singgah/user/pages/promo_deals.html" class="footer-link"
-                >Promo & Deals</a
-              >
-            </li>
-            <li>
-              <a href="/teman_singgah/user/pages/become_host.html" class="footer-link"
-                >Jadi Host</a
-              >
-            </li>
-            <li>
-              <a href="/teman_singgah/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
-            <li>
-              <a href="/teman_singgah/user/pages/account.html" class="footer-link">Akun</a>
-            </li>
+            <li><a href="/teman_singgah/user/pages/promo_deals.html" class="footer-link">Promo & Deals</a></li>
+            <li><a href="/teman_singgah/user/pages/become_host.html" class="footer-link">Jadi Host</a></li>
+            <li><a href="/teman_singgah/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
+            <li><a href="/teman_singgah/user/pages/account.php" class="footer-link">Akun</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -365,17 +337,9 @@
           <ul class="footer-links">
             <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
             <li><a href="#" class="footer-link">FAQ</a></li>
-            <li>
-              <a href="/teman_singgah/user/pages/become_host.html" class="footer-link"
-                >Cara Menjadi Host</a
-              >
-            </li>
+            <li><a href="/teman_singgah/user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a></li>
             <li><a href="#" class="footer-link">Cara Booking</a></li>
-            <li>
-              <a href="/teman_singgah/user/pages/about_us.html" class="footer-link"
-                >Tentang Kami</a
-              >
-            </li>
+            <li><a href="/teman_singgah/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
           </ul>
         </div>
       </div>

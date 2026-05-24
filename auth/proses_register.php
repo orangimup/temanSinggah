@@ -41,16 +41,25 @@ if (mysqli_stmt_num_rows($cek) > 0) {
 }
 mysqli_stmt_close($cek);
 
-// Generate user_id
-$user_id = 'USR-' . strtoupper(substr(uniqid(), -6));
+// Generate user_id urut (aman dari race condition)
+mysqli_query($koneksi, "LOCK TABLES users WRITE");
+
+$result = mysqli_query($koneksi, "SELECT MAX(id) as max_id FROM users");
+$row = mysqli_fetch_assoc($result);
+$next_id = ($row['max_id'] ?? 0) + 1;
+$user_id = 'USR-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
+
 $hash = password_hash($password, PASSWORD_DEFAULT);
 $role = 'User';
 $status = 'Aktif';
 
 $stmt = mysqli_prepare($koneksi, "INSERT INTO users (user_id, nama, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)");
 mysqli_stmt_bind_param($stmt, "ssssss", $user_id, $nama, $email, $hash, $role, $status);
+mysqli_stmt_execute($stmt);
 
-if (mysqli_stmt_execute($stmt)) {
+mysqli_query($koneksi, "UNLOCK TABLES");
+
+if (mysqli_stmt_affected_rows($stmt) > 0) {
     header("Location: /teman_singgah/index.php?auth=login&success=registered");
 } else {
     header("Location: /teman_singgah/index.php?auth=daftar&error=gagal");

@@ -1,3 +1,32 @@
+<?php
+session_start();
+include "../../koneksi.php";
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /teman_singgah/index.php?auth=login");
+    exit;
+}
+
+$stmt = mysqli_prepare($koneksi, "SELECT * FROM users WHERE user_id = ?");
+mysqli_stmt_bind_param($stmt, "s", $_SESSION['user_id']);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
+mysqli_stmt_close($stmt);
+
+if (!$user) {
+    session_destroy();
+    header("Location: /teman_singgah/index.php?auth=login");
+    exit;
+}
+
+$inisial = strtoupper(mb_substr($user['nama'], 0, 1));
+
+$photo_url = '';
+if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user['photo'])) {
+    $photo_url = "/teman_singgah/assets/uploads/photos/" . htmlspecialchars($user['photo']);
+}
+?>
 <!doctype html>
 <html lang="id">
   <head>
@@ -5,70 +34,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Riwayat Perjalanan | Teman Singgah</title>
     <link rel="icon" href="../../assets/logo/logo_temansinggah.svg" />
-
     <link rel="stylesheet" href="../../components/root.css" />
     <link rel="stylesheet" href="../../components/navbar.css" />
     <link rel="stylesheet" href="../../components/footer.css" />
     <link rel="stylesheet" href="../../popups/auth.css" />
     <link rel="stylesheet" href="../styles/account.css" />
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet" />
-
-    <script
-      type="module"
-      src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   </head>
   <body>
     <header class="navbar">
       <nav class="navbar-container">
         <a href="../../index.php" class="logo-link"></a>
         <div class="logo-section">
-          <img
-            src="../../assets/logo/logo_temansinggah.svg"
-            alt="Logo Teman Singgah"
-            class="logo-icon" />
-          <img
-            src="../../assets/logo/label_temansinggah.svg"
-            alt="Brand Name Teman Singgah"
-            class="logo-name" />
+          <img src="../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+          <img src="../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
         </div>
-
         <ul class="nav-menu">
-          <li class="nav-item">
-            <a href="../../index.php" class="nav-link">Cari Penginapan</a>
-          </li>
-          <li class="nav-item">
-            <a href="promo_deals.html" class="nav-link">
-              Promo & Deals
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="become_host.html" class="nav-link">
-              Jadi Host
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="about_us.html" class="nav-link">
-              Tentang Kami
-            </a>
-          </li>
-
+          <li class="nav-item"><a href="../../index.php" class="nav-link">Cari Penginapan</a></li>
+          <li class="nav-item"><a href="promo_deals.php" class="nav-link">Promo &amp; Deals</a></li>
+          <li class="nav-item"><a href="become_host.php" class="nav-link">Jadi Host</a></li>
+          <li class="nav-item"><a href="about_us.php" class="nav-link">Tentang Kami</a></li>
           <div class="nav-indicator"></div>
         </ul>
-
         <div class="nav-right">
           <a href="../../host/onboarding/pages/about_place.html">
             <button class="ghost-button">Ganti ke host</button>
           </a>
           <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
+            <?php if ($photo_url): ?>
+              <button class="icon-button profile" aria-label="Profile" style="padding:0;overflow:hidden;">
+                <img src="<?= $photo_url ?>" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+              </button>
+            <?php else: ?>
+              <button class="icon-button profile" aria-label="Profile"><?= $inisial ?></button>
+            <?php endif; ?>
             <button class="icon-button hamburger" aria-label="Hamburger">
               <i class="ph-bold ph-list"></i>
             </button>
@@ -88,9 +91,7 @@
             <span>Perjalanan</span>
           </div>
           <h1 class="account-hero-title">Riwayat Perjalanan</h1>
-          <p class="account-hero-subtitle">
-            Lihat dan kelola semua perjalanan Anda di sini.
-          </p>
+          <p class="account-hero-subtitle">Lihat dan kelola semua perjalanan Anda di sini.</p>
         </div>
       </section>
 
@@ -99,15 +100,21 @@
           <aside class="account-sidebar">
             <h2 class="sidebar-title">Profil</h2>
             <nav class="sidebar-nav">
-              <a href="account.html" class="sidebar-link">
-                <div class="link-icon primary-avatar">K</div>
+              <a href="./account.php" class="sidebar-link">
+                <div class="link-icon primary-avatar" style="<?= $photo_url ? 'padding:0;overflow:hidden;' : '' ?>">
+                  <?php if ($photo_url): ?>
+                    <img src="<?= $photo_url ?>" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                  <?php else: ?>
+                    <?= $inisial ?>
+                  <?php endif; ?>
+                </div>
                 <span>Tentang Saya</span>
               </a>
-              <a href="history.html" class="sidebar-link active">
+              <a href="./history.php" class="sidebar-link active">
                 <div class="link-icon"><i class="ph-bold ph-suitcase"></i></div>
                 <span>Riwayat Perjalanan</span>
               </a>
-              <a href="settings.html" class="sidebar-link">
+              <a href="./settings.php" class="sidebar-link">
                 <div class="link-icon"><i class="ph-bold ph-gear"></i></div>
                 <span>Pengaturan</span>
               </a>
@@ -144,10 +151,7 @@
             <div class="trips-list">
               <div class="trip-card">
                 <div class="trip-image-container">
-                  <img
-                    src="../../assets/images/apurva_kempinski_bali.jpg"
-                    class="trip-image"
-                    alt="Villa Sunset" />
+                  <img src="../../assets/images/apurva_kempinski_bali.jpg" class="trip-image" alt="Villa Sunset" />
                   <div class="trip-badge">
                     <span class="badge-dot upcoming"></span>
                     Mendatang
@@ -157,30 +161,17 @@
                   <h3 class="trip-name">Nihi Sumba Resort</h3>
                   <p class="trip-location">Sumba Barat, NTT</p>
                   <p class="trip-meta">15 – 18 Juni 2025 · 2 tamu · 1 kamar</p>
-                  <div class="trip-price">
-                    Rp 4.500.000 <span>/ malam</span>
-                  </div>
+                  <div class="trip-price">Rp 4.500.000 <span>/ malam</span></div>
                   <div class="trip-actions">
-                    <a href="">
-                      <button class="action-button primary">
-                        Lihat detail
-                      </button>
-                    </a>
-                    <a href="">
-                      <button class="action-button secondary">
-                        Ubah pesanan
-                      </button>
-                    </a>
+                    <a href=""><button class="action-button primary">Lihat detail</button></a>
+                    <a href=""><button class="action-button secondary">Ubah pesanan</button></a>
                   </div>
                 </div>
               </div>
 
               <div class="trip-card">
                 <div class="trip-image-container">
-                  <img
-                    src="../../assets/images/apurva_kempinski_bali.jpg"
-                    class="trip-image"
-                    alt="Villa Sunset" />
+                  <img src="../../assets/images/apurva_kempinski_bali.jpg" class="trip-image" alt="Villa Sunset" />
                   <div class="trip-badge">
                     <span class="badge-dot completed"></span>
                     Selesai
@@ -192,24 +183,15 @@
                   <p class="trip-meta">10 – 12 Jan 2025 · 2 tamu · 1 kamar</p>
                   <div class="trip-price">Rp 850.000 <span>/ malam</span></div>
                   <div class="trip-actions">
-                    <a href="">
-                      <button class="action-button primary">Pesan lagi</button>
-                    </a>
-                    <a href="">
-                      <button class="action-button secondary">
-                        Tulis ulasan
-                      </button>
-                    </a>
+                    <a href=""><button class="action-button primary">Pesan lagi</button></a>
+                    <a href=""><button class="action-button secondary">Tulis ulasan</button></a>
                   </div>
                 </div>
               </div>
 
               <div class="trip-card">
                 <div class="trip-image-container">
-                  <img
-                    src="../../assets/images/apurva_kempinski_bali.jpg"
-                    class="trip-image"
-                    alt="Villa Sunset" />
+                  <img src="../../assets/images/apurva_kempinski_bali.jpg" class="trip-image" alt="Villa Sunset" />
                   <div class="trip-badge">
                     <span class="badge-dot cancelled"></span>
                     Dibatalkan
@@ -219,18 +201,10 @@
                   <h3 class="trip-name">Ubud Jungle Villa</h3>
                   <p class="trip-location">Ubud, Bali</p>
                   <p class="trip-meta">2 – 5 Maret 2025 · 4 tamu · 2 kamar</p>
-                  <div class="trip-price">
-                    Rp 2.800.000 <span>/ malam</span>
-                  </div>
+                  <div class="trip-price">Rp 2.800.000 <span>/ malam</span></div>
                   <div class="trip-actions">
-                    <a href="">
-                      <button class="action-button primary">Pesan lagi</button>
-                    </a>
-                    <a href="">
-                      <button class="action-button secondary">
-                        Lihat detail
-                      </button>
-                    </a>
+                    <a href=""><button class="action-button primary">Pesan lagi</button></a>
+                    <a href=""><button class="action-button secondary">Lihat detail</button></a>
                   </div>
                 </div>
               </div>
@@ -244,10 +218,7 @@
       <div class="footer-grid">
         <div class="footer-column">
           <span class="footer-brand">Teman Singgah</span>
-          <p class="footer-description">
-            Platform booking penginapan terpercaya di seluruh Indonesia, dari
-            hotel berbintang hingga homestay lokal.
-          </p>
+          <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
           <div class="footer-social">
             <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
             <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
@@ -260,10 +231,10 @@
           <h3 class="footer-title">Navigasi</h3>
           <ul class="footer-links">
             <li><a href="../../index.php" class="footer-link">Beranda</a></li>
-            <li><a href="promo_deals.html" class="footer-link">Promo & Deals</a></li>
-            <li><a href="become_host.html" class="footer-link">Jadi Host</a></li>
-            <li><a href="" class="footer-link">Bantuan</a></li>
-            <li><a href="account.html" class="footer-link">Akun</a></li>
+            <li><a href="promo_deals.php" class="footer-link">Promo &amp; Deals</a></li>
+            <li><a href="become_host.php" class="footer-link">Jadi Host</a></li>
+            <li><a href="become_host.php" class="footer-link">Jadi Host</a></li>
+            <li><a href="./account.php" class="footer-link">Akun</a></li>
           </ul>
         </div>
         <div class="footer-column">
@@ -273,18 +244,16 @@
             <li><a href="" class="footer-link">FAQ</a></li>
             <li><a href="" class="footer-link">Cara Menjadi Host</a></li>
             <li><a href="" class="footer-link">Cara Booking</a></li>
-            <li><a href="about_us.html" class="footer-link">Tentang Kami</a></li>
+            <li><a href="about_us.php" class="footer-link">Tentang Kami</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-copyright">
-          © 2026 Teman Singgah — All rights reserved.
-        </p>
+        <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
         <div class="footer-legal">
           <a href="" class="footer-link bottom">Kebijakan Privasi</a>
           <span class="footer-dot">•</span>
-          <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+          <a href="" class="footer-link bottom">Syarat &amp; Ketentuan</a>
         </div>
       </div>
     </footer>

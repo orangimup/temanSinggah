@@ -64,24 +64,11 @@
               Pesan
             </a>
           </li>
-
           <div class="nav-indicator"></div>
         </ul>
 
-        <div class="nav-right">
-          <a href="../../../index.php">
-            <button class="ghost-button">Ganti ke pengunjung</button>
-          </a>
-          <div class="icon-buttons">
-            <button class="icon-button profile" aria-label="Profile">A</button>
-            <button class="icon-button hamburger" aria-label="Hamburger">
-              <i class="ph-bold ph-list"></i>
-            </button>
-          </div>
-          <div id="hamburgerDropdown"></div>
-          <div id="languagePopup"></div>
-          <div id="authPopup"></div>
-        </div>
+        <?php include '/teman_singgah/components/navbar_profile_host.php'; ?>
+
       </nav>
     </header>
 
@@ -201,9 +188,9 @@
             </div>
           </div>
           <div class="listing-card-body">
-            <span class="listing-card-name">a</span>
+            <span class="listing-card-name">Villa Sunset Tepi Pantai</span>
             <span class="listing-card-location">
-              Rumah di Kecamatan Blimbing, Indonesia
+              Hotel di Kecamatan Blimbing, Indonesia
             </span>
           </div>
         </a>
@@ -213,16 +200,16 @@
             <img
               src="../../../assets/images/apurva_kempinski_bali.jpg"
               class="listing-card-image"
-              alt="Villa Sunset" />
+              alt="Rumah Kayu Jawa" />
             <div class="listing-card-badge">
-              <span class="badge-dot error"></span>
-              Butuh aksi
+              <span class="badge-dot warning"></span>
+              Dalam proses
             </div>
           </div>
           <div class="listing-card-body">
-            <span class="listing-card-name">a</span>
+            <span class="listing-card-name">Rumah Kayu Jawa</span>
             <span class="listing-card-location">
-              Rumah di Kecamatan Blimbing, Indonesia
+              Homestay di Kecamatan Blimbing, Indonesia
             </span>
           </div>
         </a>
@@ -238,9 +225,9 @@
             </div>
           </div>
           <div class="listing-card-body">
-            <span class="listing-card-name">a</span>
+            <span class="listing-card-name">Apartment listing dimulai 2 Mei 2026</span>
             <span class="listing-card-location">
-              Rumah di Kecamatan Blimbing, Indonesia
+              Apartemen di Kecamatan Blimbing, Indonesia
             </span>
           </div>
         </a>
@@ -270,7 +257,7 @@
             <li><a href="../../../user/pages/promo_deals.html" class="footer-link">Promo & Deals</a></li>
             <li><a href="../../../user/pages/become_host.html" class="footer-link">Jadi Host</a></li>
             <li><a href="../../../user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
-            <li><a href="../../../user/pages/account.html" class="footer-link">Akun</a></li>
+            <li><a href="../../../user/pages/account.php" class="footer-link">Akun</a></li>
           </ul>
         </div>
         <div class="footer-column">

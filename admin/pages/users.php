@@ -170,6 +170,9 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
                 <?php
                 $no = 1;
                 while ($row = mysqli_fetch_assoc($result)):
+                  $photo_path = !empty($row['photo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['photo'])
+                    ? '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($row['photo'])
+                    : null;
                 ?>
                 <tr
                   data-role="<?= htmlspecialchars($row['role']) ?>"
@@ -183,7 +186,13 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
                   <td><?= htmlspecialchars($row['user_id']) ?></td>
                   <td>
                     <div class="table-cell">
-                      <div class="table-avatar"><?= strtoupper(mb_substr($row['nama'], 0, 2)) ?></div>
+                      <?php if ($photo_path): ?>
+                        <div class="table-avatar" style="padding:0;overflow:hidden;">
+                          <img src="<?= $photo_path ?>" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                        </div>
+                      <?php else: ?>
+                        <div class="table-avatar"><?= strtoupper(mb_substr($row['nama'], 0, 2)) ?></div>
+                      <?php endif; ?>
                       <h3 class="table-name"><?= htmlspecialchars($row['nama']) ?></h3>
                     </div>
                   </td>

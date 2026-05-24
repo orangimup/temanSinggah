@@ -64,24 +64,11 @@
               Pesan
             </a>
           </li>
-
           <div class="nav-indicator"></div>
         </ul>
 
-        <div class="nav-right">
-          <a href="../../../index.php">
-            <button class="ghost-button">Ganti ke pengunjung</button>
-          </a>
-          <div class="icon-buttons">
-            <?= htmlspecialchars($userInitial) ?>
-            <button class="icon-button hamburger" aria-label="Hamburger">
-              <i class="ph-bold ph-list"></i>
-            </button>
-          </div>
-          <div id="hamburgerDropdown"></div>
-          <div id="languagePopup"></div>
-          <div id="authPopup"></div>
-        </div>
+        <?php include '/teman_singgah/components/navbar_profile_host.php'; ?>
+
       </nav>
     </header>
 

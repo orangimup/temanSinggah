@@ -1,0 +1,295 @@
+<?php include '../../auth/auth_session.php'; ?>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jadi Host | Teman Singgah</title>
+    <link rel="icon" href="/teman_singgah/assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="/teman_singgah/components/root.css" />
+    <link rel="stylesheet" href="/teman_singgah/components/navbar.css" />
+    <link rel="stylesheet" href="/teman_singgah/components/footer.css" />
+    <link rel="stylesheet" href="/teman_singgah/popups/auth.css" />
+    <link rel="stylesheet" href="/teman_singgah/user/styles/become_host.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/bold/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css" />
+  </head>
+
+  <body>
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="/teman_singgah/index.php" class="logo-link"></a>
+        <div class="logo-section">
+          <img src="/teman_singgah/assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+          <img src="/teman_singgah/assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item"><a href="/teman_singgah/index.php" class="nav-link">Cari Penginapan</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/promo_deals.php" class="nav-link">Promo & Deals</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/become_host.php" class="nav-link active">Jadi Host</a></li>
+          <li class="nav-item"><a href="/teman_singgah/user/pages/about_us.php" class="nav-link">Tentang Kami</a></li>
+          <div class="nav-indicator"></div>
+        </ul>
+
+        <div class="nav-right">
+          <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+            <button class="ghost-button">Ganti ke host</button>
+          </a>
+          <?php include '../../components/navbar_profile.php'; ?>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-section">
+        <div class="hero-container">
+          <div class="hero-badge">
+            <i class="ph-fill ph-house-line"></i>
+            <span>Bergabung dengan 12.000+ Host Aktif</span>
+          </div>
+          <h1 class="hero-title">Jadi Host di Teman Singgah</h1>
+          <p class="hero-subtitle">Daftarkan propertimu — gratis, mudah, dan mulai terima tamu dalam 24 jam.</p>
+          <div class="hero-buttons">
+            <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+              <button class="hero-button primary-button"><i class="ph-bold ph-plus-circle"></i> Daftarkan Properti</button>
+            </a>
+            <a href="#benefitSection">
+              <button class="hero-button secondary-button">Pelajari Lebih Lanjut</button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="benefits-section" id="benefitSection">
+        <div class="benefits-container">
+          <div class="image-container">
+            <img src="/teman_singgah/assets/images/nihi_sumba.webp" alt="Properti host" />
+            <div class="image-badge">
+              <div class="badge-icon"><i class="ph-bold ph-currency-circle-dollar"></i></div>
+              <div class="badge-text">
+                <strong>Rp 12.400.000</strong>
+                <span>Penghasilan bulan ini</span>
+              </div>
+            </div>
+          </div>
+          <div class="benefits-body">
+            <h2 class="section-title">Keuntungan yang Kamu Dapat</h2>
+            <p class="section-description">Kami hadir sebagai mitra, bukan sekadar platform. Setiap fitur dirancang untuk membuat perjalananmu sebagai host semudah mungkin.</p>
+            <div class="benefits-list">
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="ph-bold ph-wallet"></i></div>
+                <div class="benefit-text">
+                  <h3>Penghasilan Tambahan yang Nyata</h3>
+                  <p>Host rata-rata mendapatkan Rp 5–15 juta per bulan tergantung tipe properti dan lokasi. Pembayaran langsung ke rekeningmu setiap minggu.</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="ph-bold ph-calendar-check"></i></div>
+                <div class="benefit-text">
+                  <h3>Kamu yang Pegang Kendali</h3>
+                  <p>Atur sendiri harga, ketersediaan, dan aturan tamu. Tidak ada kewajiban minimum. Buka tutup kapan pun kamu mau.</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="ph-bold ph-shield-check"></i></div>
+                <div class="benefit-text">
+                  <h3>Properti Terlindungi</h3>
+                  <p>Setiap pemesanan dilindungi oleh Jaminan Host kami hingga Rp 50 juta. Tamu juga telah terverifikasi sebelum bisa memesan.</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <div class="benefit-icon"><i class="ph-bold ph-headset"></i></div>
+                <div class="benefit-text">
+                  <h3>Dukungan 24 Jam</h3>
+                  <p>Tim kami siap membantu kamu kapan pun melalui chat, telepon, atau email. Kamu tidak pernah sendirian sebagai host.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guide-section">
+        <div class="guide-container">
+          <div class="guide-header">
+            <h2 class="section-title">Mulai dalam 3 Langkah</h2>
+            <p class="section-description guide">Tidak perlu keahlian teknis. Proses pendaftaran bisa diselesaikan dalam kurang dari 15 menit.</p>
+          </div>
+          <div class="guide-steps">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <h3>Daftarkan Propertimu</h3>
+              <p>Isi detail properti, unggah foto, dan tentukan harga. Panduan langkah demi langkah tersedia di setiap bagian.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <h3>Terima & Kelola Tamu</h3>
+              <p>Konfirmasi pemesanan, kirim pesan selamat datang, dan kelola jadwal propertimu lewat browser.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <h3>Terima Penghasilan</h3>
+              <p>Setelah tamu check-out, pembayaran otomatis dikirim ke rekeningmu. Pantau pendapatan lewat dashboard host.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="testi-section">
+        <div class="testi-container">
+          <div class="testi-header">
+            <h2 class="section-title">Cerita Nyata dari Host Teman Singgah</h2>
+          </div>
+          <div class="testi-grid">
+            <div class="testi-card">
+              <div class="testi-stars">
+                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+              </div>
+              <p class="testi-quote">Awalnya ragu, tapi ternyata prosesnya sangat mudah. Sekarang villa saya di Ubud terisi hampir setiap akhir pekan.</p>
+              <div class="testi-author">
+                <div class="testi-avatar">W</div>
+                <div>
+                  <span class="testi-name">Wayan Suartana</span>
+                  <span class="testi-location">Villa di Ubud, Bali</span>
+                </div>
+                <div class="testi-earnings"><span>Rp 14 Jt</span><small>/ bulan</small></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">
+                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+              </div>
+              <p class="testi-quote">Saya punya 2 kamar kosong di rumah. Dengan Teman Singgah, dua-duanya terisi hampir penuh setiap bulan.</p>
+              <div class="testi-author">
+                <div class="testi-avatar">S</div>
+                <div>
+                  <span class="testi-name">Siti Rahayu</span>
+                  <span class="testi-location">Homestay di Yogyakarta</span>
+                </div>
+                <div class="testi-earnings"><span>Rp 6 Jt</span><small>/ bulan</small></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">
+                <i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i>
+              </div>
+              <p class="testi-quote">Yang paling saya suka adalah fleksibilitasnya. Kalau keluarga mau menginap, tinggal blokir tanggalnya.</p>
+              <div class="testi-author">
+                <div class="testi-avatar">B</div>
+                <div>
+                  <span class="testi-name">Budi Santoso</span>
+                  <span class="testi-location">Apartemen di Jakarta Selatan</span>
+                </div>
+                <div class="testi-earnings"><span>Rp 9 Jt</span><small>/ bulan</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-section">
+        <div class="faq-header">
+          <h2 class="section-heading">Ada yang Ingin Kamu Tanyakan?</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question"><span>Apakah properti saya harus berbintang atau berlisensi?</span><div class="faq-icon"><i class="ph-bold ph-plus"></i></div></button>
+            <div class="faq-answer"><p>Tidak perlu. Properti apapun bisa didaftarkan selama kondisinya layak huni, bersih, dan sesuai dengan foto yang diunggah.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Berapa komisi yang diambil Teman Singgah?</span><div class="faq-icon"><i class="ph-bold ph-plus"></i></div></button>
+            <div class="faq-answer"><p>Kami mengambil komisi sebesar 12% dari setiap transaksi yang berhasil. Tidak ada biaya pendaftaran, biaya bulanan, atau biaya tersembunyi lainnya.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Bagaimana jika tamu merusak properti saya?</span><div class="faq-icon"><i class="ph-bold ph-plus"></i></div></button>
+            <div class="faq-answer"><p>Setiap pemesanan dilindungi oleh Jaminan Host kami hingga Rp 50 juta untuk kerusakan properti.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Kapan saya menerima pembayaran dari tamu?</span><div class="faq-icon"><i class="ph-bold ph-plus"></i></div></button>
+            <div class="faq-answer"><p>Pembayaran diproses otomatis setiap minggu dan langsung masuk ke rekening bank yang kamu daftarkan.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Bisakah saya mendaftarkan lebih dari satu properti?</span><div class="faq-icon"><i class="ph-bold ph-plus"></i></div></button>
+            <div class="faq-answer"><p>Tentu. Tidak ada batasan jumlah properti yang bisa kamu daftarkan. Banyak host kami mengelola 3–10 properti sekaligus dari satu akun dashboard.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="invite-section">
+        <div class="invite-container">
+          <div class="invite-text">
+            <h2>Siap Mulai Jadi Host?</h2>
+            <p>Bergabung sekarang dan daftarkan propertimu secara gratis. Proses verifikasi kami cepat — propertimu bisa mulai menerima tamu dalam 24 jam.</p>
+          </div>
+          <div class="invite-actions">
+            <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+              <button class="invite-button primary"><i class="ph-bold ph-plus-circle"></i> Daftar & Mulai Gratis</button>
+            </a>
+            <a href="#benefitSection">
+              <button class="invite-button secondary">Pelajari Lebih Lanjut</button>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <span class="footer-brand">Teman Singgah</span>
+          <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+          <div class="footer-social">
+            <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
+            <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
+            <a href="" class="social-link"><i class="ri-youtube-line"></i></a>
+            <a href="" class="social-link"><i class="ri-twitter-line"></i></a>
+            <a href="" class="social-link"><i class="ri-mail-line"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Navigasi</h3>
+          <ul class="footer-links">
+            <li><a href="/teman_singgah/index.php" class="footer-link">Beranda</a></li>
+            <li><a href="/teman_singgah/user/pages/promo_deals.php" class="footer-link">Promo & Deals</a></li>
+            <li><a href="/teman_singgah/user/pages/become_host.php" class="footer-link">Jadi Host</a></li>
+            <li><a href="#" class="footer-link">Bantuan</a></li>
+            <li><a href="#" class="footer-link">Akun</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3 class="footer-title">Dukungan</h3>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
+            <li><a href="#" class="footer-link">FAQ</a></li>
+            <li><a href="#" class="footer-link">Cara Menjadi Host</a></li>
+            <li><a href="#" class="footer-link">Cara Booking</a></li>
+            <li><a href="/teman_singgah/user/pages/about_us.php" class="footer-link">Tentang Kami</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="footer-link bottom">Kebijakan Privasi</a>
+          <span class="footer-dot">•</span>
+          <a href="#" class="footer-link bottom">Syarat & Ketentuan</a>
+        </div>
+      </div>
+    </footer>
+
+    <?php include '../../popups/auth_overlay.php'; ?>
+
+    <script src="/teman_singgah/user/scripts/become_host.js"></script>
+    <script src="/teman_singgah/components/navbar.js"></script>
+    <script src="/teman_singgah/popups/auth.js"></script>
+  </body>
+</html>

@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let isLoaded = false;
   let intentToBeHost = false;
 
-  // ── Deteksi base path otomatis berdasarkan lokasi file HTML ──
   function getBasePath() {
     const path = window.location.pathname;
     if (path.includes("/host/onboarding/pages/")) return "../../../";
@@ -68,14 +67,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyAuthState();
 
-  const savedInitial = localStorage.getItem("userInitial");
-  if (savedInitial && profileBtn) profileBtn.textContent = savedInitial;
+  // PERBAIKAN: navbar.js hanya update foto jika PHP belum render foto di HTML
+  // (jika PHP sudah render <img> di dalam profileBtn, jangan overwrite)
+  const profileBtnHasImg = profileBtn?.querySelector("img");
+  if (!profileBtnHasImg && profileBtn) {
+    const userPhoto = localStorage.getItem('userPhoto') || '';
+    const userInitial = localStorage.getItem('userInitial') || '';
+    if (userPhoto) {
+      profileBtn.style.padding = '0';
+      profileBtn.style.overflow = 'hidden';
+      profileBtn.innerHTML = `<img src="${userPhoto}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+    } else if (userInitial) {
+      profileBtn.textContent = userInitial;
+    }
+  }
 
-  window.onLoginSuccess = function (userInitial = "A") {
+  // PERBAIKAN: onLoginSuccess juga terima photo
+  window.onLoginSuccess = function (userInitialVal = "A", userPhotoVal = "") {
     isLoggedIn = true;
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userInitial", userInitial);
-    if (profileBtn) profileBtn.textContent = userInitial;
+    localStorage.setItem("userInitial", userInitialVal);
+    if (userPhotoVal) {
+      localStorage.setItem("userPhoto", userPhotoVal);
+    }
+    if (profileBtn) {
+      if (userPhotoVal) {
+        profileBtn.style.padding = '0';
+        profileBtn.style.overflow = 'hidden';
+        profileBtn.innerHTML = `<img src="${userPhotoVal}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+      } else {
+        profileBtn.textContent = userInitialVal;
+      }
+    }
     window.closeAuthPopup();
     applyAuthState();
     isLoaded = false;
@@ -94,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userInitial");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userPhoto");
     window.location.href = "/teman_singgah/auth/proses_logout.php";
   }
 
@@ -153,8 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           console.warn("[navbar] #languagePopup container tidak ditemukan");
         }
-      } else {
-        console.warn("[navbar] #languageOverlay tidak ditemukan di language.html");
       }
     } catch (err) {
       console.error("[navbar] Error loading language popup:", err);
@@ -179,11 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (container) {
           container.appendChild(overlay);
           window.bindAuthPopupEvents?.();
-        } else {
-          console.warn("[navbar] #authPopup container tidak ditemukan");
         }
-      } else {
-        console.warn("[navbar] #authOverlay tidak ditemukan di auth.html");
       }
     } catch (err) {
       console.error("[navbar] Error loading auth popup:", err);
