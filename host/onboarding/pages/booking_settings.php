@@ -1,0 +1,102 @@
+<?php
+session_start();
+?>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengaturan Pemesanan | Teman Singgah</title>
+    <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
+
+    <link rel="stylesheet" href="../../../components/root.css" />
+    <link rel="stylesheet" href="../../../components/navbar.css" />
+    <link rel="stylesheet" href="../onboarding.css" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  </head>
+
+  <body class="onboarding-page">
+    <header class="navbar">
+      <nav class="navbar-container">
+        <a href="../../../index.php" class="logo-link"></a>
+        <div class="logo-section">
+          <img src="../../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+          <img src="../../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
+        </div>
+        <div class="header-actions">
+          <a href="../../../user/pages/messages.html"><button class="ghost-button">Pertanyaan?</button></a>
+          <a href="../../../index.php"><button class="ghost-button">Simpan & keluar</button></a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h2>Pilih cara tamu memesan tempat Anda</h2>
+        <p>Anda bisa mengubah pengaturan ini kapan saja dari dashboard host.</p>
+      </div>
+
+      <div class="option-list">
+        <label class="option-item">
+          <input type="radio" name="booking-type" value="instan"
+            <?= (!isset($_SESSION['onboarding']['tipe_booking']) || $_SESSION['onboarding']['tipe_booking'] === 'instan') ? 'checked' : '' ?> />
+          <div class="option-card">
+            <div class="option-text">
+              <h3>Pemesanan Instan</h3>
+              <p>Tamu dapat langsung memesan tanpa perlu konfirmasi dari Anda. Lebih mudah untuk tamu, lebih banyak pemesanan untuk Anda.</p>
+            </div>
+            <div class="option-icon"><i class="ph-bold ph-lightning"></i></div>
+          </div>
+        </label>
+
+        <label class="option-item">
+          <input type="radio" name="booking-type" value="permintaan"
+            <?= (isset($_SESSION['onboarding']['tipe_booking']) && $_SESSION['onboarding']['tipe_booking'] === 'permintaan') ? 'checked' : '' ?> />
+          <div class="option-card">
+            <div class="option-text">
+              <h3>Permintaan Pemesanan</h3>
+              <p>Tamu mengirimkan permintaan dan Anda memiliki 24 jam untuk menyetujui atau menolak. Anda memiliki kontrol penuh atas siapa yang menginap.</p>
+            </div>
+            <div class="option-icon"><i class="ph-bold ph-calendar-check"></i></div>
+          </div>
+        </label>
+      </div>
+    </main>
+
+    <footer class="onboarding-footer">
+      <div class="progress-bar">
+        <div class="progress-segment completed"></div>
+        <div class="progress-segment completed"></div>
+        <div class="progress-segment active"></div>
+      </div>
+      <div class="footer-actions">
+        <a href="finish.php" class="back-button">Kembali</a>
+        <button class="next-button" id="btnSelanjutnya">Selanjutnya</button>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('btnSelanjutnya').addEventListener('click', function () {
+        const selected = document.querySelector('input[name="booking-type"]:checked');
+        if (!selected) {
+          alert('Pilih salah satu tipe pemesanan dulu ya!');
+          return;
+        }
+
+        fetch('save_booking_settings.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipe_booking: selected.value })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'ok') {
+            window.location.href = 'price.php';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
