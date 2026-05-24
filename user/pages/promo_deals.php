@@ -124,7 +124,7 @@
       <section class="card-section">
         <h2 class="section-title">Penawaran Terbatas</h2>
         <div class="promo-grid">
-          <a href="/teman_singgah/user/pages/detail_card.html" class="promo-card" data-category="flash">
+          <a href="/teman_singgah/user/pages/detail_card.php" class="promo-card" data-category="flash">
             <div class="card-image-wrapper">
               <span class="discount-tag">-45%</span>
               <img src="/teman_singgah/assets/images/nihi_sumba.webp" alt="Nihi Sumba" class="card-image" />
@@ -145,7 +145,7 @@
               </div>
             </div>
           </a>
-          <a href="/teman_singgah/user/pages/detail_card.html" class="promo-card" data-category="weekend">
+          <a href="/teman_singgah/user/pages/detail_card.php" class="promo-card" data-category="weekend">
             <div class="card-image-wrapper">
               <span class="discount-tag">-30%</span>
               <img src="/teman_singgah/assets/images/padma_resort_ubud_bali.jpg" alt="Padma Resort Ubud" class="card-image" />
@@ -166,7 +166,7 @@
               </div>
             </div>
           </a>
-          <a href="/teman_singgah/user/pages/detail_card.html" class="promo-card" data-category="flash">
+          <a href="/teman_singgah/user/pages/detail_card.php" class="promo-card" data-category="flash">
             <div class="card-image-wrapper">
               <span class="discount-tag">-20%</span>
               <img src="/teman_singgah/assets/images/apurva_kempinski_bali.jpg" alt="Apurva Kempinski" class="card-image" />
@@ -187,7 +187,7 @@
               </div>
             </div>
           </a>
-          <a href="/teman_singgah/user/pages/detail_card.html" class="promo-card" data-category="earlybird">
+          <a href="/teman_singgah/user/pages/detail_card.php" class="promo-card" data-category="earlybird">
             <div class="card-image-wrapper">
               <span class="discount-tag">-25%</span>
               <img src="/teman_singgah/assets/images/desa_potato_head_bali.webp" alt="Desa Potato Head" class="card-image" />

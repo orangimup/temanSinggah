@@ -81,7 +81,7 @@ session_start();
         .then(res => res.json())
         .then(data => {
           if (data.status === 'ok') {
-            window.location.href = 'finish.php';
+            window.location.href = 'finish.html';
           }
         });
       });

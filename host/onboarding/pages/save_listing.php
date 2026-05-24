@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once '../../../auth/koneksi.php';
+require_once '../../../koneksi.php';
+
+header('Content-Type: application/json');
 
 $required = [
     'tipe_properti', 'tipe_privasi', 'tipe_booking',
@@ -21,7 +23,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-$o = $_SESSION['onboarding'];
+$o       = $_SESSION['onboarding'];
 $host_id = $_SESSION['id'];
 
 mysqli_begin_transaction($koneksi);
@@ -35,8 +37,7 @@ try {
              max_tamu, kamar_tidur, tempat_tidur, kamar_mandi, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'aktif')
     ");
-
-    mysqli_stmt_bind_param($stmt, 'issssssddiiii',
+    mysqli_stmt_bind_param($stmt, 'issssssddiiiii',
         $host_id,
         $o['judul'],
         $o['deskripsi'],
@@ -52,25 +53,30 @@ try {
         $o['tempat_tidur'],
         $o['kamar_mandi']
     );
-
     mysqli_stmt_execute($stmt);
     $listing_id = mysqli_insert_id($koneksi);
     mysqli_stmt_close($stmt);
 
-    // 2. simpan foto
+    // 2. simpan foto — 1 query sekaligus
     $foto = $o['foto'];
+    $foto_values = [];
+    $foto_params = [];
     foreach ($foto as $index => $namaFile) {
-        $is_cover = ($index === 0) ? 1 : 0;
-        $stmt = mysqli_prepare($koneksi, "
-            INSERT INTO listing_photos (listing_id, nama_file, adalah_cover, urutan)
-            VALUES (?, ?, ?, ?)
-        ");
-        mysqli_stmt_bind_param($stmt, 'isii', $listing_id, $namaFile, $is_cover, $index);
-        mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
+        $foto_values[] = "(?, ?, ?, ?)";
+        $foto_params[] = $listing_id;
+        $foto_params[] = $namaFile;
+        $foto_params[] = ($index === 0) ? 1 : 0;
+        $foto_params[] = $index;
     }
+    $stmt = mysqli_prepare($koneksi,
+        "INSERT INTO listing_photos (listing_id, nama_file, adalah_cover, urutan) VALUES "
+        . implode(', ', $foto_values)
+    );
+    mysqli_stmt_bind_param($stmt, str_repeat('isii', count($foto)), ...$foto_params);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
-    // 3. simpan fasilitas
+    // 3. simpan fasilitas — 1 query sekaligus
     if (!empty($o['fasilitas'])) {
         $fasilitas_label = [
             'wifi'         => 'Wi-Fi',
@@ -87,20 +93,27 @@ try {
             'hewan'        => 'Ramah Hewan Peliharaan',
         ];
 
+        $fas_values = [];
+        $fas_params = [];
         foreach ($o['fasilitas'] as $key) {
             if (!isset($fasilitas_label[$key])) continue;
-            $label = $fasilitas_label[$key];
-            $stmt = mysqli_prepare($koneksi, "
-                INSERT INTO listing_amenities (listing_id, nama_fasilitas)
-                VALUES (?, ?)
-            ");
-            mysqli_stmt_bind_param($stmt, 'is', $listing_id, $label);
+            $fas_values[] = "(?, ?)";
+            $fas_params[] = $listing_id;
+            $fas_params[] = $fasilitas_label[$key];
+        }
+
+        if (!empty($fas_values)) {
+            $stmt = mysqli_prepare($koneksi,
+                "INSERT INTO listing_amenities (listing_id, nama_fasilitas) VALUES "
+                . implode(', ', $fas_values)
+            );
+            mysqli_stmt_bind_param($stmt, str_repeat('is', count($fas_values)), ...$fas_params);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
         }
     }
 
-    // 4. simpan diskon
+    // 4. simpan diskon — 1 query sekaligus
     if (!empty($o['diskon'])) {
         $diskon_config = [
             'tamu_baru' => 20,
@@ -108,22 +121,28 @@ try {
             'bulanan'   => 15,
         ];
 
+        $dis_values = [];
+        $dis_params = [];
         foreach ($o['diskon'] as $tipe) {
             if (!isset($diskon_config[$tipe])) continue;
-            $persentase = $diskon_config[$tipe];
-            $stmt = mysqli_prepare($koneksi, "
-                INSERT INTO listing_discounts (listing_id, tipe, persentase)
-                VALUES (?, ?, ?)
-            ");
-            mysqli_stmt_bind_param($stmt, 'isi', $listing_id, $tipe, $persentase);
+            $dis_values[] = "(?, ?, ?)";
+            $dis_params[] = $listing_id;
+            $dis_params[] = $tipe;
+            $dis_params[] = $diskon_config[$tipe];
+        }
+
+        if (!empty($dis_values)) {
+            $stmt = mysqli_prepare($koneksi,
+                "INSERT INTO listing_discounts (listing_id, tipe, persentase) VALUES "
+                . implode(', ', $dis_values)
+            );
+            mysqli_stmt_bind_param($stmt, str_repeat('isi', count($dis_values)), ...$dis_params);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
         }
     }
 
     mysqli_commit($koneksi);
-
-    // bersihkan session onboarding
     unset($_SESSION['onboarding']);
 
     echo json_encode(['status' => 'ok', 'listing_id' => $listing_id]);

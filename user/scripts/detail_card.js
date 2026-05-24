@@ -11,20 +11,28 @@ document.querySelectorAll(".header-button.save").forEach((saveButton) => {
 });
 
 window.addEventListener("load", () => {
+  const mapEl = document.getElementById("propertyMap");
+  if (!mapEl) return;
+
+  const lat = (window.LISTING_LAT && !isNaN(window.LISTING_LAT))
+    ? parseFloat(window.LISTING_LAT) : -8.5069;
+  const lng = (window.LISTING_LNG && !isNaN(window.LISTING_LNG))
+    ? parseFloat(window.LISTING_LNG) : 115.2625;
+  const name = window.LISTING_NAME || "Penginapan";
+  const loc = window.LISTING_LOC || "";
+
   const map = L.map("propertyMap", {
-    center: [-8.5069, 115.2625],
+    center: [lat, lng],
     zoom: 15,
     scrollWheelZoom: false,
     zoomControl: false,
   });
 
   L.tileLayer(
-    "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      attribution: "© MapTiler © OpenStreetMap",
-      tileSize: 512,
-      zoomOffset: -1,
-      maxZoom: 20,
+      attribution: "© OpenStreetMap contributors",
+      maxZoom: 19,
     },
   ).addTo(map);
 
@@ -35,9 +43,15 @@ window.addEventListener("load", () => {
     className: "",
   });
 
-  L.marker([-8.5069, 115.2625], { icon })
+  const popupContent = `
+    <div style="display:flex;flex-direction:column;gap:2px;font-family:inherit;">
+      <strong style="font-size:13px;">${name}</strong>
+      <span style="font-size:12px;color:#6b7280;">${loc}</span>
+    </div>`;
+
+  L.marker([lat, lng], { icon })
     .addTo(map)
-    .bindPopup(document.getElementById("mapPopup").innerHTML)
+    .bindPopup(popupContent)
     .openPopup();
 
   document
@@ -285,10 +299,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const pStart =
           phase === "selecting" &&
-          rangeStart &&
-          hoverDate &&
-          !isSameDay(hoverDate, rangeStart) &&
-          hoverDate > rangeStart
+            rangeStart &&
+            hoverDate &&
+            !isSameDay(hoverDate, rangeStart) &&
+            hoverDate > rangeStart
             ? rangeStart
             : null;
         const pEnd = pStart ? hoverDate : null;

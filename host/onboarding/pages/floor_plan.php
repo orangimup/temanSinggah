@@ -127,7 +127,7 @@ session_start();
         .then(res => res.json())
         .then(data => {
           if (data.status === 'ok') {
-            window.location.href = 'stand_out.php';
+            window.location.href = 'stand_out.html';
           }
         });
       });
