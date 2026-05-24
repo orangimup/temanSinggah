@@ -26,6 +26,43 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  function isHostPage() {
+    return window.location.pathname.includes("/host/");
+  }
+
+  // ── Host Profile Dropdown ────────────────────────────────────────────────
+  // Ditangani duluan, terpisah dari logika user/hamburger
+  const hostTrigger = document.querySelector(".host-profile-trigger");
+  const hostDropdown = document.getElementById("hostProfileDropdown");
+
+  if (hostTrigger && hostDropdown) {
+    hostTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = hostDropdown.classList.contains("open");
+      if (isOpen) {
+        hostDropdown.classList.remove("open");
+      } else {
+        const rect = hostTrigger.getBoundingClientRect();
+        hostDropdown.style.top = `${rect.bottom + 8}px`;
+        hostDropdown.style.right = `${window.innerWidth - rect.right}px`;
+        hostDropdown.style.left = "auto";
+        hostDropdown.classList.add("open");
+      }
+    });
+
+    document.addEventListener("click", () => hostDropdown.classList.remove("open"));
+    window.addEventListener("resize", () => hostDropdown.classList.remove("open"));
+    hostDropdown.addEventListener("click", (e) => e.stopPropagation());
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hostDropdown.classList.remove("open");
+    });
+
+    // Selesai — halaman host tidak perlu lanjut ke bawah
+    return;
+  }
+
+  // ── User / Guest Navbar (non-host pages) ────────────────────────────────
   const profileBtn = document.querySelector(".icon-button.profile");
   const hamburgerBtn = document.querySelector(".icon-button.hamburger");
   const dropdown = document.getElementById("hamburgerDropdown");
@@ -36,9 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getBasePath() {
     const path = window.location.pathname;
-    if (path.includes("/host/onboarding/pages/")) return "../../../";
-    if (path.includes("/host/dashboard/pages/")) return "../../../";
-    if (path.includes("/host/")) return "../../";
     if (path.includes("/user/pages/")) return "../../";
     if (path.includes("/admin/pages/")) return "../../";
     if (path.includes("/popups/screen/")) return "../../";
@@ -46,13 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const BASE = getBasePath();
 
-  function isHostPage() {
-    return window.location.pathname.includes("/host/");
-  }
-
   function getUserType() {
     if (!isLoggedIn) return "guest";
-    return isHostPage() ? "host" : "loggedin";
+    return "loggedin";
   }
 
   function applyAuthState() {
@@ -67,33 +97,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyAuthState();
 
-  // PERBAIKAN: navbar.js hanya update foto jika PHP belum render foto di HTML
-  // (jika PHP sudah render <img> di dalam profileBtn, jangan overwrite)
   const profileBtnHasImg = profileBtn?.querySelector("img");
   if (!profileBtnHasImg && profileBtn) {
-    const userPhoto = localStorage.getItem('userPhoto') || '';
-    const userInitial = localStorage.getItem('userInitial') || '';
+    const userPhoto = localStorage.getItem("userPhoto") || "";
+    const userInitial = localStorage.getItem("userInitial") || "";
     if (userPhoto) {
-      profileBtn.style.padding = '0';
-      profileBtn.style.overflow = 'hidden';
+      profileBtn.style.padding = "0";
+      profileBtn.style.overflow = "hidden";
       profileBtn.innerHTML = `<img src="${userPhoto}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
     } else if (userInitial) {
       profileBtn.textContent = userInitial;
     }
   }
 
-  // PERBAIKAN: onLoginSuccess juga terima photo
   window.onLoginSuccess = function (userInitialVal = "A", userPhotoVal = "") {
     isLoggedIn = true;
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("userInitial", userInitialVal);
-    if (userPhotoVal) {
-      localStorage.setItem("userPhoto", userPhotoVal);
-    }
+    if (userPhotoVal) localStorage.setItem("userPhoto", userPhotoVal);
     if (profileBtn) {
       if (userPhotoVal) {
-        profileBtn.style.padding = '0';
-        profileBtn.style.overflow = 'hidden';
+        profileBtn.style.padding = "0";
+        profileBtn.style.overflow = "hidden";
         profileBtn.innerHTML = `<img src="${userPhotoVal}" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
       } else {
         profileBtn.textContent = userInitialVal;
@@ -102,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.closeAuthPopup();
     applyAuthState();
     isLoaded = false;
-    dropdown.innerHTML = "";
+    if (dropdown) dropdown.innerHTML = "";
     loadDropdown();
 
     if (intentToBeHost) {
@@ -122,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadDropdown() {
+    if (!dropdown) return;
     const userType = getUserType();
 
     const inlineTemplate = document.querySelector(
@@ -149,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function injectDropdown(html) {
+    if (!dropdown) return;
     dropdown.innerHTML = html;
     isLoaded = true;
     bindLanguageOption();
@@ -161,21 +188,17 @@ document.addEventListener("DOMContentLoaded", () => {
       bindLanguagePopupEvents();
       return;
     }
-
     try {
       const res = await fetch(`${BASE}popups/screen/language.html`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
       const overlay = doc.querySelector("#languageOverlay");
-
       if (overlay) {
         const container = document.getElementById("languagePopup");
         if (container) {
           container.appendChild(overlay);
           bindLanguagePopupEvents();
-        } else {
-          console.warn("[navbar] #languagePopup container tidak ditemukan");
         }
       }
     } catch (err) {
@@ -188,14 +211,12 @@ document.addEventListener("DOMContentLoaded", () => {
       window.bindAuthPopupEvents?.();
       return;
     }
-
     try {
       const res = await fetch(`${BASE}popups/screen/auth.html`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const html = await res.text();
       const doc = new DOMParser().parseFromString(html, "text/html");
       const overlay = doc.querySelector("#authOverlay");
-
       if (overlay) {
         const container = document.getElementById("authPopup");
         if (container) {
@@ -209,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function openDropdown(triggerBtn) {
+    if (!dropdown) return;
     const rect = triggerBtn.getBoundingClientRect();
     dropdown.style.top = `${rect.bottom + 8}px`;
     dropdown.style.right = `${window.innerWidth - rect.right}px`;
@@ -217,12 +239,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function closeDropdown() {
-    dropdown.classList.remove("open");
+    dropdown?.classList.remove("open");
   }
 
   function toggleDropdown(triggerBtn) {
     if (!isLoaded) return;
-    dropdown.classList.contains("open")
+    dropdown?.classList.contains("open")
       ? closeDropdown()
       : openDropdown(triggerBtn);
   }
@@ -238,10 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("click", closeDropdown);
   window.addEventListener("resize", closeDropdown);
-  dropdown.addEventListener("click", (e) => e.stopPropagation());
+  dropdown?.addEventListener("click", (e) => e.stopPropagation());
 
   function bindLanguageOption() {
-    dropdown.querySelectorAll("[data-action='language']").forEach((el) => {
+    dropdown?.querySelectorAll("[data-action='language']").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -251,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function bindAuthOption() {
-    dropdown.querySelectorAll("[data-action='auth']").forEach((el) => {
+    dropdown?.querySelectorAll("[data-action='auth']").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -262,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function bindLogoutOption() {
-    dropdown.querySelectorAll("[data-action='logout']").forEach((el) => {
+    dropdown?.querySelectorAll("[data-action='logout']").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();

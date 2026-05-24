@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../../auth/guard_user.php';
 include "../../koneksi.php";
 
 if (!isset($_SESSION['user_id'])) {

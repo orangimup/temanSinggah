@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 
 $isLoggedIn  = isset($_SESSION['nama']);
 $userInitial = $isLoggedIn ? strtoupper(mb_substr($_SESSION['nama'], 0, 1)) : '';

@@ -1,4 +1,5 @@
-<?php require_once '../../../auth/guard_host.php'; ?>
+// Di reservations.php, listing.php, dll.
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/auth/guard_host.php'; ?>
 
 <!doctype html>
 <html lang="id">

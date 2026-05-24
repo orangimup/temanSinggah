@@ -1,5 +1,6 @@
 <?php
-require_once '../../../auth/guard_host.php';
+// Di reservations.php, listing.php, dll.
+require_once $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/auth/guard_host.php'; 
 require_once '../../../koneksi.php';
 
 // guard_host.php sudah session_start(), ambil id dari session
