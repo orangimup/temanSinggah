@@ -7,13 +7,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservasi | Teman Singgah</title>
-    <link rel="icon" href="/teman_singgah/assets/logo/logo_temansinggah.svg" />
+    <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
 
-    <link rel="stylesheet" href="/teman_singgah/components/root.css" />
-    <link rel="stylesheet" href="/teman_singgah/components/navbar.css" />
-    <link rel="stylesheet" href="/teman_singgah/components/footer.css" />
-    <link rel="stylesheet" href="/teman_singgah/popups/auth.css" />
-    <link rel="stylesheet" href="/teman_singgah/host/dashboard/styles/reservations.css" />
+    <link rel="stylesheet" href="../../../components/root.css" />
+    <link rel="stylesheet" href="../../../components/navbar.css" />
+    <link rel="stylesheet" href="../../../components/footer.css" />
+    <link rel="stylesheet" href="../../../popups/auth.css" />
+    <link rel="stylesheet" href="../styles/reservations.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,14 +32,14 @@
   <body>
     <header class="navbar">
       <nav class="navbar-container">
-        <a href="/teman_singgah/host/dashboard/pages/reservations.php" class="logo-link"></a>
+        <a href="reservations.php" class="logo-link"></a>
         <div class="logo-section">
           <img
-            src="/teman_singgah/assets/logo/logo_temansinggah.svg"
+            src="../../../assets/logo/logo_temansinggah.svg"
             alt="Logo Teman Singgah"
             class="logo-icon" />
           <img
-            src="/teman_singgah/assets/logo/label_temansinggah.svg"
+            src="../../../assets/logo/label_temansinggah.svg"
             alt="Brand Name Teman Singgah"
             class="logo-name" />
         </div>
@@ -300,7 +300,7 @@
         </div>
         <h3 class="empty-title">Belum Ada Reservasi</h3>
         <p class="empty-desc">Tidak ada reservasi pada kategori ini.</p>
-        <a href="/teman_singgah/index.html" class="empty-button">
+        <a href="/teman_singgah/index.php" class="empty-button">
           <i class="ph-bold ph-plus"></i>
           Tambahkan properti baru
         </a>
@@ -326,10 +326,10 @@
         <div class="footer-column">
           <h3 class="footer-title">Navigasi</h3>
           <ul class="footer-links">
-            <li><a href="/teman_singgah/index.html" class="footer-link">Beranda</a></li>
-            <li><a href="/teman_singgah/user/pages/promo_deals.html" class="footer-link">Promo & Deals</a></li>
-            <li><a href="/teman_singgah/user/pages/become_host.html" class="footer-link">Jadi Host</a></li>
-            <li><a href="/teman_singgah/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
+            <li><a href="/teman_singgah/index.php" class="footer-link">Beranda</a></li>
+            <li><a href="/teman_singgah/user/pages/promo_deals.php" class="footer-link">Promo & Deals</a></li>
+            <li><a href="/teman_singgah/user/pages/become_host.php" class="footer-link">Jadi Host</a></li>
+            <li><a href="/teman_singgah/user/pages/about_us.php" class="footer-link">Tentang Kami</a></li>
             <li><a href="/teman_singgah/user/pages/account.php" class="footer-link">Akun</a></li>
           </ul>
         </div>
@@ -338,9 +338,9 @@
           <ul class="footer-links">
             <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
             <li><a href="#" class="footer-link">FAQ</a></li>
-            <li><a href="/teman_singgah/user/pages/become_host.html" class="footer-link">Cara Menjadi Host</a></li>
+            <li><a href="/teman_singgah/user/pages/become_host.php" class="footer-link">Cara Menjadi Host</a></li>
             <li><a href="#" class="footer-link">Cara Booking</a></li>
-            <li><a href="/teman_singgah/user/pages/about_us.html" class="footer-link">Tentang Kami</a></li>
+            <li><a href="/teman_singgah/user/pages/about_us.php" class="footer-link">Tentang Kami</a></li>
           </ul>
         </div>
       </div>
@@ -356,8 +356,8 @@
       </div>
     </footer>
 
-    <script src="/teman_singgah/host/dashboard/scripts/reservations.js"></script>
-    <script src="/teman_singgah/components/navbar.js"></script>
-    <script src="/teman_singgah/popups/auth.js"></script>
+    <script src="../scripts/reservations.js"></script>
+    <script src="../../../components/navbar.js"></script>
+    <script src="../../../popups/auth.js"></script>
   </body>
 </html>

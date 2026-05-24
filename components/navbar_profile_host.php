@@ -10,7 +10,7 @@
                 aria-label="Profil Host"
                 <?= $userPhoto ? 'style="padding:0;overflow:hidden;"' : '' ?>>
             <?php if ($userPhoto): ?>
-                <img src="<?= $userPhoto ?>" alt="Foto Profil"
+                <img src="<?= htmlspecialchars($userPhoto) ?>" alt="Foto Profil"
                      style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
             <?php else: ?>
                 <?= htmlspecialchars($userInitial) ?>
@@ -21,7 +21,7 @@
             <div class="hpd-header">
                 <div class="hpd-avatar">
                     <?php if ($userPhoto): ?>
-                        <img src="<?= $userPhoto ?>" alt="Foto" />
+                        <img src="<?= htmlspecialchars($userPhoto) ?>" alt="Foto" />
                     <?php else: ?>
                         <?= htmlspecialchars($userInitial) ?>
                     <?php endif; ?>
@@ -32,8 +32,8 @@
                 </div>
             </div>
             <div class="hpd-divider"></div>
-            <a href="/teman_singgah/host/dashboard/pages/profile_host.php" class="hpd-item">
-                <i class="ph-bold ph-user-circle"></i> Profil Host
+            <a href="/teman_singgah/user/pages/account.php" class="hpd-item">
+                <i class="ph-bold ph-user-circle"></i> Profil Saya
             </a>
             <a href="/teman_singgah/host/dashboard/pages/listing.php" class="hpd-item">
                 <i class="ph-bold ph-house-line"></i> Listing Saya
@@ -42,9 +42,6 @@
                 <i class="ph-bold ph-calendar-check"></i> Reservasi
             </a>
             <div class="hpd-divider"></div>
-            <a href="/teman_singgah/index.php" class="hpd-item">
-                <i class="ph-bold ph-arrow-left"></i> Ganti ke Pengunjung
-            </a>
             <a href="/teman_singgah/auth/proses_logout.php" class="hpd-item hpd-logout">
                 <i class="ph-bold ph-sign-out"></i> Keluar
             </a>

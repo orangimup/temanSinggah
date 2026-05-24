@@ -68,7 +68,7 @@
           <div class="nav-indicator"></div>
         </ul>
 
-        <?php include '/teman_singgah/components/navbar_profile_host.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
 
       </nav>
     </header>

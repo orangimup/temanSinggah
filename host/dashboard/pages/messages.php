@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="../../../components/root.css" />
     <link rel="stylesheet" href="../../../components/navbar.css" />
+    <link rel="stylesheet" href="../../../components/footer.css" />
     <link rel="stylesheet" href="../../../popups/auth.css" />
     <link rel="stylesheet" href="../styles/messages.css" />
 
@@ -59,7 +60,7 @@
           <div class="nav-indicator"></div>
         </ul>
 
-        <?php include '/teman_singgah/components/navbar_profile_host.php'; ?>
+        <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
 
       </nav>
     </header>
