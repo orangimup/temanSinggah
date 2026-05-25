@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="hpd-divider"></div>
-            <a href="/teman_singgah/user/pages/account.php" class="hpd-item">
+            <a href="/teman_singgah/host/account_host.php" class="hpd-item">
                 <i class="ph-bold ph-user-circle"></i> Profil Saya
             </a>
             <a href="/teman_singgah/host/dashboard/pages/listing.php" class="hpd-item">

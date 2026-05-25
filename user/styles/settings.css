@@ -1,9 +1,3 @@
-/* ═══════════════════════════════════════════
-   SETTINGS PAGE STYLES
-   Extends account.css — pastikan dimuat setelahnya
-═══════════════════════════════════════════ */
-
-/* ── Group container ── */
 .settings-group {
   margin-bottom: var(--space-8);
 }
