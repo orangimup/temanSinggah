@@ -65,6 +65,7 @@
                                     placeholder="contoh@email.com" autocomplete="email" required />
                             </div>
                         </fieldset>
+
                         <fieldset class="auth-field">
                             <legend class="auth-input-label">Password</legend>
                             <div class="auth-input-group auth-password-group">
@@ -129,6 +130,15 @@
                                     placeholder="contoh@email.com" autocomplete="email" required />
                             </div>
                         </fieldset>
+
+                        <fieldset class="auth-field">
+                            <legend class="auth-input-label">No. HP</legend>
+                            <div class="auth-input-group">
+                                <input type="tel" name="no_hp" id="daftarNoHp" class="auth-input"
+                                    placeholder="Contoh: 08123456789" autocomplete="tel" required />
+                            </div>
+                        </fieldset>
+
                         <fieldset class="auth-field">
                             <legend class="auth-input-label">Password</legend>
                             <div class="auth-input-group auth-password-group">
@@ -163,7 +173,7 @@
                 </div>
             </form>
         </div>
-        
+
         <!-- STEP LUPA PASSWORD -->
         <div class="auth-step" id="authStepLupaPassword">
             <div class="auth-header-section">

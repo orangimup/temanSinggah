@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once '../../auth/guard_user.php';
 require_once '../../koneksi.php';
 
 $listing_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;

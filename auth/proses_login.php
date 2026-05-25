@@ -48,7 +48,7 @@ $_SESSION['photo']   = $data['photo'] ?? '';
 
 // Redirect sesuai role
 if ($data['role'] === 'Admin') {
-    header("Location: /teman_singgah/admin/pages/dashboard.html");
+    header("Location: /teman_singgah/admin/pages/dashboard.php");
 } elseif ($data['role'] === 'Host') {
     header("Location: /teman_singgah/host/dashboard/pages/reservations.php");
 } else {

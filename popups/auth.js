@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const pesanError = {
     field_kosong:    'Semua field harus diisi.',
     email_invalid:   'Format email tidak valid.',
+    hp_invalid:      'Nomor HP tidak valid. Gunakan format 08xxxxxxxxxx.',
     password_pendek: 'Password minimal 8 karakter.',
     email_exists:    'Email sudah digunakan, coba email lain.',
     email_notfound:  'Email tidak ditemukan.',

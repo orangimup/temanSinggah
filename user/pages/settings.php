@@ -43,7 +43,9 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
     <link rel="stylesheet" href="../styles/settings.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 </head>
@@ -102,7 +104,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
         <section class="account-section">
             <div class="account-container">
 
-                <!-- Sidebar -->
                 <aside class="account-sidebar">
                     <h2 class="sidebar-title">Profil</h2>
                     <nav class="sidebar-nav">
@@ -129,13 +130,11 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                     </nav>
                 </aside>
 
-                <!-- Content -->
                 <div class="account-content">
                     <div class="content-header">
                         <h2 class="content-title">Pengaturan</h2>
                     </div>
 
-                    <!-- ─── Keamanan Akun ─── -->
                     <div class="settings-group">
                         <h3 class="settings-group-title">Keamanan Akun</h3>
 
@@ -157,104 +156,108 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
 
                         <div class="settings-item">
                             <div class="settings-item-info">
+                                <span class="settings-item-label">No. HP</span>
+                                <span
+                                    class="settings-item-value"><?= !empty($user['no_hp']) ? htmlspecialchars($user['no_hp']) : 'Belum diatur' ?></span>
+                            </div>
+                            <button class="settings-btn-outline" data-modal="phone">Ubah</button>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-info">
                                 <span class="settings-item-label">Password</span>
                                 <span class="settings-item-value">••••••••</span>
                             </div>
                             <button class="settings-btn-outline" data-modal="password">Ubah</button>
                         </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="settings-group">
+                            <h3 class="settings-group-title">Notifikasi</h3>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Email konfirmasi booking</span>
+                                    <span class="settings-item-sub">Kirim email saat pesanan berhasil dibuat</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleEmailBooking" checked />
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Pengingat check-in</span>
+                                    <span class="settings-item-sub">Notifikasi H-1 sebelum tanggal check-in</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleCheckinReminder" checked />
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Promo &amp; penawaran</span>
+                                    <span class="settings-item-sub">Terima info diskon dan promo terbaru</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="togglePromo" />
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Pesan dari host</span>
+                                    <span class="settings-item-sub">Notifikasi saat ada pesan masuk</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleMessages" checked />
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="settings-group">
+                            <h3 class="settings-group-title">Bahasa &amp; Tampilan</h3>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Bahasa</span>
+                                    <span class="settings-item-value">Bahasa Indonesia</span>
+                                </div>
+                                <button class="settings-btn-outline" data-modal="language">Ubah</button>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-info">
+                                    <span class="settings-item-label">Mata Uang</span>
+                                    <span class="settings-item-value">IDR — Rupiah Indonesia</span>
+                                </div>
+                                <button class="settings-btn-outline" data-modal="currency">Ubah</button>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-label">Hapus Akun</span>
+                                <span class="settings-item-sub">Tindakan ini permanen dan tidak bisa dibatalkan</span>
+                            </div>
+                            <button class="settings-btn-danger" data-modal="delete-account">Hapus Akun</button>
+                        </div>
                     </div>
 
-                    <div class="section-divider"></div>
-
-                    <!-- ─── Notifikasi ─── -->
-                    <div class="settings-group">
-                        <h3 class="settings-group-title">Notifikasi</h3>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Email konfirmasi booking</span>
-                                <span class="settings-item-sub">Kirim email saat pesanan berhasil dibuat</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="toggleEmailBooking" checked />
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Pengingat check-in</span>
-                                <span class="settings-item-sub">Notifikasi H-1 sebelum tanggal check-in</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="toggleCheckinReminder" checked />
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Promo &amp; penawaran</span>
-                                <span class="settings-item-sub">Terima info diskon dan promo terbaru</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="togglePromo" />
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Pesan dari host</span>
-                                <span class="settings-item-sub">Notifikasi saat ada pesan masuk</span>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="toggleMessages" checked />
-                                <span class="toggle-track"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="section-divider"></div>
-
-                    <!-- ─── Bahasa & Tampilan ─── -->
-                    <div class="settings-group">
-                        <h3 class="settings-group-title">Bahasa &amp; Tampilan</h3>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Bahasa</span>
-                                <span class="settings-item-value">Bahasa Indonesia</span>
-                            </div>
-                            <button class="settings-btn-outline" data-modal="language">Ubah</button>
-                        </div>
-
-                        <div class="settings-item">
-                            <div class="settings-item-info">
-                                <span class="settings-item-label">Mata Uang</span>
-                                <span class="settings-item-value">IDR — Rupiah Indonesia</span>
-                            </div>
-                            <button class="settings-btn-outline" data-modal="currency">Ubah</button>
-                        </div>
-                    </div>
-
-                    <div class="section-divider"></div>
-
-                    <!-- ─── Zona Bahaya ─── -->
-                    <div class="settings-item">
-                        <div class="settings-item-info">
-                            <span class="settings-item-label">Hapus Akun</span>
-                            <span class="settings-item-sub">Tindakan ini permanen dan tidak bisa dibatalkan</span>
-                        </div>
-                        <button class="settings-btn-danger" data-modal="delete-account">Hapus Akun</button>
-                    </div>
                 </div>
-
-            </div>
         </section>
     </main>
 
-    <!-- ─── Modal: Ubah Nama ─── -->
     <div class="settings-modal-overlay" id="modal-nama">
         <div class="settings-modal">
             <div class="settings-modal-header">
@@ -270,13 +273,12 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
             </div>
             <div class="settings-modal-footer">
                 <button class="settings-btn-outline" data-close-modal>Batal</button>
-                <button class="settings-btn-primary"
-                    onclick="showToast('Nama berhasil diubah.')">Simpan Perubahan</button>
+                <button class="settings-btn-primary" onclick="showToast('Nama berhasil diubah.')">Simpan
+                    Perubahan</button>
             </div>
         </div>
     </div>
 
-    <!-- ─── Modal: Ubah Email ─── -->
     <div class="settings-modal-overlay" id="modal-email">
         <div class="settings-modal">
             <div class="settings-modal-header">
@@ -302,7 +304,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
         </div>
     </div>
 
-    <!-- ─── Modal: Ubah Password ─── -->
     <div class="settings-modal-overlay" id="modal-password">
         <div class="settings-modal">
             <div class="settings-modal-header">
@@ -313,7 +314,8 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                 <div class="settings-form-field">
                     <label>Password saat ini</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Masukkan password lama" class="settings-input" id="oldPassInput" />
+                        <input type="password" placeholder="Masukkan password lama" class="settings-input"
+                            id="oldPassInput" />
                         <button type="button" class="settings-eye-btn" data-target="oldPassInput">
                             <i class="ph-bold ph-eye"></i>
                         </button>
@@ -322,7 +324,8 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                 <div class="settings-form-field">
                     <label>Password baru</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Minimal 8 karakter" class="settings-input" id="newPassInput" />
+                        <input type="password" placeholder="Minimal 8 karakter" class="settings-input"
+                            id="newPassInput" />
                         <button type="button" class="settings-eye-btn" data-target="newPassInput">
                             <i class="ph-bold ph-eye"></i>
                         </button>
@@ -331,7 +334,8 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                 <div class="settings-form-field">
                     <label>Konfirmasi password baru</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Ulangi password baru" class="settings-input" id="confirmPassInput" />
+                        <input type="password" placeholder="Ulangi password baru" class="settings-input"
+                            id="confirmPassInput" />
                         <button type="button" class="settings-eye-btn" data-target="confirmPassInput">
                             <i class="ph-bold ph-eye"></i>
                         </button>
@@ -345,29 +349,41 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
         </div>
     </div>
 
-    <!-- ─── Modal: Ubah Nomor HP ─── -->
     <div class="settings-modal-overlay" id="modal-phone">
         <div class="settings-modal">
             <div class="settings-modal-header">
-                <h3>Ubah Nomor Telepon</h3>
+                <h3>Ubah No. HP</h3>
                 <button class="settings-modal-close" data-close-modal><i class="ph-bold ph-x"></i></button>
             </div>
-            <div class="settings-modal-body">
-                <div class="settings-form-field">
-                    <label>Nomor telepon baru</label>
-                    <input type="tel" placeholder="+62 8xx-xxxx-xxxx" class="settings-input" />
+            <form method="POST" action="/teman_singgah/user/pages/update_account.php">
+                <input type="hidden" name="nama" value="<?= htmlspecialchars($user['nama']) ?>">
+                <input type="hidden" name="pekerjaan" value="<?= htmlspecialchars($user['pekerjaan'] ?? '') ?>">
+                <input type="hidden" name="lokasi" value="<?= htmlspecialchars($user['lokasi'] ?? '') ?>">
+                <input type="hidden" name="bahasa" value="<?= htmlspecialchars($user['bahasa'] ?? '') ?>">
+                <input type="hidden" name="tentang" value="<?= htmlspecialchars($user['tentang'] ?? '') ?>">
+                <input type="hidden" name="destinasi_impian"
+                    value="<?= htmlspecialchars($user['destinasi_impian'] ?? '') ?>">
+                <input type="hidden" name="hobi" value="<?= htmlspecialchars($user['hobi'] ?? '') ?>">
+                <input type="hidden" name="hewan_peliharaan"
+                    value="<?= htmlspecialchars($user['hewan_peliharaan'] ?? '') ?>">
+                <input type="hidden" name="dekade_lahir" value="<?= htmlspecialchars($user['dekade_lahir'] ?? '') ?>">
+                <input type="hidden" name="sekolah" value="<?= htmlspecialchars($user['sekolah'] ?? '') ?>">
+                <input type="hidden" name="lagu_favorit" value="<?= htmlspecialchars($user['lagu_favorit'] ?? '') ?>">
+                <div class="settings-modal-body">
+                    <div class="settings-form-field">
+                        <label>Nomor HP baru</label>
+                        <input type="tel" name="no_hp" placeholder="Contoh: 08123456789" class="settings-input"
+                            value="<?= htmlspecialchars($user['no_hp'] ?? '') ?>" required />
+                    </div>
                 </div>
-                <p class="settings-modal-hint">Kode OTP akan dikirim via SMS untuk verifikasi.</p>
-            </div>
-            <div class="settings-modal-footer">
-                <button class="settings-btn-outline" data-close-modal>Batal</button>
-                <button class="settings-btn-primary"
-                    onclick="showToast('Kode OTP telah dikirim ke nomor baru.')">Kirim OTP</button>
-            </div>
+                <div class="settings-modal-footer">
+                    <button type="button" class="settings-btn-outline" data-close-modal>Batal</button>
+                    <button type="submit" class="settings-btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- ─── Modal: Hapus Akun ─── -->
     <div class="settings-modal-overlay" id="modal-delete-account">
         <div class="settings-modal">
             <div class="settings-modal-header">
@@ -377,8 +393,8 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
             <div class="settings-modal-body">
                 <div class="settings-danger-box">
                     <i class="ph-bold ph-warning-circle"></i>
-                    <p>Semua data akunmu termasuk riwayat perjalanan dan favorit akan
-                        <strong>dihapus permanen</strong> dan tidak bisa dipulihkan.</p>
+                    <p>Semua data akunmu termasuk riwayat perjalanan dan favorit akan <strong>dihapus permanen</strong>
+                        dan tidak bisa dipulihkan.</p>
                 </div>
                 <div class="settings-form-field">
                     <label>Ketik <strong>HAPUS AKUN</strong> untuk konfirmasi</label>
@@ -392,7 +408,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
         </div>
     </div>
 
-    <!-- ─── Toast notifikasi ─── -->
     <div class="settings-toast" id="settingsToast"></div>
 
     <footer class="footer">
@@ -444,8 +459,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
     <script src="../scripts/settings.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
-            // ── Buka modal ──
             document.querySelectorAll('[data-modal]').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     const modal = document.getElementById('modal-' + btn.getAttribute('data-modal'));
@@ -453,21 +466,18 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                 });
             });
 
-            // ── Tutup modal (tombol X & Batal) ──
             document.querySelectorAll('[data-close-modal]').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     btn.closest('.settings-modal-overlay').classList.remove('open');
                 });
             });
 
-            // ── Klik di luar modal ──
             document.querySelectorAll('.settings-modal-overlay').forEach(function (overlay) {
                 overlay.addEventListener('click', function (e) {
                     if (e.target === overlay) overlay.classList.remove('open');
                 });
             });
 
-            // ── Toggle show/hide password ──
             document.querySelectorAll('.settings-eye-btn').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     const input = document.getElementById(btn.getAttribute('data-target'));
@@ -478,7 +488,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                 });
             });
 
-            // ── Konfirmasi hapus akun ──
             const btnDelete = document.getElementById('btnConfirmDelete');
             if (btnDelete) {
                 btnDelete.addEventListener('click', function () {
@@ -494,7 +503,6 @@ if (!empty($user['photo']) && file_exists("../../assets/uploads/photos/" . $user
                     window.location.href = '/teman_singgah/user/pages/delete_account.php';
                 });
             }
-
         });
     </script>
 </body>

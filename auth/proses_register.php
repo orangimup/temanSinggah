@@ -7,12 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$nama = trim($_POST['nama'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$nama     = trim($_POST['nama'] ?? '');
+$email    = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
+$no_hp    = trim($_POST['no_hp'] ?? '');
 
 // Validasi kosong
-if (empty($nama) || empty($email) || empty($password)) {
+if (empty($nama) || empty($email) || empty($password) || empty($no_hp)) {
     header("Location: /teman_singgah/index.php?auth=daftar&error=field_kosong");
     exit;
 }
@@ -23,9 +24,15 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-// Validasi panjang password
+// Validasi password
 if (strlen($password) < 8) {
     header("Location: /teman_singgah/index.php?auth=daftar&error=password_pendek");
+    exit;
+}
+
+// Validasi no HP (angka, 8–15 digit)
+if (!preg_match('/^[0-9]{8,15}$/', $no_hp)) {
+    header("Location: /teman_singgah/index.php?auth=daftar&error=hp_invalid");
     exit;
 }
 
@@ -41,20 +48,23 @@ if (mysqli_stmt_num_rows($cek) > 0) {
 }
 mysqli_stmt_close($cek);
 
-// Generate user_id urut (aman dari race condition)
+// Generate user_id
 mysqli_query($koneksi, "LOCK TABLES users WRITE");
 
-$result = mysqli_query($koneksi, "SELECT MAX(id) as max_id FROM users");
-$row = mysqli_fetch_assoc($result);
+$result  = mysqli_query($koneksi, "SELECT MAX(id) as max_id FROM users");
+$row     = mysqli_fetch_assoc($result);
 $next_id = ($row['max_id'] ?? 0) + 1;
 $user_id = 'USR-' . str_pad($next_id, 4, '0', STR_PAD_LEFT);
 
-$hash = password_hash($password, PASSWORD_DEFAULT);
-$role = 'User';
+$hash   = password_hash($password, PASSWORD_DEFAULT);
+$role   = 'User';
 $status = 'Aktif';
 
-$stmt = mysqli_prepare($koneksi, "INSERT INTO users (user_id, nama, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)");
-mysqli_stmt_bind_param($stmt, "ssssss", $user_id, $nama, $email, $hash, $role, $status);
+$stmt = mysqli_prepare($koneksi,
+    "INSERT INTO users (user_id, nama, email, no_hp, password, role, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?)"
+);
+mysqli_stmt_bind_param($stmt, "sssssss", $user_id, $nama, $email, $no_hp, $hash, $role, $status);
 mysqli_stmt_execute($stmt);
 
 mysqli_query($koneksi, "UNLOCK TABLES");

@@ -1,34 +1,53 @@
 <?php
+/**
+ * admin/pages/delete_listing.php
+ * Hapus listing oleh Admin.
+ * Dipanggil via fetch() POST dengan body JSON: { "id": 123 }
+ */
 session_start();
-include "../../koneksi.php";
+require_once '../../koneksi.php';
 
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents("php://input"), true);
-$id = isset($data['id']) ? (int)$data['id'] : 0;
+/* Guard: hanya Admin */
+if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized.']);
+    exit;
+}
+
+$body = json_decode(file_get_contents('php://input'), true);
+$id   = (int)($body['id'] ?? 0);
 
 if (!$id) {
-    echo json_encode(["status" => "error", "message" => "ID tidak valid"]);
-    exit();
+    echo json_encode(['status' => 'error', 'message' => 'ID tidak valid.']);
+    exit;
 }
 
-$res = mysqli_query($koneksi, "SELECT nama_file FROM listing_photos WHERE listing_id = $id");
-$foto_files = [];
-while ($row = mysqli_fetch_assoc($res)) {
-    $foto_files[] = $row['nama_file'];
+/* Pastikan listing ada */
+$check = mysqli_query($koneksi, "SELECT id FROM listings WHERE id = $id LIMIT 1");
+if (!mysqli_fetch_assoc($check)) {
+    echo json_encode(['status' => 'error', 'message' => 'Listing tidak ditemukan.']);
+    exit;
 }
 
-$stmt = mysqli_prepare($koneksi, "DELETE FROM listings WHERE id = ?");
-mysqli_stmt_bind_param($stmt, "i", $id);
-
-if (mysqli_stmt_execute($stmt)) {
-    foreach ($foto_files as $file) {
-        $path = $_SERVER['DOCUMENT_ROOT'] . "/teman_singgah/assets/uploads/listings/" . $file;
-        if (file_exists($path)) unlink($path);
-    }
-    echo json_encode(["status" => "ok"]);
-} else {
-    echo json_encode(["status" => "error", "message" => "Gagal menghapus dari database"]);
+/* Ambil daftar foto untuk dihapus dari disk */
+$photos = [];
+$qPhoto = mysqli_query($koneksi, "SELECT nama_file FROM listing_photos WHERE listing_id = $id");
+while ($p = mysqli_fetch_assoc($qPhoto)) {
+    $photos[] = $p['nama_file'];
 }
 
-mysqli_stmt_close($stmt);
+/* Hapus dari DB */
+$del = mysqli_query($koneksi, "DELETE FROM listings WHERE id = $id");
+if (!$del) {
+    echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus dari database.']);
+    exit;
+}
+
+/* Hapus file foto dari disk */
+foreach ($photos as $nama) {
+    $path = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/listings/' . $nama;
+    if (file_exists($path)) @unlink($path);
+}
+
+echo json_encode(['status' => 'ok']);

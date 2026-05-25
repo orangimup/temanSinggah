@@ -643,6 +643,15 @@ $favorit_rows = fetchAll($q_favorit);
                     autocomplete="email" required />
                 </div>
               </fieldset>
+
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">No. HP</legend>
+                <div class="auth-input-group">
+                  <input type="tel" name="no_hp" id="daftarNoHp" class="auth-input" placeholder="Masukkan nomormu"
+                    autocomplete="tel" required />
+                </div>
+              </fieldset>
+
               <fieldset class="auth-field">
                 <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
