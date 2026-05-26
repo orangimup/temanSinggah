@@ -24,7 +24,7 @@ function fetchAll($result)
 function renderHotelCard($row)
 {
   $foto = !empty($row['foto_cover'])
-    ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover'])
+    ? (str_starts_with($row['foto_cover'], 'http') ? $row['foto_cover'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
     : '/teman_singgah/assets/images/apurva_kempinski_bali.jpg';
   $harga = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
   $rating = $row['rating_avg'] ? $row['rating_avg'] : '–';
@@ -63,7 +63,7 @@ function renderSeeAllCard($rows_preview)
     if ($count >= 3)
       break;
     $foto = !empty($r['foto_cover'])
-      ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($r['foto_cover'])
+      ? (str_starts_with($r['foto_cover'], 'http') ? $r['foto_cover'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($r['foto_cover']))
       : '/teman_singgah/assets/images/apurva_kempinski_bali.jpg';
     echo "<img src=\"{$foto}\" alt=\"\" class=\"see-all-photo\" />";
     $count++;
@@ -284,7 +284,7 @@ $favorit_rows = fetchAll($q_favorit);
         <div class="card-grid">
           <?php foreach ($destinasi_rows as $i => $row):
             $foto = !empty($row['foto_cover'])
-              ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover'])
+              ? (str_starts_with($row['foto_cover'], 'http') ? $row['foto_cover'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
               : '/teman_singgah/assets/images/apurva_kempinski_bali.jpg';
             $parts = array_map('trim', explode(',', $row['lokasi']));
             $lokasi_display = htmlspecialchars(implode(', ', array_slice($parts, 0, 2)));

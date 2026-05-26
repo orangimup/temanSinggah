@@ -94,7 +94,7 @@ $bulan_id = [
   'September' => 'September',
   'October' => 'Oktober',
   'November' => 'November',
-  'December' => 'Desember'
+  'December' => 'Desember',
 ];
 
 $host_initial = strtoupper(mb_substr($listing['host_nama'], 0, 1));
@@ -122,7 +122,6 @@ mysqli_stmt_execute($stmt);
 $policies = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
 
-// Map kebijakan dari listings sebagai fallback
 $kebijakan_map = [
   'fleksibel' => 'Gratis hingga 24 jam sebelum check-in',
   'moderat' => 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
@@ -178,7 +177,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
       </div>
       <ul class="nav-menu">
         <li class="nav-item"><a href="../../index.php" class="nav-link">Cari Penginapan</a></li>
-        <li class="nav-item"><a href="./promo_deals.php" class="nav-link">Promo & Deals</a></li>
+        <li class="nav-item"><a href="./promo_deals.php" class="nav-link">Promo &amp; Deals</a></li>
         <li class="nav-item"><a href="./become_host.php" class="nav-link">Jadi Host</a></li>
         <li class="nav-item"><a href="./about_us.php" class="nav-link">Tentang Kami</a></li>
         <div class="nav-indicator"></div>
@@ -204,10 +203,10 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
     <span class="content-header">
       <h1 class="property-name"><?= htmlspecialchars($listing['judul']) ?></h1>
       <div class="header-buttons">
-        <button class="header-button share">
+        <button class="header-button share" id="btnShare">
           <i class="ph-bold ph-share"></i> Bagikan
         </button>
-        <button class="header-button save">
+        <button class="header-button save" id="btnSave">
           <i class="ph-bold ph-heart"></i> Simpan
         </button>
       </div>
@@ -226,7 +225,9 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
             $thumbs[] = $p;
         }
         $cover_src = $cover
-          ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($cover['nama_file'])
+          ? (str_starts_with($cover['nama_file'], 'http')
+            ? $cover['nama_file']
+            : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($cover['nama_file']))
           : 'https://placehold.co/800x500/8b2500/ffffff?text=' . urlencode($listing['judul']);
         ?>
         <div class="gallery-card big">
@@ -234,7 +235,9 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         </div>
         <?php for ($i = 0; $i < 4; $i++):
           $src = isset($thumbs[$i])
-            ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($thumbs[$i]['nama_file'])
+            ? (str_starts_with($thumbs[$i]['nama_file'], 'http')
+              ? $thumbs[$i]['nama_file']
+              : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($thumbs[$i]['nama_file']))
             : 'https://placehold.co/400x240/6b4f3a/ffffff?text=Foto+' . ($i + 1);
           ?>
           <div class="gallery-card">
@@ -293,7 +296,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           <?php endforeach; ?>
         </section>
 
-        <!-- FASILITAS -->
+        <!-- FASILITAS UMUM -->
         <?php if (!empty($amenities)): ?>
           <section class="amenities-section">
             <h3 class="section-title">Fasilitas Umum</h3>
@@ -312,69 +315,73 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           </section>
         <?php endif; ?>
 
+        <!-- PILIHAN KAMAR -->
         <?php if (!empty($rooms)): ?>
           <section class="rooms-section">
             <h2 class="section-title">Pilihan Kamar</h2>
             <div class="rooms-grid">
               <?php foreach ($rooms as $room):
                 $fasilitas_kamar = json_decode($room['fasilitas'] ?? '[]', true) ?: [];
-                $fasilitas_icons = [
-                  'Kasur Twin' => 'ph-bed',
-                  'Kasur Double' => 'ph-bed',
-                  'Kasur King' => 'ph-bed',
-                  'Kamar Mandi Dalam' => 'ph-shower',
-                  'Bathtub' => 'ph-bathtub',
-                  'TV LED' => 'ph-television',
-                  'Minibar' => 'ph-wine',
-                  'Balkon' => 'ph-door-open',
-                  'AC' => 'ph-snowflake',
-                  'Brankas' => 'ph-lock-key',
-                  'Meja Kerja' => 'ph-desk',
-                  'Sofa' => 'ph-armchair',
-                ];
                 ?>
                 <div class="room-card">
-                  <?php if (!empty($room['foto'])): ?>
-                    <div class="room-card-photo">
-                      <img src="/teman_singgah/assets/uploads/rooms/<?= htmlspecialchars($room['foto']) ?>"
-                        alt="<?= htmlspecialchars($room['nama']) ?>" />
-                    </div>
-                  <?php endif; ?>
+
+                  <!-- Foto / Placeholder -->
+                  <div class="room-card-photo">
+                    <?php if (!empty($room['foto'])): ?>
+                      <?php $foto_src = str_starts_with($room['foto'], 'http')
+                        ? $room['foto']
+                        : '/teman_singgah/assets/uploads/rooms/' . htmlspecialchars($room['foto']); ?>
+                      <img src="<?= $foto_src ?>" alt="<?= htmlspecialchars($room['nama']) ?>" />
+                    <?php else: ?>
+                      <div class="room-photo-placeholder">
+                        <span><?= htmlspecialchars($room['nama']) ?></span>
+                      </div>
+                    <?php endif; ?>
+                  </div>
+
+                  <!-- Body -->
                   <div class="room-card-body">
-                    <div class="room-card-top">
-                      <div class="room-card-info">
-                        <h4 class="room-card-name"><?= htmlspecialchars($room['nama']) ?></h4>
-                        <div class="room-card-meta">
-                          <?php if ($room['ukuran_m2']): ?>
-                            <span><i class="ph-bold ph-arrows-out-simple"></i> <?= $room['ukuran_m2'] ?> m²</span>
-                          <?php endif; ?>
-                          <span><i class="ph-bold ph-users"></i> Maks. <?= $room['max_tamu'] ?> tamu</span>
-                        </div>
-                      </div>
-                      <div class="room-card-price">
-                        <span class="room-price-amount">
-                          Rp <?= number_format($room['harga_malam'], 0, ',', '.') ?>
-                        </span>
-                        <span class="room-price-unit">/ malam</span>
-                      </div>
-                    </div>
+
+                    <h4 class="room-card-name"><?= htmlspecialchars($room['nama']) ?></h4>
 
                     <?php if (!empty($room['deskripsi'])): ?>
                       <p class="room-card-desc"><?= htmlspecialchars($room['deskripsi']) ?></p>
                     <?php endif; ?>
 
+                    <div class="room-card-meta">
+                      <?php if (!empty($room['ukuran_m2'])): ?>
+                        <span>
+                          <i class="ph-bold ph-arrows-out-simple"></i>
+                          <?= (int) $room['ukuran_m2'] ?> m²
+                        </span>
+                      <?php endif; ?>
+                      <span>
+                        <i class="ph-bold ph-users"></i>
+                        <?= (int) $room['max_tamu'] ?> Tamu
+                      </span>
+                    </div>
+
                     <?php if (!empty($fasilitas_kamar)): ?>
-                      <div class="room-facilities">
-                        <?php foreach ($fasilitas_kamar as $f):
-                          $icon = $fasilitas_icons[$f] ?? 'ph-check-circle';
-                          ?>
-                          <span class="room-facility-chip">
-                            <i class="ph-bold <?= $icon ?>"></i>
-                            <?= htmlspecialchars($f) ?>
-                          </span>
+                      <ul class="room-amenities">
+                        <?php foreach ($fasilitas_kamar as $f): ?>
+                          <li><?= htmlspecialchars($f) ?></li>
                         <?php endforeach; ?>
-                      </div>
+                      </ul>
                     <?php endif; ?>
+
+                    <!-- Footer: harga + tombol -->
+                    <div class="room-card-footer">
+                      <div class="room-price-wrap">
+                        <span class="room-price-amount">
+                          Rp <?= number_format($room['harga_malam'], 0, ',', '.') ?>
+                        </span>
+                        <span class="room-price-unit">/ malam</span>
+                      </div>
+                      <a href="./payment_confirm.php?listing=<?= $listing_id ?>&room=<?= $room['id'] ?>">
+                        <button class="room-book-btn">Pilih Kamar</button>
+                      </a>
+                    </div>
+
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -409,7 +416,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
             </div>
             <div class="policy-item">
               <span class="policy-icon">
-                <i class="ph-bold <?= $policies['boleh_hewan'] ? 'ph-paw-print' : 'ph-paw-print' ?>"></i>
+                <i class="ph-bold ph-paw-print"></i>
               </span>
               <div class="policy-text">
                 <strong>Hewan Peliharaan</strong>
@@ -547,9 +554,11 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
                 </div>
               </div>
             </div>
-            <button class="host-chat-button">
-              <i class="ph-bold ph-chat-circle-text"></i> Hubungi Host
-            </button>
+            <a href="./messages.php?host=<?= (int) $listing['host_id'] ?>&listing=<?= $listing_id ?>">
+              <button class="host-chat-button">
+                <i class="ph-bold ph-chat-circle-text"></i> Hubungi Host
+              </button>
+            </a>
           </div>
         </section>
 
@@ -664,7 +673,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         <h3 class="footer-title">Navigasi</h3>
         <ul class="footer-links">
           <li><a href="../../index.php" class="footer-link">Beranda</a></li>
-          <li><a href="./promo_deals.php" class="footer-link">Promo & Deals</a></li>
+          <li><a href="./promo_deals.php" class="footer-link">Promo &amp; Deals</a></li>
           <li><a href="./become_host.php" class="footer-link">Jadi Host</a></li>
           <li><a href="./about_us.php" class="footer-link">Tentang Kami</a></li>
           <li><a href="./account.php" class="footer-link">Akun</a></li>
@@ -686,7 +695,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
       <div class="footer-legal">
         <a href="" class="footer-link bottom">Kebijakan Privasi</a>
         <span class="footer-dot">•</span>
-        <a href="" class="footer-link bottom">Syarat & Ketentuan</a>
+        <a href="" class="footer-link bottom">Syarat &amp; Ketentuan</a>
       </div>
     </div>
   </footer>
@@ -704,6 +713,55 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
   <?php if ($can_review): ?>
     <script src="../../popups/review_popup.js"></script>
   <?php endif; ?>
+
+  <script>
+    // ── Share ─────────────────────────────────────────────
+    document.getElementById('btnShare')?.addEventListener('click', async () => {
+      const data = {
+        title: <?= json_encode($listing['judul']) ?>,
+        text: 'Lihat penginapan ini di Teman Singgah!',
+        url: window.location.href,
+      };
+      if (navigator.share) {
+        try { await navigator.share(data); } catch (_) { }
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        const btn = document.getElementById('btnShare');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="ph-bold ph-check"></i> Link disalin!';
+        setTimeout(() => btn.innerHTML = orig, 2000);
+      }
+    });
+
+    // ── Simpan (toggle) ───────────────────────────────────
+    const SAVE_KEY = 'saved_listings';
+    const listingId = <?= $listing_id ?>;
+    const btnSave = document.getElementById('btnSave');
+
+    function getSaved() {
+      try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]'); } catch { return []; }
+    }
+    function updateSaveBtn() {
+      const saved = getSaved().includes(listingId);
+      btnSave.classList.toggle('active', saved);
+      btnSave.innerHTML = saved
+        ? '<i class="ph-fill ph-heart"></i> Tersimpan'
+        : '<i class="ph-bold ph-heart"></i> Simpan';
+    }
+
+    btnSave?.addEventListener('click', () => {
+      let saved = getSaved();
+      if (saved.includes(listingId)) {
+        saved = saved.filter(id => id !== listingId);
+      } else {
+        saved.push(listingId);
+      }
+      localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
+      updateSaveBtn();
+    });
+
+    updateSaveBtn();
+  </script>
 </body>
 
 </html>

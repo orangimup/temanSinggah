@@ -190,7 +190,7 @@
               <div class="expand-step-title">3. Review reservasi anda</div>
             </div>
             <div id="review-content" class="expand-review-content">
-              <a href="./payment_success.html">
+              <a href="./payment_success.php">
                 <button class="expand-confirm-button">
                   Konfirmasi dan Bayar
                 </button>

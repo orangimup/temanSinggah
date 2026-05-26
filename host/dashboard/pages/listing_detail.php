@@ -663,7 +663,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     $thumbs[] = $p;
             }
             $coverSrc = $cover
-                ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($cover['nama_file'])
+                ? (str_starts_with($cover['nama_file'], 'http') ? $cover['nama_file'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($cover['nama_file']))
                 : null;
             ?>
             <?php if ($coverSrc): ?>
@@ -674,7 +674,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
 
             <?php for ($i = 0; $i < 4; $i++):
                 $src = isset($thumbs[$i])
-                    ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($thumbs[$i]['nama_file'])
+                    ? (str_starts_with($nama_file, 'http') ? $nama_file : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($nama_file))
                     : null;
                 ?>
                 <?php if ($src): ?>

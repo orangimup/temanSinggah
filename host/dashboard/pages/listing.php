@@ -358,7 +358,7 @@ function statusInfo(string $s): array
           <tbody>
             <?php foreach ($listings as $l):
               $foto = !empty($l['foto_cover'])
-                ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($l['foto_cover'])
+                ? (str_starts_with($l['foto_cover'], 'http') ? $l['foto_cover'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($l['foto_cover']))
                 : '';
               [$label, $dot] = statusInfo($l['status'] ?? '');
 
@@ -418,7 +418,7 @@ function statusInfo(string $s): array
       <?php else: ?>
         <?php foreach ($listings as $l):
           $foto = !empty($l['foto_cover'])
-            ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($l['foto_cover'])
+            ? (str_starts_with($l['foto_cover'], 'http') ? $l['foto_cover'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($l['foto_cover']))
             : '';
           [$label, $dot] = statusInfo($l['status'] ?? '');
           $listingId = (int) $l['id'];
