@@ -7,6 +7,26 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
   exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_status') {
+  header('Content-Type: application/json');
+  $listing_id = (int) ($_POST['listing_id'] ?? 0);
+  $new_status = trim($_POST['new_status'] ?? '');
+  if (!$listing_id || !in_array($new_status, ['aktif', 'nonaktif'])) {
+    echo json_encode(['success' => false, 'message' => 'Parameter tidak valid.']);
+    exit;
+  }
+  $stmt = mysqli_prepare($koneksi, "UPDATE listings SET status = ? WHERE id = ?");
+  mysqli_stmt_bind_param($stmt, 'si', $new_status, $listing_id);
+  $ok = mysqli_stmt_execute($stmt);
+  mysqli_stmt_close($stmt);
+  echo json_encode(
+    $ok
+    ? ['success' => true, 'new_status' => $new_status]
+    : ['success' => false, 'message' => 'Gagal memperbarui status.']
+  );
+  exit;
+}
+
 $result = mysqli_query($koneksi, "
     SELECT
         l.id,
@@ -22,23 +42,48 @@ $result = mysqli_query($koneksi, "
         l.kamar_mandi,
         l.status,
         l.dibuat_pada,
+        l.deskripsi,
+        l.kebijakan_pembatalan,
+        l.min_malam,
+        l.jam_checkin,
+        l.jam_checkout,
         u.nama        AS host_nama,
         u.photo       AS host_photo,
         lp.nama_file  AS foto_cover,
+        lp2.boleh_hewan,
+        lp2.boleh_merokok,
+        lp2.boleh_anak,
         COUNT(DISTINCT b.id)      AS total_booking,
         ROUND(AVG(r.rating), 1)   AS rating_avg
     FROM listings l
     JOIN users u ON l.host_id = u.id
     LEFT JOIN listing_photos lp ON lp.listing_id = l.id AND lp.adalah_cover = 1
+    LEFT JOIN listing_policies lp2 ON lp2.listing_id = l.id
     LEFT JOIN bookings b ON b.listing_id = l.id
-    LEFT JOIN reviews r ON r.booking_id = b.id
+    LEFT JOIN reviews r ON r.listing_id = l.id
     GROUP BY
         l.id, l.judul, l.tipe_properti, l.tipe_privasi, l.tipe_booking,
         l.lokasi, l.harga_malam, l.max_tamu, l.kamar_tidur, l.tempat_tidur,
-        l.kamar_mandi, l.status, l.dibuat_pada, u.nama, u.photo, lp.nama_file
+        l.kamar_mandi, l.status, l.dibuat_pada, l.deskripsi,
+        l.kebijakan_pembatalan, l.min_malam, l.jam_checkin, l.jam_checkout,
+        u.nama, u.photo, lp.nama_file,
+        lp2.boleh_hewan, lp2.boleh_merokok, lp2.boleh_anak
     ORDER BY l.dibuat_pada DESC
 ");
+
+$rooms_map = [];
+$rooms_result = mysqli_query($koneksi, "SELECT listing_id, nama FROM listing_rooms ORDER BY urutan ASC, id ASC");
+while ($r = mysqli_fetch_assoc($rooms_result)) {
+  $rooms_map[$r['listing_id']][] = $r['nama'];
+}
+
+$amenities_map = [];
+$am_result = mysqli_query($koneksi, "SELECT listing_id, nama_fasilitas FROM listing_amenities");
+while ($r = mysqli_fetch_assoc($am_result)) {
+  $amenities_map[$r['listing_id']][] = $r['nama_fasilitas'];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -73,7 +118,7 @@ $result = mysqli_query($koneksi, "
 
     .table-search-wrap:focus-within {
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 4px rgba(139, 37, 0, 0.08);
+      box-shadow: 0 0 0 4px rgba(139, 37, 0, .08);
     }
 
     .table-search-icon {
@@ -106,7 +151,6 @@ $result = mysqli_query($koneksi, "
       font-weight: var(--font-regular);
     }
 
-    /* Col num */
     .table-container .managed-table thead tr th.col-num {
       text-align: center;
       width: 65px;
@@ -125,7 +169,6 @@ $result = mysqli_query($koneksi, "
       font-weight: var(--font-regular);
     }
 
-    /* Sort dropdown */
     .sort-dropdown {
       position: relative;
     }
@@ -135,10 +178,10 @@ $result = mysqli_query($koneksi, "
       position: absolute;
       right: 0;
       top: calc(100% + 6px);
-      background: #ffffff;
+      background: #fff;
       border: 1px solid var(--color-border, #e5e7eb);
       border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
       z-index: 200;
       min-width: 210px;
       overflow: hidden;
@@ -156,7 +199,7 @@ $result = mysqli_query($koneksi, "
       font-size: 14px;
       cursor: pointer;
       color: #374151;
-      transition: background 0.15s;
+      transition: background .15s;
       font-family: var(--font-family);
     }
 
@@ -176,26 +219,6 @@ $result = mysqli_query($koneksi, "
       margin: 4px 0;
     }
 
-    /* Rating cell */
-    .rating-cell {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: var(--text-sm);
-      font-weight: 500;
-    }
-
-    .rating-cell i {
-      color: #f59e0b;
-      font-size: 0.85rem;
-    }
-
-    .rating-cell .no-rating {
-      color: var(--color-text-disabled);
-      font-weight: 400;
-    }
-
-    /* Pill badges untuk tipe */
     .pill {
       display: inline-block;
       padding: 2px 9px;
@@ -225,7 +248,29 @@ $result = mysqli_query($koneksi, "
       color: #a16207;
     }
 
-    /* Booking count */
+    .pill-properti {
+      background: #fdf4ff;
+      color: #7e22ce;
+    }
+
+    .rating-cell {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+
+    .rating-cell i {
+      color: #f59e0b;
+      font-size: .85rem;
+    }
+
+    .rating-cell .no-rating {
+      color: var(--color-text-disabled);
+      font-weight: 400;
+    }
+
     .booking-count {
       font-size: var(--text-sm);
       color: var(--color-text-primary);
@@ -238,19 +283,510 @@ $result = mysqli_query($koneksi, "
       font-size: 11px;
     }
 
-    /* Floor plan mini info */
-    .floor-info {
+    .kamar-chips {
       display: flex;
-      gap: 8px;
+      gap: 4px;
       flex-wrap: wrap;
-      font-size: 11.5px;
+    }
+
+    .kamar-chip {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      background: var(--color-bg-section, #f9fafb);
+      border: 1px solid var(--color-border-subtle, #e5e7eb);
+      border-radius: 6px;
+      padding: 1px 7px;
+      white-space: nowrap;
+    }
+
+    .kamar-chip-more {
+      color: var(--color-text-hint);
+      font-style: italic;
+    }
+
+    .detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: var(--z-modal);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .detail-overlay.show {
+      display: flex;
+    }
+
+    .detail-modal {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-2xl);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .20);
+      border: 1.5px solid var(--color-border-subtle);
+      width: 100%;
+      max-width: 880px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .dm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1.5px solid var(--color-border-subtle);
+      flex-shrink: 0;
+    }
+
+    .dm-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dm-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--font-bold);
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+
+    .dm-subtitle {
+      font-size: var(--text-sm);
       color: var(--color-text-secondary);
     }
 
-    .floor-info span {
+    .dm-close {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      background: transparent;
       display: flex;
       align-items: center;
-      gap: 3px;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      font-size: var(--text-base);
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .dm-close:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text-primary);
+      background: var(--color-bg-section);
+    }
+
+    .dm-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .dm-cover {
+      width: 100%;
+      height: 220px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .dm-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dm-cover .no-photo {
+      color: var(--color-text-hint);
+      font-size: 3rem;
+    }
+
+    .dm-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .dm-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .dm-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dm-section-label {
+      font-size: 11px;
+      font-weight: var(--font-semibold);
+      color: var(--color-text-disabled);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 10px;
+    }
+
+    .dm-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dm-info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: var(--text-sm);
+    }
+
+    .dm-info-row i {
+      font-size: .95rem;
+      color: var(--color-text-hint);
+      width: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .dm-info-row .lbl {
+      color: var(--color-text-secondary);
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .dm-info-row .val {
+      color: var(--color-text-primary);
+      font-weight: var(--font-medium);
+    }
+
+    .dm-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dm-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: var(--radius-xl);
+      background: var(--color-bg-section);
+      border: 1px solid var(--color-border-subtle);
+      font-size: 12.5px;
+      color: var(--color-text-secondary);
+    }
+
+    .dm-stat i {
+      font-size: .85rem;
+      color: var(--color-text-hint);
+    }
+
+    .dm-stat strong {
+      color: var(--color-text-primary);
+    }
+
+    .dm-host {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--color-bg-section);
+      border-radius: var(--radius-xl);
+    }
+
+    .dm-host-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--color-primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: var(--font-bold);
+      font-size: var(--text-sm);
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .dm-host-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .dm-host-name {
+      font-size: var(--text-sm);
+      font-weight: var(--font-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .dm-host-sub {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+    }
+
+    .dm-deskripsi {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      background: var(--color-bg-section);
+      border-radius: var(--radius-xl);
+      padding: 14px 16px;
+      border-left: 3px solid var(--color-primary-light-active, #f3c4b0);
+    }
+
+    .dm-room-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .dm-room-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 14px;
+      border-radius: var(--radius-lg);
+      background: var(--color-bg-section);
+      border: 1px solid var(--color-border-subtle);
+      font-size: var(--text-sm);
+      color: var(--color-text-primary);
+    }
+
+    .dm-room-item i {
+      color: var(--color-text-hint);
+      font-size: .85rem;
+    }
+
+    .dm-amenity-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .dm-amenity-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: var(--color-bg-section);
+      border: 1px solid var(--color-border-subtle);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .dm-amenity-chip i {
+      font-size: .75rem;
+    }
+
+    .dm-policy-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .dm-policy-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: var(--text-sm);
+    }
+
+    .dm-policy-row i {
+      color: var(--color-text-hint);
+      font-size: .95rem;
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    .dm-policy-lbl {
+      color: var(--color-text-secondary);
+      min-width: 120px;
+    }
+
+    .dm-policy-val {
+      color: var(--color-text-primary);
+      font-weight: var(--font-medium);
+    }
+
+    .pol-ok {
+      color: #16a34a;
+    }
+
+    .pol-no {
+      color: #dc2626;
+    }
+
+    .dm-footer {
+      padding: 18px 28px;
+      border-top: 1.5px solid var(--color-border-subtle);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dm-footer-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dm-footer-label {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .btn-toggle-status {
+      padding: 10px 20px;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--color-border);
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-semibold);
+      cursor: pointer;
+      font-family: var(--font-family);
+      transition: all var(--transition-base);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-toggle-status:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text-primary);
+      background: var(--color-bg-section);
+    }
+
+    .btn-toggle-status.state-nonaktifkan:hover {
+      border-color: #dc2626;
+      color: #dc2626;
+      background: #fff1f0;
+    }
+
+    .btn-toggle-status.state-aktifkan {
+      border-color: #16a34a;
+      color: #16a34a;
+    }
+
+    .btn-toggle-status.state-aktifkan:hover {
+      background: #f0fdf4;
+    }
+
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .40);
+      z-index: calc(var(--z-modal) + 10);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+
+    .confirm-overlay.show {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-2xl);
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, .14);
+      border: 1.5px solid var(--color-border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .confirm-box h3 {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: var(--font-bold);
+      color: var(--color-text-primary);
+      margin: 0;
+    }
+
+    .confirm-box p {
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      margin: 8px 0 0;
+      line-height: 1.65;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-batal {
+      flex: 1;
+      padding: 11px 20px;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--color-border);
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-semibold);
+      cursor: pointer;
+      font-family: var(--font-family);
+      transition: all var(--transition-base);
+    }
+
+    .btn-batal:hover {
+      border-color: var(--color-border-strong);
+      color: var(--color-text-primary);
+      background: var(--color-bg-section);
+    }
+
+    .btn-hapus-confirm {
+      flex: 1;
+      padding: 11px 20px;
+      border-radius: var(--radius-xl);
+      border: none;
+      background: var(--color-primary);
+      color: #fff;
+      font-size: var(--text-sm);
+      font-weight: var(--font-semibold);
+      cursor: pointer;
+      font-family: var(--font-family);
+      transition: all var(--transition-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-hapus-confirm:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-hapus-confirm:disabled {
+      opacity: .6;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -296,8 +832,7 @@ $result = mysqli_query($koneksi, "
           <div class="nav-section-title">Sistem</div>
           <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i
               class="ph-bold ph-gear"></i>Pengaturan</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i
-              class="ph-bold ph-notepad"></i>Aktivitas</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
     </aside>
@@ -340,33 +875,25 @@ $result = mysqli_query($koneksi, "
               <i class="ph-bold ph-caret-down"></i>
             </button>
             <div class="sort-menu" id="sortMenu">
-              <div class="sort-menu-item active" onclick="selectSort('date_newest','Terbaru',this)">
-                <i class="ph-bold ph-calendar"></i> Tanggal Terbaru
-              </div>
-              <div class="sort-menu-item" onclick="selectSort('date_oldest','Terlama',this)">
-                <i class="ph-bold ph-calendar"></i> Tanggal Terlama
-              </div>
+              <div class="sort-menu-item active" onclick="selectSort('date_newest','Terbaru',this)"><i
+                  class="ph-bold ph-calendar"></i> Tanggal Terbaru</div>
+              <div class="sort-menu-item" onclick="selectSort('date_oldest','Terlama',this)"><i
+                  class="ph-bold ph-calendar"></i> Tanggal Terlama</div>
               <div class="sort-menu-divider"></div>
-              <div class="sort-menu-item" onclick="selectSort('name_asc','Nama A–Z',this)">
-                <i class="ph-bold ph-sort-ascending"></i> Nama A–Z
-              </div>
-              <div class="sort-menu-item" onclick="selectSort('name_desc','Nama Z–A',this)">
-                <i class="ph-bold ph-sort-descending"></i> Nama Z–A
-              </div>
+              <div class="sort-menu-item" onclick="selectSort('name_asc','Nama A-Z',this)"><i
+                  class="ph-bold ph-sort-ascending"></i> Nama A-Z</div>
+              <div class="sort-menu-item" onclick="selectSort('name_desc','Nama Z-A',this)"><i
+                  class="ph-bold ph-sort-descending"></i> Nama Z-A</div>
               <div class="sort-menu-divider"></div>
-              <div class="sort-menu-item" onclick="selectSort('price_high','Harga Tertinggi',this)">
-                <i class="ph-bold ph-trend-up"></i> Harga Tertinggi
-              </div>
-              <div class="sort-menu-item" onclick="selectSort('price_low','Harga Terendah',this)">
-                <i class="ph-bold ph-trend-down"></i> Harga Terendah
-              </div>
+              <div class="sort-menu-item" onclick="selectSort('price_high','Harga Tertinggi',this)"><i
+                  class="ph-bold ph-trend-up"></i> Harga Tertinggi</div>
+              <div class="sort-menu-item" onclick="selectSort('price_low','Harga Terendah',this)"><i
+                  class="ph-bold ph-trend-down"></i> Harga Terendah</div>
               <div class="sort-menu-divider"></div>
-              <div class="sort-menu-item" onclick="selectSort('rating_high','Rating Tertinggi',this)">
-                <i class="ph-bold ph-star"></i> Rating Tertinggi
-              </div>
-              <div class="sort-menu-item" onclick="selectSort('booking_most','Booking Terbanyak',this)">
-                <i class="ph-bold ph-calendar-check"></i> Booking Terbanyak
-              </div>
+              <div class="sort-menu-item" onclick="selectSort('rating_high','Rating Tertinggi',this)"><i
+                  class="ph-bold ph-star"></i> Rating Tertinggi</div>
+              <div class="sort-menu-item" onclick="selectSort('booking_most','Booking Terbanyak',this)"><i
+                  class="ph-bold ph-calendar-check"></i> Booking Terbanyak</div>
             </div>
           </div>
         </div>
@@ -380,9 +907,12 @@ $result = mysqli_query($koneksi, "
                   <th>Nama Listing</th>
                   <th>Host</th>
                   <th>Lokasi</th>
-                  <th>Detail</th>
+                  <th>Kamar</th>
                   <th>Harga/Malam</th>
-                  <th>Booking</th>
+                  <th>Tipe Properti</th>
+                  <th>Tipe Privasi</th>
+                  <th>Tipe Booking</th>
+                  <th>Total Booking</th>
                   <th>Rating</th>
                   <th>Status</th>
                   <th>Tgl Dibuat</th>
@@ -393,45 +923,68 @@ $result = mysqli_query($koneksi, "
                 <?php
                 $no = 1;
                 while ($row = mysqli_fetch_assoc($result)):
-                  // Foto listing (cover)
                   $foto_src = !empty($row['foto_cover'])
                     ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover'])
                     : null;
-
-                  // Foto host dari users table
                   $host_photo_path = !empty($row['host_photo']) &&
                     file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['host_photo'])
                     ? '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($row['host_photo'])
                     : null;
                   $host_initial = strtoupper(mb_substr($row['host_nama'], 0, 2));
-
-                  // Status
                   $status = strtolower($row['status']);
-                  $status_class = match ($status) {
-                    'aktif' => 'success',
-                    'nonaktif' => 'danger',
-                    'draft' => 'neutral',
-                    default => 'neutral'
-                  };
-
-                  // Tipe booking
+                  $status_class = match ($status) { 'aktif' => 'success', 'nonaktif' => 'danger', 'draft' => 'neutral', default => 'neutral'};
                   $tipe_booking = strtolower($row['tipe_booking']);
-                  $booking_pill_class = $tipe_booking === 'instan' ? 'pill-instan' : 'pill-permintaan';
-                  $booking_label = $tipe_booking === 'instan' ? 'Instan' : 'Konfirmasi';
-
+                  $booking_pcls = $tipe_booking === 'instan' ? 'pill-instan' : 'pill-permintaan';
+                  $booking_lbl = $tipe_booking === 'instan' ? 'Instan' : 'Konfirmasi';
+                  $tipe_privasi = strtolower($row['tipe_privasi'] ?? '');
+                  $privasi_lbl = $tipe_privasi === 'seluruh' ? 'Seluruh Tempat' : 'Per Kamar';
+                  $tipe_properti = ucfirst(strtolower($row['tipe_properti'] ?? '-'));
                   $harga = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
                   $rating = $row['rating_avg'] ?: null;
                   $tgl = date('d M Y', strtotime($row['dibuat_pada']));
+                  $listing_rooms = $rooms_map[$row['id']] ?? [];
+                  $kamar_show = array_slice($listing_rooms, 0, 2);
+                  $kamar_lebih = count($listing_rooms) - count($kamar_show);
+                  $panel_data = htmlspecialchars(json_encode([
+                    'id' => $row['id'],
+                    'judul' => $row['judul'],
+                    'tipe_properti' => $row['tipe_properti'],
+                    'tipe_privasi' => $row['tipe_privasi'],
+                    'tipe_booking' => $row['tipe_booking'],
+                    'lokasi' => $row['lokasi'],
+                    'harga_malam' => $row['harga_malam'],
+                    'max_tamu' => $row['max_tamu'],
+                    'kamar_tidur' => $row['kamar_tidur'],
+                    'tempat_tidur' => $row['tempat_tidur'],
+                    'kamar_mandi' => $row['kamar_mandi'],
+                    'min_malam' => $row['min_malam'],
+                    'jam_checkin' => substr($row['jam_checkin'] ?? '14:00:00', 0, 5),
+                    'jam_checkout' => substr($row['jam_checkout'] ?? '12:00:00', 0, 5),
+                    'status' => $row['status'],
+                    'dibuat_pada' => $row['dibuat_pada'],
+                    'deskripsi' => $row['deskripsi'] ?? '',
+                    'kebijakan_pembatalan' => $row['kebijakan_pembatalan'] ?? '',
+                    'boleh_hewan' => $row['boleh_hewan'],
+                    'boleh_merokok' => $row['boleh_merokok'],
+                    'boleh_anak' => $row['boleh_anak'],
+                    'total_booking' => $row['total_booking'],
+                    'rating_avg' => $rating,
+                    'host_nama' => $row['host_nama'],
+                    'host_photo' => $host_photo_path,
+                    'foto_cover' => $foto_src,
+                    'rooms' => $rooms_map[$row['id']] ?? [],
+                    'amenities' => $amenities_map[$row['id']] ?? [],
+                  ]), ENT_QUOTES);
                   ?>
                   <tr data-status="<?= htmlspecialchars($status) ?>" data-booking="<?= htmlspecialchars($tipe_booking) ?>"
                     data-judul="<?= htmlspecialchars($row['judul']) ?>"
                     data-host="<?= htmlspecialchars($row['host_nama']) ?>"
                     data-lokasi="<?= htmlspecialchars($row['lokasi']) ?>" data-harga="<?= (int) $row['harga_malam'] ?>"
                     data-rating="<?= $rating ?? 0 ?>" data-booking-count="<?= (int) $row['total_booking'] ?>"
-                    data-tanggal="<?= htmlspecialchars($row['dibuat_pada']) ?>">
+                    data-tanggal="<?= htmlspecialchars($row['dibuat_pada']) ?>" data-panel="<?= $panel_data ?>">
+
                     <td class="col-num"><?= $no++ ?></td>
 
-                    <!-- Nama Listing + foto cover -->
                     <td>
                       <div class="table-cell">
                         <?php if ($foto_src): ?>
@@ -442,23 +995,15 @@ $result = mysqli_query($koneksi, "
                             <i class="ph-bold ph-image" style="color:#d1d5db;font-size:1.2rem;"></i>
                           </div>
                         <?php endif; ?>
-                        <div>
-                          <h3 class="table-name"><?= htmlspecialchars($row['judul']) ?></h3>
-                          <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
-                            <span class="pill pill-tipe"><?= htmlspecialchars(ucfirst($row['tipe_properti'])) ?></span>
-                            <span
-                              class="pill pill-privasi"><?= $row['tipe_privasi'] === 'seluruh' ? 'Seluruh tempat' : 'Per kamar' ?></span>
-                          </div>
-                        </div>
+                        <h3 class="table-name"><?= htmlspecialchars($row['judul']) ?></h3>
                       </div>
                     </td>
 
-                    <!-- Host + foto profil host yang beneran -->
                     <td>
                       <div class="table-cell">
                         <?php if ($host_photo_path): ?>
                           <div class="table-avatar" style="padding:0;overflow:hidden;">
-                            <img src="<?= $host_photo_path ?>" alt="Foto Host"
+                            <img src="<?= $host_photo_path ?>" alt=""
                               style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
                           </div>
                         <?php else: ?>
@@ -468,59 +1013,60 @@ $result = mysqli_query($koneksi, "
                       </div>
                     </td>
 
-                    <!-- Lokasi -->
-                    <td><?= htmlspecialchars($row['lokasi']) ?></td>
-
-                    <!-- Detail (floor plan ringkas) -->
                     <td>
-                      <div class="floor-info">
-                        <span><i class="ph-bold ph-users"></i> <?= $row['max_tamu'] ?> tamu</span>
-                        <span><i class="ph-bold ph-bed"></i> <?= $row['kamar_tidur'] ?> KT</span>
-                        <span><i class="ph-bold ph-bathtub"></i> <?= $row['kamar_mandi'] ?> KM</span>
-                      </div>
+                      <?php
+                      $lf = htmlspecialchars($row['lokasi']);
+                      $ls = mb_strlen($row['lokasi']) > 30 ? htmlspecialchars(mb_substr($row['lokasi'], 0, 30)) . '...' : $lf;
+                      ?>
+                      <span title="<?= $lf ?>"><?= $ls ?></span>
                     </td>
 
-                    <!-- Harga -->
+                    <td>
+                      <?php if (!empty($kamar_show)): ?>
+                        <div class="kamar-chips">
+                          <?php foreach ($kamar_show as $kn): ?><span
+                              class="kamar-chip"><?= htmlspecialchars($kn) ?></span><?php endforeach; ?>
+                          <?php if ($kamar_lebih > 0): ?><span class="kamar-chip kamar-chip-more">+<?= $kamar_lebih ?>
+                              lainnya</span><?php endif; ?>
+                        </div>
+                      <?php else: ?><span style="font-size:12px;color:var(--color-text-hint);">-</span><?php endif; ?>
+                    </td>
+
                     <td><?= $harga ?></td>
 
-                    <!-- Booking: tipe + jumlah -->
+                    <td><span class="pill pill-properti"><?= htmlspecialchars($tipe_properti) ?></span></td>
+
+                    <td><span class="pill pill-privasi"><?= htmlspecialchars($privasi_lbl) ?></span></td>
+
+                    <td><span class="pill <?= $booking_pcls ?>"><?= $booking_lbl ?></span></td>
+
                     <td>
-                      <span class="pill <?= $booking_pill_class ?>"><?= $booking_label ?></span>
-                      <div class="booking-count" style="margin-top:4px;">
-                        <?= (int) $row['total_booking'] ?> <span>booking</span>
-                      </div>
+                      <div class="booking-count"><?= (int) $row['total_booking'] ?> <span>booking</span></div>
                     </td>
 
-                    <!-- Rating -->
                     <td>
                       <?php if ($rating): ?>
                         <div class="rating-cell"><i class="ph-fill ph-star"></i><?= $rating ?></div>
                       <?php else: ?>
-                        <div class="rating-cell"><span class="no-rating">–</span></div>
+                        <div class="rating-cell"><span class="no-rating">-</span></div>
                       <?php endif; ?>
                     </td>
 
-                    <!-- Status -->
                     <td>
                       <span class="table-badge <?= $status_class ?>">
                         <span class="badge-dot"></span><?= ucfirst($row['status']) ?>
                       </span>
                     </td>
 
-                    <!-- Tgl dibuat -->
                     <td><?= $tgl ?></td>
 
-                    <!-- Aksi -->
                     <td>
                       <div class="action-group">
-                        <button class="action-button warning" aria-label="Edit listing" title="Edit">
-                          <i class="ph-bold ph-pencil"></i>
-                        </button>
-                        <button class="action-button info" aria-label="Lihat detail" title="Lihat">
+                        <button class="action-button info btn-detail" title="Lihat Detail">
                           <i class="ph-bold ph-eye"></i>
                         </button>
-                        <button class="action-button error" aria-label="Hapus listing" title="Hapus"
-                          onclick="hapusListing(<?= $row['id'] ?>)">
+                        <button class="action-button error btn-hapus" title="Hapus Listing" data-id="<?= $row['id'] ?>"
+                          data-judul="<?= htmlspecialchars($row['judul']) ?>">
                           <i class="ph-bold ph-trash"></i>
                         </button>
                       </div>
@@ -539,8 +1085,135 @@ $result = mysqli_query($koneksi, "
     </div>
   </div>
 
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-modal">
+      <div class="dm-header">
+        <div class="dm-header-left">
+          <h2 class="dm-title" id="dmJudul"></h2>
+          <span class="dm-subtitle" id="dmSubtitle"></span>
+        </div>
+        <button class="dm-close" id="dmClose" type="button"><i class="ph-bold ph-x"></i></button>
+      </div>
+
+      <div class="dm-body">
+        <div class="dm-cover" id="dmCover"><i class="ph-bold ph-image no-photo"></i></div>
+
+        <div class="dm-pills" id="dmPills"></div>
+
+        <div class="dm-cols">
+
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div>
+              <div class="dm-section-label">Informasi Umum</div>
+              <div class="dm-info-list">
+                <div class="dm-info-row"><i class="ph-bold ph-map-pin"></i><span class="lbl">Lokasi</span><span
+                    class="val" id="dmLokasi"></span></div>
+                <div class="dm-info-row"><i class="ph-bold ph-currency-circle-dollar"></i><span
+                    class="lbl">Harga/malam</span><span class="val" id="dmHarga"></span></div>
+                <div class="dm-info-row"><i class="ph-bold ph-buildings"></i><span class="lbl">Tipe properti</span><span
+                    class="val" id="dmTipeProperti"></span></div>
+                <div class="dm-info-row"><i class="ph-bold ph-door"></i><span class="lbl">Tipe privasi</span><span
+                    class="val" id="dmTipePrivasi"></span></div>
+                <div class="dm-info-row"><i class="ph-bold ph-calendar-check"></i><span class="lbl">Tipe
+                    booking</span><span class="val" id="dmBooking"></span></div>
+                <div class="dm-info-row"><i class="ph-bold ph-calendar"></i><span class="lbl">Tgl dibuat</span><span
+                    class="val" id="dmTanggal"></span></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="dm-section-label">Host</div>
+              <div class="dm-host">
+                <div class="dm-host-avatar" id="dmHostAvatar"></div>
+                <div>
+                  <div class="dm-host-name" id="dmHostNama"></div>
+                  <div class="dm-host-sub">Host properti ini</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="dmDeskripsiWrap">
+              <div class="dm-section-label">Deskripsi</div>
+              <div class="dm-deskripsi" id="dmDeskripsi"></div>
+            </div>
+
+            <div id="dmKamarWrap">
+              <div class="dm-section-label">Pilihan Kamar</div>
+              <div class="dm-room-list" id="dmKamarList"></div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div>
+              <div class="dm-section-label">Statistik</div>
+              <div class="dm-stats">
+                <div class="dm-stat"><i class="ph-bold ph-users"></i><strong id="dmMaxTamu"></strong> tamu</div>
+                <div class="dm-stat"><i class="ph-bold ph-bed"></i><strong id="dmKamarTidur"></strong> KT</div>
+                <div class="dm-stat"><i class="ph-bold ph-bathtub"></i><strong id="dmKamarMandi"></strong> KM</div>
+                <div class="dm-stat"><i class="ph-bold ph-moon"></i>min <strong id="dmMinMalam"></strong> mlm</div>
+                <div class="dm-stat"><i class="ph-bold ph-calendar-check"></i><strong id="dmTotalBooking"></strong>
+                  booking</div>
+                <div class="dm-stat" id="dmRatingChip" style="display:none;"><i class="ph-fill ph-star"
+                    style="color:#f59e0b;"></i><strong id="dmRating"></strong></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="dm-section-label">Kebijakan</div>
+              <div class="dm-policy-list">
+                <div class="dm-policy-row"><i class="ph-bold ph-clock"></i><span
+                    class="dm-policy-lbl">Check-in</span><span class="dm-policy-val" id="dmCheckin"></span></div>
+                <div class="dm-policy-row"><i class="ph-bold ph-clock"></i><span
+                    class="dm-policy-lbl">Check-out</span><span class="dm-policy-val" id="dmCheckout"></span></div>
+                <div class="dm-policy-row"><i class="ph-bold ph-prohibit"></i><span
+                    class="dm-policy-lbl">Pembatalan</span><span class="dm-policy-val" id="dmKebijakan"></span></div>
+                <div class="dm-policy-row"><i class="ph-bold ph-paw-print"></i><span class="dm-policy-lbl">Hewan
+                    peliharaan</span><span class="dm-policy-val" id="dmHewan"></span></div>
+                <div class="dm-policy-row"><i class="ph-bold ph-cigarette"></i><span
+                    class="dm-policy-lbl">Merokok</span><span class="dm-policy-val" id="dmRokok"></span></div>
+                <div class="dm-policy-row"><i class="ph-bold ph-baby"></i><span
+                    class="dm-policy-lbl">Anak-anak</span><span class="dm-policy-val" id="dmAnak"></span></div>
+              </div>
+            </div>
+
+            <div id="dmFasilitasWrap">
+              <div class="dm-section-label">Fasilitas</div>
+              <div class="dm-amenity-list" id="dmFasilitas"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="dm-footer">
+        <div class="dm-footer-status">
+          <span class="dm-footer-label">Status saat ini:</span>
+          <div id="dmStatusBadge"></div>
+        </div>
+        <button class="btn-toggle-status" id="btnToggleStatus" type="button"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <div>
+        <h3>Hapus Listing?</h3>
+        <p id="confirmMsg"></p>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn-batal" id="btnBatal" type="button">Batal</button>
+        <button class="btn-hapus-confirm" id="btnHapusConfirm" type="button">
+          <i class="ph-bold ph-trash"></i> Ya, Hapus Permanen
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    /* ── Filter ── */
     document.querySelectorAll(".filter-item").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".filter-item").forEach(b => b.classList.remove("active"));
@@ -548,186 +1221,252 @@ $result = mysqli_query($koneksi, "
         applyFilter();
       });
     });
-
     function applyFilter() {
-      const table = document.querySelector(".managed-table");
-      if (!table) return;
-      const filterAttr = document.querySelector(".filter-item.active")?.dataset.filter || "all";
-
+      const table = document.querySelector(".managed-table"); if (!table) return;
+      const f = document.querySelector(".filter-item.active")?.dataset.filter || "all";
       table.querySelectorAll("tbody tr").forEach(row => {
         let show = true;
-        if (filterAttr !== "all") {
-          const [key, value] = filterAttr.split(":");
-          if (key === "status") show = row.dataset.status === value;
-          if (key === "booking") show = row.dataset.booking === value;
-        }
+        if (f !== "all") { const [k, v] = f.split(":"); if (k === "status") show = row.dataset.status === v; if (k === "booking") show = row.dataset.booking === v; }
         show ? delete row.dataset.hiddenFilter : (row.dataset.hiddenFilter = "1");
         rebuildHidden(row);
       });
       resetAndPaginate(table);
     }
+    function rebuildHidden(row) { (row.dataset.hiddenFilter || row.dataset.hiddenSearch) ? (row.dataset.hidden = "1") : delete row.dataset.hidden; }
 
-    function rebuildHidden(row) {
-      (row.dataset.hiddenFilter || row.dataset.hiddenSearch)
-        ? (row.dataset.hidden = "1")
-        : delete row.dataset.hidden;
-    }
-
-    /* ── Sort ── */
     const sortToggleBtn = document.getElementById("sortToggleBtn");
     const sortMenu = document.getElementById("sortMenu");
-    if (sortToggleBtn && sortMenu) {
-      sortToggleBtn.addEventListener("click", e => { e.stopPropagation(); sortMenu.classList.toggle("open"); });
-      document.addEventListener("click", e => {
-        if (!sortMenu.contains(e.target) && e.target !== sortToggleBtn) sortMenu.classList.remove("open");
-      });
-    }
-
-    function selectSort(sortBy, label, el) {
+    sortToggleBtn.addEventListener("click", e => { e.stopPropagation(); sortMenu.classList.toggle("open"); });
+    document.addEventListener("click", e => { if (!sortMenu.contains(e.target) && e.target !== sortToggleBtn) sortMenu.classList.remove("open"); });
+    function selectSort(by, label, el) {
       document.getElementById("sortLabel").textContent = "Urutkan: " + label;
-      document.querySelectorAll(".sort-menu-item").forEach(i => i.classList.remove("active"));
-      el?.classList.add("active");
-      sortMenu.classList.remove("open");
-      applySort(sortBy);
+      document.querySelectorAll(".sort-menu-item").forEach(i => i.classList.remove("active")); el?.classList.add("active");
+      sortMenu.classList.remove("open"); applySort(by);
     }
-
-    function applySort(sortBy) {
-      const table = document.querySelector(".managed-table");
-      const tbody = table?.querySelector("tbody");
-      if (!tbody) return;
+    function applySort(by) {
+      const table = document.querySelector(".managed-table"); const tbody = table?.querySelector("tbody"); if (!tbody) return;
       const rows = Array.from(tbody.querySelectorAll("tr"));
-
       rows.sort((a, b) => {
-        if (sortBy === "date_newest") return new Date(b.dataset.tanggal || 0) - new Date(a.dataset.tanggal || 0);
-        if (sortBy === "date_oldest") return new Date(a.dataset.tanggal || 0) - new Date(b.dataset.tanggal || 0);
-        if (sortBy === "name_asc") return (a.dataset.judul || "").localeCompare(b.dataset.judul || "", "id-ID");
-        if (sortBy === "name_desc") return (b.dataset.judul || "").localeCompare(a.dataset.judul || "", "id-ID");
-        if (sortBy === "price_high") return parseInt(b.dataset.harga || 0) - parseInt(a.dataset.harga || 0);
-        if (sortBy === "price_low") return parseInt(a.dataset.harga || 0) - parseInt(b.dataset.harga || 0);
-        if (sortBy === "rating_high") return parseFloat(b.dataset.rating || 0) - parseFloat(a.dataset.rating || 0);
-        if (sortBy === "booking_most") return parseInt(b.dataset.bookingCount || 0) - parseInt(a.dataset.bookingCount || 0);
+        if (by === "date_newest") return new Date(b.dataset.tanggal || 0) - new Date(a.dataset.tanggal || 0);
+        if (by === "date_oldest") return new Date(a.dataset.tanggal || 0) - new Date(b.dataset.tanggal || 0);
+        if (by === "name_asc") return (a.dataset.judul || "").localeCompare(b.dataset.judul || "", "id-ID");
+        if (by === "name_desc") return (b.dataset.judul || "").localeCompare(a.dataset.judul || "", "id-ID");
+        if (by === "price_high") return parseInt(b.dataset.harga || 0) - parseInt(a.dataset.harga || 0);
+        if (by === "price_low") return parseInt(a.dataset.harga || 0) - parseInt(b.dataset.harga || 0);
+        if (by === "rating_high") return parseFloat(b.dataset.rating || 0) - parseFloat(a.dataset.rating || 0);
+        if (by === "booking_most") return parseInt(b.dataset.bookingCount || 0) - parseInt(a.dataset.bookingCount || 0);
         return 0;
       });
-
-      rows.forEach(row => tbody.appendChild(row));
-      resetAndPaginate(table);
+      rows.forEach(r => tbody.appendChild(r)); resetAndPaginate(table);
     }
 
-    /* ── Search ── */
     document.getElementById("adminSearch")?.addEventListener("input", function () {
-      const q = this.value.trim().toLowerCase();
-      const table = document.querySelector(".managed-table");
-      if (!table) return;
+      const q = this.value.trim().toLowerCase(); const table = document.querySelector(".managed-table"); if (!table) return;
       table.querySelectorAll("tbody tr").forEach(row => {
-        const match = !q
-          || (row.dataset.judul || "").toLowerCase().includes(q)
-          || (row.dataset.host || "").toLowerCase().includes(q)
-          || (row.dataset.lokasi || "").toLowerCase().includes(q);
-        match ? delete row.dataset.hiddenSearch : (row.dataset.hiddenSearch = "1");
-        rebuildHidden(row);
-      });
-      resetAndPaginate(table);
+        const match = !q || (row.dataset.judul || "").toLowerCase().includes(q) || (row.dataset.host || "").toLowerCase().includes(q) || (row.dataset.lokasi || "").toLowerCase().includes(q);
+        match ? delete row.dataset.hiddenSearch : (row.dataset.hiddenSearch = "1"); rebuildHidden(row);
+      }); resetAndPaginate(table);
     });
 
-    /* ── Pagination ── */
-    const ROWS_PER_PAGE = 10;
-
-    function resetAndPaginate(table) { table._adminPage = 1; applyPagination(table); }
-
-    function applyPagination(table) {
-      const page = table._adminPage || 1;
-      const allRows = Array.from(table.querySelectorAll("tbody tr"));
-      const visible = allRows.filter(r => !r.dataset.hidden);
-      const total = visible.length;
-      const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
-      const safe = Math.min(page, totalPages);
-      table._adminPage = safe;
-
-      const start = (safe - 1) * ROWS_PER_PAGE;
-      const end = start + ROWS_PER_PAGE;
-
-      allRows.forEach(r => { r.style.display = r.dataset.hidden ? "none" : ""; });
-      visible.forEach((r, i) => { r.style.display = (i >= start && i < end) ? "" : "none"; });
-
-      let counter = 0;
-      allRows.forEach(row => {
-        const cell = row.querySelector(".col-num");
-        if (!cell) return;
-        cell.textContent = row.style.display === "none" ? "" : ++counter;
+    const RPP = 10;
+    function resetAndPaginate(t) { t._p = 1; paginate(t); }
+    function paginate(table) {
+      const page = table._p || 1, all = Array.from(table.querySelectorAll("tbody tr")), vis = all.filter(r => !r.dataset.hidden);
+      const total = vis.length, tp = Math.max(1, Math.ceil(total / RPP)), safe = Math.min(page, tp);
+      table._p = safe; const s = (safe - 1) * RPP, e = s + RPP;
+      all.forEach(r => { r.style.display = r.dataset.hidden ? "none" : ""; });
+      vis.forEach((r, i) => { r.style.display = (i >= s && i < e) ? "" : "none"; });
+      let c = 0; all.forEach(row => { const cell = row.querySelector(".col-num"); if (!cell) return; cell.textContent = row.style.display === "none" ? "" : ++c; });
+      renderPag(table, safe, tp, total);
+    }
+    function renderPag(table, page, tp, total) {
+      const sec = table.closest(".table-section"), info = sec?.querySelector(".pagination-info"), ctrl = sec?.querySelector(".pagination-controls");
+      if (!info || !ctrl) return;
+      const s = total === 0 ? 0 : (page - 1) * RPP + 1, e = Math.min(page * RPP, total);
+      info.textContent = total === 0 ? "Tidak ada data" : `${s}-${e} dari ${total} listing`;
+      ctrl.innerHTML = "";
+      const mk = (html, dis, cb) => { const b = document.createElement("button"); b.className = "page-btn nav-btn"; b.innerHTML = html; b.disabled = dis; if (!dis) b.addEventListener("click", cb); return b; };
+      ctrl.appendChild(mk('<i class="ph-bold ph-caret-left"></i>', page <= 1, () => { table._p = page - 1; paginate(table); }));
+      pgList(page, tp).forEach(p => {
+        if (p === "...") { const sp = document.createElement("span"); sp.className = "page-ellipsis"; sp.textContent = "..."; ctrl.appendChild(sp); }
+        else { const b = document.createElement("button"); b.className = "page-btn" + (p === page ? " active" : ""); b.textContent = p; b.addEventListener("click", () => { table._p = p; paginate(table); }); ctrl.appendChild(b); }
       });
-
-      renderPagination(table, safe, totalPages, total);
+      ctrl.appendChild(mk('<i class="ph-bold ph-caret-right"></i>', page >= tp, () => { table._p = page + 1; paginate(table); }));
     }
+    function pgList(cur, tot) { if (tot <= 7) return Array.from({ length: tot }, (_, i) => i + 1); const p = [1]; if (cur > 3) p.push("..."); for (let i = Math.max(2, cur - 1); i <= Math.min(tot - 1, cur + 1); i++)p.push(i); if (cur < tot - 2) p.push("..."); p.push(tot); return p; }
 
-    function renderPagination(table, page, totalPages, total) {
-      const section = table.closest(".table-section");
-      const infoEl = section?.querySelector(".pagination-info");
-      const controlsEl = section?.querySelector(".pagination-controls");
-      if (!infoEl || !controlsEl) return;
+    let pendingId = null;
+    const confirmOverlay = document.getElementById("confirmOverlay");
+    const btnBatal = document.getElementById("btnBatal");
+    const btnHapusConfirm = document.getElementById("btnHapusConfirm");
 
-      const start = total === 0 ? 0 : (page - 1) * ROWS_PER_PAGE + 1;
-      const end = Math.min(page * ROWS_PER_PAGE, total);
-      infoEl.textContent = total === 0 ? "Tidak ada data" : `${start}–${end} dari ${total} listing`;
-
-      controlsEl.innerHTML = "";
-
-      const mkBtn = (html, disabled, onClick) => {
-        const btn = document.createElement("button");
-        btn.className = "page-btn nav-btn";
-        btn.innerHTML = html;
-        btn.disabled = disabled;
-        if (!disabled) btn.addEventListener("click", onClick);
-        return btn;
-      };
-
-      controlsEl.appendChild(mkBtn('<i class="ph-bold ph-caret-left"></i>', page <= 1,
-        () => { table._adminPage = page - 1; applyPagination(table); }));
-
-      buildPageList(page, totalPages).forEach(p => {
-        if (p === "...") {
-          const el = document.createElement("span");
-          el.className = "page-ellipsis"; el.textContent = "…";
-          controlsEl.appendChild(el);
-        } else {
-          const btn = document.createElement("button");
-          btn.className = "page-btn" + (p === page ? " active" : "");
-          btn.textContent = p;
-          btn.addEventListener("click", () => { table._adminPage = p; applyPagination(table); });
-          controlsEl.appendChild(btn);
-        }
-      });
-
-      controlsEl.appendChild(mkBtn('<i class="ph-bold ph-caret-right"></i>', page >= totalPages,
-        () => { table._adminPage = page + 1; applyPagination(table); }));
+    function showConfirmHapus(id, judul) {
+      pendingId = id;
+      document.getElementById("confirmMsg").textContent = `Listing "${judul}" akan dihapus secara permanen beserta semua foto dan data terkait. Tindakan ini tidak bisa dibatalkan.`;
+      confirmOverlay.classList.add("show");
     }
-
-    function buildPageList(current, total) {
-      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-      const pages = [1];
-      if (current > 3) pages.push("...");
-      for (let p = Math.max(2, current - 1); p <= Math.min(total - 1, current + 1); p++) pages.push(p);
-      if (current < total - 2) pages.push("...");
-      pages.push(total);
-      return pages;
-    }
-
-    /* ── Hapus Listing ── */
-    function hapusListing(id) {
-      if (!confirm("Yakin hapus listing ini? Semua foto dan data terkait akan ikut terhapus.")) return;
-      fetch("/teman_singgah/admin/pages/delete_listing.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id })
-      })
+    btnBatal.addEventListener("click", () => { confirmOverlay.classList.remove("show"); pendingId = null; });
+    confirmOverlay.addEventListener("click", e => { if (e.target === confirmOverlay) { confirmOverlay.classList.remove("show"); pendingId = null; } });
+    btnHapusConfirm.addEventListener("click", () => {
+      if (!pendingId) return;
+      btnHapusConfirm.disabled = true;
+      btnHapusConfirm.innerHTML = '<i class="ph-bold ph-spinner"></i> Menghapus...';
+      fetch("/teman_singgah/admin/pages/delete_listing.php", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: pendingId }) })
         .then(r => r.json())
-        .then(d => { if (d.status === "ok") location.reload(); else alert("Gagal: " + d.message); });
+        .then(d => {
+          if (d.status === "ok") location.reload();
+          else { alert("Gagal: " + d.message); btnHapusConfirm.disabled = false; btnHapusConfirm.innerHTML = '<i class="ph-bold ph-trash"></i> Ya, Hapus Permanen'; }
+        })
+        .catch(() => { alert("Koneksi bermasalah."); btnHapusConfirm.disabled = false; btnHapusConfirm.innerHTML = '<i class="ph-bold ph-trash"></i> Ya, Hapus Permanen'; });
+    });
+
+    const detailOverlay = document.getElementById("detailOverlay");
+    const btnClose = document.getElementById("dmClose");
+    const btnToggle = document.getElementById("btnToggleStatus");
+    let activeId = null;
+    let activeStatus = null;
+    let activeRow = null;
+
+    const KEBmap = {
+      fleksibel: 'Gratis hingga 24 jam sebelum check-in',
+      moderat: 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
+      ketat: 'Tidak ada refund setelah konfirmasi',
+    };
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function ucf(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function rupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+    function tgl(s) { const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'], d = new Date(s); return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`; }
+    function trunc(s, max) { if (!s) return '-'; return s.length > max ? s.substring(0, max) + '...' : s; }
+
+    function updateToggleBtn(status) {
+      const isAktif = status === 'aktif';
+      btnToggle.textContent = '';
+      btnToggle.innerHTML = isAktif
+        ? '<i class="ph-bold ph-prohibit"></i> Nonaktifkan'
+        : '<i class="ph-bold ph-check-circle"></i> Aktifkan';
+      btnToggle.className = 'btn-toggle-status ' + (isAktif ? 'state-nonaktifkan' : 'state-aktifkan');
     }
 
-    /* ── Init ── */
-    document.addEventListener("DOMContentLoaded", () => {
-      const table = document.querySelector(".managed-table");
-      if (table) applyPagination(table);
+    function updateStatusBadge(status) {
+      const map = { aktif: 'success', nonaktif: 'danger', draft: 'neutral' };
+      document.getElementById("dmStatusBadge").innerHTML =
+        `<span class="table-badge ${map[status] || 'neutral'}"><span class="badge-dot"></span>${ucf(status)}</span>`;
+    }
+
+    function openDetail(row) {
+      const d = JSON.parse(row.dataset.panel);
+      activeId = d.id;
+      activeStatus = d.status.toLowerCase();
+      activeRow = row;
+
+      document.getElementById("dmCover").innerHTML = d.foto_cover
+        ? `<img src="${d.foto_cover}" alt="" />`
+        : `<i class="ph-bold ph-image no-photo"></i>`;
+
+      document.getElementById("dmJudul").textContent = d.judul;
+      document.getElementById("dmSubtitle").textContent = d.lokasi;
+
+      document.getElementById("dmPills").innerHTML = `
+      <span class="pill pill-properti">${ucf(d.tipe_properti)}</span>
+      <span class="pill pill-privasi">${d.tipe_privasi === 'seluruh' ? 'Seluruh Tempat' : 'Per Kamar'}</span>
+      <span class="pill ${d.tipe_booking === 'instan' ? 'pill-instan' : 'pill-permintaan'}">${d.tipe_booking === 'instan' ? 'Instan' : 'Konfirmasi'}</span>
+    `;
+
+      const av = document.getElementById("dmHostAvatar");
+      av.innerHTML = d.host_photo ? `<img src="${d.host_photo}" alt="" />` : (d.host_nama ? d.host_nama.substring(0, 2).toUpperCase() : 'H');
+      document.getElementById("dmHostNama").textContent = d.host_nama;
+
+      document.getElementById("dmLokasi").textContent = d.lokasi;
+      document.getElementById("dmHarga").textContent = rupiah(d.harga_malam);
+      document.getElementById("dmTipeProperti").textContent = ucf(d.tipe_properti);
+      document.getElementById("dmTipePrivasi").textContent = d.tipe_privasi === 'seluruh' ? 'Seluruh Tempat' : 'Per Kamar';
+      document.getElementById("dmBooking").textContent = d.tipe_booking === 'instan' ? 'Booking Instan' : 'Perlu Konfirmasi';
+      document.getElementById("dmTanggal").textContent = tgl(d.dibuat_pada);
+
+      document.getElementById("dmMaxTamu").textContent = d.max_tamu;
+      document.getElementById("dmKamarTidur").textContent = d.kamar_tidur;
+      document.getElementById("dmKamarMandi").textContent = d.kamar_mandi;
+      document.getElementById("dmMinMalam").textContent = d.min_malam;
+      document.getElementById("dmTotalBooking").textContent = d.total_booking;
+      const rc = document.getElementById("dmRatingChip");
+      if (d.rating_avg) { rc.style.display = ''; document.getElementById("dmRating").textContent = d.rating_avg; } else rc.style.display = 'none';
+
+      const dw = document.getElementById("dmDeskripsiWrap");
+      if (d.deskripsi) { dw.style.display = ''; document.getElementById("dmDeskripsi").textContent = trunc(d.deskripsi, 300); } else dw.style.display = 'none';
+
+      const kw = document.getElementById("dmKamarWrap");
+      if (d.rooms && d.rooms.length > 0) {
+        kw.style.display = '';
+        document.getElementById("dmKamarList").innerHTML = d.rooms.map(n => `<div class="dm-room-item"><i class="ph-bold ph-door"></i>${esc(n)}</div>`).join('');
+      } else kw.style.display = 'none';
+
+      const fw = document.getElementById("dmFasilitasWrap");
+      if (d.amenities && d.amenities.length > 0) {
+        fw.style.display = '';
+        document.getElementById("dmFasilitas").innerHTML = d.amenities.map(a => `<span class="dm-amenity-chip"><i class="ph-bold ph-check-circle"></i>${esc(a)}</span>`).join('');
+      } else fw.style.display = 'none';
+
+      document.getElementById("dmCheckin").textContent = 'Dari pukul ' + d.jam_checkin + ' WIB';
+      document.getElementById("dmCheckout").textContent = 'Sebelum pukul ' + d.jam_checkout + ' WIB';
+      document.getElementById("dmKebijakan").textContent = KEBmap[d.kebijakan_pembatalan] || ucf(d.kebijakan_pembatalan || '-');
+
+      const he = document.getElementById("dmHewan"); he.textContent = d.boleh_hewan ? 'Diperbolehkan' : 'Tidak diperbolehkan'; he.className = 'dm-policy-val ' + (d.boleh_hewan ? 'pol-ok' : 'pol-no');
+      const re = document.getElementById("dmRokok"); re.textContent = d.boleh_merokok ? 'Diperbolehkan' : 'Tidak diperbolehkan'; re.className = 'dm-policy-val ' + (d.boleh_merokok ? 'pol-ok' : 'pol-no');
+      const ae = document.getElementById("dmAnak"); ae.textContent = d.boleh_anak ? 'Selamat datang' : 'Tidak diperbolehkan'; ae.className = 'dm-policy-val ' + (d.boleh_anak ? 'pol-ok' : 'pol-no');
+
+      updateStatusBadge(activeStatus);
+      updateToggleBtn(activeStatus);
+
+      detailOverlay.classList.add("show");
+    }
+
+    btnToggle.addEventListener("click", () => {
+      if (!activeId) return;
+      const newStatus = activeStatus === 'aktif' ? 'nonaktif' : 'aktif';
+      const aksi = activeStatus === 'aktif' ? 'menonaktifkan' : 'mengaktifkan';
+      if (!confirm(`Yakin ingin ${aksi} listing "${document.getElementById('dmJudul').textContent}"?`)) return;
+
+      btnToggle.disabled = true;
+      const fd = new FormData();
+      fd.append('action', 'toggle_status'); fd.append('listing_id', activeId); fd.append('new_status', newStatus);
+      fetch(window.location.pathname, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            activeStatus = data.new_status;
+            if (activeRow) {
+              activeRow.dataset.status = activeStatus;
+              const panelObj = JSON.parse(activeRow.dataset.panel.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&'));
+              panelObj.status = activeStatus;
+              activeRow.dataset.panel = JSON.stringify(panelObj).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+              const badge = activeRow.querySelector('td .table-badge');
+              if (badge) {
+                const map = { aktif: 'success', nonaktif: 'danger', draft: 'neutral' };
+                badge.className = `table-badge ${map[activeStatus] || 'neutral'}`;
+                badge.innerHTML = `<span class="badge-dot"></span>${ucf(activeStatus)}`;
+              }
+            }
+            updateStatusBadge(activeStatus);
+            updateToggleBtn(activeStatus);
+          } else { alert('Gagal: ' + (data.message || 'Terjadi kesalahan.')); }
+        })
+        .catch(() => alert('Koneksi bermasalah.'))
+        .finally(() => { btnToggle.disabled = false; });
     });
+
+    document.querySelector("#listingTable tbody").addEventListener("click", e => {
+      const bD = e.target.closest(".btn-detail"); if (bD) { openDetail(bD.closest("tr")); return; }
+      const bH = e.target.closest(".btn-hapus"); if (bH) { showConfirmHapus(bH.dataset.id, bH.dataset.judul); }
+    });
+
+    btnClose.addEventListener("click", () => detailOverlay.classList.remove("show"));
+    detailOverlay.addEventListener("click", e => { if (e.target === detailOverlay) detailOverlay.classList.remove("show"); });
+
+    function ucFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    document.addEventListener("DOMContentLoaded", () => { const t = document.querySelector(".managed-table"); if (t) paginate(t); });
   </script>
 </body>
 

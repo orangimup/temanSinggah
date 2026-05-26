@@ -124,24 +124,24 @@ mysqli_stmt_close($stmt);
 
 // Map kebijakan dari listings sebagai fallback
 $kebijakan_map = [
-    'fleksibel' => 'Gratis hingga 24 jam sebelum check-in',
-    'moderat'   => 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
-    'ketat'     => 'Tidak ada refund setelah konfirmasi',
+  'fleksibel' => 'Gratis hingga 24 jam sebelum check-in',
+  'moderat' => 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
+  'ketat' => 'Tidak ada refund setelah konfirmasi',
 ];
 
 if (!$policies) {
-    $policies = [
-        'jam_checkin'          => $listing['jam_checkin'] ?? '14:00:00',
-        'jam_checkout'         => $listing['jam_checkout'] ?? '12:00:00',
-        'kebijakan_pembatalan' => $kebijakan_map[$listing['kebijakan_pembatalan'] ?? 'fleksibel'],
-        'boleh_hewan'          => 0,
-        'boleh_merokok'        => 0,
-        'boleh_anak'           => 1,
-        'catatan_tambahan'     => '',
-    ];
+  $policies = [
+    'jam_checkin' => $listing['jam_checkin'] ?? '14:00:00',
+    'jam_checkout' => $listing['jam_checkout'] ?? '12:00:00',
+    'kebijakan_pembatalan' => $kebijakan_map[$listing['kebijakan_pembatalan'] ?? 'fleksibel'],
+    'boleh_hewan' => 0,
+    'boleh_merokok' => 0,
+    'boleh_anak' => 1,
+    'catatan_tambahan' => '',
+  ];
 }
 
-$jam_checkin  = substr($policies['jam_checkin'], 0, 5);
+$jam_checkin = substr($policies['jam_checkin'], 0, 5);
 $jam_checkout = substr($policies['jam_checkout'], 0, 5);
 ?>
 <!doctype html>

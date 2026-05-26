@@ -76,7 +76,7 @@ $saved = isset($_SESSION['onboarding']['fasilitas']) ? $_SESSION['onboarding']['
         <div class="progress-segment"></div>
       </div>
       <div class="footer-actions">
-        <a href="stand_out.php" class="back-button">Kembali</a>
+        <a href="stand_out.html" class="back-button">Kembali</a>
         <button class="next-button" id="btnSelanjutnya">Selanjutnya</button>
       </div>
     </footer>
