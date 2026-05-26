@@ -94,7 +94,7 @@ $saved = isset($_SESSION['onboarding']['fasilitas']) ? $_SESSION['onboarding']['
         .then(res => res.json())
         .then(data => {
           if (data.status === 'ok') {
-            window.location.href = 'photos.php';
+            window.location.href = 'rooms.php';
           }
         });
       });

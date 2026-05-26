@@ -29,8 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
             exit;
         }
         $filePath = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/listings/' . $chk['nama_file'];
-        if (file_exists($filePath))
-            @unlink($filePath);
+        if (file_exists($filePath)) @unlink($filePath);
         mysqli_query($koneksi, "DELETE FROM listing_photos WHERE id = $photoId");
         echo json_encode(['status' => 'ok']);
         exit;
@@ -38,32 +37,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
 
     /* ── Simpan listing ── */
     if ($aksi === 'simpan') {
-        $judul = mysqli_real_escape_string($koneksi, trim($_POST['judul'] ?? ''));
-        $tipe = mysqli_real_escape_string($koneksi, $_POST['tipe_properti'] ?? '');
-        $lokasi = mysqli_real_escape_string($koneksi, trim($_POST['lokasi'] ?? ''));
-        $deskripsi = mysqli_real_escape_string($koneksi, trim($_POST['deskripsi'] ?? ''));
-        $max_tamu = (int) ($_POST['max_tamu'] ?? 2);
-        $kamar_tidur = (int) ($_POST['kamar_tidur'] ?? 1);
-        $kamar_mandi = (int) ($_POST['kamar_mandi'] ?? 1);
-        $harga_malam = (float) ($_POST['harga_malam'] ?? 0);
-        $harga_akhir = ($_POST['harga_akhir_pekan'] !== '') ? (float) $_POST['harga_akhir_pekan'] : null;
-        $min_malam = (int) ($_POST['min_malam'] ?? 1);
-        $kebijakan = mysqli_real_escape_string($koneksi, $_POST['kebijakan_pembatalan'] ?? 'fleksibel');
-        $checkin = mysqli_real_escape_string($koneksi, $_POST['jam_checkin'] ?? '14:00');
-        $checkout = mysqli_real_escape_string($koneksi, $_POST['jam_checkout'] ?? '12:00');
-        $tipe_booking = mysqli_real_escape_string($koneksi, $_POST['tipe_booking'] ?? 'manual');
-        $status = mysqli_real_escape_string($koneksi, $_POST['status'] ?? 'draft');
+        $judul        = mysqli_real_escape_string($koneksi, trim($_POST['judul'] ?? ''));
+        $tipe         = mysqli_real_escape_string($koneksi, $_POST['tipe_properti'] ?? '');
+        $lokasi       = mysqli_real_escape_string($koneksi, trim($_POST['lokasi'] ?? ''));
+        $deskripsi    = mysqli_real_escape_string($koneksi, trim($_POST['deskripsi'] ?? ''));
+        $max_tamu     = (int) ($_POST['max_tamu'] ?? 2);
+        $kamar_tidur  = (int) ($_POST['kamar_tidur'] ?? 1);
+        $kamar_mandi  = (int) ($_POST['kamar_mandi'] ?? 1);
+        $harga_malam  = (float) ($_POST['harga_malam'] ?? 0);
+        $harga_akhir  = (isset($_POST['harga_akhir_pekan']) && $_POST['harga_akhir_pekan'] !== '')
+                            ? (float) $_POST['harga_akhir_pekan'] : null;
+        $min_malam    = (int) ($_POST['min_malam'] ?? 1);
+        $kebijakan    = mysqli_real_escape_string($koneksi, $_POST['kebijakan_pembatalan'] ?? 'fleksibel');
+        $checkin      = mysqli_real_escape_string($koneksi, $_POST['jam_checkin'] ?? '14:00');
+        $checkout     = mysqli_real_escape_string($koneksi, $_POST['jam_checkout'] ?? '12:00');
+        $tipe_booking = mysqli_real_escape_string($koneksi, $_POST['tipe_booking'] ?? 'permintaan');
+        $status       = mysqli_real_escape_string($koneksi, $_POST['status'] ?? 'draft');
         $amenitasNama = $_POST['amenitas'] ?? [];
+        $boleh_hewan   = (int) ($_POST['boleh_hewan']   ?? 0);
+        $boleh_merokok = (int) ($_POST['boleh_merokok'] ?? 0);
+        $boleh_anak    = (int) ($_POST['boleh_anak']    ?? 1);
+        $catatan       = mysqli_real_escape_string($koneksi, $_POST['catatan_tambahan'] ?? '');
 
         if (!$judul || !$tipe || !$lokasi) {
-            $flashMsg = 'Judul, tipe, dan lokasi wajib diisi.';
+            $flashMsg  = 'Judul, tipe, dan lokasi wajib diisi.';
             $flashType = 'error';
         } else {
-            $hargaAkhirSQL = $harga_akhir !== null ? $harga_akhir : 'NULL';
+            $hargaAkhirSQL = ($harga_akhir !== null) ? $harga_akhir : 'NULL';
 
             if ($listingId) {
-                mysqli_query(
-                    $koneksi,
+                mysqli_query($koneksi,
                     "UPDATE listings SET
                        judul                = '$judul',
                        tipe_properti        = '$tipe',
@@ -83,8 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
                      WHERE id = $listingId AND host_id = $hostId"
                 );
             } else {
-                mysqli_query(
-                    $koneksi,
+                mysqli_query($koneksi,
                     "INSERT INTO listings
                        (host_id, judul, tipe_properti, lokasi, deskripsi,
                         max_tamu, kamar_tidur, kamar_mandi,
@@ -101,43 +103,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
                 $listingId = (int) mysqli_insert_id($koneksi);
             }
 
-            /* ── Amenities: hapus lama, insert baru ke listing_amenities ── */
+            /* ── Amenitas ── */
             mysqli_query($koneksi, "DELETE FROM listing_amenities WHERE listing_id = $listingId");
             foreach ($amenitasNama as $nama) {
                 $nama = mysqli_real_escape_string($koneksi, trim($nama));
-                if ($nama === '')
-                    continue;
-                mysqli_query(
-                    $koneksi,
+                if ($nama === '') continue;
+                mysqli_query($koneksi,
                     "INSERT INTO listing_amenities (listing_id, nama_fasilitas)
                      VALUES ($listingId, '$nama')"
                 );
             }
 
-            /* ── Upload foto baru ── */
+            /* ── Upload foto ── */
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/listings/';
             if (!empty($_FILES['new_photos']['name'][0])) {
-                $hasCover = mysqli_fetch_assoc(mysqli_query(
-                    $koneksi,
+                $hasCover   = mysqli_fetch_assoc(mysqli_query($koneksi,
                     "SELECT id FROM listing_photos WHERE listing_id = $listingId AND adalah_cover = 1 LIMIT 1"
                 ));
                 $firstPhoto = !$hasCover;
                 foreach ($_FILES['new_photos']['tmp_name'] as $i => $tmp) {
-                    if (!$tmp || $_FILES['new_photos']['error'][$i] !== UPLOAD_ERR_OK)
-                        continue;
+                    if (!$tmp || $_FILES['new_photos']['error'][$i] !== UPLOAD_ERR_OK) continue;
                     $ext = strtolower(pathinfo($_FILES['new_photos']['name'][$i], PATHINFO_EXTENSION));
-                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp']))
-                        continue;
+                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) continue;
                     $namaFile = 'listing_' . $listingId . '_' . uniqid() . '.' . $ext;
                     if (move_uploaded_file($tmp, $uploadDir . $namaFile)) {
                         $isCover = ($firstPhoto && $i === 0) ? 1 : 0;
-                        mysqli_query(
-                            $koneksi,
+                        mysqli_query($koneksi,
                             "INSERT INTO listing_photos (listing_id, nama_file, adalah_cover)
                              VALUES ($listingId, '$namaFile', $isCover)"
                         );
                     }
                 }
+            }
+
+            /* ── Sinkron ke listing_policies ── */
+            $kebijakan_map = [
+                'fleksibel' => 'Gratis hingga 24 jam sebelum check-in',
+                'moderat'   => 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
+                'ketat'     => 'Tidak ada refund setelah konfirmasi',
+            ];
+            $kebijakan_pol = mysqli_real_escape_string($koneksi, $kebijakan_map[$kebijakan] ?? $kebijakan);
+            $checkin_pol   = mysqli_real_escape_string($koneksi, $checkin);
+            $checkout_pol  = mysqli_real_escape_string($koneksi, $checkout);
+
+            $existPol = mysqli_fetch_assoc(mysqli_query($koneksi,
+                "SELECT id FROM listing_policies WHERE listing_id = $listingId LIMIT 1"
+            ));
+            if ($existPol) {
+                mysqli_query($koneksi,
+                    "UPDATE listing_policies SET
+                       jam_checkin          = '$checkin_pol',
+                       jam_checkout         = '$checkout_pol',
+                       kebijakan_pembatalan = '$kebijakan_pol',
+                       boleh_hewan          = $boleh_hewan,
+                       boleh_merokok        = $boleh_merokok,
+                       boleh_anak           = $boleh_anak,
+                       catatan_tambahan     = '$catatan'
+                     WHERE listing_id = $listingId"
+                );
+            } else {
+                mysqli_query($koneksi,
+                    "INSERT INTO listing_policies
+                       (listing_id, jam_checkin, jam_checkout, kebijakan_pembatalan,
+                        boleh_hewan, boleh_merokok, boleh_anak, catatan_tambahan)
+                     VALUES
+                       ($listingId, '$checkin_pol', '$checkout_pol', '$kebijakan_pol',
+                        $boleh_hewan, $boleh_merokok, $boleh_anak, '$catatan')"
+                );
             }
 
             header("Location: listing_detail.php?id=$listingId&saved=1");
@@ -146,63 +178,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
     }
 }
 
-/* ══════════════════════════════════════════════
-   LOAD DATA untuk form
-══════════════════════════════════════════════ */
-$listing = null;
-$photos = [];
+$listing         = null;
+$photos          = [];
 $currentAmenitas = [];
+$policies        = null;
 
-/* Daftar master amenitas (diambil dari listing_amenities yang sudah pernah ada,
-   atau kamu bisa ganti dengan tabel master kalau ada) */
 $masterAmenitas = [
-    'Wi-Fi',
-    'TV',
-    'AC / Pendingin Ruangan',
-    'Dapur',
-    'Mesin Cuci',
-    'Parkir Gratis',
-    'Kolam Renang',
-    'Kotak P3K',
-    'Alat Pemadam',
-    'Shower Air Panas',
-    'Ruang Kerja',
-    'Ramah Hewan Peliharaan',
+    'Wi-Fi', 'TV', 'AC / Pendingin Ruangan', 'Dapur', 'Mesin Cuci',
+    'Parkir Gratis', 'Kolam Renang', 'Kotak P3K', 'Alat Pemadam',
+    'Shower Air Panas', 'Ruang Kerja', 'Ramah Hewan Peliharaan',
 ];
 
 if ($listingId) {
-    $q = mysqli_query(
-        $koneksi,
+    $q = mysqli_query($koneksi,
         "SELECT * FROM listings WHERE id = $listingId AND host_id = $hostId LIMIT 1"
     );
     $listing = mysqli_fetch_assoc($q);
-    if (!$listing) {
-        header('Location: listing.php');
-        exit;
-    }
+    if (!$listing) { header('Location: listing.php'); exit; }
 
-    $qp = mysqli_query(
-        $koneksi,
+    $qp = mysqli_query($koneksi,
         "SELECT id, nama_file, adalah_cover FROM listing_photos
          WHERE listing_id = $listingId ORDER BY adalah_cover DESC, id ASC"
     );
-    while ($r = mysqli_fetch_assoc($qp))
-        $photos[] = $r;
+    while ($r = mysqli_fetch_assoc($qp)) $photos[] = $r;
 
-    $qa = mysqli_query(
-        $koneksi,
+    $qa = mysqli_query($koneksi,
         "SELECT nama_fasilitas FROM listing_amenities WHERE listing_id = $listingId"
     );
-    while ($r = mysqli_fetch_assoc($qa))
-        $currentAmenitas[] = $r['nama_fasilitas'];
+    while ($r = mysqli_fetch_assoc($qa)) $currentAmenitas[] = $r['nama_fasilitas'];
+
+    $qpol = mysqli_query($koneksi,
+        "SELECT * FROM listing_policies WHERE listing_id = $listingId LIMIT 1"
+    );
+    $policies = mysqli_fetch_assoc($qpol);
 }
 
-$isEdit = !empty($listing);
+$isEdit    = !empty($listing);
 $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
 ?>
 <!doctype html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -214,9 +229,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
     <link rel="stylesheet" href="../../../popups/auth.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 
@@ -237,31 +250,20 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             margin-bottom: var(--space-24);
         }
 
-        .breadcrumb a {
-            color: var(--color-primary);
-            text-decoration: none;
-        }
+        .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
 
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .page-header {
-            margin-bottom: var(--space-40);
-        }
+        .page-header { margin-bottom: var(--space-40); }
 
         .page-header h1 {
             font-size: var(--text-3xl);
             font-weight: var(--font-bold);
             color: var(--color-text-primary);
-            font-family: 'Playfair Display', serif;
+            font-family: 'Inter', sans-serif;
             margin-bottom: var(--space-8);
         }
 
-        .page-header p {
-            color: var(--color-text-secondary);
-            font-size: 0.9375rem;
-        }
+        .page-header p { color: var(--color-text-secondary); font-size: 0.9375rem; }
 
         .form-section {
             background: var(--color-bg-card, #fff);
@@ -296,13 +298,10 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             flex-shrink: 0;
         }
 
-        .form-group {
-            margin-bottom: var(--space-20);
-        }
+        .section-icon i { display: flex; align-items: center; justify-content: center; line-height: 1; }
 
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
+        .form-group { margin-bottom: var(--space-20); }
+        .form-group:last-child { margin-bottom: 0; }
 
         .form-label {
             display: block;
@@ -312,16 +311,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             margin-bottom: var(--space-8);
         }
 
-        .form-label .required {
-            color: #dc2626;
-            margin-left: 2px;
-        }
-
-        .form-hint {
-            font-size: 0.775rem;
-            color: var(--color-text-secondary);
-            margin-top: 5px;
-        }
+        .form-label .required { color: #dc2626; margin-left: 2px; }
+        .form-hint { font-size: 0.775rem; color: var(--color-text-secondary); margin-top: 5px; }
 
         .form-input,
         .form-select,
@@ -346,35 +337,28 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 99, 102, 241), 0.12);
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 120px;
-            line-height: 1.6;
+        .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
-        .form-row {
-            display: grid;
-            gap: var(--space-16);
-        }
+        .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 
-        .form-row.cols-2 {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .form-row.cols-3 {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
+        .form-row { display: grid; gap: var(--space-16); }
+        .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+        .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
 
         /* Stepper */
-        .stepper {
-            display: flex;
-            align-items: center;
-            gap: var(--space-12);
-        }
+        .stepper { display: flex; align-items: center; gap: var(--space-12); }
 
         .stepper-btn {
-            width: 36px;
-            height: 36px;
+            width: 36px; height: 36px;
+            min-width: 36px; min-height: 36px;
             border-radius: 50%;
             border: 1.5px solid var(--color-border-strong);
             background: transparent;
@@ -386,16 +370,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             color: var(--color-text-primary);
             transition: background 0.1s;
             flex-shrink: 0;
+            padding: 0;
+            line-height: 1;
         }
 
-        .stepper-btn:hover {
-            background: var(--color-border-subtle);
-        }
-
-        .stepper-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .stepper-btn:hover { background: var(--color-border-subtle); }
+        .stepper-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .stepper-val {
             font-size: 1rem;
@@ -405,7 +385,9 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             color: var(--color-text-primary);
         }
 
-        /* Amenitas checklist */
+        .stepper-wrap { display: flex; align-items: center; height: 46px; }
+
+        /* Amenitas */
         .facility-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -426,24 +408,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             user-select: none;
         }
 
-        .facility-check:hover {
-            border-color: var(--color-primary);
-            background: var(--color-primary-light);
-        }
-
-        .facility-check.selected {
-            border-color: var(--color-primary);
-            background: var(--color-primary-light);
-            font-weight: 600;
-        }
-
-        .facility-check input[type="checkbox"] {
-            display: none;
-        }
+        .facility-check:hover { border-color: var(--color-primary); background: var(--color-primary-light); }
+        .facility-check.selected { border-color: var(--color-primary); background: var(--color-primary-light); font-weight: 600; }
+        .facility-check input[type="checkbox"] { display: none; }
 
         .facility-check .check-icon {
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             border-radius: 5px;
             border: 1.5px solid var(--color-border-strong);
             display: flex;
@@ -461,6 +431,44 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             color: #fff;
         }
 
+        /* Toggle kebijakan */
+        .toggle-options { display: flex; gap: var(--space-8); }
+
+        .toggle-opt {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 8px;
+            border: 1.5px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            transition: all 0.15s;
+            text-align: center;
+            user-select: none;
+        }
+
+        .toggle-opt input { display: none; }
+        .toggle-opt i { font-size: 1.2rem; }
+        .toggle-opt:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+        .toggle-opt.selected-yes {
+            border-color: #16a34a;
+            background: #f0fdf4;
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .toggle-opt.selected-no {
+            border-color: #dc2626;
+            background: #fef2f2;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
         /* Foto upload */
         .photo-upload-area {
             border: 2px dashed var(--color-border-strong);
@@ -472,27 +480,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             margin-bottom: var(--space-16);
         }
 
-        .photo-upload-area:hover {
-            border-color: var(--color-primary);
-            background: var(--color-primary-light);
-        }
+        .photo-upload-area:hover { border-color: var(--color-primary); background: var(--color-primary-light); }
+        .photo-upload-area i { font-size: 2rem; color: var(--color-text-secondary); margin-bottom: 8px; display: block; }
+        .photo-upload-area p { font-size: 0.875rem; color: var(--color-text-secondary); margin: 0; }
 
-        .photo-upload-area i {
-            font-size: 2rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .photo-upload-area p {
-            font-size: 0.875rem;
-            color: var(--color-text-secondary);
-            margin: 0;
-        }
-
-        #photoInput {
-            display: none;
-        }
+        #photoInput { display: none; }
 
         .photo-preview-grid {
             display: grid;
@@ -508,20 +500,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             border: 2px solid transparent;
         }
 
-        .photo-preview-item.is-cover {
-            border-color: var(--color-primary);
-        }
-
-        .photo-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .photo-preview-item.is-cover { border-color: var(--color-primary); }
+        .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
 
         .photo-cover-badge {
             position: absolute;
-            bottom: 5px;
-            left: 5px;
+            bottom: 5px; left: 5px;
             background: var(--color-primary);
             color: #fff;
             font-size: 0.65rem;
@@ -533,10 +517,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
 
         .photo-remove-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 22px;
-            height: 22px;
+            top: 5px; right: 5px;
+            width: 22px; height: 22px;
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.55);
             color: #fff;
@@ -550,15 +532,10 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             transition: opacity 0.15s;
         }
 
-        .photo-preview-item:hover .photo-remove-btn {
-            opacity: 1;
-        }
+        .photo-preview-item:hover .photo-remove-btn { opacity: 1; }
 
-        /* Status toggle */
-        .status-options {
-            display: flex;
-            gap: var(--space-12);
-        }
+        /* Status */
+        .status-options { display: flex; gap: var(--space-12); }
 
         .status-opt {
             flex: 1;
@@ -570,36 +547,13 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             transition: all 0.15s;
         }
 
-        .status-opt.selected-aktif {
-            border-color: #16a34a;
-            background: #f0fdf4;
-        }
+        .status-opt.selected-aktif    { border-color: #16a34a; background: #f0fdf4; }
+        .status-opt.selected-draft    { border-color: #ca8a04; background: #fefce8; }
+        .status-opt.selected-nonaktif { border-color: #dc2626; background: #fef2f2; }
+        .status-opt input { display: none; }
 
-        .status-opt.selected-draft {
-            border-color: #ca8a04;
-            background: #fefce8;
-        }
-
-        .status-opt.selected-nonaktif {
-            border-color: #dc2626;
-            background: #fef2f2;
-        }
-
-        .status-opt input {
-            display: none;
-        }
-
-        .status-opt-label {
-            font-weight: 700;
-            font-size: 0.875rem;
-            color: var(--color-text-primary);
-            margin-bottom: 3px;
-        }
-
-        .status-opt-desc {
-            font-size: 0.775rem;
-            color: var(--color-text-secondary);
-        }
+        .status-opt-label { font-weight: 700; font-size: 0.875rem; color: var(--color-text-primary); margin-bottom: 3px; }
+        .status-opt-desc  { font-size: 0.775rem; color: var(--color-text-secondary); }
 
         /* Submit bar */
         .submit-bar {
@@ -633,9 +587,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             transition: background 0.15s;
         }
 
-        .btn-outline:hover {
-            background: var(--color-border-subtle);
-        }
+        .btn-outline:hover { background: var(--color-border-subtle); }
 
         .btn-primary {
             display: inline-flex;
@@ -652,14 +604,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             transition: background 0.15s;
         }
 
-        .btn-primary:hover {
-            background: var(--color-primary-hover);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .btn-primary:hover    { background: var(--color-primary-hover); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .flash-msg {
             display: flex;
@@ -672,17 +618,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             margin-bottom: var(--space-24);
         }
 
-        .flash-msg.error {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .flash-msg.success {
-            background: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
+        .flash-msg.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .flash-msg.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
 
         .ts-toast {
             position: fixed;
@@ -702,22 +639,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             z-index: 99999;
         }
 
-        .ts-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .ts-toast.show    { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .ts-toast.success { background: #15803d; }
+        .ts-toast.error   { background: #dc2626; }
 
-        .ts-toast.success {
-            background: #15803d;
-        }
-
-        .ts-toast.error {
-            background: #dc2626;
-        }
-
-        .input-prefix {
-            position: relative;
-        }
+        .input-prefix { position: relative; }
 
         .input-prefix-text {
             position: absolute;
@@ -730,28 +656,20 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             font-weight: 500;
         }
 
-        .input-prefix .form-input {
-            padding-left: 44px;
-        }
+        .input-prefix .form-input { padding-left: 44px; }
 
         @media (max-width: 640px) {
-
             .form-row.cols-2,
-            .form-row.cols-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .status-options {
-                flex-direction: column;
-            }
+            .form-row.cols-3 { grid-template-columns: 1fr; }
+            .status-options  { flex-direction: column; }
         }
     </style>
 </head>
 
 <body>
-
     <header class="navbar">
         <nav class="navbar-container">
+            <a href="reservations.php" class="logo-link"></a>
             <div class="logo-section">
                 <img src="../../../assets/logo/logo_temansinggah.svg" alt="Logo" class="logo-icon" />
                 <img src="../../../assets/logo/label_temansinggah.svg" alt="Teman Singgah" class="logo-name" />
@@ -769,14 +687,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
 
     <main class="edit-wrap">
 
-        <!-- Breadcrumb -->
         <nav class="breadcrumb">
             <a href="listing.php"><i class="ph-bold ph-house-simple"></i> Listing Saya</a>
             <?php if ($isEdit): ?>
                 <i class="ph-bold ph-caret-right"></i>
-                <a href="listing_detail.php?id=<?= $listingId ?>">
-                    <?= htmlspecialchars($listing['judul']) ?>
-                </a>
+                <a href="listing_detail.php?id=<?= $listingId ?>"><?= htmlspecialchars($listing['judul']) ?></a>
             <?php endif; ?>
             <i class="ph-bold ph-caret-right"></i>
             <span><?= $isEdit ? 'Edit' : 'Tambah Listing' ?></span>
@@ -821,7 +736,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         <label class="form-label">Tipe Properti <span class="required">*</span></label>
                         <select name="tipe_properti" class="form-select" required>
                             <?php
-                            $tipes = ['villa', 'rumah', 'apartemen', 'pondok/cabin', 'hotel', 'rumah tradisional'];
+                            $tipes   = ['villa', 'rumah', 'apartemen', 'cabin', 'hotel', 'rumah tradisional'];
                             $selTipe = $listing['tipe_properti'] ?? '';
                             foreach ($tipes as $t) {
                                 $sel = ($selTipe === $t) ? 'selected' : '';
@@ -851,42 +766,33 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                     <div class="section-icon"><i class="ph-bold ph-users"></i></div>
                     Kapasitas
                 </div>
-
                 <div class="form-row cols-3">
-                    <!-- max_tamu -->
                     <div class="form-group">
                         <label class="form-label">Maks. Tamu</label>
-                        <div class="stepper">
+                        <div class="stepper-wrap"><div class="stepper">
                             <button type="button" class="stepper-btn" data-target="max_tamu" data-op="dec">−</button>
                             <span class="stepper-val" id="val-max_tamu"><?= (int) ($listing['max_tamu'] ?? 2) ?></span>
-                            <input type="hidden" name="max_tamu" id="max_tamu"
-                                value="<?= (int) ($listing['max_tamu'] ?? 2) ?>" />
+                            <input type="hidden" name="max_tamu" id="max_tamu" value="<?= (int) ($listing['max_tamu'] ?? 2) ?>" />
                             <button type="button" class="stepper-btn" data-target="max_tamu" data-op="inc">+</button>
-                        </div>
+                        </div></div>
                     </div>
-                    <!-- kamar_tidur -->
                     <div class="form-group">
                         <label class="form-label">Kamar Tidur</label>
-                        <div class="stepper">
+                        <div class="stepper-wrap"><div class="stepper">
                             <button type="button" class="stepper-btn" data-target="kamar_tidur" data-op="dec">−</button>
-                            <span class="stepper-val"
-                                id="val-kamar_tidur"><?= (int) ($listing['kamar_tidur'] ?? 1) ?></span>
-                            <input type="hidden" name="kamar_tidur" id="kamar_tidur"
-                                value="<?= (int) ($listing['kamar_tidur'] ?? 1) ?>" />
+                            <span class="stepper-val" id="val-kamar_tidur"><?= (int) ($listing['kamar_tidur'] ?? 1) ?></span>
+                            <input type="hidden" name="kamar_tidur" id="kamar_tidur" value="<?= (int) ($listing['kamar_tidur'] ?? 1) ?>" />
                             <button type="button" class="stepper-btn" data-target="kamar_tidur" data-op="inc">+</button>
-                        </div>
+                        </div></div>
                     </div>
-                    <!-- kamar_mandi -->
                     <div class="form-group">
                         <label class="form-label">Kamar Mandi</label>
-                        <div class="stepper">
+                        <div class="stepper-wrap"><div class="stepper">
                             <button type="button" class="stepper-btn" data-target="kamar_mandi" data-op="dec">−</button>
-                            <span class="stepper-val"
-                                id="val-kamar_mandi"><?= (int) ($listing['kamar_mandi'] ?? 1) ?></span>
-                            <input type="hidden" name="kamar_mandi" id="kamar_mandi"
-                                value="<?= (int) ($listing['kamar_mandi'] ?? 1) ?>" />
+                            <span class="stepper-val" id="val-kamar_mandi"><?= (int) ($listing['kamar_mandi'] ?? 1) ?></span>
+                            <input type="hidden" name="kamar_mandi" id="kamar_mandi" value="<?= (int) ($listing['kamar_mandi'] ?? 1) ?>" />
                             <button type="button" class="stepper-btn" data-target="kamar_mandi" data-op="inc">+</button>
-                        </div>
+                        </div></div>
                     </div>
                 </div>
             </div>
@@ -912,46 +818,28 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         <div class="input-prefix">
                             <span class="input-prefix-text">Rp</span>
                             <input type="number" name="harga_akhir_pekan" class="form-input" min="0" step="1000"
-                                placeholder="300000" value="<?= (int) ($listing['harga_akhir_pekan'] ?? '') ?>" />
+                                placeholder="Kosongkan jika sama"
+                                value="<?= $listing['harga_akhir_pekan'] ? (int) $listing['harga_akhir_pekan'] : '' ?>" />
                         </div>
-                        <p class="form-hint">Kosongkan jika sama dengan harga biasa.</p>
                     </div>
                 </div>
 
-                <div class="form-row cols-3">
+                <div class="form-row cols-2">
                     <div class="form-group">
                         <label class="form-label">Min. Malam</label>
-                        <div class="stepper">
+                        <div class="stepper-wrap"><div class="stepper">
                             <button type="button" class="stepper-btn" data-target="min_malam" data-op="dec">−</button>
                             <span class="stepper-val" id="val-min_malam"><?= (int) ($listing['min_malam'] ?? 1) ?></span>
-                            <input type="hidden" name="min_malam" id="min_malam"
-                                value="<?= (int) ($listing['min_malam'] ?? 1) ?>" />
+                            <input type="hidden" name="min_malam" id="min_malam" value="<?= (int) ($listing['min_malam'] ?? 1) ?>" />
                             <button type="button" class="stepper-btn" data-target="min_malam" data-op="inc">+</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kebijakan Pembatalan</label>
-                        <select name="kebijakan_pembatalan" class="form-select">
-                            <?php
-                            $kebijakanOpts = [
-                                'fleksibel' => 'Fleksibel (refund penuh ≥24 jam)',
-                                'moderat' => 'Moderat (refund 50% ≥5 hari)',
-                                'ketat' => 'Ketat (tidak ada refund)',
-                            ];
-                            $selKebijakan = $listing['kebijakan_pembatalan'] ?? '';
-                            foreach ($kebijakanOpts as $val => $label) {
-                                $sel = ($selKebijakan === $val) ? 'selected' : '';
-                                echo "<option value=\"$val\" $sel>$label</option>";
-                            }
-                            ?>
-                        </select>
+                        </div></div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tipe Booking</label>
                         <select name="tipe_booking" class="form-select">
                             <?php
-                            $bookingOpts = ['manual' => 'Manual (perlu konfirmasi)', 'instan' => 'Instan'];
-                            $selBooking = $listing['tipe_booking'] ?? 'manual';
+                            $bookingOpts = ['permintaan' => 'Permintaan (perlu konfirmasi)', 'instan' => 'Instan'];
+                            $selBooking  = $listing['tipe_booking'] ?? 'permintaan';
                             foreach ($bookingOpts as $val => $label) {
                                 $sel = ($selBooking === $val) ? 'selected' : '';
                                 echo "<option value=\"$val\" $sel>$label</option>";
@@ -959,6 +847,24 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                             ?>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kebijakan Pembatalan</label>
+                    <select name="kebijakan_pembatalan" class="form-select">
+                        <?php
+                        $kebijakanOpts = [
+                            'fleksibel' => 'Fleksibel — refund penuh jika dibatalkan ≥24 jam sebelum check-in',
+                            'moderat'   => 'Moderat — refund 50% jika dibatalkan ≥5 hari sebelum check-in',
+                            'ketat'     => 'Ketat — tidak ada refund setelah konfirmasi',
+                        ];
+                        $selKebijakan = $listing['kebijakan_pembatalan'] ?? 'fleksibel';
+                        foreach ($kebijakanOpts as $val => $label) {
+                            $sel = ($selKebijakan === $val) ? 'selected' : '';
+                            echo "<option value=\"$val\" $sel>$label</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
             </div>
 
@@ -972,12 +878,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                     <div class="form-group">
                         <label class="form-label">Jam Check-in</label>
                         <input type="time" name="jam_checkin" class="form-input"
-                            value="<?= htmlspecialchars($listing['jam_checkin'] ?? '14:00') ?>" />
+                            value="<?= htmlspecialchars(substr($listing['jam_checkin'] ?? '14:00', 0, 5)) ?>" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Jam Check-out</label>
                         <input type="time" name="jam_checkout" class="form-input"
-                            value="<?= htmlspecialchars($listing['jam_checkout'] ?? '12:00') ?>" />
+                            value="<?= htmlspecialchars(substr($listing['jam_checkout'] ?? '12:00', 0, 5)) ?>" />
                     </div>
                 </div>
             </div>
@@ -990,7 +896,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
                 <div class="facility-grid">
                     <?php foreach ($masterAmenitas as $nama):
-                        $checked = in_array($nama, $currentAmenitas);
+                        $checked  = in_array($nama, $currentAmenitas);
                         $selClass = $checked ? 'selected' : '';
                         ?>
                         <label class="facility-check <?= $selClass ?>" data-val="<?= htmlspecialchars($nama) ?>">
@@ -1042,7 +948,77 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 <div class="photo-preview-grid" id="newPhotoPreview"></div>
             </div>
 
-            <!-- ══ 7. Status ══ -->
+            <!-- ══ 7. Kebijakan Tambahan ══ -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="section-icon"><i class="ph-bold ph-shield-check"></i></div>
+                    Kebijakan Tambahan
+                </div>
+
+                <div class="form-row cols-3">
+                    <?php
+                    $boleh_hewan_val   = (int) ($policies['boleh_hewan']   ?? 0);
+                    $boleh_merokok_val = (int) ($policies['boleh_merokok'] ?? 0);
+                    $boleh_anak_val    = (int) ($policies['boleh_anak']    ?? 1);
+                    ?>
+                    <!-- Hewan Peliharaan -->
+                    <div class="form-group">
+                        <label class="form-label">Hewan Peliharaan</label>
+                        <div class="toggle-options">
+                            <label class="toggle-opt <?= $boleh_hewan_val ? 'selected-yes' : '' ?>" data-group="boleh_hewan">
+                                <input type="radio" name="boleh_hewan" value="1" <?= $boleh_hewan_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-paw-print"></i>
+                                <span>Boleh</span>
+                            </label>
+                            <label class="toggle-opt <?= !$boleh_hewan_val ? 'selected-no' : '' ?>" data-group="boleh_hewan">
+                                <input type="radio" name="boleh_hewan" value="0" <?= !$boleh_hewan_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-prohibit"></i>
+                                <span>Tidak</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Merokok -->
+                    <div class="form-group">
+                        <label class="form-label">Merokok</label>
+                        <div class="toggle-options">
+                            <label class="toggle-opt <?= $boleh_merokok_val ? 'selected-yes' : '' ?>" data-group="boleh_merokok">
+                                <input type="radio" name="boleh_merokok" value="1" <?= $boleh_merokok_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-cigarette"></i>
+                                <span>Boleh</span>
+                            </label>
+                            <label class="toggle-opt <?= !$boleh_merokok_val ? 'selected-no' : '' ?>" data-group="boleh_merokok">
+                                <input type="radio" name="boleh_merokok" value="0" <?= !$boleh_merokok_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-cigarette-slash"></i>
+                                <span>Tidak</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Anak-anak -->
+                    <div class="form-group">
+                        <label class="form-label">Anak-anak</label>
+                        <div class="toggle-options">
+                            <label class="toggle-opt <?= $boleh_anak_val ? 'selected-yes' : '' ?>" data-group="boleh_anak">
+                                <input type="radio" name="boleh_anak" value="1" <?= $boleh_anak_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-baby"></i>
+                                <span>Boleh</span>
+                            </label>
+                            <label class="toggle-opt <?= !$boleh_anak_val ? 'selected-no' : '' ?>" data-group="boleh_anak">
+                                <input type="radio" name="boleh_anak" value="0" <?= !$boleh_anak_val ? 'checked' : '' ?> />
+                                <i class="ph-bold ph-prohibit"></i>
+                                <span>Tidak</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Catatan Tambahan</label>
+                    <textarea name="catatan_tambahan" class="form-textarea" rows="3"
+                        placeholder="cth. Tamu wajib lapor sebelum kedatangan, tidak menerima tamu rombongan, dll."><?= htmlspecialchars($policies['catatan_tambahan'] ?? '') ?></textarea>
+                </div>
+            </div>
+
+            <!-- ══ 8. Status ══ -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-toggle-right"></i></div>
@@ -1051,8 +1027,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 <div class="status-options">
                     <?php
                     $statuses = [
-                        'aktif' => ['Aktif', 'Langsung terlihat oleh tamu'],
-                        'draft' => ['Draft', 'Disimpan, belum dipublikasi'],
+                        'aktif'    => ['Aktif',    'Langsung terlihat oleh tamu'],
+                        'draft'    => ['Draft',    'Disimpan, belum dipublikasi'],
                         'nonaktif' => ['Nonaktif', 'Disembunyikan sementara'],
                     ];
                     $curStatus = $listing['status'] ?? 'draft';
@@ -1108,14 +1084,14 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         /* Stepper */
         document.querySelectorAll('.stepper-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const target = btn.dataset.target;
-                const op = btn.dataset.op;
-                const input = document.getElementById(target);
+                const target  = btn.dataset.target;
+                const op      = btn.dataset.op;
+                const input   = document.getElementById(target);
                 const display = document.getElementById('val-' + target);
                 let val = parseInt(input.value) || 0;
                 if (op === 'inc') val++;
                 else if (op === 'dec' && val > 1) val--;
-                input.value = val;
+                input.value         = val;
                 display.textContent = val;
             });
         });
@@ -1123,11 +1099,24 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         /* Amenitas toggle */
         document.querySelectorAll('.facility-check').forEach(label => {
             label.addEventListener('click', () => {
-                const cb = label.querySelector('input[type="checkbox"]');
+                const cb   = label.querySelector('input[type="checkbox"]');
                 const icon = label.querySelector('.check-icon');
                 cb.checked = !cb.checked;
                 label.classList.toggle('selected', cb.checked);
                 icon.textContent = cb.checked ? '✓' : '';
+            });
+        });
+
+        /* Kebijakan toggle */
+        document.querySelectorAll('.toggle-opt').forEach(opt => {
+            opt.addEventListener('click', () => {
+                const group = opt.dataset.group;
+                document.querySelectorAll(`.toggle-opt[data-group="${group}"]`).forEach(o => {
+                    o.classList.remove('selected-yes', 'selected-no');
+                });
+                const val = opt.querySelector('input').value;
+                opt.classList.add(val === '1' ? 'selected-yes' : 'selected-no');
+                opt.querySelector('input').checked = true;
             });
         });
 
@@ -1150,11 +1139,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                     const wrap = document.createElement('div');
                     wrap.className = 'photo-preview-item';
                     wrap.innerHTML = `
-        <img src="${e.target.result}" alt="Preview" />
-        <button type="button" class="photo-remove-btn"
-                onclick="this.closest('.photo-preview-item').remove()">
-          <i class="ph-bold ph-x"></i>
-        </button>`;
+                        <img src="${e.target.result}" alt="Preview" />
+                        <button type="button" class="photo-remove-btn"
+                                onclick="this.closest('.photo-preview-item').remove()">
+                            <i class="ph-bold ph-x"></i>
+                        </button>`;
                     grid.appendChild(wrap);
                 };
                 reader.readAsDataURL(file);
@@ -1164,10 +1153,10 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         /* Hapus foto existing */
         function removeExistingPhoto(photoId, btn) {
             const item = btn.closest('.photo-preview-item');
-            const fd = new FormData();
-            fd.append('_aksi', 'hapus_foto');
+            const fd   = new FormData();
+            fd.append('_aksi',    'hapus_foto');
             fd.append('photo_id', photoId);
-            fd.append('id', '<?= $listingId ?>');
+            fd.append('id',       '<?= $listingId ?>');
             fetch('', { method: 'POST', body: fd })
                 .then(r => r.json())
                 .then(d => {
@@ -1180,15 +1169,15 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         /* Submit */
         document.getElementById('listingForm').addEventListener('submit', function () {
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
+            btn.disabled  = true;
             btn.innerHTML = '<i class="ph-bold ph-spinner" style="animation:spin 1s linear infinite"></i> Menyimpan...';
         });
 
         /* Toast */
         function showToast(msg, type = '') {
-            const el = document.getElementById('tsToast');
+            const el      = document.getElementById('tsToast');
             el.textContent = msg;
-            el.className = 'ts-toast' + (type ? ' ' + type : '');
+            el.className   = 'ts-toast' + (type ? ' ' + type : '');
             el.classList.add('show');
             setTimeout(() => el.classList.remove('show'), 3000);
         }
@@ -1198,5 +1187,4 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         document.head.appendChild(style);
     </script>
 </body>
-
 </html>

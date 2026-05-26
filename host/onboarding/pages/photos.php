@@ -55,7 +55,7 @@ session_start();
         <div class="progress-segment"></div>
       </div>
       <div class="footer-actions">
-        <a href="amenities.php" class="back-button">Kembali</a>
+        <a href="policies.php" class="back-button">Kembali</a>
         <button class="next-button" id="btnSelanjutnya">Selanjutnya</button>
       </div>
     </footer>

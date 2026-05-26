@@ -688,10 +688,12 @@
   0% {
     color: var(--color-text-primary);
   }
+
   50% {
     color: var(--color-primary);
     font-weight: var(--font-bold);
   }
+
   100% {
     color: var(--color-text-primary);
   }
@@ -918,4 +920,163 @@
 .host-chat-button:active {
   background: var(--color-primary-light-hover);
   transform: scale(0.99);
+}
+
+.rooms-section {
+  margin-bottom: 40px;
+}
+
+.rooms-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.room-card {
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--color-surface, #fff);
+  transition: box-shadow 0.2s;
+}
+
+.room-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* foto kamar (opsional, kalau ada) */
+.room-card-photo {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.room-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.room-card-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.room-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.room-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.room-card-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+  margin: 0;
+}
+
+.room-card-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.room-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.room-card-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.room-price-amount {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary, #c0392b);
+}
+
+.room-price-unit {
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.room-card-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary, #6b7280);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.room-facilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.room-facility-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+  background: var(--color-surface, #fff);
+}
+
+/* ── Policy Notes (catatan tambahan) ──────────────────────── */
+.policy-notes {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: #fafafa;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary, #6b7280);
+  line-height: 1.6;
+}
+
+.policy-notes i {
+  font-size: 18px;
+  color: var(--color-primary, #c0392b);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.policy-notes p {
+  margin: 0;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .room-card-top {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .room-card-price {
+    text-align: left;
+  }
+
+  .room-card-body {
+    padding: 16px;
+  }
 }

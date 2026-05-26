@@ -1,0 +1,356 @@
+/* ============================================================
+   rooms.css — Onboarding: Pilihan Kamar
+   Letakkan di: host/onboarding/rooms.css
+   ============================================================ */
+
+/* ── Daftar kamar yang sudah ditambah ────────────────────── */
+.rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.room-entry {
+  background: var(--color-surface, #fff);
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: border-color 0.2s;
+}
+.room-entry:hover { border-color: var(--color-primary, #c0392b); }
+
+.room-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.room-entry-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.room-entry-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+}
+
+.room-entry-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+.room-entry-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.room-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text, #1a1a1a);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.room-edit-btn:hover {
+  border-color: var(--color-primary, #c0392b);
+  color: var(--color-primary, #c0392b);
+}
+
+.room-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.room-delete-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* ── Tombol tambah kamar ─────────────────────────────────── */
+.add-room-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px dashed var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+}
+.add-room-btn:hover {
+  border-color: var(--color-primary, #c0392b);
+  color: var(--color-primary, #c0392b);
+  background: #fef9f9;
+}
+
+/* ── Card form tambah/edit kamar ─────────────────────────── */
+.room-form-card {
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  background: var(--color-surface, #fff);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+
+.room-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  background: var(--color-surface-2, #fafafa);
+}
+
+.room-form-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+  margin: 0;
+}
+
+.room-form-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.room-form-close:hover {
+  background: var(--color-border, #e5e7eb);
+  color: var(--color-text, #1a1a1a);
+}
+
+.room-form-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Form groups ─────────────────────────────────────────── */
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+.form-row.two-col > .form-group { flex: 1; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+}
+
+.required { color: var(--color-primary, #c0392b); }
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--color-text, #1a1a1a);
+  background: var(--color-surface, #fff);
+  transition: border-color 0.2s;
+  font-family: inherit;
+  resize: vertical;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #c0392b);
+}
+
+/* ── Counter tamu ────────────────────────────────────────── */
+.counter-input {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 42px;
+}
+
+.counter-btn {
+  width: 42px;
+  height: 100%;
+  border: none;
+  background: var(--color-surface-2, #fafafa);
+  color: var(--color-text, #1a1a1a);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.counter-btn:hover { background: var(--color-border, #e5e7eb); }
+
+#tamuCount {
+  flex: 1;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+}
+
+/* ── Grid fasilitas kamar ────────────────────────────────── */
+.room-facilities-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.facility-chip {
+  cursor: pointer;
+}
+
+.facility-chip input { display: none; }
+
+.facility-chip span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+  background: var(--color-surface, #fff);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.facility-chip input:checked + span {
+  border-color: var(--color-primary, #c0392b);
+  color: var(--color-primary, #c0392b);
+  background: #fef9f9;
+  font-weight: 500;
+}
+
+.facility-chip:hover span {
+  border-color: var(--color-primary, #c0392b);
+}
+
+/* ── Error & form footer ─────────────────────────────────── */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.rooms-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.room-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.cancel-btn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-secondary, #6b7280);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cancel-btn:hover {
+  border-color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text, #1a1a1a);
+}
+
+.save-room-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 10px;
+  background: var(--color-primary, #c0392b);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.save-room-btn:hover { background: #a93226; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .form-row.two-col {
+    flex-direction: column;
+  }
+  .room-entry-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .room-entry-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

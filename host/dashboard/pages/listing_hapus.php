@@ -6,7 +6,6 @@ header('Content-Type: application/json');
 
 $hostId = (int)($_SESSION['id'] ?? 0);
 
-/* Terima JSON atau form POST */
 $raw  = file_get_contents('php://input');
 $data = json_decode($raw, true);
 $id   = (int)($data['id']   ?? $_POST['id']   ?? 0);
@@ -17,7 +16,6 @@ if (!$id || !$aksi) {
     exit;
 }
 
-/* Pastikan listing milik host yang login */
 $cek = mysqli_fetch_assoc(mysqli_query($koneksi,
     "SELECT id, status FROM listings WHERE id = $id AND host_id = $hostId LIMIT 1"));
 
