@@ -674,7 +674,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
 
             <?php for ($i = 0; $i < 4; $i++):
                 $src = isset($thumbs[$i])
-                    ? (str_starts_with($nama_file, 'http') ? $nama_file : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($nama_file))
+                    ? (str_starts_with($thumbs[$i]['nama_file'], 'http') ? $thumbs[$i]['nama_file'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($thumbs[$i]['nama_file']))
                     : null;
                 ?>
                 <?php if ($src): ?>

@@ -393,7 +393,16 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       gap: 24px;
     }
 
-    .dm-cover {
+    /* ── Gallery in modal ── */
+    .dm-gallery {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .dm-gallery-main {
       width: 100%;
       height: 220px;
       border-radius: var(--radius-xl);
@@ -402,18 +411,67 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      position: relative;
     }
 
-    .dm-cover img {
+    .dm-gallery-main img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: opacity 0.2s ease;
     }
 
-    .dm-cover .no-photo {
+    .dm-gallery-main .no-photo {
       color: var(--color-text-hint);
       font-size: 3rem;
+    }
+
+    .dm-gallery-thumbs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .dm-gallery-thumbs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .dm-gallery-thumbs::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dm-gallery-thumbs::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 99px;
+    }
+
+    .dm-thumb {
+      width: 72px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s, transform 0.15s;
+      background: #f3f4f6;
+    }
+
+    .dm-thumb:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-primary);
+    }
+
+    .dm-thumb.active {
+      border-color: var(--color-primary);
+    }
+
+    .dm-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .dm-pills {
@@ -817,6 +875,8 @@ while ($r = mysqli_fetch_assoc($am_result)) {
               class="ph-bold ph-calendar-check"></i>Reservasi</a>
           <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i
               class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
+            Deals</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
@@ -924,7 +984,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                 $no = 1;
                 while ($row = mysqli_fetch_assoc($result)):
                   $foto_src = !empty($row['foto_cover'])
-                    ? '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover'])
+                    ? htmlspecialchars($row['foto_cover'])
                     : null;
                   $host_photo_path = !empty($row['host_photo']) &&
                     file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['host_photo'])
@@ -945,6 +1005,18 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                   $listing_rooms = $rooms_map[$row['id']] ?? [];
                   $kamar_show = array_slice($listing_rooms, 0, 2);
                   $kamar_lebih = count($listing_rooms) - count($kamar_show);
+
+                  // Ambil semua foto listing untuk gallery di modal
+                  $listing_photos_stmt = mysqli_prepare($koneksi, "SELECT nama_file, adalah_cover FROM listing_photos WHERE listing_id = ? ORDER BY adalah_cover DESC, urutan ASC");
+                  mysqli_stmt_bind_param($listing_photos_stmt, 'i', $row['id']);
+                  mysqli_stmt_execute($listing_photos_stmt);
+                  $listing_photos_result = mysqli_stmt_get_result($listing_photos_stmt);
+                  $listing_photos_all = [];
+                  while ($lp = mysqli_fetch_assoc($listing_photos_result)) {
+                    $listing_photos_all[] = $lp['nama_file'];
+                  }
+                  mysqli_stmt_close($listing_photos_stmt);
+
                   $panel_data = htmlspecialchars(json_encode([
                     'id' => $row['id'],
                     'judul' => $row['judul'],
@@ -972,6 +1044,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                     'host_nama' => $row['host_nama'],
                     'host_photo' => $host_photo_path,
                     'foto_cover' => $foto_src,
+                    'all_photos' => $listing_photos_all,   // ← semua foto
                     'rooms' => $rooms_map[$row['id']] ?? [],
                     'amenities' => $amenities_map[$row['id']] ?? [],
                   ]), ENT_QUOTES);
@@ -988,7 +1061,8 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                     <td>
                       <div class="table-cell">
                         <?php if ($foto_src): ?>
-                          <img src="<?= $foto_src ?>" class="table-thumbnail" alt="" />
+                          <img src="<?= $foto_src ?>" class="table-thumbnail" alt=""
+                            onerror="this.outerHTML='<div class=\'table-thumbnail\' style=\'background:#f3f4f6;display:flex;align-items:center;justify-content:center;\'><i class=\'ph-bold ph-image\' style=\'color:#d1d5db;font-size:1.2rem;\'></i></div>'" />
                         <?php else: ?>
                           <div class="table-thumbnail"
                             style="background:#f3f4f6;display:flex;align-items:center;justify-content:center;">
@@ -1004,7 +1078,8 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                         <?php if ($host_photo_path): ?>
                           <div class="table-avatar" style="padding:0;overflow:hidden;">
                             <img src="<?= $host_photo_path ?>" alt=""
-                              style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                              style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                              onerror="this.parentElement.innerHTML='<?= addslashes($host_initial) ?>'" />
                           </div>
                         <?php else: ?>
                           <div class="table-avatar"><?= $host_initial ?></div>
@@ -1085,6 +1160,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
     </div>
   </div>
 
+  <!-- ── DETAIL MODAL ── -->
   <div class="detail-overlay" id="detailOverlay">
     <div class="detail-modal">
       <div class="dm-header">
@@ -1096,7 +1172,14 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       </div>
 
       <div class="dm-body">
-        <div class="dm-cover" id="dmCover"><i class="ph-bold ph-image no-photo"></i></div>
+
+        <!-- Gallery: main image + thumbnails -->
+        <div class="dm-gallery" id="dmGallery">
+          <div class="dm-gallery-main" id="dmGalleryMain">
+            <i class="ph-bold ph-image no-photo"></i>
+          </div>
+          <div class="dm-gallery-thumbs" id="dmGalleryThumbs"></div>
+        </div>
 
         <div class="dm-pills" id="dmPills"></div>
 
@@ -1198,6 +1281,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
     </div>
   </div>
 
+  <!-- ── CONFIRM HAPUS ── -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
       <div>
@@ -1214,6 +1298,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
   </div>
 
   <script>
+    // ── Filter ────────────────────────────────────────────
     document.querySelectorAll(".filter-item").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".filter-item").forEach(b => b.classList.remove("active"));
@@ -1234,6 +1319,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
     }
     function rebuildHidden(row) { (row.dataset.hiddenFilter || row.dataset.hiddenSearch) ? (row.dataset.hidden = "1") : delete row.dataset.hidden; }
 
+    // ── Sort ──────────────────────────────────────────────
     const sortToggleBtn = document.getElementById("sortToggleBtn");
     const sortMenu = document.getElementById("sortMenu");
     sortToggleBtn.addEventListener("click", e => { e.stopPropagation(); sortMenu.classList.toggle("open"); });
@@ -1260,6 +1346,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       rows.forEach(r => tbody.appendChild(r)); resetAndPaginate(table);
     }
 
+    // ── Search ────────────────────────────────────────────
     document.getElementById("adminSearch")?.addEventListener("input", function () {
       const q = this.value.trim().toLowerCase(); const table = document.querySelector(".managed-table"); if (!table) return;
       table.querySelectorAll("tbody tr").forEach(row => {
@@ -1268,6 +1355,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       }); resetAndPaginate(table);
     });
 
+    // ── Pagination ────────────────────────────────────────
     const RPP = 10;
     function resetAndPaginate(t) { t._p = 1; paginate(t); }
     function paginate(table) {
@@ -1295,6 +1383,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
     }
     function pgList(cur, tot) { if (tot <= 7) return Array.from({ length: tot }, (_, i) => i + 1); const p = [1]; if (cur > 3) p.push("..."); for (let i = Math.max(2, cur - 1); i <= Math.min(tot - 1, cur + 1); i++)p.push(i); if (cur < tot - 2) p.push("..."); p.push(tot); return p; }
 
+    // ── Hapus listing ─────────────────────────────────────
     let pendingId = null;
     const confirmOverlay = document.getElementById("confirmOverlay");
     const btnBatal = document.getElementById("btnBatal");
@@ -1320,12 +1409,15 @@ while ($r = mysqli_fetch_assoc($am_result)) {
         .catch(() => { alert("Koneksi bermasalah."); btnHapusConfirm.disabled = false; btnHapusConfirm.innerHTML = '<i class="ph-bold ph-trash"></i> Ya, Hapus Permanen'; });
     });
 
+    // ── Detail modal ──────────────────────────────────────
     const detailOverlay = document.getElementById("detailOverlay");
     const btnClose = document.getElementById("dmClose");
     const btnToggle = document.getElementById("btnToggleStatus");
     let activeId = null;
     let activeStatus = null;
     let activeRow = null;
+
+    const FALLBACK_IMG = 'https://placehold.co/800x400/f3f4f6/9ca3af?text=Tidak+Ada+Foto';
 
     const KEBmap = {
       fleksibel: 'Gratis hingga 24 jam sebelum check-in',
@@ -1339,9 +1431,52 @@ while ($r = mysqli_fetch_assoc($am_result)) {
     function tgl(s) { const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'], d = new Date(s); return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`; }
     function trunc(s, max) { if (!s) return '-'; return s.length > max ? s.substring(0, max) + '...' : s; }
 
+    // ── Gallery helpers ────────────────────────────────────
+    function buildGallery(photos) {
+      const mainEl = document.getElementById('dmGalleryMain');
+      const thumbsEl = document.getElementById('dmGalleryThumbs');
+      thumbsEl.innerHTML = '';
+
+      if (!photos || photos.length === 0) {
+        mainEl.innerHTML = '<i class="ph-bold ph-image no-photo"></i>';
+        return;
+      }
+
+      // Render main image
+      function setMain(src, thumbEl) {
+        const img = mainEl.querySelector('img');
+        if (img) {
+          img.style.opacity = '0';
+          setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 150);
+        } else {
+          mainEl.innerHTML = `<img src="${src}" alt="" style="transition:opacity .2s ease;"
+            onerror="this.src='${FALLBACK_IMG}'" />`;
+        }
+        // Aktifkan thumb yang dipilih
+        thumbsEl.querySelectorAll('.dm-thumb').forEach(t => t.classList.remove('active'));
+        if (thumbEl) thumbEl.classList.add('active');
+      }
+
+      // Tampilkan foto pertama sebagai main
+      mainEl.innerHTML = `<img src="${photos[0]}" alt="" style="transition:opacity .2s ease;"
+        onerror="this.src='${FALLBACK_IMG}'" />`;
+
+      // Buat thumbnails
+      photos.forEach((src, idx) => {
+        const div = document.createElement('div');
+        div.className = 'dm-thumb' + (idx === 0 ? ' active' : '');
+        div.innerHTML = `<img src="${src}" alt="Foto ${idx + 1}"
+          onerror="this.src='${FALLBACK_IMG}'" />`;
+        div.addEventListener('click', () => setMain(src, div));
+        thumbsEl.appendChild(div);
+      });
+
+      // Sembunyikan thumbs row jika hanya 1 foto
+      thumbsEl.style.display = photos.length > 1 ? '' : 'none';
+    }
+
     function updateToggleBtn(status) {
       const isAktif = status === 'aktif';
-      btnToggle.textContent = '';
       btnToggle.innerHTML = isAktif
         ? '<i class="ph-bold ph-prohibit"></i> Nonaktifkan'
         : '<i class="ph-bold ph-check-circle"></i> Aktifkan';
@@ -1360,21 +1495,28 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       activeStatus = d.status.toLowerCase();
       activeRow = row;
 
-      document.getElementById("dmCover").innerHTML = d.foto_cover
-        ? `<img src="${d.foto_cover}" alt="" />`
-        : `<i class="ph-bold ph-image no-photo"></i>`;
+      // Gallery — gunakan all_photos jika ada, fallback ke foto_cover saja
+      const photos = (d.all_photos && d.all_photos.length > 0)
+        ? d.all_photos
+        : (d.foto_cover ? [d.foto_cover] : []);
+      buildGallery(photos);
 
       document.getElementById("dmJudul").textContent = d.judul;
       document.getElementById("dmSubtitle").textContent = d.lokasi;
 
       document.getElementById("dmPills").innerHTML = `
-      <span class="pill pill-properti">${ucf(d.tipe_properti)}</span>
-      <span class="pill pill-privasi">${d.tipe_privasi === 'seluruh' ? 'Seluruh Tempat' : 'Per Kamar'}</span>
-      <span class="pill ${d.tipe_booking === 'instan' ? 'pill-instan' : 'pill-permintaan'}">${d.tipe_booking === 'instan' ? 'Instan' : 'Konfirmasi'}</span>
-    `;
+        <span class="pill pill-properti">${ucf(d.tipe_properti)}</span>
+        <span class="pill pill-privasi">${d.tipe_privasi === 'seluruh' ? 'Seluruh Tempat' : 'Per Kamar'}</span>
+        <span class="pill ${d.tipe_booking === 'instan' ? 'pill-instan' : 'pill-permintaan'}">${d.tipe_booking === 'instan' ? 'Instan' : 'Konfirmasi'}</span>
+      `;
 
       const av = document.getElementById("dmHostAvatar");
-      av.innerHTML = d.host_photo ? `<img src="${d.host_photo}" alt="" />` : (d.host_nama ? d.host_nama.substring(0, 2).toUpperCase() : 'H');
+      if (d.host_photo) {
+        av.innerHTML = `<img src="${d.host_photo}" alt=""
+          onerror="this.parentElement.textContent='${(d.host_nama || 'H').substring(0, 2).toUpperCase()}'" />`;
+      } else {
+        av.textContent = (d.host_nama || 'H').substring(0, 2).toUpperCase();
+      }
       document.getElementById("dmHostNama").textContent = d.host_nama;
 
       document.getElementById("dmLokasi").textContent = d.lokasi;
@@ -1421,6 +1563,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       detailOverlay.classList.add("show");
     }
 
+    // ── Toggle status ─────────────────────────────────────
     btnToggle.addEventListener("click", () => {
       if (!activeId) return;
       const newStatus = activeStatus === 'aktif' ? 'nonaktif' : 'aktif';
@@ -1429,7 +1572,10 @@ while ($r = mysqli_fetch_assoc($am_result)) {
 
       btnToggle.disabled = true;
       const fd = new FormData();
-      fd.append('action', 'toggle_status'); fd.append('listing_id', activeId); fd.append('new_status', newStatus);
+      fd.append('action', 'toggle_status');
+      fd.append('listing_id', activeId);
+      fd.append('new_status', newStatus);
+
       fetch(window.location.pathname, { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
@@ -1437,9 +1583,13 @@ while ($r = mysqli_fetch_assoc($am_result)) {
             activeStatus = data.new_status;
             if (activeRow) {
               activeRow.dataset.status = activeStatus;
-              const panelObj = JSON.parse(activeRow.dataset.panel.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&'));
-              panelObj.status = activeStatus;
-              activeRow.dataset.panel = JSON.stringify(panelObj).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+              // Update panel JSON di data-attribute
+              try {
+                const panelObj = JSON.parse(activeRow.dataset.panel);
+                panelObj.status = activeStatus;
+                activeRow.dataset.panel = JSON.stringify(panelObj);
+              } catch (e) { /* abaikan jika parse gagal */ }
+              // Update badge di baris tabel
               const badge = activeRow.querySelector('td .table-badge');
               if (badge) {
                 const map = { aktif: 'success', nonaktif: 'danger', draft: 'neutral' };
@@ -1449,12 +1599,15 @@ while ($r = mysqli_fetch_assoc($am_result)) {
             }
             updateStatusBadge(activeStatus);
             updateToggleBtn(activeStatus);
-          } else { alert('Gagal: ' + (data.message || 'Terjadi kesalahan.')); }
+          } else {
+            alert('Gagal: ' + (data.message || 'Terjadi kesalahan.'));
+          }
         })
         .catch(() => alert('Koneksi bermasalah.'))
         .finally(() => { btnToggle.disabled = false; });
     });
 
+    // ── Delegasi klik tabel ───────────────────────────────
     document.querySelector("#listingTable tbody").addEventListener("click", e => {
       const bD = e.target.closest(".btn-detail"); if (bD) { openDetail(bD.closest("tr")); return; }
       const bH = e.target.closest(".btn-hapus"); if (bH) { showConfirmHapus(bH.dataset.id, bH.dataset.judul); }
@@ -1462,9 +1615,6 @@ while ($r = mysqli_fetch_assoc($am_result)) {
 
     btnClose.addEventListener("click", () => detailOverlay.classList.remove("show"));
     detailOverlay.addEventListener("click", e => { if (e.target === detailOverlay) detailOverlay.classList.remove("show"); });
-
-    function ucFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
     document.addEventListener("DOMContentLoaded", () => { const t = document.querySelector(".managed-table"); if (t) paginate(t); });
   </script>

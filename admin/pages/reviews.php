@@ -453,6 +453,8 @@ function potong_teks(string $teks, int $maks = 80): string
               class="ph-bold ph-calendar-check"></i> Reservasi</a>
           <a href="/teman_singgah/admin/pages/transactions.php" class="nav-item"><i
               class="ph-bold ph-currency-circle-dollar"></i> Transaksi</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
+            Deals</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>

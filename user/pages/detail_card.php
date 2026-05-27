@@ -165,6 +165,78 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
     rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+
+  <style>
+    /* ── Room Selection States ───────────────────────── */
+    .room-card {
+      transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .room-card.selected {
+      border: 2px solid #8b2500;
+      box-shadow: 0 0 0 4px rgba(139, 37, 0, 0.12);
+      background: rgba(139, 37, 0, 0.025);
+    }
+
+    .room-book-btn.is-selected {
+      background: #8b2500 !important;
+      color: #fff !important;
+      opacity: 1 !important;
+    }
+
+    /* ── Sidebar room label ──────────────────────────── */
+    .booking-selected-room {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #8b2500;
+      background: rgba(139, 37, 0, 0.07);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .booking-selected-room.visible {
+      display: flex;
+    }
+
+    .booking-selected-room i {
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .booking-selected-room .clear-room {
+      margin-left: auto;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.15s;
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .booking-selected-room .clear-room:hover {
+      opacity: 1;
+    }
+
+    /* ── No room warning on submit ───────────────────── */
+    .booking-no-room-warning {
+      display: none;
+      font-size: 12px;
+      color: #c0392b;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .booking-no-room-warning.visible {
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
@@ -323,7 +395,8 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
               <?php foreach ($rooms as $room):
                 $fasilitas_kamar = json_decode($room['fasilitas'] ?? '[]', true) ?: [];
                 ?>
-                <div class="room-card">
+                <!-- data-room-id ditambahkan untuk seleksi JS -->
+                <div class="room-card" data-room-id="<?= $room['id'] ?>">
 
                   <!-- Foto / Placeholder -->
                   <div class="room-card-photo">
@@ -377,9 +450,12 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
                         </span>
                         <span class="room-price-unit">/ malam</span>
                       </div>
-                      <a href="./payment_confirm.php?listing=<?= $listing_id ?>&room=<?= $room['id'] ?>">
-                        <button class="room-book-btn">Pilih Kamar</button>
-                      </a>
+                      <!-- Tombol sekarang tidak redirect, tapi trigger seleksi -->
+                      <button class="room-book-btn" data-room-id="<?= $room['id'] ?>"
+                        data-room-name="<?= htmlspecialchars($room['nama'], ENT_QUOTES) ?>"
+                        data-room-price="<?= $room['harga_malam'] ?>">
+                        Pilih Kamar
+                      </button>
                     </div>
 
                   </div>
@@ -569,20 +645,34 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         <div class="booking-card">
           <h3 class="booking-title">Pesan Kamar</h3>
           <div class="booking-price">
-            <span class="booking-price-amount">
+            <!-- id ditambahkan agar harga bisa diupdate JS saat kamar dipilih -->
+            <span class="booking-price-amount" id="bookingPriceAmount">
               Rp <?= number_format($listing['harga_malam'], 0, ',', '.') ?>
             </span>
             <span class="booking-price-unit">/ malam</span>
           </div>
-          <form class="booking-form">
+
+          <!-- Label kamar yang dipilih (tersembunyi sampai ada kamar dipilih) -->
+          <div class="booking-selected-room" id="bookingSelectedRoom">
+            <i class="ph-bold ph-bed"></i>
+            <span id="bookingSelectedRoomName"></span>
+            <button class="clear-room" id="clearRoomBtn" title="Hapus pilihan kamar">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+
+          <form class="booking-form" id="bookingForm">
+            <!-- Hidden input untuk room_id yang dipilih -->
+            <input type="hidden" id="selectedRoomIdInput" name="room_id" value="" />
+
             <div class="date-input-field">
               <div class="booking-field">
-                <label>Check-in</label>
+                <label for="checkin">Check-in</label>
                 <input type="text" inputmode="date" class="calendar-input" id="checkinInput"
                   placeholder="Tambahkan Tanggal" required />
               </div>
               <div class="booking-field">
-                <label>Check-out</label>
+                <label for="checkout">Check-out</label>
                 <input type="text" inputmode="date" class="calendar-input" id="checkoutInput"
                   placeholder="Tambahkan Tanggal" required />
               </div>
@@ -595,9 +685,16 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
               <label>Kode Promo</label>
               <input type="text" class="promo-input" id="promoInput" placeholder="Masukkan kode promo" />
             </div>
-            <a href="./payment_confirm.php?listing=<?= $listing_id ?>">
-              <button type="button" class="booking-submit">Pesan Sekarang</button>
-            </a>
+
+            <!-- Tombol submit — tidak pakai <a> wrapper, redirect dihandle JS -->
+            <button type="button" class="booking-submit" id="bookingSubmitBtn">Pesan Sekarang</button>
+
+            <!-- Warning muncul kalau ada banyak kamar tapi belum pilih -->
+            <?php if (!empty($rooms)): ?>
+              <p class="booking-no-room-warning" id="bookingNoRoomWarning">
+                Pilih kamar terlebih dahulu dari daftar di atas.
+              </p>
+            <?php endif; ?>
           </form>
           <div id="bookingCalendarDropdown" class="calendar-dropdown"></div>
           <div id="bookingGuestDropdown" class="guest-counter-dropdown"></div>
@@ -715,7 +812,6 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
   <?php endif; ?>
 
   <script>
-    // ── Share ─────────────────────────────────────────────
     document.getElementById('btnShare')?.addEventListener('click', async () => {
       const data = {
         title: <?= json_encode($listing['judul']) ?>,
@@ -732,8 +828,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         setTimeout(() => btn.innerHTML = orig, 2000);
       }
     });
-
-    // ── Simpan (toggle) ───────────────────────────────────
+    
     const SAVE_KEY = 'saved_listings';
     const listingId = <?= $listing_id ?>;
     const btnSave = document.getElementById('btnSave');
@@ -751,16 +846,114 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
 
     btnSave?.addEventListener('click', () => {
       let saved = getSaved();
-      if (saved.includes(listingId)) {
-        saved = saved.filter(id => id !== listingId);
-      } else {
-        saved.push(listingId);
-      }
+      saved = saved.includes(listingId)
+        ? saved.filter(id => id !== listingId)
+        : [...saved, listingId];
       localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
       updateSaveBtn();
     });
 
     updateSaveBtn();
+
+    (function () {
+      const BASE_PRICE = <?= (int) $listing['harga_malam'] ?>;
+      const HAS_ROOMS = <?= !empty($rooms) ? 'true' : 'false' ?>;
+      const BASE_LISTING_ID = <?= $listing_id ?>;
+
+      let selectedRoomId = null;
+
+      const priceEl = document.getElementById('bookingPriceAmount');
+      const selectedRoomEl = document.getElementById('bookingSelectedRoom');
+      const selectedRoomName = document.getElementById('bookingSelectedRoomName');
+      const clearRoomBtn = document.getElementById('clearRoomBtn');
+      const roomIdInput = document.getElementById('selectedRoomIdInput');
+      const submitBtn = document.getElementById('bookingSubmitBtn');
+      const noRoomWarning = document.getElementById('bookingNoRoomWarning');
+
+      function formatRupiah(num) {
+        return 'Rp ' + parseInt(num).toLocaleString('id-ID');
+      }
+
+      function clearSelection() {
+        selectedRoomId = null;
+        roomIdInput.value = '';
+
+        document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.room-book-btn').forEach(b => {
+          b.classList.remove('is-selected');
+          b.textContent = 'Pilih Kamar';
+        });
+
+        priceEl.textContent = formatRupiah(BASE_PRICE);
+        selectedRoomEl.classList.remove('visible');
+        selectedRoomName.textContent = '';
+        if (noRoomWarning) noRoomWarning.classList.remove('visible');
+      }
+
+      function selectRoom(roomId, roomName, roomPrice) {
+        selectedRoomId = roomId;
+        roomIdInput.value = roomId;
+
+        document.querySelectorAll('.room-card').forEach(c => {
+          c.classList.toggle('selected', c.dataset.roomId === roomId);
+        });
+        document.querySelectorAll('.room-book-btn').forEach(b => {
+          const isThis = b.dataset.roomId === roomId;
+          b.classList.toggle('is-selected', isThis);
+          b.textContent = isThis ? '✓ Dipilih' : 'Pilih Kamar';
+        });
+
+        priceEl.textContent = formatRupiah(roomPrice);
+
+        selectedRoomName.textContent = roomName;
+        selectedRoomEl.classList.add('visible');
+
+        if (noRoomWarning) noRoomWarning.classList.remove('visible');
+
+        document.querySelector('.booking-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      document.querySelectorAll('.room-book-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const roomId = btn.dataset.roomId;
+          const roomName = btn.dataset.roomName;
+          const roomPrice = btn.dataset.roomPrice;
+
+          if (selectedRoomId === roomId) {
+            clearSelection();
+            return;
+          }
+
+          selectRoom(roomId, roomName, roomPrice);
+        });
+      });
+
+      clearRoomBtn?.addEventListener('click', clearSelection);
+
+      submitBtn?.addEventListener('click', () => {
+        if (HAS_ROOMS && !selectedRoomId) {
+          if (noRoomWarning) {
+            noRoomWarning.classList.add('visible');
+            document.querySelector('.rooms-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
+
+        const checkin = document.getElementById('checkinInput')?.value || '';
+        const checkout = document.getElementById('checkoutInput')?.value || '';
+        const promo = document.getElementById('promoInput')?.value || '';
+        const guest = document.getElementById('guestInput')?.value || '';
+
+        let url = `./payment_confirm.php?listing_id=${BASE_LISTING_ID}`;
+        if (selectedRoomId) url += `&room_id=${encodeURIComponent(selectedRoomId)}`;
+        if (checkin) url += `&checkin=${encodeURIComponent(checkin)}`;
+        if (checkout) url += `&checkout=${encodeURIComponent(checkout)}`;
+        if (guest) url += `&jumlah_tamu=${encodeURIComponent(guest)}`;
+        if (promo) url += `&promo=${encodeURIComponent(promo)}`;
+
+        window.location.href = url;
+      });
+    })();
   </script>
 </body>
 

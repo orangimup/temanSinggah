@@ -11,7 +11,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_status') {
   header('Content-Type: application/json');
 
-  $user_id    = trim($_POST['user_id']    ?? '');
+  $user_id = trim($_POST['user_id'] ?? '');
   $new_status = trim($_POST['new_status'] ?? '');
 
   if (!$user_id || !in_array($new_status, ['Aktif', 'Nonaktif'])) {
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   }
 
   $check = mysqli_query($koneksi, "SELECT role FROM users WHERE user_id = '" . mysqli_real_escape_string($koneksi, $user_id) . "'");
-  $user  = mysqli_fetch_assoc($check);
+  $user = mysqli_fetch_assoc($check);
 
   if (!$user) {
     echo json_encode(['success' => false, 'message' => 'User tidak ditemukan.']);
@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   $ok = mysqli_stmt_execute($stmt);
   mysqli_stmt_close($stmt);
 
-  echo json_encode($ok
+  echo json_encode(
+    $ok
     ? ['success' => true, 'new_status' => $new_status]
     : ['success' => false, 'message' => 'Gagal memperbarui status.']
   );
@@ -58,7 +59,9 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
   <link rel="stylesheet" href="/teman_singgah/admin/dashboard.css" />
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
   <style>
@@ -391,20 +394,28 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
         <a class="logo-link" href="/teman_singgah/admin/pages/dashboard.php"></a>
         <div class="logo-section">
           <img alt="Logo Teman Singgah" class="logo-icon" src="/teman_singgah/assets/logo/logo_temansinggah.svg" />
-          <img alt="Brand Name Teman Singgah" class="logo-name" src="/teman_singgah/assets/logo/label_temansinggah.svg" />
+          <img alt="Brand Name Teman Singgah" class="logo-name"
+            src="/teman_singgah/assets/logo/label_temansinggah.svg" />
         </div>
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">
           <div class="nav-section-title">Halaman Utama</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.php"><i class="ph-bold ph-squares-four"></i>Dashboard</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.php"><i
+              class="ph-bold ph-squares-four"></i>Dashboard</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Manajemen</div>
-          <a class="nav-item active" href="/teman_singgah/admin/pages/users.php"><i class="ph-bold ph-users"></i>Pengguna</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/listings.php"><i class="ph-bold ph-house"></i>Properti</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/reservations.php"><i class="ph-bold ph-calendar-check"></i>Reservasi</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
+          <a class="nav-item active" href="/teman_singgah/admin/pages/users.php"><i
+              class="ph-bold ph-users"></i>Pengguna</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/listings.php"><i
+              class="ph-bold ph-house"></i>Properti</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/reservations.php"><i
+              class="ph-bold ph-calendar-check"></i>Reservasi</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i
+              class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
+            Deals</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
@@ -413,11 +424,13 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/payouts.php"><i class="ph-bold ph-money"></i>Pembayaran</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/payouts.php"><i
+              class="ph-bold ph-money"></i>Pembayaran</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Sistem</div>
-          <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i class="ph-bold ph-gear"></i>Pengaturan</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i
+              class="ph-bold ph-gear"></i>Pengaturan</a>
           <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
@@ -439,7 +452,8 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
           <div class="search-row">
             <div class="table-search-wrap">
               <i class="ph-bold ph-magnifying-glass table-search-icon"></i>
-              <input type="search" id="adminSearch" class="table-search-input" placeholder="Cari ID, nama, atau email..." />
+              <input type="search" id="adminSearch" class="table-search-input"
+                placeholder="Cari ID, nama, atau email..." />
             </div>
           </div>
         </div>
@@ -504,13 +518,11 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
                   $photo_path = !empty($row['photo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['photo'])
                     ? '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($row['photo'])
                     : null;
-                ?>
-                  <tr
-                    data-role="<?= htmlspecialchars($row['role']) ?>"
+                  ?>
+                  <tr data-role="<?= htmlspecialchars($row['role']) ?>"
                     data-status="<?= htmlspecialchars($row['status']) ?>"
                     data-userid="<?= htmlspecialchars($row['user_id']) ?>"
-                    data-nama="<?= htmlspecialchars($row['nama']) ?>"
-                    data-email="<?= htmlspecialchars($row['email']) ?>"
+                    data-nama="<?= htmlspecialchars($row['nama']) ?>" data-email="<?= htmlspecialchars($row['email']) ?>"
                     data-nohp="<?= htmlspecialchars($row['no_hp'] ?? '') ?>"
                     data-tanggal="<?= htmlspecialchars($row['tanggal_daftar']) ?>"
                     data-photo="<?= $photo_path ? htmlspecialchars($photo_path) : '' ?>">
@@ -520,7 +532,8 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
                       <div class="table-cell">
                         <?php if ($photo_path): ?>
                           <div class="table-avatar" style="padding:0;overflow:hidden;">
-                            <img src="<?= $photo_path ?>" alt="Foto" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                            <img src="<?= $photo_path ?>" alt="Foto"
+                              style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
                           </div>
                         <?php else: ?>
                           <div class="table-avatar"><?= strtoupper(mb_substr($row['nama'], 0, 2)) ?></div>
@@ -612,11 +625,11 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
   <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-      const panel     = document.getElementById('detailPanel');
-      const btnClose  = document.getElementById('detailClose');
+      const panel = document.getElementById('detailPanel');
+      const btnClose = document.getElementById('detailClose');
       const btnToggle = document.getElementById('btnToggleStatus');
 
-      let activeRow    = null;
+      let activeRow = null;
       let activeUserId = '';
       let activeStatus = '';
 
@@ -635,27 +648,27 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
 
       /* ── Buka panel & isi data ── */
       function openDetail(row) {
-        activeRow    = row;
+        activeRow = row;
         activeUserId = row.dataset.userid;
         activeStatus = row.dataset.status;
 
-        const nama    = row.dataset.nama;
-        const email   = row.dataset.email;
-        const noHp    = row.dataset.nohp;
-        const role    = row.dataset.role;
+        const nama = row.dataset.nama;
+        const email = row.dataset.email;
+        const noHp = row.dataset.nohp;
+        const role = row.dataset.role;
         const tanggal = row.dataset.tanggal;
-        const photo   = row.dataset.photo;
+        const photo = row.dataset.photo;
 
         const avatarEl = document.getElementById('detailAvatar');
         avatarEl.innerHTML = photo
           ? `<img src="${photo}" alt="Foto" style="width:100%;height:100%;object-fit:cover;" />`
           : nama.substring(0, 2).toUpperCase();
 
-        document.getElementById('detailNama').textContent    = nama;
-        document.getElementById('detailUserId').textContent  = activeUserId;
-        document.getElementById('detailEmail').textContent   = email;
-        document.getElementById('detailNoHp').textContent    = noHp || 'Belum diatur';
-        document.getElementById('detailRole').textContent    = role;
+        document.getElementById('detailNama').textContent = nama;
+        document.getElementById('detailUserId').textContent = activeUserId;
+        document.getElementById('detailEmail').textContent = email;
+        document.getElementById('detailNoHp').textContent = noHp || 'Belum diatur';
+        document.getElementById('detailRole').textContent = role;
         document.getElementById('detailTanggal').textContent = new Date(tanggal).toLocaleDateString('id-ID', {
           day: 'numeric', month: 'long', year: 'numeric'
         });
@@ -669,17 +682,17 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
         if (!activeUserId) return;
 
         const newStatus = activeStatus === 'Aktif' ? 'Nonaktif' : 'Aktif';
-        const aksi      = activeStatus === 'Aktif' ? 'menonaktifkan' : 'mengaktifkan';
-        const nama      = document.getElementById('detailNama').textContent;
+        const aksi = activeStatus === 'Aktif' ? 'menonaktifkan' : 'mengaktifkan';
+        const nama = document.getElementById('detailNama').textContent;
 
         if (!confirm(`Yakin ingin ${aksi} akun "${nama}"?`)) return;
 
-        btnToggle.disabled    = true;
+        btnToggle.disabled = true;
         btnToggle.textContent = 'Menyimpan…';
 
         const fd = new FormData();
-        fd.append('action',     'toggle_status');
-        fd.append('user_id',    activeUserId);
+        fd.append('action', 'toggle_status');
+        fd.append('user_id', activeUserId);
         fd.append('new_status', newStatus);
 
         fetch(window.location.pathname, { method: 'POST', body: fd })

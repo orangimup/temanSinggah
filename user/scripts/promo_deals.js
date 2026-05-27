@@ -102,11 +102,10 @@ filterButton.forEach((filterItem) => {
   });
 });
 
-const sortButton = document.querySelectorAll(".sort-button");
+const sortButton = document.querySelector(".sort-button");
 
-sortButton.forEach((sortItem) => {
-  sortItem.addEventListener("click", () => {
-    const isActive = sortItem.classList.toggle("active");
+sortButton.addEventListener("click", () => {
+    const isActive = sortButton.classList.toggle("active");
 
     const textSpan = sortItem.querySelector("span");
     const iconI = sortItem.querySelector(".caret-icon");
@@ -121,7 +120,6 @@ sortButton.forEach((sortItem) => {
       sortPromos("descending");
     }
   });
-});
 
 const copyButton = document.querySelectorAll(".copy-button");
 copyButton.forEach((copyItem) => {
