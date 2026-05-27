@@ -686,10 +686,8 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
               <input type="text" class="promo-input" id="promoInput" placeholder="Masukkan kode promo" />
             </div>
 
-            <!-- Tombol submit — tidak pakai <a> wrapper, redirect dihandle JS -->
             <button type="button" class="booking-submit" id="bookingSubmitBtn">Pesan Sekarang</button>
 
-            <!-- Warning muncul kalau ada banyak kamar tapi belum pilih -->
             <?php if (!empty($rooms)): ?>
               <p class="booking-no-room-warning" id="bookingNoRoomWarning">
                 Pilih kamar terlebih dahulu dari daftar di atas.
@@ -828,7 +826,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         setTimeout(() => btn.innerHTML = orig, 2000);
       }
     });
-    
+
     const SAVE_KEY = 'saved_listings';
     const listingId = <?= $listing_id ?>;
     const btnSave = document.getElementById('btnSave');
@@ -939,8 +937,8 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           return;
         }
 
-        const checkin = document.getElementById('checkinInput')?.value || '';
-        const checkout = document.getElementById('checkoutInput')?.value || '';
+        const checkin = document.getElementById('checkinInput')?.dataset.value || '';
+        const checkout = document.getElementById('checkoutInput')?.dataset.value || '';
         const promo = document.getElementById('promoInput')?.value || '';
         const guest = document.getElementById('guestInput')?.value || '';
 
