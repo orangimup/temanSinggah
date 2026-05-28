@@ -492,7 +492,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
             </div>
             <div class="policy-item">
               <span class="policy-icon">
-                <i class="ph-bold ph-paw-print"></i>
+                <i class="ph-bold <?= $policies['boleh_hewan'] ? 'ph-paw-print' : 'ph-prohibit' ?>"></i>
               </span>
               <div class="policy-text">
                 <strong>Hewan Peliharaan</strong>
@@ -800,6 +800,8 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
     window.LISTING_LNG = <?= json_encode((float) ($listing['longitude'] ?? 115.2625)) ?>;
     window.LISTING_NAME = <?= json_encode($listing['judul']) ?>;
     window.LISTING_LOC = <?= json_encode($listing['lokasi']) ?>;
+    window.MAX_TAMU = <?= (int) $listing['max_tamu'] ?>;
+    window.BOLEH_HEWAN = <?= !empty($policies['boleh_hewan']) ? 'true' : 'false' ?>;
   </script>
 
   <script src="../../components/navbar.js"></script>

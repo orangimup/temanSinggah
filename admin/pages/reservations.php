@@ -7,17 +7,22 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
   exit;
 }
 
-// ── Parameter filter & pencarian ──────────────────────────────────────────────
-$search = trim($_GET['q'] ?? '');
-$status_f = trim($_GET['status'] ?? '');
-$sort = trim($_GET['sort'] ?? 'checkin_asc');
+$conn->query("
+    UPDATE bookings b
+    JOIN listings l ON l.id = b.listing_id
+    SET b.status = 'dikonfirmasi'
+    WHERE b.status = 'menunggu'
+      AND l.tipe_booking = 'instan'
+");
 
-// ── Paginasi ──────────────────────────────────────────────────────────────────
+$search = trim($_GET['q'] ?? '');
+$filter_f = trim($_GET['filter'] ?? '');
+$sort = trim($_GET['sort'] ?? 'terbaru');
+
 $per_page = 10;
 $page = max(1, intval($_GET['page'] ?? 1));
 $offset = ($page - 1) * $per_page;
 
-// ── Bangun klausa WHERE ───────────────────────────────────────────────────────
 $conditions = [];
 $params = [];
 $types = '';
@@ -31,27 +36,35 @@ if ($search !== '') {
   $types .= 'sss';
 }
 
-if ($status_f !== '') {
-  $conditions[] = "b.status = ?";
-  $params[] = $status_f;
-  $types .= 's';
+switch ($filter_f) {
+  case 'berlangsung':
+    $conditions[] = "b.checkin <= CURDATE() AND b.checkout >= CURDATE() AND b.status = 'dikonfirmasi'";
+    break;
+  case 'mendatang':
+    $conditions[] = "b.checkin > CURDATE()";
+    break;
+  case 'dikonfirmasi':
+    $conditions[] = "b.status = 'dikonfirmasi'";
+    break;
+  case 'dibatalkan':
+    $conditions[] = "b.status = 'dibatalkan'";
+    break;
+  case 'selesai':
+    $conditions[] = "b.status = 'selesai'";
+    break;
 }
 
 $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-// ── ORDER BY ──────────────────────────────────────────────────────────────────
 $order_map = [
-  'checkin_asc' => 'b.checkin ASC',
-  'checkin_desc' => 'b.checkin DESC',
-  'checkout_asc' => 'b.checkout ASC',
-  'checkout_desc' => 'b.checkout DESC',
+  'terbaru' => 'b.dibuat_pada DESC',
+  'checkin_terbaru' => 'b.checkin DESC',
+  'checkin_terlama' => 'b.checkin ASC',
   'harga_desc' => 'b.total_harga DESC',
   'harga_asc' => 'b.total_harga ASC',
-  'terbaru' => 'b.dibuat_pada DESC',
 ];
-$order = $order_map[$sort] ?? 'b.checkin ASC';
+$order = $order_map[$sort] ?? 'b.dibuat_pada DESC';
 
-// ── Hitung total data (untuk paginasi) ────────────────────────────────────────
 $count_sql = "
     SELECT COUNT(*) AS total
     FROM bookings b
@@ -68,7 +81,6 @@ $total_data = $count_stmt->get_result()->fetch_assoc()['total'];
 $total_pages = (int) ceil($total_data / $per_page);
 $count_stmt->close();
 
-// ── Ambil data utama ──────────────────────────────────────────────────────────
 $data_sql = "
     SELECT
         b.id,
@@ -78,12 +90,20 @@ $data_sql = "
         b.total_harga,
         b.status,
         b.dibuat_pada,
+        b.metode_bayar,
+        b.tipe_bayar,
+        b.dp_amount,
+        b.kode_promo,
+        b.sisa_bayar,
         u.nama  AS nama_tamu,
         u.email AS email_tamu,
-        l.judul AS nama_listing
+        u.photo AS photo_tamu,
+        l.judul AS nama_listing,
+        r.nama  AS nama_kamar
     FROM bookings b
     JOIN users    u ON u.id = b.user_id
     JOIN listings l ON l.id = b.listing_id
+    LEFT JOIN listing_rooms r ON r.id = b.room_id
     $where
     ORDER BY $order
     LIMIT ? OFFSET ?
@@ -97,7 +117,6 @@ $data_stmt->execute();
 $rows = $data_stmt->get_result();
 $data_stmt->close();
 
-// ── Map status ke label & badge ───────────────────────────────────────────────
 $badge_map = [
   'menunggu' => ['label' => 'Menunggu', 'class' => 'warning'],
   'dikonfirmasi' => ['label' => 'Dikonfirmasi', 'class' => 'success'],
@@ -105,7 +124,14 @@ $badge_map = [
   'selesai' => ['label' => 'Selesai', 'class' => 'info'],
 ];
 
-// Fungsi bantu: buat URL query string dengan override parameter tertentu
+$sort_labels = [
+  'terbaru' => 'Terbaru',
+  'checkin_terbaru' => 'Check-in Terbaru',
+  'checkin_terlama' => 'Check-in Terlama',
+  'harga_desc' => 'Harga Tertinggi',
+  'harga_asc' => 'Harga Terendah',
+];
+
 function build_url(array $overrides = []): string
 {
   $params = array_merge($_GET, $overrides);
@@ -120,10 +146,8 @@ function build_url(array $overrides = []): string
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manajemen Reservasi | Admin Teman Singgah</title>
   <link rel="icon" href="../../assets/logo/logo_temansinggah.svg" />
-
   <link rel="stylesheet" href="../../components/root.css" />
   <link rel="stylesheet" href="../dashboard.css" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -196,7 +220,56 @@ function build_url(array $overrides = []): string
       font-weight: var(--font-regular);
     }
 
-    /* Modal detail */
+    .sort-dropdown {
+      position: relative;
+    }
+
+    .sort-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      background: #fff;
+      border: 1px solid var(--color-border, #e5e7eb);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+      z-index: 200;
+      min-width: 210px;
+      overflow: hidden;
+    }
+
+    .sort-menu.open {
+      display: block;
+    }
+
+    .sort-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #374151;
+      transition: background .15s;
+      font-family: var(--font-family);
+    }
+
+    .sort-menu-item:hover {
+      background: #f9fafb;
+    }
+
+    .sort-menu-item.active {
+      color: var(--color-primary, #8b2500);
+      font-weight: 600;
+      background: #fff8f5;
+    }
+
+    .sort-menu-divider {
+      height: 1px;
+      background: #f3f4f6;
+      margin: 4px 0;
+    }
+
     .modal-overlay {
       display: none;
       position: fixed;
@@ -270,7 +343,6 @@ function build_url(array $overrides = []): string
       background: var(--color-bg-hover);
     }
 
-    /* Paginasi */
     .pagination {
       display: flex;
       align-items: center;
@@ -305,13 +377,22 @@ function build_url(array $overrides = []): string
       opacity: .4;
       cursor: not-allowed;
     }
+
+    /* Badge Berlangsung */
+    .table-badge.primary {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .table-badge.primary .badge-dot {
+      background: #1d4ed8;
+    }
   </style>
 </head>
 
 <body>
   <div class="admin-layout">
 
-    <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo-section">
@@ -351,7 +432,6 @@ function build_url(array $overrides = []): string
       </nav>
     </aside>
 
-    <!-- ── Main ────────────────────────────────────────────────────────────── -->
     <div class="main-container">
       <header class="topbar">
         <div class="topbar-left">
@@ -367,7 +447,6 @@ function build_url(array $overrides = []): string
 
       <main class="content-area">
 
-        <!-- ── Toolbar pencarian ─────────────────────────────────────────────── -->
         <form method="GET" action="" id="filterForm">
           <div class="table-toolbar">
             <div class="search-row">
@@ -380,40 +459,61 @@ function build_url(array $overrides = []): string
             </div>
           </div>
 
-          <!-- ── Filter status ──────────────────────────────────────────────── -->
           <div class="filter-container">
             <div class="filter-group" id="filterGroup">
-              <a href="<?= build_url(['status' => '', 'page' => 1]) ?>"
-                class="filter-item <?= $status_f === '' ? 'active' : '' ?>">Semua</a>
-              <a href="<?= build_url(['status' => 'menunggu', 'page' => 1]) ?>"
-                class="filter-item <?= $status_f === 'menunggu' ? 'active' : '' ?>">Menunggu</a>
-              <a href="<?= build_url(['status' => 'dikonfirmasi', 'page' => 1]) ?>"
-                class="filter-item <?= $status_f === 'dikonfirmasi' ? 'active' : '' ?>">Dikonfirmasi</a>
-              <a href="<?= build_url(['status' => 'dibatalkan', 'page' => 1]) ?>"
-                class="filter-item <?= $status_f === 'dibatalkan' ? 'active' : '' ?>">Dibatalkan</a>
-              <a href="<?= build_url(['status' => 'selesai', 'page' => 1]) ?>"
-                class="filter-item <?= $status_f === 'selesai' ? 'active' : '' ?>">Selesai</a>
+              <a href="<?= build_url(['filter' => '', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === '' ? 'active' : '' ?>">Semua</a>
+              <a href="<?= build_url(['filter' => 'berlangsung', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === 'berlangsung' ? 'active' : '' ?>">Berlangsung</a>
+              <a href="<?= build_url(['filter' => 'mendatang', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === 'mendatang' ? 'active' : '' ?>">Mendatang</a>
+              <a href="<?= build_url(['filter' => 'dikonfirmasi', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === 'dikonfirmasi' ? 'active' : '' ?>">Dikonfirmasi</a>
+              <a href="<?= build_url(['filter' => 'dibatalkan', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === 'dibatalkan' ? 'active' : '' ?>">Dibatalkan</a>
+              <a href="<?= build_url(['filter' => 'selesai', 'page' => 1]) ?>"
+                class="filter-item <?= $filter_f === 'selesai' ? 'active' : '' ?>">Selesai</a>
             </div>
 
             <div class="sort-dropdown">
-              <select name="sort" class="sort-button" onchange="document.getElementById('filterForm').submit()"
-                style="appearance:none;padding:8px 36px 8px 14px;border-radius:8px;border:1.5px solid var(--color-border);background:var(--color-bg-card);font-size:13px;cursor:pointer;">
-                <option value="checkin_asc" <?= $sort === 'checkin_asc' ? 'selected' : '' ?>>Urutkan: Check-in ↑</option>
-                <option value="checkin_desc" <?= $sort === 'checkin_desc' ? 'selected' : '' ?>>Urutkan: Check-in ↓</option>
-                <option value="checkout_asc" <?= $sort === 'checkout_asc' ? 'selected' : '' ?>>Urutkan: Check-out ↑
-                </option>
-                <option value="checkout_desc" <?= $sort === 'checkout_desc' ? 'selected' : '' ?>>Urutkan: Check-out ↓
-                </option>
-                <option value="harga_desc" <?= $sort === 'harga_desc' ? 'selected' : '' ?>>Harga Tertinggi</option>
-                <option value="harga_asc" <?= $sort === 'harga_asc' ? 'selected' : '' ?>>Harga Terendah</option>
-                <option value="terbaru" <?= $sort === 'terbaru' ? 'selected' : '' ?>>Terbaru</option>
-              </select>
+              <button class="sort-button" id="sortToggleBtn" type="button">
+                <i class="ph-bold ph-faders-horizontal"></i>
+                <span id="sortLabel">Urutkan: <?= htmlspecialchars($sort_labels[$sort] ?? 'Terbaru') ?></span>
+                <i class="ph-bold ph-caret-down"></i>
+              </button>
+
+              <div class="sort-menu" id="sortMenu">
+                <div class="sort-menu-item <?= $sort === 'terbaru' ? 'active' : '' ?>" onclick="selectSort('terbaru')">
+                  <i class="ph-bold ph-clock-counter-clockwise"></i> Terbaru Dibuat
+                </div>
+                <div class="sort-menu-divider"></div>
+                <div class="sort-menu-item <?= $sort === 'checkin_terbaru' ? 'active' : '' ?>"
+                  onclick="selectSort('checkin_terbaru')">
+                  <i class="ph-bold ph-calendar-blank"></i> Check-in Terbaru
+                </div>
+                <div class="sort-menu-item <?= $sort === 'checkin_terlama' ? 'active' : '' ?>"
+                  onclick="selectSort('checkin_terlama')">
+                  <i class="ph-bold ph-calendar-blank"></i> Check-in Terlama
+                </div>
+                <div class="sort-menu-divider"></div>
+                <div class="sort-menu-item <?= $sort === 'harga_desc' ? 'active' : '' ?>"
+                  onclick="selectSort('harga_desc')">
+                  <i class="ph-bold ph-trend-up"></i> Harga Tertinggi
+                </div>
+                <div class="sort-menu-item <?= $sort === 'harga_asc' ? 'active' : '' ?>"
+                  onclick="selectSort('harga_asc')">
+                  <i class="ph-bold ph-trend-down"></i> Harga Terendah
+                </div>
+              </div>
+
+              <input type="hidden" name="sort" id="sortInput" value="<?= htmlspecialchars($sort) ?>" />
             </div>
           </div>
+
+          <input type="hidden" name="filter" id="filterInput" value="<?= htmlspecialchars($filter_f) ?>" />
           <input type="hidden" name="page" value="1" />
         </form>
 
-        <!-- ── Tabel ──────────────────────────────────────────────────────── -->
         <section class="table-section">
           <div class="table-container">
             <table class="managed-table" id="reservationTable">
@@ -433,19 +533,40 @@ function build_url(array $overrides = []): string
               <tbody>
                 <?php
                 $no = $offset + 1;
-                $booking_list = []; // simpan untuk modal
+                $booking_list = [];
+                $today = date('Y-m-d');
                 while ($row = $rows->fetch_assoc()):
                   $booking_list[] = $row;
-                  $badge = $badge_map[$row['status']] ?? ['label' => ucfirst($row['status']), 'class' => 'info'];
+
+                  if (
+                    $row['status'] === 'dikonfirmasi' &&
+                    $row['checkin'] <= $today &&
+                    $row['checkout'] >= $today
+                  ) {
+                    $badge = ['label' => 'Berlangsung', 'class' => 'primary'];
+                  } else {
+                    $badge = $badge_map[$row['status']] ?? ['label' => ucfirst($row['status']), 'class' => 'info'];
+                  }
+
                   $id_rsv = '#RSV-' . date('Y') . '-' . str_pad($row['id'], 4, '0', STR_PAD_LEFT);
                   $initials = strtoupper(substr($row['nama_tamu'], 0, 2));
+                  $photo_tamu = !empty($row['photo_tamu']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['photo_tamu'])
+                    ? '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($row['photo_tamu'])
+                    : null;
                   ?>
                   <tr>
                     <td class="col-num"><?= $no++ ?></td>
                     <td><span class="id-code"><?= htmlspecialchars($id_rsv) ?></span></td>
                     <td>
                       <div class="table-cell">
-                        <div class="table-avatar"><?= $initials ?></div>
+                        <?php if ($photo_tamu): ?>
+                          <div class="table-avatar" style="padding:0;overflow:hidden;">
+                            <img src="<?= $photo_tamu ?>" alt="Foto"
+                              style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                          </div>
+                        <?php else: ?>
+                          <div class="table-avatar"><?= $initials ?></div>
+                        <?php endif; ?>
                         <h3 class="table-name"><?= htmlspecialchars($row['nama_tamu']) ?></h3>
                       </div>
                     </td>
@@ -478,7 +599,6 @@ function build_url(array $overrides = []): string
               </tbody>
             </table>
 
-            <!-- Paginasi -->
             <div class="table-pagination">
               <span class="pagination-info">
                 Menampilkan <?= min($offset + 1, $total_data) ?>–<?= min($offset + $per_page, $total_data) ?>
@@ -508,7 +628,6 @@ function build_url(array $overrides = []): string
     </div>
   </div>
 
-  <!-- ── Modal Detail Reservasi ─────────────────────────────────────────────── -->
   <div class="modal-overlay" id="detailModal">
     <div class="modal-box">
       <div class="modal-title">Detail Reservasi</div>
@@ -519,56 +638,89 @@ function build_url(array $overrides = []): string
     </div>
   </div>
 
-  <!-- Data booking untuk modal (JSON) -->
   <script>
     const bookings = <?= json_encode(array_values($booking_list)) ?>;
+
+    function getStatusLabel(b) {
+      const today = new Date().toISOString().split('T')[0];
+      if (b.status === 'dikonfirmasi' && b.checkin <= today && b.checkout >= today) {
+        return 'Berlangsung';
+      }
+      const map = {
+        menunggu: 'Menunggu',
+        dikonfirmasi: 'Dikonfirmasi',
+        dibatalkan: 'Dibatalkan',
+        selesai: 'Selesai',
+      };
+      return map[b.status] || b.status;
+    }
 
     function bukaModal(id) {
       const b = bookings.find(x => x.id == id);
       if (!b) return;
 
       const idRsv = '#RSV-' + new Date().getFullYear() + '-' + String(b.id).padStart(4, '0');
-      const badge = { menunggu: 'Menunggu', dikonfirmasi: 'Dikonfirmasi', dibatalkan: 'Dibatalkan', selesai: 'Selesai' };
+      const status = getStatusLabel(b);
       const total = 'Rp ' + Number(b.total_harga).toLocaleString('id-ID');
 
       document.getElementById('modalContent').innerHTML = `
-      <div class="modal-item">
-        <span class="modal-label">ID Reservasi</span>
-        <span class="modal-value">${idRsv}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Status</span>
-        <span class="modal-value">${badge[b.status] || b.status}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Nama Tamu</span>
-        <span class="modal-value">${b.nama_tamu}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Email</span>
-        <span class="modal-value">${b.email_tamu ?? '-'}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Properti</span>
-        <span class="modal-value">${b.nama_listing}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Jumlah Tamu</span>
-        <span class="modal-value">${b.jumlah_tamu} orang</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Check-in</span>
-        <span class="modal-value">${b.checkin}</span>
-      </div>
-      <div class="modal-item">
-        <span class="modal-label">Check-out</span>
-        <span class="modal-value">${b.checkout}</span>
-      </div>
-      <div class="modal-item" style="grid-column:span 2">
-        <span class="modal-label">Total Harga</span>
-        <span class="modal-value" style="font-size:18px">${total}</span>
-      </div>
-    `;
+        <div class="modal-item">
+          <span class="modal-label">ID Reservasi</span>
+          <span class="modal-value">${idRsv}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Status</span>
+          <span class="modal-value">${status}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Nama Tamu</span>
+          <span class="modal-value">${b.nama_tamu}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Email</span>
+          <span class="modal-value">${b.email_tamu ?? '-'}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Properti</span>
+          <span class="modal-value">${b.nama_listing}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Jumlah Tamu</span>
+          <span class="modal-value">${b.jumlah_tamu} orang</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Check-in</span>
+          <span class="modal-value">${b.checkin}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Check-out</span>
+          <span class="modal-value">${b.checkout}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Metode Bayar</span>
+          <span class="modal-value">${b.metode_bayar ?? '-'}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Tipe Bayar</span>
+          <span class="modal-value">${b.tipe_bayar === 'dp' ? 'DP' : 'Lunas'}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">DP Dibayar</span>
+          <span class="modal-value">${b.tipe_bayar === 'dp' ? 'Rp ' + Number(b.dp_amount).toLocaleString('id-ID') : '-'}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Sisa Bayar</span>
+          <span class="modal-value">${b.tipe_bayar === 'dp' ? 'Rp ' + Number(b.sisa_bayar).toLocaleString('id-ID') : '-'}</span>
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">Kode Promo</span>
+          <span class="modal-value">${b.kode_promo || '-'}</span>
+        </div>
+        <div class="modal-item" style="grid-column:span 2">
+          <span class="modal-label">Total Harga</span>
+          <span class="modal-value" style="font-size:18px">${total}</span>
+        </div>
+      `;
       document.getElementById('detailModal').classList.add('open');
     }
 
@@ -576,18 +728,35 @@ function build_url(array $overrides = []): string
       document.getElementById('detailModal').classList.remove('open');
     }
 
-    // Tutup modal klik di luar
     document.getElementById('detailModal').addEventListener('click', function (e) {
       if (e.target === this) tutupModal();
     });
 
-    // Submit pencarian dengan enter / auto
     document.getElementById('adminSearch').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         document.getElementById('filterForm').submit();
       }
     });
+
+    const sortToggleBtn = document.getElementById('sortToggleBtn');
+    const sortMenu = document.getElementById('sortMenu');
+
+    sortToggleBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      sortMenu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', e => {
+      if (!sortMenu.contains(e.target) && e.target !== sortToggleBtn)
+        sortMenu.classList.remove('open');
+    });
+
+    function selectSort(value) {
+      document.getElementById('sortInput').value = value;
+      document.querySelector('input[name="page"]').value = 1;
+      document.getElementById('filterForm').submit();
+    }
   </script>
 
   <script src="../dashboard.js"></script>

@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (other.dataset.group === "dewasa" || other.dataset.group === "anak")) {
             const ov = parseInt(other.querySelector(".counter-value").textContent);
             const om = parseInt(other.dataset.max);
-            other.querySelector(".plus").classList.toggle("disabled", ov >= om || getTotal() >= 16);
+            other.querySelector(".plus").classList.toggle("disabled", ov >= om || getTotal() >= (window.MAX_TAMU || 16));
           }
         });
       }
@@ -486,12 +486,12 @@ document.addEventListener("DOMContentLoaded", () => {
         minusBtn.classList.toggle("disabled", value <= min);
         const isOrang = item.dataset.group === "dewasa" || item.dataset.group === "anak";
         plusBtn.classList.toggle("disabled",
-          isOrang ? value >= max || getTotal() >= 16 : value >= max);
+          isOrang ? value >= max || getTotal() >= (window.MAX_TAMU || 16) : value >= max);
       }
 
       plusBtn.addEventListener("click", () => {
         const isOrang = item.dataset.group === "dewasa" || item.dataset.group === "anak";
-        if (isOrang ? value < max && getTotal() < 16 : value < max) {
+        if (isOrang ? value < max && getTotal() < (window.MAX_TAMU || 16) : value < max) {
           value++;
           updateCounter();
           if (isOrang) updateSiblings();
@@ -512,11 +512,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ─── FIX: inject guest HTML directly instead of fetch ─── */
+  // SESUDAH
   function loadBookingGuestEager() {
+    const maxTamu = window.MAX_TAMU || 16;
+    const bolehHewan = window.BOLEH_HEWAN !== false;
+    const hewanDisabledAttr = !bolehHewan ? 'data-disabled="true"' : '';
+    const hewanDisabledStyle = !bolehHewan
+      ? 'style="opacity:0.4;pointer-events:none;" title="Hewan peliharaan tidak diperbolehkan"'
+      : '';
+
     guestDropdown.innerHTML = `
       <div class="counter-list">
-        <div class="counter-row" data-min="1" data-max="16" data-group="dewasa">
+        <div class="counter-row" data-min="1" data-max="${maxTamu}" data-group="dewasa">
           <div class="counter-info">
             <h3 class="counter-label">Orang Dewasa</h3>
             <h4 class="counter-desc">17 Tahun ke Atas</h4>
@@ -527,7 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row" data-min="0" data-max="16" data-group="anak">
+        <div class="counter-row" data-min="0" data-max="${maxTamu}" data-group="anak">
           <div class="counter-info">
             <h3 class="counter-label">Anak-anak</h3>
             <h4 class="counter-desc">2–17 Tahun</h4>
@@ -538,7 +545,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row" data-min="0" data-max="5" data-group="bayi">
+       <div class="counter-row" data-min="0" data-max="5" data-group="bayi">
           <div class="counter-info">
             <h3 class="counter-label">Bayi</h3>
             <h4 class="counter-desc">2 Tahun ke Bawah</h4>
@@ -549,9 +556,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-        <div class="counter-row" data-min="0" data-max="5" data-group="hewan">
+          <div class="counter-row" data-min="0" data-max="${bolehHewan ? 5 : 0}" data-group="hewan" ${hewanDisabledAttr} ${hewanDisabledStyle}>
           <div class="counter-info">
             <h3 class="counter-label">Hewan Peliharaan</h3>
+            ${!bolehHewan ? '<h4 class="counter-desc" style="color:#c0392b;">Tidak diperbolehkan</h4>' : ''}
           </div>
           <div class="counter-control">
             <button type="button" class="counter-button minus">−</button>
@@ -563,10 +571,8 @@ document.addEventListener("DOMContentLoaded", () => {
     guestLoaded = true;
     initGuestCounter();
   }
-  /* ───────────────────────────────────────────────────────── */
 
   loadBookingGuestEager();
-
   function toggleGuestDropdown() {
     calendarDropdown?.classList.remove("open");
     if (guestDropdown.classList.contains("open")) {

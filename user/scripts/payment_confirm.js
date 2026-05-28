@@ -1,591 +1,197 @@
 let activeSection = "pay";
-let selectedPay = "now";
+let selectedPayTime = "now";
 let selectedMethod = "gopay";
 
+const ewalletMethods = ["gopay", "ovo", "dana"];
+const cardMethods = ["visa", "mastercard"];
+
+const methodLabels = {
+  gopay: "GoPay",
+  ovo: "OVO",
+  dana: "DANA",
+  visa: "Visa",
+  mastercard: "Mastercard",
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-  setupStepListeners();
-  setupSummaryDropdowns();
-  renderAll();
+  setupToggleListeners();
+  setupPayTimeListeners();
+  setupCardFormatters();
+  setupSubmitHandler();
+  initMethodBoxes();
+  renderSections();
+  selectMethod("gopay");
 });
 
-function setupStepListeners() {
+function setupToggleListeners() {
   document.querySelectorAll("[data-toggle-section]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      toggleSection(btn.getAttribute("data-toggle-section"));
+      const name = btn.getAttribute("data-toggle-section");
+      activeSection = activeSection === name ? null : name;
+      renderSections();
     });
   });
+}
 
+function renderSections() {
+  const payExpand = document.getElementById("payExpand");
+  const methodExpand = document.getElementById("methodExpand");
+  if (payExpand) payExpand.classList.toggle("active", activeSection === "pay");
+  if (methodExpand) methodExpand.classList.toggle("active", activeSection === "method");
+}
+
+function setupPayTimeListeners() {
   document.querySelectorAll("[data-select-pay]").forEach((row) => {
-    row.addEventListener("click", () =>
-      selectPay(row.getAttribute("data-select-pay")),
-    );
+    row.addEventListener("click", function () {
+      const val = this.getAttribute("data-select-pay");
+      if (!val) return;
+      selectedPayTime = val;
+      applyPayTime(val);
+    });
   });
-
-  document.querySelectorAll("[data-select-method]").forEach((row) => {
-    row.addEventListener("click", () =>
-      selectMethod(row.getAttribute("data-select-method")),
-    );
-  });
-
-  document
-    .querySelector(".back-button")
-    ?.addEventListener("click", () => window.history.back());
 }
 
-function toggleSection(name) {
-  activeSection = activeSection === name ? null : name;
-  renderAll();
-}
-function selectPay(val) {
-  selectedPay = val;
-  renderAll();
-}
-function selectMethod(val) {
-  selectedMethod = val;
-  renderAll();
+function applyPayTime(val) {
+  const radioNow = document.getElementById("radio-pay-now");
+  const radioLater = document.getElementById("radio-pay-later");
+  const dpInfoBox = document.getElementById("dpInfoBox");
+  const summaryDp = document.getElementById("summaryDpBreakdown");
+  const paySub = document.getElementById("paySub");
+  const btnLabel = document.getElementById("btnPayLabel");
+  const inputWT = document.getElementById("inputWaktuBayar");
+
+  if (radioNow) radioNow.classList.toggle("selected", val === "now");
+  if (radioLater) radioLater.classList.toggle("selected", val === "later");
+  if (dpInfoBox) dpInfoBox.style.display = val === "later" ? "block" : "none";
+  if (summaryDp) summaryDp.style.display = val === "later" ? "block" : "none";
+  if (inputWT) inputWT.value = val;
+
+  if (paySub)
+    paySub.textContent = val === "now"
+      ? "Bayar penuh " + (window.totalFormatted || "") + " sekarang"
+      : "DP " + (window.dpFormatted || "") + " sekarang (30%)";
+
+  if (btnLabel)
+    btnLabel.textContent = val === "now"
+      ? "Konfirmasi dan Bayar " + (window.totalFormatted || "")
+      : "Bayar DP " + (window.dpFormatted || "");
 }
 
-function renderAll() {
-  document
-    .getElementById("payExpand")
-    ?.classList.toggle("active", activeSection === "pay");
-  document
-    .getElementById("methodExpand")
-    ?.classList.toggle("active", activeSection === "method");
-  document
-    .getElementById("review-content")
-    ?.classList.toggle("active", !activeSection);
+function initMethodBoxes() {
+  const methodExpand = document.getElementById("methodExpand");
+  const doneRow = methodExpand && methodExpand.querySelector(".expand-done-row");
+  const ewalletBox = document.getElementById("ewalletInputBox");
+  const cardBox = document.getElementById("cardInputBox");
 
-  setRadio("nowRadio", selectedPay === "now");
-  setRadio("radio-later", selectedPay === "later");
-  setRadio("radioCard", selectedMethod === "card");
-  setRadio("radio-gopay", selectedMethod === "gopay");
-
-  const methodHeader = document.getElementById("method-header-display");
-  if (methodHeader) {
-    methodHeader.innerHTML =
-      selectedMethod === "card"
-        ? `<div class="expand-card-icon"><i class="ph-bold ph-credit-card"></i></div>
-         <span class="expand-step-sub">Credit or debit card</span>`
-        : `<div class="expand-gopay-icon"><span>GP</span></div>
-         <span class="expand-step-sub">GoPay</span>`;
+  if (doneRow) {
+    if (ewalletBox) methodExpand.insertBefore(ewalletBox, doneRow);
+    if (cardBox) methodExpand.insertBefore(cardBox, doneRow);
   }
 }
 
-function setRadio(id, active) {
-  document.getElementById(id)?.classList.toggle("selected", active);
+function selectMethod(id) {
+  selectedMethod = id;
+
+  const inputMetode = document.getElementById("inputMetode");
+  if (inputMetode) inputMetode.value = id;
+
+  const sub = document.getElementById("methodSubLabel");
+  if (sub) sub.textContent = methodLabels[id] || id;
+
+  document.querySelectorAll(".method-radio").forEach((r) => r.classList.remove("selected"));
+  document.querySelectorAll(".method-row").forEach((r) => r.classList.remove("selected-row"));
+
+  const radioEl = document.getElementById("radio-" + id);
+  if (radioEl) radioEl.classList.add("selected");
+
+  const selectedRow = document.querySelector('[data-method-id="' + id + '"]');
+  if (selectedRow) selectedRow.classList.add("selected-row");
+
+  const ewalletBox = document.getElementById("ewalletInputBox");
+  const cardBox = document.getElementById("cardInputBox");
+
+  if (ewalletBox) ewalletBox.style.display = ewalletMethods.includes(id) ? "block" : "none";
+  if (cardBox) cardBox.style.display = cardMethods.includes(id) ? "block" : "none";
+
+  if (ewalletMethods.includes(id)) {
+    const brandLabel = document.getElementById("ewalletBrandLabel");
+    if (brandLabel) brandLabel.textContent = methodLabels[id];
+  }
 }
 
-let activeAnchor = null;
+document.querySelectorAll(".method-row").forEach((row) => {
+  row.addEventListener("click", () => selectMethod(row.dataset.methodId));
+});
 
-function positionDropdown(dropdown, triggerEl) {
-  const rect = triggerEl.getBoundingClientRect();
-  const dropdownHeight = dropdown.offsetHeight || 300;
-  const viewportHeight = window.innerHeight;
-  const viewportWidth = window.innerWidth;
+function setupCardFormatters() {
+  const cardNumber = document.getElementById("cardNumber");
+  const cardExpiry = document.getElementById("cardExpiry");
+  const ewalletNum = document.getElementById("ewalletNumber");
 
-  let top = rect.bottom + 8;
-  if (top + dropdownHeight > viewportHeight - 16) {
-
-    top = rect.top - dropdownHeight - 8;
-    if (top < 16) {
-
-      top = Math.max(16, viewportHeight - dropdownHeight - 16);
-    }
+  if (cardNumber) {
+    cardNumber.addEventListener("input", function () {
+      const v = this.value.replace(/\D/g, "").slice(0, 16);
+      const parts = [];
+      for (let i = 0; i < v.length; i += 4) parts.push(v.slice(i, i + 4));
+      this.value = parts.join("  ");
+    });
   }
 
-  let left = rect.left;
-  if (left + 380 > viewportWidth) {
-
-    left = Math.max(16, viewportWidth - 380 - 16);
+  if (cardExpiry) {
+    cardExpiry.addEventListener("input", function () {
+      let v = this.value.replace(/\D/g, "").slice(0, 4);
+      if (v.length > 2) v = v.slice(0, 2) + "/" + v.slice(2);
+      this.value = v;
+    });
   }
 
-  dropdown.style.top = `${top}px`;
-  dropdown.style.left = `${left}px`;
-  dropdown.style.right = "auto";
-}
-
-function openDropdown(dropdown, triggerEl) {
-  positionDropdown(dropdown, triggerEl);
-  dropdown.classList.add("open");
-  activeAnchor = { dropdown, triggerEl };
-}
-
-function setupDropdownTracking() {
-  function trackLoop() {
-    if (activeAnchor) {
-      const { dropdown, triggerEl } = activeAnchor;
-      if (dropdown.classList.contains("open")) {
-        positionDropdown(dropdown, triggerEl);
-      } else {
-        activeAnchor = null;
-      }
-    }
-    requestAnimationFrame(trackLoop);
+  if (ewalletNum) {
+    ewalletNum.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "").slice(0, 14);
+    });
   }
-  requestAnimationFrame(trackLoop);
 }
 
-function setupSummaryDropdowns() {
-  const infoRows = document.querySelectorAll(".expand-info-row");
-  const dateRow = infoRows[0];
-  const guestRow = infoRows[1];
+function setupSubmitHandler() {
+  const form = document.getElementById("bookingForm");
+  if (!form) return;
 
-  if (dateRow) setupDateGantiButton(dateRow);
-  if (guestRow) setupGuestGantiButton(guestRow);
+  form.addEventListener("submit", function (e) {
+    let detail = {};
 
-  setupDropdownTracking();
-}
+    if (cardMethods.includes(selectedMethod)) {
+      const nomor = (document.getElementById("cardNumber")?.value || "").replace(/\s/g, "");
+      const expiry = document.getElementById("cardExpiry")?.value || "";
+      const nama = (document.getElementById("cardName")?.value || "").trim();
+      const cvv = document.getElementById("cardCvv")?.value || "";
 
-function setupDateGantiButton(dateRow) {
-  const gantiBtn = dateRow.querySelector(".expand-change-sm");
-  if (!gantiBtn) return;
+      if (nomor.length < 13) { e.preventDefault(); alert("Masukkan nomor kartu yang valid."); return; }
+      if (expiry.length < 5) { e.preventDefault(); alert("Masukkan tanggal berlaku kartu (MM/YY)."); return; }
+      if (!cvv) { e.preventDefault(); alert("Masukkan CVV/CVC kartu."); return; }
+      if (!nama) { e.preventDefault(); alert("Masukkan nama yang tertera di kartu."); return; }
+      detail = { nomor, expiry, nama, brand: selectedMethod };
 
-  const dropdown = document.createElement("div");
-  dropdown.id = "summaryCalendarDropdown";
-  dropdown.style.position = "fixed";
-  dropdown.style.zIndex = "var(--z-dropdown)";
-  dateRow.after(dropdown);
-
-  let calLoaded = false;
-  let calReady = false;
-
-  gantiBtn.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const isOpen = dropdown.classList.contains("open");
-
-    const guestDd = document.getElementById("summaryGuestDropdown");
-    if (guestDd) guestDd.classList.remove("open");
-
-    if (isOpen) {
-      dropdown.classList.remove("open");
-      return;
-    }
-
-    if (!calLoaded) {
-      try {
-        const res = await fetch("/popups/screen/calendar.html");
-        const html = await res.text();
-        dropdown.innerHTML = html;
-        calLoaded = true;
-        initSummaryCalendar(dropdown);
-        calReady = true;
-      } catch (err) {
+    } else if (ewalletMethods.includes(selectedMethod)) {
+      const hp = (document.getElementById("ewalletNumber")?.value || "").trim();
+      if (!hp || hp.length < 8) {
+        e.preventDefault();
+        alert("Masukkan nomor HP / akun " + (methodLabels[selectedMethod] || selectedMethod) + " yang valid.");
         return;
       }
+      detail = { nomor_hp: hp };
     }
 
-    openDropdown(dropdown, gantiBtn);
-  });
+    const inputDetail = document.getElementById("inputDetailBayar");
+    if (inputDetail) inputDetail.value = JSON.stringify(detail);
 
-  document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target) && e.target !== gantiBtn) {
-      dropdown.classList.remove("open");
+    const btn = document.getElementById("btnKonfirmasi");
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" style="animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4
+                 M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Memproses...`;
     }
-  });
-}
-
-function initSummaryCalendar(container) {
-  let rangeStart = null;
-  let rangeEnd = null;
-  let hoverDate = null;
-  let phase = "idle";
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const maxDate = new Date(
-    today.getFullYear() + 2,
-    today.getMonth(),
-    today.getDate(),
-  );
-
-  const MONTH_NAMES = [
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
-  const MONTH_SHORT = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Ags",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-
-  let leftYear = today.getFullYear();
-  let leftMonth = today.getMonth();
-
-  function isSameDay(a, b) {
-    return (
-      a &&
-      b &&
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate()
-    );
-  }
-
-  function fmtDate(d) {
-    return `${d.getDate()} ${MONTH_SHORT[d.getMonth()]} ${d.getFullYear()}`;
-  }
-
-  function addMonths(year, month, delta) {
-    const d = new Date(year, month + delta, 1);
-    return { year: d.getFullYear(), month: d.getMonth() };
-  }
-
-  function onDayClick(date) {
-    if (phase === "idle") {
-      rangeStart = date;
-      rangeEnd = null;
-      hoverDate = null;
-      phase = "selecting";
-    } else {
-      if (isSameDay(date, rangeStart)) {
-        rangeStart = null;
-        rangeEnd = null;
-        hoverDate = null;
-        phase = "idle";
-      } else if (date < rangeStart) {
-        rangeStart = date;
-        rangeEnd = null;
-        hoverDate = null;
-        phase = "selecting";
-      } else {
-        rangeEnd = date;
-        hoverDate = null;
-        phase = "idle";
-
-        applyDateToSummary(rangeStart, rangeEnd);
-        setTimeout(() => {
-          container.classList.remove("open");
-        }, 300);
-      }
-    }
-    renderCalendar();
-  }
-
-  function applyDateToSummary(start, end) {
-    const dateVal = document.querySelector(
-      ".expand-info-row .expand-info-value",
-    );
-    if (dateVal && start && end) {
-      const s = start < end ? start : end;
-      const e = start < end ? end : start;
-      dateVal.textContent = `${s.getDate()} ${MONTH_SHORT[s.getMonth()]} – ${e.getDate()} ${MONTH_SHORT[e.getMonth()]}, ${e.getFullYear()}`;
-    }
-  }
-
-  function onDayHover(date) {
-    if (phase !== "selecting" || !rangeStart) {
-      if (hoverDate) {
-        hoverDate = null;
-        updateDayClasses();
-      }
-      return;
-    }
-    if (hoverDate && isSameDay(date, hoverDate)) return;
-    hoverDate = date;
-    updateDayClasses();
-  }
-
-  function updateDayClasses() {
-    container
-      .querySelectorAll(".calendar-day:not(.empty):not(.disabled)")
-      .forEach((el) => {
-        const [y, m, d] = el.dataset.date.split("-").map(Number);
-        const date = new Date(y, m - 1, d);
-        const cls = ["calendar-day"];
-        if (el.classList.contains("today")) cls.push("today");
-
-        const pStart =
-          phase === "selecting" &&
-          rangeStart &&
-          hoverDate &&
-          !isSameDay(hoverDate, rangeStart) &&
-          hoverDate > rangeStart
-            ? rangeStart
-            : null;
-        const pEnd = pStart ? hoverDate : null;
-
-        if (phase === "idle" && rangeStart && rangeEnd) {
-          const s = rangeStart < rangeEnd ? rangeStart : rangeEnd;
-          const e = rangeStart < rangeEnd ? rangeEnd : rangeStart;
-          if (isSameDay(date, s)) cls.push("range-start");
-          else if (isSameDay(date, e)) cls.push("range-end");
-          else if (date > s && date < e) cls.push("in-range");
-        } else if (phase === "selecting") {
-          if (isSameDay(date, rangeStart)) {
-            cls.push(
-              pStart && isSameDay(date, pStart) ? "range-start" : "selected",
-            );
-          } else if (pStart && pEnd) {
-            if (isSameDay(date, pEnd)) cls.push("range-end");
-            else if (date > pStart && date < pEnd) cls.push("in-range");
-          }
-        }
-        el.className = cls.join(" ");
-      });
-  }
-
-  function renderMonth(monthContainer, year, month) {
-    monthContainer.querySelector(".calendar-month-name").textContent =
-      `${MONTH_NAMES[month]} ${year}`;
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const body = monthContainer.querySelector(".calendar-body");
-    body.innerHTML = "";
-    body.addEventListener("mouseleave", () => {
-      if (hoverDate) {
-        hoverDate = null;
-        updateDayClasses();
-      }
-    });
-
-    for (let i = 0; i < firstDay; i++) {
-      const el = document.createElement("div");
-      el.className = "calendar-day empty";
-      body.appendChild(el);
-    }
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const dayEl = document.createElement("div");
-      dayEl.className = "calendar-day";
-      dayEl.textContent = day;
-      dayEl.dataset.date = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      if (date < today || date > maxDate) {
-        dayEl.classList.add("disabled");
-      } else {
-        if (isSameDay(date, today)) dayEl.classList.add("today");
-        dayEl.addEventListener("click", () => onDayClick(date));
-        dayEl.addEventListener("mouseenter", () => onDayHover(date));
-      }
-      body.appendChild(dayEl);
-    }
-  }
-
-  function updateArrowState() {
-    const [leftM, rightM] = container.querySelectorAll(".calendar-month");
-    const lArr = leftM?.querySelector(".ph-caret-left");
-    const rArr = rightM?.querySelector(".ph-caret-right");
-    const atMin =
-      leftYear === today.getFullYear() && leftMonth === today.getMonth();
-    if (lArr) lArr.style.visibility = atMin ? "hidden" : "visible";
-    const right = addMonths(leftYear, leftMonth, 1);
-    const atMax =
-      right.year === maxDate.getFullYear() &&
-      right.month === maxDate.getMonth();
-    if (rArr) rArr.style.visibility = atMax ? "hidden" : "visible";
-  }
-
-  function renderCalendar() {
-    const right = addMonths(leftYear, leftMonth, 1);
-    const [leftM, rightM] = container.querySelectorAll(".calendar-month");
-    if (!leftM || !rightM) return;
-    renderMonth(leftM, leftYear, leftMonth);
-    renderMonth(rightM, right.year, right.month);
-    updateDayClasses();
-    updateArrowState();
-  }
-
-  const [leftM, rightM] = container.querySelectorAll(".calendar-month");
-  leftM?.querySelector(".ph-caret-left")?.addEventListener("click", () => {
-    const prev = addMonths(leftYear, leftMonth, -1);
-    if (
-      prev.year < today.getFullYear() ||
-      (prev.year === today.getFullYear() && prev.month < today.getMonth())
-    )
-      return;
-    leftYear = prev.year;
-    leftMonth = prev.month;
-    renderCalendar();
-  });
-  rightM?.querySelector(".ph-caret-right")?.addEventListener("click", () => {
-    const right = addMonths(leftYear, leftMonth, 1);
-    const newRight = addMonths(leftYear, leftMonth, 2);
-    if (
-      newRight.year > maxDate.getFullYear() ||
-      (newRight.year === maxDate.getFullYear() &&
-        newRight.month > maxDate.getMonth())
-    )
-      return;
-    leftYear = right.year;
-    leftMonth = right.month;
-    renderCalendar();
-  });
-
-  renderCalendar();
-}
-
-function setupGuestGantiButton(guestRow) {
-  const gantiBtn = guestRow.querySelector(".expand-change-sm");
-  if (!gantiBtn) return;
-
-  const dropdown = document.createElement("div");
-  dropdown.id = "summaryGuestDropdown";
-  dropdown.style.position = "fixed";
-  dropdown.style.zIndex = "var(--z-dropdown)";
-  guestRow.after(dropdown);
-
-  let guestLoaded = false;
-
-  gantiBtn.addEventListener("click", async (e) => {
-    e.stopPropagation();
-    const isOpen = dropdown.classList.contains("open");
-
-    const calDd = document.getElementById("summaryCalendarDropdown");
-    if (calDd) calDd.classList.remove("open");
-
-    if (isOpen) {
-      dropdown.classList.remove("open");
-      return;
-    }
-
-    if (!guestLoaded) {
-      try {
-        const res = await fetch("/popups/screen/guest_counter.html");
-        const html = await res.text();
-        dropdown.innerHTML = html;
-        guestLoaded = true;
-        initSummaryGuestCounter(dropdown, guestRow);
-      } catch (err) {
-        return;
-      }
-    }
-
-    openDropdown(dropdown, gantiBtn);
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target) && e.target !== gantiBtn) {
-      dropdown.classList.remove("open");
-    }
-  });
-}
-
-function initSummaryGuestCounter(container, guestRow) {
-  const MONTH_SHORT = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Ags",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-  const counterItems = container.querySelectorAll(".counter-row");
-  const dewasaRow = container.querySelector('[data-group="dewasa"]');
-  const anakRow = container.querySelector('[data-group="anak"]');
-
-  function getTotal() {
-    return (
-      parseInt(dewasaRow.querySelector(".counter-value").textContent) +
-      parseInt(anakRow.querySelector(".counter-value").textContent)
-    );
-  }
-
-  function updateGuestDisplay() {
-    const getValue = (group) => {
-      const row = container.querySelector(`[data-group="${group}"]`);
-      return row
-        ? parseInt(row.querySelector(".counter-value").textContent)
-        : 0;
-    };
-    const dewasa = getValue("dewasa");
-    const anak = getValue("anak");
-    const bayi = getValue("bayi");
-    const hewan = getValue("hewan");
-
-    const parts = [];
-    if (dewasa > 0) parts.push(`${dewasa} pengunjung`);
-    if (anak > 0) parts.push(`${anak} anak`);
-    if (bayi > 0) parts.push(`${bayi} bayi`);
-    if (hewan > 0) parts.push(`${hewan} peliharaan`);
-
-    const allInfoRows = document.querySelectorAll(".expand-info-row");
-    const guestVal = allInfoRows[1]?.querySelector(".expand-info-value");
-    if (guestVal) guestVal.textContent = parts.join(", ") || "1 pengunjung";
-  }
-
-  counterItems.forEach((item) => {
-    const minusBtn = item.querySelector(".minus");
-    const plusBtn = item.querySelector(".plus");
-    const counterValue = item.querySelector(".counter-value");
-    const min = parseInt(item.dataset.min) || 0;
-    const max = parseInt(item.dataset.max) || 10;
-    let value = parseInt(counterValue.textContent);
-
-    function updateSiblings() {
-      counterItems.forEach((other) => {
-        if (
-          other !== item &&
-          (other.dataset.group === "dewasa" || other.dataset.group === "anak")
-        ) {
-          const ov = parseInt(
-            other.querySelector(".counter-value").textContent,
-          );
-          const om = parseInt(other.dataset.max);
-          other
-            .querySelector(".plus")
-            .classList.toggle("disabled", ov >= om || getTotal() >= 16);
-        }
-      });
-    }
-
-    function updateCounter() {
-      counterValue.textContent = value;
-      minusBtn.classList.toggle("disabled", value <= min);
-      const isOrang =
-        item.dataset.group === "dewasa" || item.dataset.group === "anak";
-      plusBtn.classList.toggle(
-        "disabled",
-        isOrang ? value >= max || getTotal() >= 16 : value >= max,
-      );
-    }
-
-    plusBtn.addEventListener("click", () => {
-      const isOrang =
-        item.dataset.group === "dewasa" || item.dataset.group === "anak";
-      if (isOrang ? value < max && getTotal() < 16 : value < max) {
-        value++;
-        updateCounter();
-        if (isOrang) updateSiblings();
-        updateGuestDisplay();
-      }
-    });
-
-    minusBtn.addEventListener("click", () => {
-      if (value > min) {
-        value--;
-        updateCounter();
-        if (item.dataset.group === "dewasa" || item.dataset.group === "anak")
-          updateSiblings();
-        updateGuestDisplay();
-      }
-    });
-
-    updateCounter();
   });
 }

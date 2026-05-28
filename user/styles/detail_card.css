@@ -304,7 +304,7 @@
   box-shadow: var(--shadow-dropdown);
   margin-top: var(--space-6);
   display: none;
-  min-width: 580px;
+  min-width: 500px;
 }
 
 #bookingCalendarDropdown.open {

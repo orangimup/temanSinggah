@@ -854,6 +854,10 @@
   background: var(--color-error);
 }
 
+.badge-dot.pending {
+  background: var(--color-warning);
+}
+
 .trip-content {
   display: flex;
   flex-direction: column;
