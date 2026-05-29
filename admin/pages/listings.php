@@ -312,7 +312,6 @@ while ($r = mysqli_fetch_assoc($am_result)) {
       z-index: var(--z-modal);
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(3px);
       padding: 24px;
       box-sizing: border-box;
     }

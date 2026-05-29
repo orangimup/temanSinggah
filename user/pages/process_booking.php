@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// ── Fungsi validasi promo ────────────────────────────────────────────────────
 function validatePromo(mysqli $db, string $kode, int $user_id, int $jumlah_malam): array {
     if (empty($kode)) return ['valid' => false, 'message' => 'Kode kosong.'];
 
@@ -56,17 +55,21 @@ function validatePromo(mysqli $db, string $kode, int $user_id, int $jumlah_malam
     ];
 }
 
-// ── Ambil data POST ──────────────────────────────────────────────────────────
-$user_id     = $_SESSION['id'];
-$listing_id  = intval($_POST['listing_id']  ?? 0);
-$room_id     = intval($_POST['room_id']     ?? 0) ?: null;
-$checkin     = trim($_POST['checkin']       ?? '');
-$checkout    = trim($_POST['checkout']      ?? '');
-$jumlah_tamu = intval($_POST['jumlah_tamu'] ?? 1);
-$metode      = trim($_POST['metode_bayar']  ?? 'gopay');
-$kode_promo  = strtoupper(trim($_POST['kode_promo'] ?? ''));
-$waktu_bayar = trim($_POST['waktu_bayar']   ?? 'now');
-$tipe_bayar  = $waktu_bayar === 'later' ? 'dp' : 'lunas';
+$user_id       = $_SESSION['id'];
+$listing_id    = intval($_POST['listing_id']    ?? 0);
+$room_id       = intval($_POST['room_id']       ?? 0) ?: null;
+$checkin       = trim($_POST['checkin']         ?? '');
+$checkout      = trim($_POST['checkout']        ?? '');
+$jumlah_tamu   = intval($_POST['jumlah_tamu']   ?? 1);
+$metode        = trim($_POST['metode_bayar']    ?? 'gopay');
+$kode_promo    = strtoupper(trim($_POST['kode_promo'] ?? ''));
+$waktu_bayar   = trim($_POST['waktu_bayar']     ?? 'now');
+$tipe_bayar    = $waktu_bayar === 'later' ? 'dp' : 'lunas';
+$no_hp         = trim($_POST['no_hp']           ?? '');
+$nama_kartu    = trim($_POST['nama_kartu']      ?? '');
+$nomor_kartu   = preg_replace('/\s+/', '', trim($_POST['nomor_kartu']   ?? ''));
+$expired_kartu = trim($_POST['expired_kartu']   ?? '');
+$cvv           = trim($_POST['cvv']             ?? '');
 
 $redirect_params = http_build_query([
     'listing_id'  => $listing_id,
@@ -77,7 +80,6 @@ $redirect_params = http_build_query([
     'promo'       => $kode_promo,
 ]);
 
-// ── Validasi dasar ───────────────────────────────────────────────────────────
 if (!$listing_id || !$checkin || !$checkout) {
     $_SESSION['booking_error'] = 'Data tidak lengkap.';
     header("Location: payment_confirm.php?$redirect_params");
@@ -93,7 +95,6 @@ if (!$tgl_in || !$tgl_out || $tgl_out <= $tgl_in) {
 }
 $jumlah_malam = (int)$tgl_in->diff($tgl_out)->days;
 
-// ── Ambil harga dari DB ──────────────────────────────────────────────────────
 if ($room_id) {
     $stmt = $koneksi->prepare("SELECT harga_malam FROM listing_rooms WHERE id = ? AND listing_id = ? LIMIT 1");
     $stmt->bind_param('ii', $room_id, $listing_id);
@@ -111,13 +112,11 @@ if (!$row_harga) {
     exit;
 }
 
-// ── Hitung harga ─────────────────────────────────────────────────────────────
 $harga_malam = (float)$row_harga['harga_malam'];
 $subtotal    = $harga_malam * $jumlah_malam;
 $diskon_amt  = 0;
 $promo_id    = null;
 
-// ── Validasi & apply promo ───────────────────────────────────────────────────
 if ($kode_promo) {
     $cek = validatePromo($koneksi, $kode_promo, $user_id, $jumlah_malam);
     if (!$cek['valid']) {
@@ -132,11 +131,9 @@ if ($kode_promo) {
 $biaya_layanan = (int)round(($subtotal - $diskon_amt) * 0.05);
 $total_harga   = $subtotal - $diskon_amt + $biaya_layanan;
 
-// ── Hitung DP ────────────────────────────────────────────────────────────────
 $dp_amount  = $tipe_bayar === 'dp' ? (int)round($total_harga * 0.30) : $total_harga;
 $sisa_bayar = $total_harga - $dp_amount;
 
-// ── Cek overlap tanggal ──────────────────────────────────────────────────────
 $cek_overlap = $koneksi->prepare("
     SELECT id FROM bookings
     WHERE listing_id = ?
@@ -157,7 +154,6 @@ if ($cek_overlap->num_rows > 0) {
 }
 $cek_overlap->close();
 
-// ── INSERT booking ───────────────────────────────────────────────────────────
 $stmt = $koneksi->prepare("
     INSERT INTO bookings
         (listing_id, user_id, room_id, checkin, checkout,
@@ -177,7 +173,27 @@ if ($stmt->execute()) {
     $booking_id = $koneksi->insert_id;
     $stmt->close();
 
-    // Catat pemakaian promo
+    $jumlah_trx = $dp_amount;
+    $trx = $koneksi->prepare("
+        INSERT INTO transactions
+            (booking_id, jumlah, metode, no_hp, nama_kartu,
+             nomor_kartu, expired_kartu, cvv, status, dibayar_pada)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sukses', NOW())
+    ");
+    $trx->bind_param(
+        'idssssss',
+        $booking_id,
+        $jumlah_trx,
+        $metode,
+        $no_hp         ?: null,
+        $nama_kartu    ?: null,
+        $nomor_kartu   ?: null,
+        $expired_kartu ?: null,
+        $cvv           ?: null
+    );
+    $trx->execute();
+    $trx->close();
+
     if ($promo_id) {
         $pu = $koneksi->prepare("INSERT INTO promo_usage (promo_id, user_id, booking_id) VALUES (?, ?, ?)");
         $pu->bind_param('iii', $promo_id, $user_id, $booking_id);
