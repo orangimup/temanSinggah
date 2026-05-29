@@ -56,7 +56,7 @@ function renderHotelCard($row)
 
 function renderSeeAllCard($rows_preview)
 {
-  echo '<a href="user/pages/search_result.html" class="see-all-card">';
+  echo '<a href="user/pages/search_result.php" class="see-all-card">';
   echo '<div class="see-all-photos">';
   $count = 0;
   foreach ($rows_preview as $r) {
@@ -111,8 +111,7 @@ $q_rekomendasi = mysqli_query($koneksi, "
         ROUND(AVG(r.rating), 1) AS rating_avg
     FROM listings l
     LEFT JOIN listing_photos lp ON lp.listing_id = l.id AND lp.adalah_cover = 1
-    LEFT JOIN bookings b ON b.listing_id = l.id
-    LEFT JOIN reviews r ON r.booking_id = b.id
+    LEFT JOIN reviews r ON r.listing_id = l.id
     WHERE l.status = 'aktif'
     GROUP BY l.id, l.judul, l.lokasi, l.harga_malam, lp.nama_file
     ORDER BY RAND()
@@ -120,29 +119,24 @@ $q_rekomendasi = mysqli_query($koneksi, "
 ");
 $rekomendasi_rows = fetchAll($q_rekomendasi);
 
-// ── 3. Favorit Traveler ──────────────────────────────────────────────────────
-// Skor kombinasi: rating (40%) + jumlah review (30%) + jumlah booking (30%)
-// Dinormalisasi supaya bobot seimbang
+// ── 3. Favorit Traveler ─────────────────────────────────────────────────────
 $q_favorit = mysqli_query($koneksi, "
     SELECT
-        l.id, l.judul, l.lokasi, l.harga_malam,
-        lp.nama_file AS foto_cover,
-        ROUND(AVG(r.rating), 1) AS rating_avg,
-        COUNT(DISTINCT r.id) AS jumlah_review,
-        COUNT(DISTINCT b.id) AS jumlah_booking
-    FROM listings l
-    LEFT JOIN listing_photos lp ON lp.listing_id = l.id AND lp.adalah_cover = 1
-    LEFT JOIN bookings b ON b.listing_id = l.id
-    LEFT JOIN reviews r ON r.booking_id = b.id
-    WHERE l.status = 'aktif'
-    GROUP BY l.id, l.judul, l.lokasi, l.harga_malam, lp.nama_file
-    HAVING jumlah_review > 0
-    ORDER BY (
-        COALESCE(AVG(r.rating), 0) * 0.4
-        + COUNT(DISTINCT r.id)     * 0.3
-        + COUNT(DISTINCT b.id)     * 0.3
-    ) DESC
-    LIMIT 9
+    l.id, l.judul, l.lokasi, l.harga_malam,
+    lp.nama_file AS foto_cover,
+    ROUND(AVG(r.rating), 1) AS rating_avg,
+    COUNT(DISTINCT r.id) AS jumlah_review
+FROM listings l
+LEFT JOIN listing_photos lp ON lp.listing_id = l.id AND lp.adalah_cover = 1
+LEFT JOIN reviews r ON r.listing_id = l.id
+WHERE l.status = 'aktif'
+GROUP BY l.id, l.judul, l.lokasi, l.harga_malam, lp.nama_file
+HAVING jumlah_review > 0
+ORDER BY (
+    COALESCE(AVG(r.rating), 0) * 0.5
+    + COUNT(DISTINCT r.id) * 0.5
+) DESC
+LIMIT 9
 ");
 $favorit_rows = fetchAll($q_favorit);
 ?>
@@ -262,7 +256,7 @@ $favorit_rows = fetchAll($q_favorit);
             <span class="field-label">Siapa Saja?</span>
             <span class="field-value" id="guestSummary">Tambahkan Pengunjung</span>
           </div>
-          <a href="user/pages/search_result.html">
+          <a href="user/pages/search_result.php">
             <button class="search-button" type="button">
               <i class="ph-bold ph-magnifying-glass"></i>
             </button>
@@ -496,7 +490,7 @@ $favorit_rows = fetchAll($q_favorit);
                       ? '/teman_singgah/assets/uploads/listings/' + r.foto_cover
                       : FALLBACK;
                   });
-                  html += '<a href="user/pages/search_result.html" class="see-all-card">'
+                  html += '<a href="user/pages/search_result.php" class="see-all-card">'
                     + '<div class="see-all-photos">'
                     + previews.map(function (f) { return '<img src="' + f + '" alt="" class="see-all-photo" />'; }).join('')
                     + '</div>'

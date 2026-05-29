@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ── Semua elemen dideklarasikan di sini dulu ──────────────────────────────
   const searchBar = document.querySelector(".search-bar");
   const searchFields = document.querySelector(".search-fields");
 
@@ -15,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const destinationInput = document.getElementById("destinationInput");
   const guestSummary     = document.getElementById("guestSummary");
   const dateSummary      = document.getElementById("dateSummary");
-  // ──────────────────────────────────────────────────────────────────────────
 
   function closeAllDropdowns() {
     destinationDropdown?.classList.remove("open");
@@ -129,12 +127,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadGuestDropdown() {
     try {
-      const res = await fetch("/teman_singgah/popups/screen/guest_counter.html");
+      const res  = await fetch("/teman_singgah/popups/screen/guest_counter.php");
       const html = await res.text();
       guestDropdown.innerHTML = html;
       guestLoaded = true;
+      applyGuestConfig();
       initCounter();
     } catch (err) {}
+  }
+
+  function applyGuestConfig() {
+    const maxTamu   = typeof window.MAX_TAMU    !== "undefined" ? window.MAX_TAMU    : 16;
+    const bolehHewan = typeof window.BOLEH_HEWAN !== "undefined" ? window.BOLEH_HEWAN : true;
+
+    const list = guestDropdown.querySelector(".counter-list");
+    if (!list) return;
+
+    list.dataset.maxTamu    = maxTamu;
+    list.dataset.bolehHewan = bolehHewan ? "1" : "0";
+
+    const dewasaRow = guestDropdown.querySelector('[data-group="dewasa"]');
+    const anakRow   = guestDropdown.querySelector('[data-group="anak"]');
+    if (dewasaRow) dewasaRow.dataset.max = maxTamu;
+    if (anakRow)   anakRow.dataset.max   = maxTamu;
+
+    const hewanRow = guestDropdown.querySelector('[data-group="hewan"]');
+    if (hewanRow) {
+      if (!bolehHewan) {
+        hewanRow.classList.add("not-allowed");
+        hewanRow.dataset.allowed = "0";
+        const desc = hewanRow.querySelector(".counter-desc") || document.createElement("h4");
+        desc.className = "counter-desc not-allowed-desc";
+        desc.textContent = "Tidak diizinkan di properti ini";
+        if (!hewanRow.querySelector(".counter-desc")) {
+          hewanRow.querySelector(".counter-info").appendChild(desc);
+        }
+        hewanRow.querySelectorAll(".counter-button").forEach((b) => {
+          b.classList.add("disabled");
+          b.disabled = true;
+        });
+      } else {
+        hewanRow.classList.remove("not-allowed");
+        hewanRow.dataset.allowed = "1";
+        const desc = hewanRow.querySelector(".not-allowed-desc");
+        if (desc) desc.remove();
+        hewanRow.querySelectorAll(".counter-button").forEach((b) => {
+          b.classList.remove("disabled");
+          b.disabled = false;
+        });
+      }
+    }
   }
 
   function updateGuestSummary() {
@@ -183,11 +225,14 @@ document.addEventListener("DOMContentLoaded", () => {
   guestDropdown.addEventListener("click", (e) => e.stopPropagation());
 
   function initCounter() {
-    const counterItem = guestDropdown.querySelectorAll(".counter-row");
-    const dewasaRow   = guestDropdown.querySelector('[data-group="dewasa"]');
-    const anakRow     = guestDropdown.querySelector('[data-group="anak"]');
+    const counterItems = guestDropdown.querySelectorAll(".counter-row");
+    const dewasaRow    = guestDropdown.querySelector('[data-group="dewasa"]');
+    const anakRow      = guestDropdown.querySelector('[data-group="anak"]');
+    const maxTamu      = parseInt(guestDropdown.querySelector(".counter-list")?.dataset.maxTamu ?? 16);
 
-    counterItem.forEach((item) => {
+    counterItems.forEach((item) => {
+      if (item.classList.contains("not-allowed")) return;
+
       const minusButton  = item.querySelector(".minus");
       const plusButton   = item.querySelector(".plus");
       const counterValue = item.querySelector(".counter-value");
@@ -203,26 +248,29 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       function updateSiblingOrangGroup() {
-        counterItem.forEach((other) => {
-          if (other !== item && (other.dataset.group === "dewasa" || other.dataset.group === "anak")) {
-            const otherVal = parseInt(other.querySelector(".counter-value").textContent);
-            const otherMax = parseInt(other.dataset.max);
-            other.querySelector(".plus").classList.toggle("disabled", otherVal >= otherMax || getTotal() >= 16);
-          }
+        counterItems.forEach((other) => {
+          if (other === item) return;
+          if (other.dataset.group !== "dewasa" && other.dataset.group !== "anak") return;
+          const otherVal = parseInt(other.querySelector(".counter-value").textContent);
+          const otherMax = parseInt(other.dataset.max);
+          other.querySelector(".plus").classList.toggle("disabled", otherVal >= otherMax || getTotal() >= maxTamu);
         });
       }
 
       function updateCounter() {
         counterValue.textContent = value;
         minusButton.classList.toggle("disabled", value <= min);
+        minusButton.disabled = value <= min;
         const isOrangGroup = item.dataset.group === "dewasa" || item.dataset.group === "anak";
-        plusButton.classList.toggle("disabled", isOrangGroup ? (value >= max || getTotal() >= 16) : value >= max);
+        const atMax = isOrangGroup ? (value >= max || getTotal() >= maxTamu) : value >= max;
+        plusButton.classList.toggle("disabled", atMax);
+        plusButton.disabled = atMax;
       }
 
       plusButton.addEventListener("click", () => {
         const isOrangGroup = item.dataset.group === "dewasa" || item.dataset.group === "anak";
         if (isOrangGroup) {
-          if (value < max && getTotal() < 16) { value++; updateCounter(); updateSiblingOrangGroup(); updateGuestSummary(); }
+          if (value < max && getTotal() < maxTamu) { value++; updateCounter(); updateSiblingOrangGroup(); updateGuestSummary(); }
         } else {
           if (value < max) { value++; updateCounter(); updateGuestSummary(); }
         }
