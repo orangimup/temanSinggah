@@ -326,7 +326,7 @@ function statusInfo(string $s): array
         <button class="header-button list-button" title="Tampilan list">
           <i class="ph-bold ph-rows"></i>
         </button>
-        <a href="listing_edit.php" class="header-button" title="Tambah listing">
+        <a href="../../onboarding/pages/about_place.html" class="header-button" title="Tambah listing">
           <i class="ph-bold ph-plus"></i>
         </a>
       </div>

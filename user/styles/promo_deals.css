@@ -171,6 +171,7 @@
 .featured-section {
   max-width: var(--container-xl);
   margin: 0 auto var(--space-64);
+  margin-top: 48px;
   padding: 0 var(--space-24);
 }
 
@@ -287,7 +288,7 @@
   position: relative;
   z-index: 2;
   height: 100%;
-  min-height: 350px;
+  min-height: unset;
   border-radius: var(--radius-2xl);
   overflow: hidden;
   box-shadow: var(--shadow-card-hover);
@@ -303,6 +304,7 @@
   max-width: var(--container-xl);
   margin: 0 auto var(--space-64);
   padding: 0 var(--space-24);
+  overflow: hidden;
 }
 
 .section-title {
@@ -311,16 +313,25 @@
   margin-bottom: var(--space-24);
 }
 
-.voucher-section {
-  max-width: var(--container-xl);
-  margin: 0 auto var(--space-64);
-  padding: 0 var(--space-24);
+/* ── Voucher grid: horizontal scroll, tampil 3 default ── */
+.voucher-grid {
+  display: flex;
+  gap: var(--space-20);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--space-12);
+  scrollbar-width: thin;
+  scrollbar-color: #ddd transparent;
 }
 
-.voucher-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-20);
+.voucher-grid::-webkit-scrollbar {
+  height: 5px;
+}
+
+.voucher-grid::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 99px;
 }
 
 .voucher-card {
@@ -331,6 +342,10 @@
   position: relative;
   transition: all var(--transition-base);
   cursor: pointer;
+  /* Tampil 3 kartu sekaligus, geser sisanya */
+  flex: 0 0 calc((100% - 2 * var(--space-20)) / 3);
+  min-width: 240px;
+  scroll-snap-align: start;
 }
 
 .voucher-card:hover {
@@ -434,12 +449,6 @@
   max-width: var(--container-xl);
   margin: 0 auto var(--space-80);
   padding: 0 var(--space-24);
-}
-
-.section-title {
-  color: var(--color-text-primary);
-  font-weight: var(--font-semibold);
-  margin-bottom: var(--space-24);
 }
 
 .promo-grid {

@@ -92,7 +92,9 @@ $promos = $koneksi->query("
     <link rel="icon" href="/teman_singgah/assets/logo/logo_temansinggah.svg" />
     <link rel="stylesheet" href="/teman_singgah/components/root.css" />
     <link rel="stylesheet" href="/teman_singgah/admin/dashboard.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <style>
         .promo-toolbar {
@@ -434,9 +436,20 @@ $promos = $koneksi->query("
             flex-shrink: 0;
         }
 
-        .confirm-icon-wrap.danger { background: #fff1f0; color: #dc2626; }
-        .confirm-icon-wrap.warning { background: #fffbeb; color: #d97706; }
-        .confirm-icon-wrap.success { background: #f0fdf4; color: #16a34a; }
+        .confirm-icon-wrap.danger {
+            background: #fff1f0;
+            color: #dc2626;
+        }
+
+        .confirm-icon-wrap.warning {
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .confirm-icon-wrap.success {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
 
         .confirm-box h3 {
             font-family: var(--font-display);
@@ -472,7 +485,10 @@ $promos = $koneksi->query("
             font-family: inherit;
         }
 
-        .btn-confirm-batal:hover { border-color: #aaa; color: #333; }
+        .btn-confirm-batal:hover {
+            border-color: #aaa;
+            color: #333;
+        }
 
         .btn-confirm-ok {
             flex: 1;
@@ -489,13 +505,37 @@ $promos = $koneksi->query("
             gap: 7px;
         }
 
-        .btn-confirm-ok.danger { background: #dc2626; color: #fff; }
-        .btn-confirm-ok.danger:hover { background: #b91c1c; }
-        .btn-confirm-ok.warning { background: #d97706; color: #fff; }
-        .btn-confirm-ok.warning:hover { background: #b45309; }
-        .btn-confirm-ok.success { background: #16a34a; color: #fff; }
-        .btn-confirm-ok.success:hover { background: #15803d; }
-        .btn-confirm-ok:disabled { opacity: .6; cursor: not-allowed; }
+        .btn-confirm-ok.danger {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .btn-confirm-ok.danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-confirm-ok.warning {
+            background: #d97706;
+            color: #fff;
+        }
+
+        .btn-confirm-ok.warning:hover {
+            background: #b45309;
+        }
+
+        .btn-confirm-ok.success {
+            background: #16a34a;
+            color: #fff;
+        }
+
+        .btn-confirm-ok.success:hover {
+            background: #15803d;
+        }
+
+        .btn-confirm-ok:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
 
         .detail-overlay {
             display: none;
@@ -509,7 +549,9 @@ $promos = $koneksi->query("
             box-sizing: border-box;
         }
 
-        .detail-overlay.show { display: flex; }
+        .detail-overlay.show {
+            display: flex;
+        }
 
         .detail-box {
             background: #fff;
@@ -571,7 +613,9 @@ $promos = $koneksi->query("
             color: #666;
         }
 
-        .btn-detail-close:hover { background: #eee; }
+        .btn-detail-close:hover {
+            background: #eee;
+        }
 
         .detail-divider {
             height: 1px;
@@ -619,29 +663,40 @@ $promos = $koneksi->query("
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Halaman Utama</div>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.php"><i class="ph-bold ph-squares-four"></i>Dashboard</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/dashboard.php"><i
+                            class="ph-bold ph-squares-four"></i>Dashboard</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Manajemen</div>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/users.php"><i class="ph-bold ph-users"></i>Pengguna</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/listings.php"><i class="ph-bold ph-house"></i>Properti</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/reservations.php"><i class="ph-bold ph-calendar-check"></i>Reservasi</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
-                    <a class="nav-item active" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo & Deals</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/users.php"><i
+                            class="ph-bold ph-users"></i>Pengguna</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/listings.php"><i
+                            class="ph-bold ph-house"></i>Properti</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/reservations.php"><i
+                            class="ph-bold ph-calendar-check"></i>Reservasi</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i
+                            class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
+                    <a class="nav-item active" href="/teman_singgah/admin/pages/promos.php"><i
+                            class="ph-bold ph-tag"></i>Promo & Deals</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Moderasi</div>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/reviews.php"><i class="ph-bold ph-star"></i>Ulasan</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/reports.php"><i class="ph-bold ph-flag"></i>Laporan</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/reviews.php"><i
+                            class="ph-bold ph-star"></i>Ulasan</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/reports.php"><i
+                            class="ph-bold ph-flag"></i>Laporan</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Keuangan</div>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/payouts.php"><i class="ph-bold ph-money"></i>Pembayaran</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/payouts.php"><i
+                            class="ph-bold ph-money"></i>Pembayaran</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Sistem</div>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i class="ph-bold ph-gear"></i>Pengaturan</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i
+                            class="ph-bold ph-gear"></i>Pengaturan</a>
+                    <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i
+                            class="ph-bold ph-notepad"></i>Aktivitas</a>
                 </div>
             </nav>
         </aside>
@@ -661,7 +716,8 @@ $promos = $koneksi->query("
                 <div class="promo-toolbar">
                     <div class="table-search-wrap">
                         <i class="ph-bold ph-magnifying-glass table-search-icon"></i>
-                        <input type="search" id="promoSearch" class="table-search-input" placeholder="Cari kode atau judul..." />
+                        <input type="search" id="promoSearch" class="table-search-input"
+                            placeholder="Cari kode atau judul..." />
                     </div>
                     <button class="btn-add-promo" id="btnAddPromo">
                         <i class="ph-bold ph-plus"></i> Tambah Promo
@@ -687,24 +743,24 @@ $promos = $koneksi->query("
                             </thead>
                             <tbody>
                                 <?php foreach ($promos as $i => $p):
-                                    $pct = $p['maks_pakai'] ? min(100, round($p['sudah_dipakai'] / $p['maks_pakai'] * 100)) : 0;
+                                    $usage = intval($p['total_usage_real']);
+                                    $maks = $p['maks_pakai'] ? intval($p['maks_pakai']) : null;
+                                    $pct = $maks ? min(100, round($usage / $maks * 100)) : 100;
+                                    $bar_style = $maks ? '' : 'background:#d1d5db;';
+                                    $pakai_label = $maks ? $usage . ' / ' . $maks . ' dipakai' : $usage . ' dipakai · tanpa batas';
                                     $tgl_dari = date('d M Y', strtotime($p['berlaku_dari']));
                                     $tgl_hgga = date('d M Y', strtotime($p['berlaku_hingga']));
                                     $expired = strtotime($p['berlaku_hingga']) < time();
                                     $scls = $p['status'] === 'aktif' && !$expired ? 'success' : 'danger';
                                     $slbl = $expired ? 'Kedaluwarsa' : ucfirst($p['status']);
-                                    $pakai_label = $p['maks_pakai'] ? $p['sudah_dipakai'].'/'.$p['maks_pakai'].' total' : $p['sudah_dipakai'].'× (∞ kuota)';
-                                    $limit_user_label = $p['maks_pakai_per_user'] ? $p['maks_pakai_per_user'].'× per user' : 'Tidak dibatasi';
-                                ?>
-                                    <tr data-id="<?= $p['id'] ?>"
-                                        data-status="<?= htmlspecialchars($p['status']) ?>"
+                                    $limit_user_label = $p['maks_pakai_per_user'] ? $p['maks_pakai_per_user'] . '× per user' : 'Tidak dibatasi';
+                                    ?>
+                                    <tr data-id="<?= $p['id'] ?>" data-status="<?= htmlspecialchars($p['status']) ?>"
                                         data-kode="<?= htmlspecialchars($p['kode']) ?>"
                                         data-judul="<?= htmlspecialchars($p['judul']) ?>"
                                         data-desk="<?= htmlspecialchars($p['deskripsi'] ?? '') ?>"
-                                        data-diskon="<?= $p['diskon_persen'] ?>%"
-                                        data-min="<?= $p['min_malam'] ?> malam"
-                                        data-dari="<?= $tgl_dari ?>"
-                                        data-hingga="<?= $tgl_hgga ?>"
+                                        data-diskon="<?= $p['diskon_persen'] ?>%" data-min="<?= $p['min_malam'] ?> malam"
+                                        data-dari="<?= $tgl_dari ?>" data-hingga="<?= $tgl_hgga ?>"
                                         data-pakai="<?= htmlspecialchars($pakai_label) ?>"
                                         data-limit-user="<?= htmlspecialchars($limit_user_label) ?>"
                                         data-status-label="<?= $slbl ?>">
@@ -717,28 +773,25 @@ $promos = $koneksi->query("
                                             <?php endif; ?>
                                         </td>
                                         <td style="font-weight:700;color:var(--color-primary);font-size:15px;">
-                                            <?= $p['diskon_persen'] ?>%
-                                        </td>
+                                            <?= $p['diskon_persen'] ?>%</td>
                                         <td><?= $p['min_malam'] ?> malam</td>
                                         <td style="max-width:90px;">
-                                            <div class="validity-cell"><?= date('d M Y', strtotime($p['berlaku_dari'])) ?></div>
-                                            <div class="validity-cell">s/d <?= date('d M Y', strtotime($p['berlaku_hingga'])) ?></div>
+                                            <div class="validity-cell"><?= $tgl_dari ?></div>
+                                            <div class="validity-cell">s/d <?= $tgl_hgga ?></div>
                                         </td>
                                         <td>
-                                            <?php if ($p['maks_pakai']): ?>
-                                                <div class="progress-bar-wrap">
-                                                    <div class="progress-bar-track">
-                                                        <div class="progress-bar-fill" style="width:<?= $pct ?>%;"></div>
-                                                    </div>
-                                                    <div class="progress-label"><?= $p['sudah_dipakai'] ?>/<?= $p['maks_pakai'] ?> total</div>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-track">
+                                                    <div class="progress-bar-fill"
+                                                        style="width:<?= $pct ?>%;<?= $bar_style ?>"></div>
                                                 </div>
-                                            <?php else: ?>
-                                                <span style="font-size:12px;color:#aaa;"><?= $p['sudah_dipakai'] ?>× (∞ kuota)</span>
-                                            <?php endif; ?>
+                                                <div class="progress-label"><?= $pakai_label ?></div>
+                                            </div>
                                         </td>
                                         <td>
                                             <?php if ($p['maks_pakai_per_user']): ?>
-                                                <span style="font-size:13px;font-weight:600;color:var(--color-text-primary);"><?= $p['maks_pakai_per_user'] ?>×</span>
+                                                <span
+                                                    style="font-size:13px;font-weight:600;color:var(--color-text-primary);"><?= $p['maks_pakai_per_user'] ?>×</span>
                                                 <div class="per-user-badge">per user</div>
                                             <?php else: ?>
                                                 <span style="font-size:12px;color:#aaa;">Tidak dibatasi</span>
@@ -751,15 +804,12 @@ $promos = $koneksi->query("
                                         </td>
                                         <td>
                                             <div class="action-group">
-                                                <button class="action-button secondary btn-view" title="Lihat Detail">
-                                                    <i class="ph-bold ph-eye"></i>
-                                                </button>
-                                                <button class="action-button info btn-toggle" title="Toggle Status">
-                                                    <i class="ph-bold ph-power"></i>
-                                                </button>
-                                                <button class="action-button error btn-delete" title="Hapus">
-                                                    <i class="ph-bold ph-trash"></i>
-                                                </button>
+                                                <button class="action-button secondary btn-view" title="Lihat Detail"><i
+                                                        class="ph-bold ph-eye"></i></button>
+                                                <button class="action-button info btn-toggle" title="Toggle Status"><i
+                                                        class="ph-bold ph-power"></i></button>
+                                                <button class="action-button error btn-delete" title="Hapus"><i
+                                                        class="ph-bold ph-trash"></i></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -767,7 +817,8 @@ $promos = $koneksi->query("
                                 <?php if (empty($promos)): ?>
                                     <tr>
                                         <td colspan="10" style="text-align:center;color:#aaa;padding:40px;font-size:14px;">
-                                            <i class="ph-bold ph-tag" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+                                            <i class="ph-bold ph-tag"
+                                                style="font-size:2rem;display:block;margin-bottom:8px;"></i>
                                             Belum ada kode promo. Klik "Tambah Promo" untuk membuat.
                                         </td>
                                     </tr>
@@ -786,7 +837,8 @@ $promos = $koneksi->query("
             <div class="modal-grid">
                 <div class="modal-field">
                     <label class="modal-label">Kode Promo *</label>
-                    <input type="text" class="modal-input" id="fKode" placeholder="HEMAT20" style="text-transform:uppercase;font-family:monospace;font-weight:700;" />
+                    <input type="text" class="modal-input" id="fKode" placeholder="HEMAT20"
+                        style="text-transform:uppercase;font-family:monospace;font-weight:700;" />
                 </div>
                 <div class="modal-field">
                     <label class="modal-label">Diskon (%) *</label>
@@ -1003,16 +1055,16 @@ $promos = $koneksi->query("
         detailOverlay.addEventListener('click', e => { if (e.target === detailOverlay) detailOverlay.classList.remove('show'); });
 
         function openDetail(row) {
-            document.getElementById('dKode').textContent      = row.dataset.kode;
-            document.getElementById('dJudul').textContent     = row.dataset.judul;
-            document.getElementById('dDesk').textContent      = row.dataset.desk || '—';
-            document.getElementById('dDiskon').textContent    = row.dataset.diskon;
-            document.getElementById('dMin').textContent       = row.dataset.min;
-            document.getElementById('dDari').textContent      = row.dataset.dari;
-            document.getElementById('dHingga').textContent    = row.dataset.hingga;
-            document.getElementById('dPakai').textContent     = row.dataset.pakai;
+            document.getElementById('dKode').textContent = row.dataset.kode;
+            document.getElementById('dJudul').textContent = row.dataset.judul;
+            document.getElementById('dDesk').textContent = row.dataset.desk || '—';
+            document.getElementById('dDiskon').textContent = row.dataset.diskon;
+            document.getElementById('dMin').textContent = row.dataset.min;
+            document.getElementById('dDari').textContent = row.dataset.dari;
+            document.getElementById('dHingga').textContent = row.dataset.hingga;
+            document.getElementById('dPakai').textContent = row.dataset.pakai;
             document.getElementById('dLimitUser').textContent = row.dataset.limitUser;
-            document.getElementById('dStatus').textContent    = row.dataset.statusLabel;
+            document.getElementById('dStatus').textContent = row.dataset.statusLabel;
             detailOverlay.classList.add('show');
         }
 

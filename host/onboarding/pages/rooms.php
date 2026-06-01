@@ -1,7 +1,6 @@
 <?php
 session_start();
-
-// Ambil data kamar yang sudah disimpan di session (jika ada)
+error_log("rooms.php session_id: " . session_id());
 $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']['rooms'] : [];
 ?>
 <!doctype html>
@@ -11,12 +10,10 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pilihan Kamar | Teman Singgah</title>
     <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
-
     <link rel="stylesheet" href="../../../components/root.css" />
     <link rel="stylesheet" href="../../../components/navbar.css" />
     <link rel="stylesheet" href="../onboarding.css" />
     <link rel="stylesheet" href="../rooms.css" />
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   </head>
@@ -42,7 +39,6 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         <p>Tambahkan tipe-tipe kamar yang bisa dipesan tamu. Minimal 1 kamar diperlukan.</p>
       </div>
 
-      <!-- List kamar yang sudah ditambah -->
       <div id="roomsList" class="rooms-list">
         <?php if (!empty($saved_rooms)): ?>
           <?php foreach ($saved_rooms as $i => $room): ?>
@@ -70,13 +66,11 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         <?php endif; ?>
       </div>
 
-      <!-- Tombol tambah kamar -->
       <button class="add-room-btn" id="btnTambahKamar">
         <i class="ph-bold ph-plus-circle"></i>
         Tambah Tipe Kamar
       </button>
 
-      <!-- Form tambah/edit kamar (tersembunyi awalnya) -->
       <div id="roomFormCard" class="room-form-card" style="display:none;">
         <div class="room-form-header">
           <h3 id="roomFormTitle">Tambah Tipe Kamar</h3>
@@ -125,22 +119,39 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
           </div>
 
           <div class="form-group">
+            <label>Foto Kamar</label>
+            <input type="file" id="roomFoto" accept="image/*" style="display:none;" />
+            <div class="foto-upload-area" id="fotoPreview" onclick="document.getElementById('roomFoto').click()">
+              <div class="foto-placeholder" id="fotoPlaceholder">
+                <i class="ph-bold ph-camera"></i>
+                <span>Pilih foto kamar</span>
+                <small>Format gambar apapun, maks. 2MB</small>
+              </div>
+              <img id="fotoImg" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" />
+              <button type="button" id="btnHapusFoto" style="display:none;" onclick="event.stopPropagation(); hapusFoto()">
+                <i class="ph-bold ph-x"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label>Fasilitas Kamar</label>
             <div class="room-facilities-grid">
               <?php
               $fasilitas_kamar = [
-                'Kasur Twin'       => 'ph-bed',
-                'Kasur Double'     => 'ph-bed',
-                'Kasur King'       => 'ph-bed',
-                'Kamar Mandi Dalam'=> 'ph-shower',
-                'Bathtub'          => 'ph-bathtub',
-                'TV LED'           => 'ph-television',
-                'Minibar'          => 'ph-wine',
-                'Balkon'           => 'ph-door-open',
-                'AC'               => 'ph-snowflake',
-                'Brankas'          => 'ph-lock-key',
-                'Meja Kerja'       => 'ph-desk',
-                'Sofa'             => 'ph-armchair',
+                'Kasur Twin'        => 'ph-bed',
+                'Kasur Double'      => 'ph-bed',
+                'Kasur Queen'       => 'ph-bed',
+                'Kasur King'        => 'ph-bed',
+                'Kamar Mandi Dalam' => 'ph-shower',
+                'Bathtub'           => 'ph-bathtub',
+                'TV LED'            => 'ph-television',
+                'Minibar'           => 'ph-wine',
+                'Balkon'            => 'ph-door-open',
+                'AC'                => 'ph-snowflake',
+                'Brankas'           => 'ph-lock-key',
+                'Meja Kerja'        => 'ph-desk',
+                'Sofa'              => 'ph-armchair',
               ];
               foreach ($fasilitas_kamar as $nama => $icon): ?>
                 <label class="facility-chip">
@@ -180,11 +191,11 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
     </footer>
 
     <script>
-      // ── State ─────────────────────────────────────────────
       let rooms = <?= json_encode($saved_rooms) ?>;
       let tamuCount = 2;
+      let currentFotoFile = null;
+      let currentFotoName = '';
 
-      // ── Counter tamu ──────────────────────────────────────
       document.getElementById('btnTamuMin').addEventListener('click', () => {
         if (tamuCount > 1) { tamuCount--; updateTamuDisplay(); }
       });
@@ -195,10 +206,54 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         document.getElementById('tamuCount').textContent = tamuCount;
       }
 
-      // ── Buka/tutup form ───────────────────────────────────
+      document.getElementById('roomFoto').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          alert('File harus berupa gambar.');
+          this.value = '';
+          return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Ukuran foto maksimal 2MB.');
+          this.value = '';
+          return;
+        }
+        currentFotoFile = file;
+        currentFotoName = file.name;
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('fotoImg').src = e.target.result;
+          document.getElementById('fotoImg').style.display = 'block';
+          document.getElementById('fotoPlaceholder').style.display = 'none';
+          document.getElementById('btnHapusFoto').style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      });
+
+      function hapusFoto() {
+        document.getElementById('fotoImg').src = '';
+        document.getElementById('fotoImg').style.display = 'none';
+        document.getElementById('fotoPlaceholder').style.display = 'flex';
+        document.getElementById('btnHapusFoto').style.display = 'none';
+        document.getElementById('roomFoto').value = '';
+        currentFotoFile = null;
+        currentFotoName = '';
+      }
+
       document.getElementById('btnTambahKamar').addEventListener('click', () => openForm(-1));
       document.getElementById('btnTutupForm').addEventListener('click', closeForm);
       document.getElementById('btnBatalForm').addEventListener('click', closeForm);
+
+      function resetFotoPreview() {
+        document.getElementById('fotoImg').src = '';
+        document.getElementById('fotoImg').style.display = 'none';
+        document.getElementById('fotoPlaceholder').style.display = 'flex';
+        document.getElementById('btnHapusFoto').style.display = 'none';
+        document.getElementById('roomFoto').value = '';
+        currentFotoFile = null;
+        currentFotoName = '';
+      }
 
       function openForm(index) {
         document.getElementById('editIndex').value = index;
@@ -206,22 +261,21 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
           index === -1 ? 'Tambah Tipe Kamar' : 'Edit Tipe Kamar';
         document.getElementById('roomFormError').style.display = 'none';
 
-        // Reset
-        document.getElementById('roomNama').value     = '';
-        document.getElementById('roomHarga').value    = '';
-        document.getElementById('roomUkuran').value   = '';
-        document.getElementById('roomDeskripsi').value= '';
+        document.getElementById('roomNama').value      = '';
+        document.getElementById('roomHarga').value     = '';
+        document.getElementById('roomUkuran').value    = '';
+        document.getElementById('roomDeskripsi').value = '';
         tamuCount = 2;
         updateTamuDisplay();
         document.querySelectorAll('input[name="room_fasilitas[]"]').forEach(cb => cb.checked = false);
+        resetFotoPreview();
 
-        // Fill kalau edit
         if (index >= 0 && rooms[index]) {
           const r = rooms[index];
-          document.getElementById('roomNama').value      = r.nama      || '';
+          document.getElementById('roomNama').value      = r.nama        || '';
           document.getElementById('roomHarga').value     = r.harga_malam || '';
-          document.getElementById('roomUkuran').value    = r.ukuran_m2 || '';
-          document.getElementById('roomDeskripsi').value = r.deskripsi  || '';
+          document.getElementById('roomUkuran').value    = r.ukuran_m2   || '';
+          document.getElementById('roomDeskripsi').value = r.deskripsi   || '';
           tamuCount = r.max_tamu || 2;
           updateTamuDisplay();
           if (Array.isArray(r.fasilitas)) {
@@ -229,6 +283,13 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
               const cb = document.querySelector(`input[name="room_fasilitas[]"][value="${f}"]`);
               if (cb) cb.checked = true;
             });
+          }
+          if (r.foto) {
+            currentFotoName = r.foto;
+            document.getElementById('fotoImg').src = `../../../uploads/rooms/${r.foto}`;
+            document.getElementById('fotoImg').style.display = 'block';
+            document.getElementById('fotoPlaceholder').style.display = 'none';
+            document.getElementById('btnHapusFoto').style.display = 'flex';
           }
         }
 
@@ -240,7 +301,6 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         document.getElementById('roomFormCard').style.display = 'none';
       }
 
-      // ── Simpan kamar ke array ─────────────────────────────
       document.getElementById('btnSimpanKamar').addEventListener('click', () => {
         const nama  = document.getElementById('roomNama').value.trim();
         const harga = parseFloat(document.getElementById('roomHarga').value);
@@ -268,6 +328,8 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
           max_tamu:    tamuCount,
           harga_malam: harga,
           fasilitas:   fasilitas,
+          foto:        currentFotoName,
+          _fotoFile:   currentFotoFile,
         };
 
         const idx = parseInt(document.getElementById('editIndex').value);
@@ -282,7 +344,6 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         document.getElementById('roomsError').style.display = 'none';
       });
 
-      // ── Edit & Delete ─────────────────────────────────────
       function editRoom(index)   { openForm(index); }
       function deleteRoom(index) {
         if (confirm('Hapus kamar ini?')) {
@@ -291,7 +352,6 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         }
       }
 
-      // ── Render list kamar ─────────────────────────────────
       function renderRooms() {
         const list = document.getElementById('roomsList');
         list.innerHTML = '';
@@ -326,17 +386,24 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       }
 
-      // ── Selanjutnya → simpan & lanjut ke policies ─────────
       document.getElementById('btnSelanjutnya').addEventListener('click', () => {
         if (rooms.length === 0) {
           document.getElementById('roomsError').style.display = 'flex';
           return;
         }
 
+        const formData = new FormData();
+        formData.append('rooms_json', JSON.stringify(rooms.map(r => {
+          const { _fotoFile, ...rest } = r;
+          return rest;
+        })));
+        rooms.forEach((r, i) => {
+          if (r._fotoFile) formData.append(`foto_${i}`, r._fotoFile);
+        });
+
         fetch('save_rooms.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rooms })
+          body: formData
         })
         .then(res => res.json())
         .then(data => {

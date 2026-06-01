@@ -11,7 +11,7 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
-$allowed_ext = ['jpg', 'jpeg', 'png', 'webp'];
+$allowed_ext = ['jpg', 'jpeg', 'png', 'webp', 'jfif'];
 $uploaded = [];
 
 foreach ($_FILES['foto']['tmp_name'] as $index => $tmp) {
