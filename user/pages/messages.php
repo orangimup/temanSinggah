@@ -2,27 +2,46 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/auth/guard_user.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/koneksi.php';
 
-$guest_id = $_SESSION['user_id'];
+$guest_id = $_SESSION['id'] ?? $_SESSION['user_id'] ?? null;
+if (!$guest_id) {
+  http_response_code(401);
+  echo json_encode(['error' => 'Tidak terautentikasi']);
+  exit;
+}
 
 if (isset($_GET['action']) && $_GET['action'] === 'conversations') {
   header('Content-Type: application/json');
+
   $sql = "
-        SELECT c.id, c.property_name, c.last_message_at,
-               h.nama AS host_name, h.user_id AS host_id, h.photo AS host_photo,
-               m.message AS last_message, m.image_paths AS last_image_paths, m.sender_id AS last_sender_id,
-               (SELECT COUNT(*) FROM messages WHERE conversation_id = c.id AND sender_id != '$guest_id' AND is_read = 0) AS unread_count
-        FROM conversations c
-        JOIN users h ON h.user_id = c.host_id
-        LEFT JOIN messages m ON m.id = (SELECT MAX(id) FROM messages WHERE conversation_id = c.id)
-        WHERE c.guest_id = '$guest_id'
-        ORDER BY c.last_message_at DESC
-    ";
+  SELECT c.id, c.host_id, c.last_message_at,
+         h.nama AS host_name, h.photo AS host_photo,
+         GROUP_CONCAT(DISTINCT c.property_name ORDER BY c.last_message_at DESC SEPARATOR ', ') AS property_names,
+         m.message AS last_message, m.image_paths AS last_image_paths,
+         m.sender_id AS last_sender_id,
+         (SELECT COUNT(*) FROM messages ms
+          JOIN conversations cs ON cs.id = ms.conversation_id
+          WHERE cs.guest_id = '$guest_id' AND cs.host_id = c.host_id
+            AND ms.sender_id != '$guest_id' AND ms.is_read = 0) AS unread_count
+  FROM conversations c
+  JOIN users h ON h.id = c.host_id
+  LEFT JOIN messages m ON m.id = (
+    SELECT MAX(msg2.id) FROM messages msg2
+    JOIN conversations cc ON cc.id = msg2.conversation_id
+    WHERE cc.guest_id = '$guest_id' AND cc.host_id = c.host_id
+  )
+  WHERE c.guest_id = '$guest_id'
+  GROUP BY c.host_id, c.id, c.last_message_at, h.nama, h.photo,
+           m.message, m.image_paths, m.sender_id
+  ORDER BY MAX(c.last_message_at) DESC
+";
+
   $result = mysqli_query($koneksi, $sql);
   if (!$result) {
     http_response_code(500);
     echo json_encode(['error' => mysqli_error($koneksi)]);
     exit;
   }
+
   $conversations = [];
   while ($row = mysqli_fetch_assoc($result)) {
     $preview = ($row['last_sender_id'] === $guest_id) ? 'Anda: ' : '';
@@ -32,6 +51,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'conversations') {
       $preview .= '📷 Gambar dikirim';
     else
       $preview .= 'Belum ada pesan';
+
     $sent_ts = strtotime($row['last_message_at']);
     if ($sent_ts >= strtotime('today'))
       $time_label = date('H:i', $sent_ts);
@@ -39,13 +59,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'conversations') {
       $time_label = 'Kemarin';
     else
       $time_label = date('d M', $sent_ts);
+
     $conversations[] = [
       'id' => (int) $row['id'],
       'host_name' => $row['host_name'],
       'host_id' => $row['host_id'],
       'host_initial' => strtoupper(substr($row['host_name'], 0, 1)),
       'host_photo' => $row['host_photo'],
-      'property_name' => $row['property_name'],
+      'property_name' => $row['property_names'],
       'last_preview' => $preview,
       'time_label' => $time_label,
       'unread_count' => (int) $row['unread_count'],
@@ -59,27 +80,50 @@ if (isset($_GET['action']) && $_GET['action'] === 'start') {
   header('Content-Type: application/json');
   $host_id = isset($_GET['host_id']) ? (int) $_GET['host_id'] : 0;
   $listing_id = isset($_GET['listing_id']) ? (int) $_GET['listing_id'] : 0;
+
   if (!$host_id) {
     http_response_code(400);
     echo json_encode(['error' => 'host_id diperlukan']);
     exit;
   }
-  $listing_cond = $listing_id ? "AND listing_id = '$listing_id'" : "";
-  $check = mysqli_query($koneksi, "SELECT id FROM conversations WHERE guest_id = '$guest_id' AND host_id = '$host_id' $listing_cond LIMIT 1");
+
+  $check = mysqli_query(
+    $koneksi,
+    "SELECT id FROM conversations
+     WHERE guest_id = '$guest_id' AND host_id = '$host_id'
+     ORDER BY last_message_at DESC LIMIT 1"
+  );
+
   if ($row = mysqli_fetch_assoc($check)) {
-    echo json_encode(['conversation_id' => (int) $row['id']]);
-    exit;
+    echo json_encode([
+      'conversation_id' => (int) $row['id'],
+      'is_new' => false,
+    ]);
+  } else {
+    $prop_name = '';
+    if ($listing_id) {
+      $r = mysqli_query(
+        $koneksi,
+        "SELECT judul FROM listings WHERE id = '$listing_id' LIMIT 1"
+      );
+      if ($r && $pr = mysqli_fetch_assoc($r))
+        $prop_name = $pr['judul'];
+    }
+
+    $host_row = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT nama FROM users WHERE id = '$host_id' LIMIT 1"));
+    $host_name = $host_row['nama'] ?? 'Host';
+    $host_initial = strtoupper(substr($host_name, 0, 1));
+
+    echo json_encode([
+      'conversation_id' => null,
+      'is_new' => true,
+      'pending_host_id' => $host_id,
+      'pending_listing_id' => $listing_id,
+      'pending_prop_name' => $prop_name,
+      'pending_host_name' => $host_name,
+      'pending_host_initial' => $host_initial,
+    ]);
   }
-  $prop_name = '';
-  if ($listing_id) {
-    $r = mysqli_query($koneksi, "SELECT judul FROM listings WHERE id = '$listing_id' LIMIT 1");
-    if ($r && $pr = mysqli_fetch_assoc($r))
-      $prop_name = $pr['judul'];
-  }
-  $prop_esc = mysqli_real_escape_string($koneksi, $prop_name);
-  $listing_val = $listing_id ?: 'NULL';
-  mysqli_query($koneksi, "INSERT INTO conversations (guest_id, host_id, listing_id, property_name, last_message_at) VALUES ('$guest_id', '$host_id', $listing_val, '$prop_esc', NOW())");
-  echo json_encode(['conversation_id' => mysqli_insert_id($koneksi)]);
   exit;
 }
 
@@ -91,29 +135,39 @@ if (isset($_GET['action']) && $_GET['action'] === 'read') {
     echo json_encode(['error' => 'conversation_id diperlukan']);
     exit;
   }
-  $check = mysqli_query($koneksi, "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'");
+
+  $check = mysqli_query(
+    $koneksi,
+    "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'"
+  );
   if (!$check || mysqli_num_rows($check) === 0) {
     http_response_code(403);
     echo json_encode(['error' => 'Akses ditolak']);
     exit;
   }
-  $result = mysqli_query($koneksi, "
-        SELECT m.id, m.sender_id, m.message, m.image_paths, m.is_read, m.sent_at, u.nama AS sender_name
-        FROM messages m JOIN users u ON u.user_id = m.sender_id
-        WHERE m.conversation_id = '$conv_id' ORDER BY m.sent_at ASC
-    ");
+
+  $result = mysqli_query(
+    $koneksi,
+    "SELECT m.id, m.sender_id, m.message, m.image_paths, m.is_read, m.sent_at,
+            u.nama AS sender_name
+     FROM messages m
+     JOIN users u ON u.id = m.sender_id
+     WHERE m.conversation_id = '$conv_id'
+     ORDER BY m.sent_at ASC"
+  );
   if (!$result) {
     http_response_code(500);
     echo json_encode(['error' => mysqli_error($koneksi)]);
     exit;
   }
+
   $messages = [];
   while ($row = mysqli_fetch_assoc($result)) {
     $messages[] = [
       'id' => (int) $row['id'],
       'sender_id' => $row['sender_id'],
       'sender_name' => $row['sender_name'],
-      'is_me' => ($row['sender_id'] === $guest_id),
+      'is_me' => ($row['sender_id'] == $guest_id),
       'message' => $row['message'],
       'images' => $row['image_paths'] ? json_decode($row['image_paths'], true) : [],
       'is_read' => (bool) $row['is_read'],
@@ -127,23 +181,47 @@ if (isset($_GET['action']) && $_GET['action'] === 'read') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'send') {
   header('Content-Type: application/json');
+
   $conv_id = isset($_POST['conversation_id']) ? (int) $_POST['conversation_id'] : 0;
   $message = isset($_POST['message']) ? trim($_POST['message']) : '';
+
   if (!$conv_id) {
-    http_response_code(400);
-    echo json_encode(['error' => 'conversation_id diperlukan']);
-    exit;
+    $host_id = isset($_POST['host_id']) ? (int) $_POST['host_id'] : 0;
+    $listing_id = isset($_POST['listing_id']) ? (int) $_POST['listing_id'] : 0;
+    $prop_name = isset($_POST['prop_name']) ? trim($_POST['prop_name']) : '';
+
+    if (!$host_id) {
+      http_response_code(400);
+      echo json_encode(['error' => 'host_id diperlukan untuk percakapan baru']);
+      exit;
+    }
+
+    $prop_esc = mysqli_real_escape_string($koneksi, $prop_name);
+    $listing_val = $listing_id ? "'$listing_id'" : 'NULL';
+
+    mysqli_query(
+      $koneksi,
+      "INSERT INTO conversations (guest_id, host_id, listing_id, property_name, last_message_at)
+       VALUES ('$guest_id', '$host_id', $listing_val, '$prop_esc', NOW())"
+    );
+    $conv_id = (int) mysqli_insert_id($koneksi);
+  } else {
+    $check = mysqli_query(
+      $koneksi,
+      "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'"
+    );
+    if (!$check || mysqli_num_rows($check) === 0) {
+      http_response_code(403);
+      echo json_encode(['error' => 'Akses ditolak']);
+      exit;
+    }
   }
-  $check = mysqli_query($koneksi, "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'");
-  if (!$check || mysqli_num_rows($check) === 0) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Akses ditolak']);
-    exit;
-  }
+
   $image_paths = [];
   $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/chat_images/';
   if (!is_dir($upload_dir))
     mkdir($upload_dir, 0755, true);
+
   if (!empty($_FILES['images']['name'][0])) {
     $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     foreach ($_FILES['images']['tmp_name'] as $i => $tmp) {
@@ -159,21 +237,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $image_paths[] = '/teman_singgah/assets/uploads/chat_images/' . $filename;
     }
   }
+
   if (!$message && empty($image_paths)) {
     http_response_code(400);
     echo json_encode(['error' => 'Pesan kosong']);
     exit;
   }
+
   $msg_val = $message ? "'" . mysqli_real_escape_string($koneksi, $message) . "'" : 'NULL';
-  $img_val = !empty($image_paths) ? "'" . mysqli_real_escape_string($koneksi, json_encode($image_paths)) . "'" : 'NULL';
-  $insert = mysqli_query($koneksi, "INSERT INTO messages (conversation_id, sender_id, message, image_paths) VALUES ('$conv_id','$guest_id',$msg_val,$img_val)");
+  $img_val = !empty($image_paths)
+    ? "'" . mysqli_real_escape_string($koneksi, json_encode($image_paths)) . "'"
+    : 'NULL';
+
+  $insert = mysqli_query(
+    $koneksi,
+    "INSERT INTO messages (conversation_id, sender_id, message, image_paths)
+     VALUES ('$conv_id','$guest_id',$msg_val,$img_val)"
+  );
   if (!$insert) {
     http_response_code(500);
     echo json_encode(['error' => mysqli_error($koneksi)]);
     exit;
   }
-  mysqli_query($koneksi, "UPDATE conversations SET last_message_at = NOW() WHERE id='$conv_id'");
-  echo json_encode(['success' => true, 'message_id' => mysqli_insert_id($koneksi), 'images' => $image_paths, 'time_label' => date('H:i')]);
+
+  mysqli_query(
+    $koneksi,
+    "UPDATE conversations SET last_message_at = NOW() WHERE id='$conv_id'"
+  );
+
+  echo json_encode([
+    'success' => true,
+    'conversation_id' => $conv_id, // penting! frontend simpan ini kalau tadi pending
+    'message_id' => mysqli_insert_id($koneksi),
+    'images' => $image_paths,
+    'time_label' => date('H:i'),
+  ]);
   exit;
 }
 
@@ -185,13 +283,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     echo json_encode(['error' => 'conversation_id diperlukan']);
     exit;
   }
-  $check = mysqli_query($koneksi, "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'");
+
+  $check = mysqli_query(
+    $koneksi,
+    "SELECT id FROM conversations WHERE id='$conv_id' AND guest_id='$guest_id'"
+  );
   if (!$check || mysqli_num_rows($check) === 0) {
     http_response_code(403);
     echo json_encode(['error' => 'Akses ditolak']);
     exit;
   }
-  mysqli_query($koneksi, "UPDATE messages SET is_read=1 WHERE conversation_id='$conv_id' AND sender_id!='$guest_id' AND is_read=0");
+
+  mysqli_query(
+    $koneksi,
+    "UPDATE messages SET is_read=1
+     WHERE conversation_id='$conv_id'
+       AND sender_id != '$guest_id'
+       AND is_read=0"
+  );
   echo json_encode(['success' => true]);
   exit;
 }

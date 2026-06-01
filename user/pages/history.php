@@ -53,6 +53,17 @@ switch ($filter) {
     break;
 }
 
+$stmt = mysqli_prepare($koneksi, "
+    UPDATE bookings 
+    SET status = 'selesai' 
+    WHERE status = 'dikonfirmasi' 
+      AND checkout < CURDATE()
+      AND user_id = ?
+");
+mysqli_stmt_bind_param($stmt, 'i', $user['id']);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
+
 $sql = "
     SELECT
         b.id,

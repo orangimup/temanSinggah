@@ -278,7 +278,11 @@ unset($_SESSION['booking_error']);
             <div class="method-row selected-row" data-method-id="gopay">
               <div class="method-logo"
                 style="background:#fff; padding:4px; border:.5px solid #e0e0e0; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                <img src="assets/logo/gopay.svg" alt="GoPay" style="width:48px; height:28px; object-fit:contain;" />
+                <svg viewBox="0 0 90 32" xmlns="http://www.w3.org/2000/svg" width="56" height="20">
+                  <rect width="90" height="32" rx="6" fill="#00AED6" />
+                  <text x="45" y="22" font-family="'Arial Black',sans-serif" font-size="14" font-weight="900"
+                    fill="#fff" text-anchor="middle">GoPay</text>
+                </svg>
               </div>
               <div class="method-info">
                 <p class="method-name">GoPay</p>
@@ -297,7 +301,11 @@ unset($_SESSION['booking_error']);
             <div class="method-row" data-method-id="ovo">
               <div class="method-logo"
                 style="background:#fff; padding:4px; border:.5px solid #e0e0e0; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                <img src="assets/logo/ovo.svg" alt="OVO" style="width:48px; height:28px; object-fit:contain;" />
+                <svg viewBox="0 0 90 32" xmlns="http://www.w3.org/2000/svg" width="56" height="20">
+                  <rect width="90" height="32" rx="6" fill="#4C3494" />
+                  <text x="45" y="22" font-family="'Arial Black',sans-serif" font-size="16" font-weight="900"
+                    fill="#fff" text-anchor="middle" letter-spacing="2">OVO</text>
+                </svg>
               </div>
               <div class="method-info">
                 <p class="method-name">OVO</p>
@@ -309,7 +317,11 @@ unset($_SESSION['booking_error']);
             <div class="method-row" data-method-id="dana">
               <div class="method-logo"
                 style="background:#fff; padding:4px; border:.5px solid #e0e0e0; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                <img src="assets/logo/dana.svg" alt="DANA" style="width:48px; height:28px; object-fit:contain;" />
+                <svg viewBox="0 0 90 32" xmlns="http://www.w3.org/2000/svg" width="56" height="20">
+                  <rect width="90" height="32" rx="6" fill="#108BE3" />
+                  <text x="45" y="22" font-family="'Arial Black',sans-serif" font-size="14" font-weight="900"
+                    fill="#fff" text-anchor="middle" letter-spacing="1">DANA</text>
+                </svg>
               </div>
               <div class="method-info">
                 <p class="method-name">DANA</p>
@@ -450,21 +462,21 @@ unset($_SESSION['booking_error']);
             </div>
 
             <form method="POST" action="./process_booking.php" id="bookingForm">
-              <input type="hidden" name="listing_id"    value="<?= $listing_id ?>">
-              <input type="hidden" name="room_id"       value="<?= $room_id ?>">
-              <input type="hidden" name="checkin"       value="<?= htmlspecialchars($checkin_val) ?>">
-              <input type="hidden" name="checkout"      value="<?= htmlspecialchars($checkout_val) ?>">
-              <input type="hidden" name="jumlah_tamu"   value="<?= $jumlah_tamu ?>">
-              <input type="hidden" name="total_harga"   value="<?= $total_harga ?>">
-              <input type="hidden" name="dp_amount"     value="<?= $dp_amount ?>">
-              <input type="hidden" name="kode_promo"    value="<?= htmlspecialchars($kode_promo) ?>">
-              <input type="hidden" name="metode_bayar"  value="gopay"  id="inputMetode">
-              <input type="hidden" name="waktu_bayar"   value="now"    id="inputWaktuBayar">
-              <input type="hidden" name="no_hp"         value=""       id="inputNoHp">
-              <input type="hidden" name="nama_kartu"    value=""       id="inputNamaKartu">
-              <input type="hidden" name="nomor_kartu"   value=""       id="inputNomorKartu">
-              <input type="hidden" name="expired_kartu" value=""       id="inputExpiredKartu">
-              <input type="hidden" name="cvv"           value=""       id="inputCvv">
+              <input type="hidden" name="listing_id" value="<?= $listing_id ?>">
+              <input type="hidden" name="room_id" value="<?= $room_id ?>">
+              <input type="hidden" name="checkin" value="<?= htmlspecialchars($checkin_val) ?>">
+              <input type="hidden" name="checkout" value="<?= htmlspecialchars($checkout_val) ?>">
+              <input type="hidden" name="jumlah_tamu" value="<?= $jumlah_tamu ?>">
+              <input type="hidden" name="total_harga" value="<?= $total_harga ?>">
+              <input type="hidden" name="dp_amount" value="<?= $dp_amount ?>">
+              <input type="hidden" name="kode_promo" value="<?= htmlspecialchars($kode_promo) ?>">
+              <input type="hidden" name="metode_bayar" value="gopay" id="inputMetode">
+              <input type="hidden" name="waktu_bayar" value="now" id="inputWaktuBayar">
+              <input type="hidden" name="no_hp" value="" id="inputNoHp">
+              <input type="hidden" name="nama_kartu" value="" id="inputNamaKartu">
+              <input type="hidden" name="nomor_kartu" value="" id="inputNomorKartu">
+              <input type="hidden" name="expired_kartu" value="" id="inputExpiredKartu">
+              <input type="hidden" name="cvv" value="" id="inputCvv">
 
               <button type="submit" class="expand-confirm-button" id="btnKonfirmasi">
                 <i class="ph-bold ph-lock-simple"></i>
@@ -593,8 +605,8 @@ unset($_SESSION['booking_error']);
 
   <script>
     var totalFormatted = 'Rp<?= number_format($total_harga, 0, ',', '.') ?>';
-    var dpFormatted    = 'Rp<?= number_format($dp_amount,   0, ',', '.') ?>';
-    var bayarNanti     = '<?= $bayar_nanti ?>';
+    var dpFormatted = 'Rp<?= number_format($dp_amount, 0, ',', '.') ?>';
+    var bayarNanti = '<?= $bayar_nanti ?>';
   </script>
 
   <script src="../scripts/payment_confirm.js"></script>
@@ -602,12 +614,12 @@ unset($_SESSION['booking_error']);
   <script>
     (function () {
       const ewalletIds = ['gopay', 'ovo', 'dana'];
-      const cardIds    = ['visa', 'mastercard'];
+      const cardIds = ['visa', 'mastercard'];
       const allMethods = [...ewalletIds, ...cardIds];
 
-      const ewalletBox  = document.getElementById('ewalletInputBox');
-      const cardBox     = document.getElementById('cardInputBox');
-      const brandLabel  = document.getElementById('ewalletBrandLabel');
+      const ewalletBox = document.getElementById('ewalletInputBox');
+      const cardBox = document.getElementById('cardInputBox');
+      const brandLabel = document.getElementById('ewalletBrandLabel');
       const methodLabel = document.getElementById('methodSubLabel');
       const inputMetode = document.getElementById('inputMetode');
 
@@ -619,7 +631,7 @@ unset($_SESSION['booking_error']);
       function selectMethod(id) {
         allMethods.forEach(m => {
           const radio = document.getElementById('radio-' + m);
-          const row   = document.querySelector(`[data-method-id="${m}"]`);
+          const row = document.querySelector(`[data-method-id="${m}"]`);
           if (!radio) return;
           if (m === id) {
             radio.classList.add('selected');
@@ -631,10 +643,10 @@ unset($_SESSION['booking_error']);
         });
 
         const isEwallet = ewalletIds.includes(id);
-        const isCard    = cardIds.includes(id);
+        const isCard = cardIds.includes(id);
 
         ewalletBox.style.display = isEwallet ? 'block' : 'none';
-        cardBox.style.display    = isCard    ? 'block' : 'none';
+        cardBox.style.display = isCard ? 'block' : 'none';
 
         if (isEwallet && brandLabel) brandLabel.textContent = names[id];
 
@@ -679,19 +691,19 @@ unset($_SESSION['booking_error']);
         const metode = document.getElementById('inputMetode').value;
 
         if (ewalletIds.includes(metode)) {
-          document.getElementById('inputNoHp').value         = document.getElementById('ewalletNumber')?.value || '';
-          document.getElementById('inputNamaKartu').value    = '';
-          document.getElementById('inputNomorKartu').value   = '';
+          document.getElementById('inputNoHp').value = document.getElementById('ewalletNumber')?.value || '';
+          document.getElementById('inputNamaKartu').value = '';
+          document.getElementById('inputNomorKartu').value = '';
           document.getElementById('inputExpiredKartu').value = '';
-          document.getElementById('inputCvv').value          = '';
+          document.getElementById('inputCvv').value = '';
         }
 
         if (cardIds.includes(metode)) {
-          document.getElementById('inputNoHp').value         = '';
-          document.getElementById('inputNamaKartu').value    = document.getElementById('cardName')?.value   || '';
-          document.getElementById('inputNomorKartu').value   = document.getElementById('cardNumber')?.value.replace(/\s+/g, '') || '';
-          document.getElementById('inputExpiredKartu').value = document.getElementById('cardExpiry')?.value.replace(/\s/g, '')  || '';
-          document.getElementById('inputCvv').value          = document.getElementById('cardCvv')?.value    || '';
+          document.getElementById('inputNoHp').value = '';
+          document.getElementById('inputNamaKartu').value = document.getElementById('cardName')?.value || '';
+          document.getElementById('inputNomorKartu').value = document.getElementById('cardNumber')?.value.replace(/\s+/g, '') || '';
+          document.getElementById('inputExpiredKartu').value = document.getElementById('cardExpiry')?.value.replace(/\s/g, '') || '';
+          document.getElementById('inputCvv').value = document.getElementById('cardCvv')?.value || '';
         }
       });
     })();
@@ -701,4 +713,5 @@ unset($_SESSION['booking_error']);
   <script src="../../popups/auth.js"></script>
 
 </body>
+
 </html>
