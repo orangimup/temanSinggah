@@ -40,7 +40,9 @@ if (!empty($user['photo'])) {
     <link rel="stylesheet" href="../user/styles/settings.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 </head>
@@ -139,6 +141,16 @@ if (!empty($user['photo'])) {
                                 <span class="settings-item-value"><?= htmlspecialchars($user['email']) ?></span>
                             </div>
                             <button class="settings-btn-outline" data-modal="email">Ubah</button>
+                        </div>
+
+                        <div class="settings-item">
+                            <div class="settings-item-info">
+                                <span class="settings-item-label">No. HP</span>
+                                <span class="settings-item-value">
+                                    <?= !empty($user['no_hp']) ? htmlspecialchars($user['no_hp']) : 'Belum diatur' ?>
+                                </span>
+                            </div>
+                            <button class="settings-btn-outline" data-modal="phone">Ubah</button>
                         </div>
 
                         <div class="settings-item">
@@ -257,7 +269,8 @@ if (!empty($user['photo'])) {
             </div>
             <div class="settings-modal-footer">
                 <button class="settings-btn-outline" data-close-modal>Batal</button>
-                <button class="settings-btn-primary" onclick="showToast('Nama berhasil diubah.')">Simpan Perubahan</button>
+                <button class="settings-btn-primary" onclick="showToast('Nama berhasil diubah.')">Simpan
+                    Perubahan</button>
             </div>
         </div>
     </div>
@@ -282,8 +295,45 @@ if (!empty($user['photo'])) {
             </div>
             <div class="settings-modal-footer">
                 <button class="settings-btn-outline" data-close-modal>Batal</button>
-                <button class="settings-btn-primary" onclick="showToast('Link verifikasi telah dikirim ke email baru.')">Simpan Perubahan</button>
+                <button class="settings-btn-primary"
+                    onclick="showToast('Link verifikasi telah dikirim ke email baru.')">Simpan Perubahan</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ─── Modal: Ubah No. HP ─── -->
+    <div class="settings-modal-overlay" id="modal-phone">
+        <div class="settings-modal">
+            <div class="settings-modal-header">
+                <h3>Ubah No. HP</h3>
+                <button class="settings-modal-close" data-close-modal><i class="ph-bold ph-x"></i></button>
+            </div>
+            <form method="POST" action="/teman_singgah/user/pages/update_account.php">
+                <input type="hidden" name="nama" value="<?= htmlspecialchars($user['nama']) ?>">
+                <input type="hidden" name="pekerjaan" value="<?= htmlspecialchars($user['pekerjaan'] ?? '') ?>">
+                <input type="hidden" name="lokasi" value="<?= htmlspecialchars($user['lokasi'] ?? '') ?>">
+                <input type="hidden" name="bahasa" value="<?= htmlspecialchars($user['bahasa'] ?? '') ?>">
+                <input type="hidden" name="tentang" value="<?= htmlspecialchars($user['tentang'] ?? '') ?>">
+                <input type="hidden" name="destinasi_impian"
+                    value="<?= htmlspecialchars($user['destinasi_impian'] ?? '') ?>">
+                <input type="hidden" name="hobi" value="<?= htmlspecialchars($user['hobi'] ?? '') ?>">
+                <input type="hidden" name="hewan_peliharaan"
+                    value="<?= htmlspecialchars($user['hewan_peliharaan'] ?? '') ?>">
+                <input type="hidden" name="dekade_lahir" value="<?= htmlspecialchars($user['dekade_lahir'] ?? '') ?>">
+                <input type="hidden" name="sekolah" value="<?= htmlspecialchars($user['sekolah'] ?? '') ?>">
+                <input type="hidden" name="lagu_favorit" value="<?= htmlspecialchars($user['lagu_favorit'] ?? '') ?>">
+                <div class="settings-modal-body">
+                    <div class="settings-form-field">
+                        <label>Nomor HP baru</label>
+                        <input type="tel" name="no_hp" placeholder="Contoh: 08123456789" class="settings-input"
+                            value="<?= htmlspecialchars($user['no_hp'] ?? '') ?>" required />
+                    </div>
+                </div>
+                <div class="settings-modal-footer">
+                    <button type="button" class="settings-btn-outline" data-close-modal>Batal</button>
+                    <button type="submit" class="settings-btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -298,22 +348,28 @@ if (!empty($user['photo'])) {
                 <div class="settings-form-field">
                     <label>Password saat ini</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Masukkan password lama" class="settings-input" id="oldPassInput" />
-                        <button type="button" class="settings-eye-btn" data-target="oldPassInput"><i class="ph-bold ph-eye"></i></button>
+                        <input type="password" placeholder="Masukkan password lama" class="settings-input"
+                            id="oldPassInput" />
+                        <button type="button" class="settings-eye-btn" data-target="oldPassInput"><i
+                                class="ph-bold ph-eye"></i></button>
                     </div>
                 </div>
                 <div class="settings-form-field">
                     <label>Password baru</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Minimal 8 karakter" class="settings-input" id="newPassInput" />
-                        <button type="button" class="settings-eye-btn" data-target="newPassInput"><i class="ph-bold ph-eye"></i></button>
+                        <input type="password" placeholder="Minimal 8 karakter" class="settings-input"
+                            id="newPassInput" />
+                        <button type="button" class="settings-eye-btn" data-target="newPassInput"><i
+                                class="ph-bold ph-eye"></i></button>
                     </div>
                 </div>
                 <div class="settings-form-field">
                     <label>Konfirmasi password baru</label>
                     <div class="settings-input-group">
-                        <input type="password" placeholder="Ulangi password baru" class="settings-input" id="confirmPassInput" />
-                        <button type="button" class="settings-eye-btn" data-target="confirmPassInput"><i class="ph-bold ph-eye"></i></button>
+                        <input type="password" placeholder="Ulangi password baru" class="settings-input"
+                            id="confirmPassInput" />
+                        <button type="button" class="settings-eye-btn" data-target="confirmPassInput"><i
+                                class="ph-bold ph-eye"></i></button>
                     </div>
                 </div>
             </div>
@@ -335,7 +391,8 @@ if (!empty($user['photo'])) {
                 <div class="settings-danger-box">
                     <i class="ph-bold ph-warning-circle"></i>
                     <p>Semua data akun termasuk listing dan riwayat reservasi akan
-                        <strong>dihapus permanen</strong> dan tidak bisa dipulihkan.</p>
+                        <strong>dihapus permanen</strong> dan tidak bisa dipulihkan.
+                    </p>
                 </div>
                 <div class="settings-form-field">
                     <label>Ketik <strong>HAPUS AKUN</strong> untuk konfirmasi</label>
@@ -356,7 +413,8 @@ if (!empty($user['photo'])) {
         <div class="footer-grid">
             <div class="footer-column">
                 <span class="footer-brand">Teman Singgah</span>
-                <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+                <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel
+                    berbintang hingga homestay lokal.</p>
                 <div class="footer-social">
                     <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
                     <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
@@ -438,4 +496,5 @@ if (!empty($user['photo'])) {
     </script>
 
 </body>
+
 </html>

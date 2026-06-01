@@ -185,7 +185,7 @@ $harga_per_malam_r = $malam > 0 ? round($subtotal / $malam) : $subtotal;
                 <div class="nav-indicator"></div>
             </ul>
             <div class="nav-right">
-                <a href="../../host/onboarding/pages/about_place.html">
+                <a href="../../host/dashboard/pages/reservations.php">
                     <button class="ghost-button">Ganti ke host</button>
                 </a>
                 <div class="icon-buttons">
@@ -346,7 +346,8 @@ $harga_per_malam_r = $malam > 0 ? round($subtotal / $malam) : $subtotal;
                                     <div class="dp-info-box">
                                         <p>Masih ada sisa pembayaran sebesar
                                             <strong><?= fmt_harga($b['sisa_bayar']) ?></strong>. Lunasi sebelum tanggal
-                                            check-in.</p>
+                                            check-in.
+                                        </p>
                                     </div>
                                 <?php endif; ?>
                             </div>

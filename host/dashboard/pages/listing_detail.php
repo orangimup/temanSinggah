@@ -10,7 +10,6 @@ if (!$listingId) {
     exit;
 }
 
-/* ── Ambil data listing ── */
 $q = mysqli_query(
     $koneksi,
     "SELECT l.*,
@@ -26,7 +25,6 @@ if (!$listing) {
     exit;
 }
 
-/* ── Foto ── */
 $photos = [];
 $qp = mysqli_query(
     $koneksi,
@@ -37,7 +35,6 @@ $qp = mysqli_query(
 while ($row = mysqli_fetch_assoc($qp))
     $photos[] = $row;
 
-/* ── Amenities (listing_amenities, kolom nama_fasilitas) ── */
 $amenities = [];
 $qa = mysqli_query(
     $koneksi,
@@ -46,7 +43,34 @@ $qa = mysqli_query(
 while ($row = mysqli_fetch_assoc($qa))
     $amenities[] = $row['nama_fasilitas'];
 
-/* ── Statistik reservasi ── */
+$rooms = [];
+$qr = mysqli_query(
+    $koneksi,
+    "SELECT * FROM listing_rooms
+     WHERE listing_id = $listingId
+     ORDER BY urutan ASC, id ASC"
+);
+while ($row = mysqli_fetch_assoc($qr))
+    $rooms[] = $row;
+
+$policies = mysqli_fetch_assoc(mysqli_query(
+    $koneksi,
+    "SELECT * FROM listing_policies WHERE listing_id = $listingId LIMIT 1"
+));
+if (!$policies) {
+    $policies = [
+        'jam_checkin'          => $listing['jam_checkin']          ?? '14:00:00',
+        'jam_checkout'         => $listing['jam_checkout']         ?? '12:00:00',
+        'kebijakan_pembatalan' => $listing['kebijakan_pembatalan'] ?? 'fleksibel',
+        'boleh_hewan'          => 0,
+        'boleh_merokok'        => 0,
+        'boleh_anak'           => 1,
+        'catatan_tambahan'     => '',
+    ];
+}
+$jam_checkin  = substr($policies['jam_checkin']  ?? '14:00', 0, 5);
+$jam_checkout = substr($policies['jam_checkout'] ?? '12:00', 0, 5);
+
 $stats = mysqli_fetch_assoc(mysqli_query(
     $koneksi,
     "SELECT
@@ -59,23 +83,21 @@ $stats = mysqli_fetch_assoc(mysqli_query(
      WHERE listing_id = $listingId"
 ));
 
-/* ── Rating rata-rata ── */
 $ratingRow = mysqli_fetch_assoc(mysqli_query(
     $koneksi,
     "SELECT ROUND(AVG(rating), 1) AS avg_rating, COUNT(*) AS total_review
      FROM reviews WHERE listing_id = $listingId"
 ));
-$avgRating = $ratingRow['avg_rating'] ?? 0;
+$avgRating   = $ratingRow['avg_rating']   ?? 0;
 $totalReview = $ratingRow['total_review'] ?? 0;
 
-/* ── Helper status ── */
 function statusBadge(string $s): array
 {
     return match ($s) {
-        'aktif' => ['Aktif', 'success'],
-        'draft' => ['Draft', 'warning'],
+        'aktif'    => ['Aktif',    'success'],
+        'draft'    => ['Draft',    'warning'],
         'nonaktif' => ['Nonaktif', 'error'],
-        default => ['Butuh Aksi', 'error'],
+        default    => ['Butuh Aksi', 'error'],
     };
 }
 [$statusLabel, $statusDot] = statusBadge($listing['status'] ?? '');
@@ -110,7 +132,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             padding: 0 var(--space-24) var(--space-96);
         }
 
-        /* Breadcrumb */
         .breadcrumb {
             display: flex;
             align-items: center;
@@ -129,7 +150,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             text-decoration: underline;
         }
 
-        /* Foto Grid */
         .photo-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -165,7 +185,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             color: var(--color-border-strong);
         }
 
-        /* Header */
         .detail-header {
             display: flex;
             align-items: flex-start;
@@ -271,33 +290,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             background: var(--color-primary-hover);
         }
 
-        /* Grid 2 kolom */
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: var(--space-32);
-            align-items: start;
-        }
-
-        /* Sections */
-        .detail-section {
-            margin-bottom: var(--space-32);
-            padding-bottom: var(--space-32);
-            border-bottom: 1px solid var(--color-border-subtle);
-        }
-
-        .detail-section:last-child {
-            border-bottom: none;
-        }
-
-        .section-title {
-            font-size: var(--text-lg);
-            font-weight: var(--font-bold);
-            color: var(--color-text-primary);
-            margin-bottom: var(--space-16);
-        }
-
-        /* Highlight badges baris atas */
         .highlight-row {
             display: flex;
             flex-wrap: wrap;
@@ -323,20 +315,30 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             font-size: 1rem;
         }
 
-        /* Rating */
-        .rating-row {
-            display: flex;
-            align-items: center;
-            gap: var(--space-8);
-            margin-bottom: var(--space-12);
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: var(--space-32);
+            align-items: start;
         }
 
-        .star-icon {
-            color: #f59e0b;
-            font-size: 1rem;
+        .detail-section {
+            margin-bottom: var(--space-32);
+            padding-bottom: var(--space-32);
+            border-bottom: 1px solid var(--color-border-subtle);
         }
 
-        /* Stats */
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-16);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -370,7 +372,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             font-size: 1.1rem;
         }
 
-        /* Fasilitas */
         .facility-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -393,7 +394,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             color: var(--color-primary);
         }
 
-        /* Info Rows */
         .info-row {
             display: flex;
             align-items: flex-start;
@@ -420,7 +420,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             flex: 1;
         }
 
-        /* Sidebar */
         .sidebar-card {
             background: var(--color-bg-card, #fff);
             border: 1px solid var(--color-border-subtle);
@@ -484,7 +483,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             background: #fee2e2;
         }
 
-        /* Confirm Modal */
         .confirm-overlay {
             display: none;
             position: fixed;
@@ -588,7 +586,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             background: #b45309;
         }
 
-        /* Toast */
         .ts-toast {
             position: fixed;
             bottom: 28px;
@@ -619,6 +616,215 @@ $editHref = 'listing_edit.php?id=' . $listingId;
         .ts-toast.error {
             background: #dc2626;
         }
+
+        .rooms-grid-host {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .room-card-host {
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            background: var(--color-bg-card, #fff);
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .room-card-host:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .room-card-host .room-photo {
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .room-card-host .room-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .room-card-host:hover .room-photo img {
+            transform: scale(1.04);
+        }
+
+        .room-photo-placeholder-host {
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-skeleton);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .room-photo-placeholder-host i {
+            font-size: 2rem;
+            color: var(--color-border-strong);
+        }
+
+        .room-card-body-host {
+            padding: var(--space-16);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+            flex: 1;
+        }
+
+        .room-card-name-host {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .room-card-desc-host {
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .room-card-meta-host {
+            display: flex;
+            gap: var(--space-12);
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+        }
+
+        .room-card-meta-host span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .room-card-meta-host i {
+            color: var(--color-primary);
+            font-size: 0.9rem;
+        }
+
+        .room-amenities-host {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px 8px;
+        }
+
+        .room-amenities-host li {
+            font-size: 0.775rem;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .room-amenities-host li::before {
+            content: "\2713";
+            color: var(--color-primary);
+            font-weight: 700;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .room-card-footer-host {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-12) var(--space-16);
+            border-top: 1px solid var(--color-border-subtle);
+            margin-top: auto;
+        }
+
+        .room-price-host {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .room-price-unit-host {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            margin-left: 2px;
+        }
+
+        .policy-grid-host {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-12);
+        }
+
+        .policy-item-host {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            padding: var(--space-14) var(--space-16);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            background: var(--color-bg-card, #fff);
+        }
+
+        .policy-icon-host {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: var(--radius-lg);
+            background: var(--color-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .policy-icon-host i {
+            font-size: 1.1rem;
+            color: var(--color-primary);
+        }
+
+        .policy-text-host strong {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 2px;
+        }
+
+        .policy-text-host span {
+            font-size: 0.775rem;
+            color: var(--color-text-secondary);
+        }
+
+        .policy-notes-host {
+            display: flex;
+            gap: var(--space-10);
+            margin-top: var(--space-16);
+            padding: var(--space-12) var(--space-16);
+            background: var(--color-bg-skeleton);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .policy-notes-host i {
+            font-size: 1rem;
+            color: var(--color-primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .policy-notes-host p {
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -644,17 +850,15 @@ $editHref = 'listing_edit.php?id=' . $listingId;
 
     <main class="detail-wrap">
 
-        <!-- Breadcrumb -->
         <nav class="breadcrumb">
             <a href="listing.php"><i class="ph-bold ph-house-simple"></i> Listing Saya</a>
             <i class="ph-bold ph-caret-right"></i>
             <span><?= htmlspecialchars($listing['judul']) ?></span>
         </nav>
 
-        <!-- Foto Grid -->
         <div class="photo-grid">
             <?php
-            $cover = null;
+            $cover  = null;
             $thumbs = [];
             foreach ($photos as $p) {
                 if ($p['adalah_cover'] && !$cover)
@@ -676,7 +880,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                 $src = isset($thumbs[$i])
                     ? (str_starts_with($thumbs[$i]['nama_file'], 'http') ? $thumbs[$i]['nama_file'] : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($thumbs[$i]['nama_file']))
                     : null;
-                ?>
+            ?>
                 <?php if ($src): ?>
                     <img src="<?= $src ?>" class="photo-thumb" alt="Foto <?= $i + 1 ?>" />
                 <?php else: ?>
@@ -685,7 +889,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             <?php endfor; ?>
         </div>
 
-        <!-- Header Info + Tombol -->
         <div class="detail-header">
             <div class="detail-title-group">
                 <h1 class="detail-title"><?= htmlspecialchars($listing['judul']) ?></h1>
@@ -705,7 +908,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             </div>
         </div>
 
-        <!-- Highlight Badges -->
         <div class="highlight-row">
             <span class="highlight-badge">
                 <i class="ph-bold ph-users"></i>
@@ -731,13 +933,10 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             <?php endif; ?>
         </div>
 
-        <!-- Grid Utama -->
         <div class="detail-grid">
 
-            <!-- Kolom Kiri -->
             <div>
 
-                <!-- Deskripsi -->
                 <div class="detail-section">
                     <h2 class="section-title">Deskripsi</h2>
                     <p style="font-size:0.9375rem;color:var(--color-text-secondary);line-height:1.75;">
@@ -745,14 +944,12 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     </p>
                 </div>
 
-                <!-- Informasi Properti -->
                 <div class="detail-section">
                     <h2 class="section-title">Informasi Properti</h2>
                     <div>
                         <div class="info-row">
                             <span class="info-label">Tipe Properti</span>
-                            <span
-                                class="info-value"><?= htmlspecialchars(ucfirst($listing['tipe_properti'] ?? '-')) ?></span>
+                            <span class="info-value"><?= htmlspecialchars(ucfirst($listing['tipe_properti'] ?? '-')) ?></span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Tamu Maks.</span>
@@ -772,8 +969,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                         </div>
                         <div class="info-row">
                             <span class="info-label">Kebijakan Batal</span>
-                            <span
-                                class="info-value"><?= htmlspecialchars(ucfirst($listing['kebijakan_pembatalan'] ?? '-')) ?></span>
+                            <span class="info-value"><?= htmlspecialchars(ucfirst($listing['kebijakan_pembatalan'] ?? '-')) ?></span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Check-in</span>
@@ -785,8 +981,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                         </div>
                         <div class="info-row">
                             <span class="info-label">Tipe Booking</span>
-                            <span
-                                class="info-value"><?= htmlspecialchars(ucfirst($listing['tipe_booking'] ?? '-')) ?></span>
+                            <span class="info-value"><?= htmlspecialchars(ucfirst($listing['tipe_booking'] ?? '-')) ?></span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Dibuat</span>
@@ -797,7 +992,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     </div>
                 </div>
 
-                <!-- Fasilitas -->
                 <?php if (!empty($amenities)): ?>
                     <div class="detail-section">
                         <h2 class="section-title">Fasilitas</h2>
@@ -812,7 +1006,124 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     </div>
                 <?php endif; ?>
 
-                <!-- Statistik Reservasi -->
+                <?php if (!empty($rooms)): ?>
+                    <div class="detail-section">
+                        <h2 class="section-title">Pilihan Kamar</h2>
+                        <div class="rooms-grid-host">
+                            <?php foreach ($rooms as $room):
+                                $fasilitas_kamar = json_decode($room['fasilitas'] ?? '[]', true) ?: [];
+                            ?>
+                                <div class="room-card-host">
+                                    <div class="room-photo">
+                                        <?php if (!empty($room['foto'])):
+                                            $foto_src = str_starts_with($room['foto'], 'http')
+                                                ? $room['foto']
+                                                : '/teman_singgah/assets/uploads/rooms/' . htmlspecialchars($room['foto']);
+                                        ?>
+                                            <img src="<?= $foto_src ?>" alt="<?= htmlspecialchars($room['nama']) ?>" />
+                                        <?php else: ?>
+                                            <div class="room-photo-placeholder-host">
+                                                <i class="ph-bold ph-bed"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="room-card-body-host">
+                                        <h4 class="room-card-name-host"><?= htmlspecialchars($room['nama']) ?></h4>
+                                        <?php if (!empty($room['deskripsi'])): ?>
+                                            <p class="room-card-desc-host"><?= htmlspecialchars($room['deskripsi']) ?></p>
+                                        <?php endif; ?>
+                                        <div class="room-card-meta-host">
+                                            <?php if (!empty($room['ukuran_m2'])): ?>
+                                                <span>
+                                                    <i class="ph-bold ph-arrows-out-simple"></i>
+                                                    <?= (int) $room['ukuran_m2'] ?> m&sup2;
+                                                </span>
+                                            <?php endif; ?>
+                                            <span>
+                                                <i class="ph-bold ph-users"></i>
+                                                <?= (int) $room['max_tamu'] ?> tamu
+                                            </span>
+                                        </div>
+                                        <?php if (!empty($fasilitas_kamar)): ?>
+                                            <ul class="room-amenities-host">
+                                                <?php foreach ($fasilitas_kamar as $f): ?>
+                                                    <li><?= htmlspecialchars($f) ?></li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="room-card-footer-host">
+                                        <div>
+                                            <span class="room-price-host">
+                                                Rp <?= number_format((float) $room['harga_malam'], 0, ',', '.') ?>
+                                            </span>
+                                            <span class="room-price-unit-host">/ malam</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="detail-section">
+                    <h2 class="section-title">Kebijakan Penginapan</h2>
+                    <div class="policy-grid-host">
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host"><i class="ph-bold ph-clock"></i></div>
+                            <div class="policy-text-host">
+                                <strong>Check-in</strong>
+                                <span>Dari pukul <?= $jam_checkin ?> WIB</span>
+                            </div>
+                        </div>
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host"><i class="ph-bold ph-clock"></i></div>
+                            <div class="policy-text-host">
+                                <strong>Check-out</strong>
+                                <span>Sebelum pukul <?= $jam_checkout ?> WIB</span>
+                            </div>
+                        </div>
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host"><i class="ph-bold ph-prohibit"></i></div>
+                            <div class="policy-text-host">
+                                <strong>Pembatalan</strong>
+                                <span><?= htmlspecialchars($policies['kebijakan_pembatalan']) ?></span>
+                            </div>
+                        </div>
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host">
+                                <i class="ph-bold <?= $policies['boleh_hewan'] ? 'ph-paw-print' : 'ph-prohibit' ?>"></i>
+                            </div>
+                            <div class="policy-text-host">
+                                <strong>Hewan Peliharaan</strong>
+                                <span><?= $policies['boleh_hewan'] ? 'Diperbolehkan' : 'Tidak diperbolehkan' ?></span>
+                            </div>
+                        </div>
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host">
+                                <i class="ph-bold <?= $policies['boleh_merokok'] ? 'ph-cigarette' : 'ph-cigarette-slash' ?>"></i>
+                            </div>
+                            <div class="policy-text-host">
+                                <strong>Merokok</strong>
+                                <span><?= $policies['boleh_merokok'] ? 'Diperbolehkan' : 'Dilarang' ?></span>
+                            </div>
+                        </div>
+                        <div class="policy-item-host">
+                            <div class="policy-icon-host"><i class="ph-bold ph-baby"></i></div>
+                            <div class="policy-text-host">
+                                <strong>Anak-anak</strong>
+                                <span><?= $policies['boleh_anak'] ? 'Diperbolehkan' : 'Tidak diperbolehkan' ?></span>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if (!empty($policies['catatan_tambahan'])): ?>
+                        <div class="policy-notes-host">
+                            <i class="ph-bold ph-note-pencil"></i>
+                            <p><?= nl2br(htmlspecialchars($policies['catatan_tambahan'])) ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
                 <div class="detail-section">
                     <h2 class="section-title">Statistik Reservasi</h2>
                     <div class="stats-grid">
@@ -837,9 +1148,8 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     </div>
                 </div>
 
-            </div><!-- /kolom kiri -->
+            </div>
 
-            <!-- Sidebar Kanan -->
             <div>
                 <div class="sidebar-card">
                     <p class="sidebar-price">
@@ -881,7 +1191,7 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                     <?php if ($avgRating > 0): ?>
                         <div class="sidebar-row">
                             <span>Rating</span>
-                            <strong>⭐ <?= $avgRating ?> / 5 (<?= $totalReview ?>)</strong>
+                            <strong><?= $avgRating ?> / 5 (<?= $totalReview ?>)</strong>
                         </div>
                     <?php endif; ?>
 
@@ -896,9 +1206,9 @@ $editHref = 'listing_edit.php?id=' . $listingId;
                         <i class="ph-bold ph-trash"></i> Hapus Listing
                     </button>
                 </div>
-            </div><!-- /sidebar -->
+            </div>
 
-        </div><!-- /detail-grid -->
+        </div>
     </main>
 
     <footer class="footer">
@@ -909,11 +1219,10 @@ $editHref = 'listing_edit.php?id=' . $listingId;
             </div>
         </div>
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
+            <p class="footer-copyright">&copy; 2026 Teman Singgah &mdash; All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Confirm Modal -->
     <div class="confirm-overlay" id="confirmOverlay">
         <div class="confirm-box">
             <div class="confirm-icon" id="confirmIcon">
@@ -925,7 +1234,6 @@ $editHref = 'listing_edit.php?id=' . $listingId;
         </div>
     </div>
 
-    <!-- Toast -->
     <div class="ts-toast" id="tsToast"></div>
 
     <script src="../../../components/navbar.js"></script>

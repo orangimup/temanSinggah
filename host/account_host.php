@@ -12,7 +12,7 @@ mysqli_stmt_close($stmt);
 
 if (!$user) {
     session_destroy();
-    header("Location: /teman_singgah/index.php?auth=login");
+    header("Location: /teman_singgah/host/pages/reservations.php?auth=login");
     exit;
 }
 

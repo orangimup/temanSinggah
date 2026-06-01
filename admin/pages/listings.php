@@ -874,7 +874,7 @@ while ($r = mysqli_fetch_assoc($am_result)) {
               class="ph-bold ph-calendar-check"></i>Reservasi</a>
           <a class="nav-item" href="/teman_singgah/admin/pages/transactions.php"><i
               class="ph-bold ph-currency-circle-dollar"></i>Transaksi</a>
-              <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
+          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
             Deals</a>
         </div>
         <div class="nav-section">
@@ -982,9 +982,13 @@ while ($r = mysqli_fetch_assoc($am_result)) {
                 <?php
                 $no = 1;
                 while ($row = mysqli_fetch_assoc($result)):
-                  $foto_src = !empty($row['foto_cover'])
-                    ? htmlspecialchars($row['foto_cover'])
-                    : null;
+                  $foto_src = null;
+                  if (!empty($row['foto_cover'])) {
+                    $f = $row['foto_cover'];
+                    $foto_src = (str_starts_with($f, 'http://') || str_starts_with($f, 'https://'))
+                      ? $f
+                      : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($f);
+                  }
                   $host_photo_path = !empty($row['host_photo']) &&
                     file_exists($_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/photos/' . $row['host_photo'])
                     ? '/teman_singgah/assets/uploads/photos/' . htmlspecialchars($row['host_photo'])

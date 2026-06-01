@@ -4,8 +4,8 @@ require_once '../../koneksi.php';
 
 // Hanya bisa diakses setelah proses booking berhasil
 if (!isset($_SESSION['last_booking_id'])) {
-    header('Location: ../../index.php');
-    exit;
+  header('Location: ../../index.php');
+  exit;
 }
 
 $booking_id = intval($_SESSION['last_booking_id']);
@@ -41,33 +41,34 @@ $stmt->close();
 $koneksi->close();
 
 if (!$booking) {
-    header('Location: ../../index.php');
-    exit;
+  header('Location: ../../index.php');
+  exit;
 }
 
 // Format data tampilan
 $id_reservasi = '#RSV-' . date('Y') . '-' . str_pad($booking['id'], 4, '0', STR_PAD_LEFT);
-$fmt_checkin  = date('d M Y', strtotime($booking['checkin']));
+$fmt_checkin = date('d M Y', strtotime($booking['checkin']));
 $fmt_checkout = date('d M Y', strtotime($booking['checkout']));
 $jumlah_malam = (new DateTime($booking['checkin']))->diff(new DateTime($booking['checkout']))->days;
-$total_fmt    = 'Rp ' . number_format($booking['total_harga'], 0, ',', '.');
+$total_fmt = 'Rp ' . number_format($booking['total_harga'], 0, ',', '.');
 
 $metode_label = [
-    'gopay'     => 'GoPay',
-    'ovo'       => 'OVO',
-    'dana'      => 'DANA',
-    'shopeepay' => 'ShopeePay',
-    'qris'      => 'QRIS',
-    'bca'       => 'Transfer BCA',
-    'bni'       => 'Transfer BNI',
-    'mandiri'   => 'Transfer Mandiri',
-    'bri'       => 'Transfer BRI',
-    'card'      => 'Kartu Kredit/Debit',
+  'gopay' => 'GoPay',
+  'ovo' => 'OVO',
+  'dana' => 'DANA',
+  'shopeepay' => 'ShopeePay',
+  'qris' => 'QRIS',
+  'bca' => 'Transfer BCA',
+  'bni' => 'Transfer BNI',
+  'mandiri' => 'Transfer Mandiri',
+  'bri' => 'Transfer BRI',
+  'card' => 'Kartu Kredit/Debit',
 ];
 $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['metode_bayar']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -97,7 +98,7 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
         <div class="nav-indicator"></div>
       </ul>
       <div class="nav-right">
-        <a href="../../host/onboarding/pages/about_place.html">
+        <a href="../../host/dashboard/pages/reservations.php">
           <button class="ghost-button">Ganti ke host</button>
         </a>
         <div class="icon-buttons">
@@ -156,10 +157,10 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
             <span class="receipt-value"><?= htmlspecialchars($booking['nama_listing']) ?></span>
           </div>
           <?php if (!empty($booking['nama_kamar'])): ?>
-          <div class="receipt-item">
-            <span class="receipt-label">Kamar</span>
-            <span class="receipt-value"><?= htmlspecialchars($booking['nama_kamar']) ?></span>
-          </div>
+            <div class="receipt-item">
+              <span class="receipt-label">Kamar</span>
+              <span class="receipt-value"><?= htmlspecialchars($booking['nama_kamar']) ?></span>
+            </div>
           <?php endif; ?>
           <div class="receipt-item">
             <span class="receipt-label">Check-In</span>
@@ -178,13 +179,13 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
             <span class="receipt-value"><?= htmlspecialchars($metode_tampil) ?></span>
           </div>
           <?php if (!empty($booking['kode_promo'])): ?>
-          <div class="receipt-item">
-            <span class="receipt-label">Kode Promo</span>
-            <span class="receipt-value" style="color:#27ae60;">
-              <i class="ph-bold ph-tag"></i>
-              <?= htmlspecialchars($booking['kode_promo']) ?>
-            </span>
-          </div>
+            <div class="receipt-item">
+              <span class="receipt-label">Kode Promo</span>
+              <span class="receipt-value" style="color:#27ae60;">
+                <i class="ph-bold ph-tag"></i>
+                <?= htmlspecialchars($booking['kode_promo']) ?>
+              </span>
+            </div>
           <?php endif; ?>
         </div>
 
@@ -252,4 +253,5 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
   <script src="../../components/navbar.js"></script>
   <script src="../../popups/auth.js"></script>
 </body>
+
 </html>

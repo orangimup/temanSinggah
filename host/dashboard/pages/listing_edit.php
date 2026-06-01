@@ -8,13 +8,9 @@ $listingId = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
 $flashMsg = '';
 $flashType = '';
 
-/* ══════════════════════════════════════════════
-   HANDLE POST
-══════════════════════════════════════════════ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
     $aksi = $_POST['_aksi'];
 
-    /* ── Hapus foto (AJAX) ── */
     if ($aksi === 'hapus_foto') {
         header('Content-Type: application/json');
         $photoId = (int) ($_POST['photo_id'] ?? 0);
@@ -36,7 +32,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
         exit;
     }
 
-    /* ── Simpan listing ── */
+    if ($aksi === 'hapus_room') {
+        header('Content-Type: application/json');
+        $roomId = (int) ($_POST['room_id'] ?? 0);
+        $chk = mysqli_fetch_assoc(mysqli_query(
+            $koneksi,
+            "SELECT lr.id, lr.foto FROM listing_rooms lr
+             JOIN listings l ON l.id = lr.listing_id
+             WHERE lr.id = $roomId AND l.host_id = $hostId LIMIT 1"
+        ));
+        if (!$chk) {
+            echo json_encode(['status' => 'error', 'message' => 'Tidak ditemukan']);
+            exit;
+        }
+        if (!empty($chk['foto'])) {
+            $fotoPath = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/rooms/' . $chk['foto'];
+            if (file_exists($fotoPath))
+                @unlink($fotoPath);
+        }
+        mysqli_query($koneksi, "DELETE FROM listing_rooms WHERE id = $roomId");
+        echo json_encode(['status' => 'ok']);
+        exit;
+    }
+
+    if ($aksi === 'simpan_room') {
+        header('Content-Type: application/json');
+        $roomId = (int) ($_POST['room_id'] ?? 0);
+        $nama = mysqli_real_escape_string($koneksi, trim($_POST['nama'] ?? ''));
+        $deskripsi = mysqli_real_escape_string($koneksi, trim($_POST['deskripsi'] ?? ''));
+        $ukuran = ($_POST['ukuran_m2'] !== '') ? (int) $_POST['ukuran_m2'] : null;
+        $maxTamu = max(1, (int) ($_POST['max_tamu'] ?? 1));
+        $harga = (float) ($_POST['harga_malam'] ?? 0);
+        $fasilitas = json_encode($_POST['fasilitas'] ?? []);
+        $urutan = (int) ($_POST['urutan'] ?? 0);
+        $ukuranSQL = ($ukuran !== null) ? $ukuran : 'NULL';
+
+        if (!$nama || $harga <= 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Nama dan harga wajib diisi.']);
+            exit;
+        }
+
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/rooms/';
+        $namaFoto = '';
+
+        if ($roomId > 0) {
+            $existing = mysqli_fetch_assoc(mysqli_query(
+                $koneksi,
+                "SELECT lr.id, lr.foto FROM listing_rooms lr
+                 JOIN listings l ON l.id = lr.listing_id
+                 WHERE lr.id = $roomId AND l.host_id = $hostId LIMIT 1"
+            ));
+            if (!$existing) {
+                echo json_encode(['status' => 'error', 'message' => 'Kamar tidak ditemukan.']);
+                exit;
+            }
+            $namaFoto = $existing['foto'] ?? '';
+        }
+
+        if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'jfif'])) {
+                $newFile = 'room_' . ($listingId ?: 'new') . '_' . uniqid() . '.' . $ext;
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $uploadDir . $newFile)) {
+                    if ($roomId > 0 && !empty($namaFoto)) {
+                        $oldPath = $uploadDir . $namaFoto;
+                        if (file_exists($oldPath))
+                            @unlink($oldPath);
+                    }
+                    $namaFoto = $newFile;
+                }
+            }
+        }
+
+        $namaFotoSQL = mysqli_real_escape_string($koneksi, $namaFoto);
+        $fasilitasSQL = mysqli_real_escape_string($koneksi, $fasilitas);
+
+        if ($roomId > 0) {
+            mysqli_query($koneksi, "UPDATE listing_rooms SET
+                nama        = '$nama',
+                deskripsi   = '$deskripsi',
+                ukuran_m2   = $ukuranSQL,
+                max_tamu    = $maxTamu,
+                harga_malam = $harga,
+                fasilitas   = '$fasilitasSQL',
+                foto        = '$namaFotoSQL',
+                urutan      = $urutan
+              WHERE id = $roomId");
+            echo json_encode(['status' => 'ok', 'room_id' => $roomId, 'foto' => $namaFoto]);
+        } else {
+            $lid = $listingId;
+            mysqli_query($koneksi, "INSERT INTO listing_rooms
+                (listing_id, nama, deskripsi, ukuran_m2, max_tamu, harga_malam, fasilitas, foto, urutan)
+              VALUES
+                ($lid, '$nama', '$deskripsi', $ukuranSQL, $maxTamu, $harga, '$fasilitasSQL', '$namaFotoSQL', $urutan)");
+            $newId = (int) mysqli_insert_id($koneksi);
+            echo json_encode(['status' => 'ok', 'room_id' => $newId, 'foto' => $namaFoto]);
+        }
+        exit;
+    }
+
     if ($aksi === 'simpan') {
         $judul = mysqli_real_escape_string($koneksi, trim($_POST['judul'] ?? ''));
         $tipe = mysqli_real_escape_string($koneksi, $_POST['tipe_properti'] ?? '');
@@ -67,59 +161,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
             $hargaAkhirSQL = ($harga_akhir !== null) ? $harga_akhir : 'NULL';
 
             if ($listingId) {
-                mysqli_query(
-                    $koneksi,
-                    "UPDATE listings SET
-                       judul                = '$judul',
-                       tipe_properti        = '$tipe',
-                       lokasi               = '$lokasi',
-                       deskripsi            = '$deskripsi',
-                       max_tamu             = $max_tamu,
-                       kamar_tidur          = $kamar_tidur,
-                       kamar_mandi          = $kamar_mandi,
-                       harga_malam          = $harga_malam,
-                       harga_akhir_pekan    = $hargaAkhirSQL,
-                       min_malam            = $min_malam,
-                       kebijakan_pembatalan = '$kebijakan',
-                       jam_checkin          = '$checkin',
-                       jam_checkout         = '$checkout',
-                       tipe_booking         = '$tipe_booking',
-                       status               = '$status'
-                     WHERE id = $listingId AND host_id = $hostId"
-                );
+                mysqli_query($koneksi, "UPDATE listings SET
+                    judul                = '$judul',
+                    tipe_properti        = '$tipe',
+                    lokasi               = '$lokasi',
+                    deskripsi            = '$deskripsi',
+                    max_tamu             = $max_tamu,
+                    kamar_tidur          = $kamar_tidur,
+                    kamar_mandi          = $kamar_mandi,
+                    harga_malam          = $harga_malam,
+                    harga_akhir_pekan    = $hargaAkhirSQL,
+                    min_malam            = $min_malam,
+                    kebijakan_pembatalan = '$kebijakan',
+                    jam_checkin          = '$checkin',
+                    jam_checkout         = '$checkout',
+                    tipe_booking         = '$tipe_booking',
+                    status               = '$status'
+                  WHERE id = $listingId AND host_id = $hostId");
             } else {
-                mysqli_query(
-                    $koneksi,
-                    "INSERT INTO listings
-                       (host_id, judul, tipe_properti, lokasi, deskripsi,
-                        max_tamu, kamar_tidur, kamar_mandi,
-                        harga_malam, harga_akhir_pekan,
-                        min_malam, kebijakan_pembatalan,
-                        jam_checkin, jam_checkout, tipe_booking, status, dibuat_pada)
-                     VALUES
-                       ($hostId, '$judul', '$tipe', '$lokasi', '$deskripsi',
-                        $max_tamu, $kamar_tidur, $kamar_mandi,
-                        $harga_malam, $hargaAkhirSQL,
-                        $min_malam, '$kebijakan',
-                        '$checkin', '$checkout', '$tipe_booking', '$status', NOW())"
-                );
+                mysqli_query($koneksi, "INSERT INTO listings
+                    (host_id, judul, tipe_properti, lokasi, deskripsi,
+                     max_tamu, kamar_tidur, kamar_mandi,
+                     harga_malam, harga_akhir_pekan,
+                     min_malam, kebijakan_pembatalan,
+                     jam_checkin, jam_checkout, tipe_booking, status, dibuat_pada)
+                  VALUES
+                    ($hostId, '$judul', '$tipe', '$lokasi', '$deskripsi',
+                     $max_tamu, $kamar_tidur, $kamar_mandi,
+                     $harga_malam, $hargaAkhirSQL,
+                     $min_malam, '$kebijakan',
+                     '$checkin', '$checkout', '$tipe_booking', '$status', NOW())");
                 $listingId = (int) mysqli_insert_id($koneksi);
             }
 
-            /* ── Amenitas ── */
             mysqli_query($koneksi, "DELETE FROM listing_amenities WHERE listing_id = $listingId");
             foreach ($amenitasNama as $nama) {
                 $nama = mysqli_real_escape_string($koneksi, trim($nama));
                 if ($nama === '')
                     continue;
-                mysqli_query(
-                    $koneksi,
-                    "INSERT INTO listing_amenities (listing_id, nama_fasilitas)
-                     VALUES ($listingId, '$nama')"
-                );
+                mysqli_query($koneksi, "INSERT INTO listing_amenities (listing_id, nama_fasilitas) VALUES ($listingId, '$nama')");
             }
 
-            /* ── Upload foto ── */
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/assets/uploads/listings/';
             if (!empty($_FILES['new_photos']['name'][0])) {
                 $hasCover = mysqli_fetch_assoc(mysqli_query(
@@ -136,16 +218,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
                     $namaFile = 'listing_' . $listingId . '_' . uniqid() . '.' . $ext;
                     if (move_uploaded_file($tmp, $uploadDir . $namaFile)) {
                         $isCover = ($firstPhoto && $i === 0) ? 1 : 0;
-                        mysqli_query(
-                            $koneksi,
-                            "INSERT INTO listing_photos (listing_id, nama_file, adalah_cover)
-                             VALUES ($listingId, '$namaFile', $isCover)"
-                        );
+                        mysqli_query($koneksi, "INSERT INTO listing_photos (listing_id, nama_file, adalah_cover) VALUES ($listingId, '$namaFile', $isCover)");
                     }
                 }
             }
 
-            /* ── Sinkron ke listing_policies ── */
             $kebijakan_map = [
                 'fleksibel' => 'Gratis hingga 24 jam sebelum check-in',
                 'moderat' => 'Refund 50% jika dibatalkan 5 hari sebelum check-in',
@@ -160,28 +237,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
                 "SELECT id FROM listing_policies WHERE listing_id = $listingId LIMIT 1"
             ));
             if ($existPol) {
-                mysqli_query(
-                    $koneksi,
-                    "UPDATE listing_policies SET
-                       jam_checkin          = '$checkin_pol',
-                       jam_checkout         = '$checkout_pol',
-                       kebijakan_pembatalan = '$kebijakan_pol',
-                       boleh_hewan          = $boleh_hewan,
-                       boleh_merokok        = $boleh_merokok,
-                       boleh_anak           = $boleh_anak,
-                       catatan_tambahan     = '$catatan'
-                     WHERE listing_id = $listingId"
-                );
+                mysqli_query($koneksi, "UPDATE listing_policies SET
+                    jam_checkin          = '$checkin_pol',
+                    jam_checkout         = '$checkout_pol',
+                    kebijakan_pembatalan = '$kebijakan_pol',
+                    boleh_hewan          = $boleh_hewan,
+                    boleh_merokok        = $boleh_merokok,
+                    boleh_anak           = $boleh_anak,
+                    catatan_tambahan     = '$catatan'
+                  WHERE listing_id = $listingId");
             } else {
-                mysqli_query(
-                    $koneksi,
-                    "INSERT INTO listing_policies
-                       (listing_id, jam_checkin, jam_checkout, kebijakan_pembatalan,
-                        boleh_hewan, boleh_merokok, boleh_anak, catatan_tambahan)
-                     VALUES
-                       ($listingId, '$checkin_pol', '$checkout_pol', '$kebijakan_pol',
-                        $boleh_hewan, $boleh_merokok, $boleh_anak, '$catatan')"
-                );
+                mysqli_query($koneksi, "INSERT INTO listing_policies
+                    (listing_id, jam_checkin, jam_checkout, kebijakan_pembatalan,
+                     boleh_hewan, boleh_merokok, boleh_anak, catatan_tambahan)
+                  VALUES
+                    ($listingId, '$checkin_pol', '$checkout_pol', '$kebijakan_pol',
+                     $boleh_hewan, $boleh_merokok, $boleh_anak, '$catatan')");
             }
 
             header("Location: listing_detail.php?id=$listingId&saved=1");
@@ -194,6 +265,7 @@ $listing = null;
 $photos = [];
 $currentAmenitas = [];
 $policies = null;
+$existingRooms = [];
 
 $masterAmenitas = [
     'Wi-Fi',
@@ -210,37 +282,44 @@ $masterAmenitas = [
     'Ramah Hewan Peliharaan',
 ];
 
+$fasilitasKamarMaster = [
+    'Kasur Twin' => 'ph-bed',
+    'Kasur Double' => 'ph-bed',
+    'Kasur Queen' => 'ph-bed',
+    'Kasur King' => 'ph-bed',
+    'Kamar Mandi Dalam' => 'ph-shower',
+    'Bathtub' => 'ph-bathtub',
+    'TV LED' => 'ph-television',
+    'Minibar' => 'ph-wine',
+    'Balkon' => 'ph-door-open',
+    'AC' => 'ph-snowflake',
+    'Brankas' => 'ph-lock-key',
+    'Meja Kerja' => 'ph-desk',
+    'Sofa' => 'ph-armchair',
+];
+
 if ($listingId) {
-    $q = mysqli_query(
-        $koneksi,
-        "SELECT * FROM listings WHERE id = $listingId AND host_id = $hostId LIMIT 1"
-    );
+    $q = mysqli_query($koneksi, "SELECT * FROM listings WHERE id = $listingId AND host_id = $hostId LIMIT 1");
     $listing = mysqli_fetch_assoc($q);
     if (!$listing) {
         header('Location: listing.php');
         exit;
     }
 
-    $qp = mysqli_query(
-        $koneksi,
-        "SELECT id, nama_file, adalah_cover FROM listing_photos
-         WHERE listing_id = $listingId ORDER BY adalah_cover DESC, id ASC"
-    );
+    $qp = mysqli_query($koneksi, "SELECT id, nama_file, adalah_cover FROM listing_photos WHERE listing_id = $listingId ORDER BY adalah_cover DESC, id ASC");
     while ($r = mysqli_fetch_assoc($qp))
         $photos[] = $r;
 
-    $qa = mysqli_query(
-        $koneksi,
-        "SELECT nama_fasilitas FROM listing_amenities WHERE listing_id = $listingId"
-    );
+    $qa = mysqli_query($koneksi, "SELECT nama_fasilitas FROM listing_amenities WHERE listing_id = $listingId");
     while ($r = mysqli_fetch_assoc($qa))
         $currentAmenitas[] = $r['nama_fasilitas'];
 
-    $qpol = mysqli_query(
-        $koneksi,
-        "SELECT * FROM listing_policies WHERE listing_id = $listingId LIMIT 1"
-    );
+    $qpol = mysqli_query($koneksi, "SELECT * FROM listing_policies WHERE listing_id = $listingId LIMIT 1");
     $policies = mysqli_fetch_assoc($qpol);
+
+    $qr = mysqli_query($koneksi, "SELECT * FROM listing_rooms WHERE listing_id = $listingId ORDER BY urutan ASC, id ASC");
+    while ($r = mysqli_fetch_assoc($qr))
+        $existingRooms[] = $r;
 }
 
 $isEdit = !empty($listing);
@@ -265,7 +344,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         rel="stylesheet" />
     <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
-
     <style>
         .edit-wrap {
             max-width: 780px;
@@ -428,11 +506,10 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             grid-template-columns: 1fr 1fr 1fr;
         }
 
-        /* Stepper */
         .stepper {
             display: flex;
             align-items: center;
-            gap: var(--space-12);
+            gap: var(--space-4);
         }
 
         .stepper-btn {
@@ -478,7 +555,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             height: 46px;
         }
 
-        /* Amenitas */
         .facility-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -534,7 +610,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             color: #fff;
         }
 
-        /* Toggle kebijakan */
         .toggle-options {
             display: flex;
             gap: var(--space-8);
@@ -584,7 +659,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             font-weight: 600;
         }
 
-        /* Foto upload */
         .photo-upload-area {
             border: 2px dashed var(--color-border-strong);
             border-radius: var(--radius-2xl);
@@ -629,6 +703,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             border-radius: var(--radius-xl);
             overflow: hidden;
             border: 2px solid transparent;
+            background: var(--color-border-subtle);
         }
 
         .photo-preview-item.is-cover {
@@ -677,7 +752,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             opacity: 1;
         }
 
-        /* Status */
         .status-options {
             display: flex;
             gap: var(--space-12);
@@ -724,7 +798,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             color: var(--color-text-secondary);
         }
 
-        /* Submit bar */
         .submit-bar {
             position: sticky;
             bottom: 24px;
@@ -857,6 +930,455 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             padding-left: 44px;
         }
 
+        /* ── Rooms list ── */
+        .rooms-list-edit {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-12);
+            margin-bottom: var(--space-20);
+        }
+
+        .room-entry-edit {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            padding: var(--space-14) var(--space-16);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            background: var(--color-bg-card, #fff);
+        }
+
+        .room-entry-thumb {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            flex-shrink: 0;
+            background: var(--color-bg-skeleton);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .room-entry-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-entry-thumb i {
+            font-size: 1.4rem;
+            color: var(--color-border-strong);
+        }
+
+        .room-entry-info-edit {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .room-entry-name-edit {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .room-entry-meta-edit {
+            font-size: 0.775rem;
+            color: var(--color-text-secondary);
+        }
+
+        .room-entry-btns {
+            display: flex;
+            gap: var(--space-8);
+            flex-shrink: 0;
+        }
+
+        .room-edit-btn-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border: 1.5px solid var(--color-border-strong);
+            border-radius: var(--radius-lg);
+            background: transparent;
+            color: var(--color-text-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .room-edit-btn-small:hover {
+            background: var(--color-border-subtle);
+        }
+
+        .room-delete-btn-small {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border: 1.5px solid #fecaca;
+            border-radius: var(--radius-lg);
+            background: #fef2f2;
+            color: #dc2626;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .room-delete-btn-small:hover {
+            background: #fee2e2;
+        }
+
+        .add-room-btn-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 2px dashed var(--color-border-strong);
+            border-radius: var(--radius-xl);
+            background: transparent;
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s, background 0.15s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .add-room-btn-edit:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        /* ── Room modal ── */
+        .room-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-16);
+        }
+
+        .room-modal-overlay.open {
+            display: flex;
+        }
+
+        .room-modal-box {
+            background: #fff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 660px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 16px 56px rgba(0, 0, 0, 0.22);
+        }
+
+        .room-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--color-border-subtle);
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .room-modal-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .room-modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid var(--color-border-strong);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+            font-size: 0.8rem;
+            transition: background 0.15s;
+        }
+
+        .room-modal-close:hover {
+            background: var(--color-border-subtle);
+        }
+
+        .room-modal-body {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .room-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--color-border-subtle);
+        }
+
+        /* foto + fields row */
+        .rm-top-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .rm-foto-wrap {
+            width: 150px;
+            min-width: 150px;
+            height: 108px;
+            border-radius: 12px;
+            border: 1.5px dashed var(--color-border-strong);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: var(--color-bg, #f9fafb);
+            transition: border-color 0.15s, background 0.15s;
+            flex-shrink: 0;
+        }
+
+        .rm-foto-wrap:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .rm-foto-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .rm-foto-placeholder i {
+            font-size: 1.6rem;
+        }
+
+        .rm-foto-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .rm-foto-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            z-index: 2;
+        }
+
+        .rm-fields-right {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* field helpers inside modal */
+        .rm-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .rm-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rm-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .rm-input {
+            padding: 9px 12px;
+            border: 1.5px solid var(--color-border-strong, #d1d5db);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            background: var(--color-bg, #fff);
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.15s;
+        }
+
+        .rm-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .rm-prefix {
+            position: relative;
+        }
+
+        .rm-prefix-text {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        .rm-prefix .rm-input {
+            padding-left: 36px;
+        }
+
+        .rm-stepper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 38px;
+        }
+
+        .rm-stepper-btn {
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            border: 1.5px solid var(--color-border-strong);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+            line-height: 1;
+            padding: 0;
+        }
+
+        .rm-stepper-btn:hover {
+            background: var(--color-border-subtle);
+        }
+
+        .rm-stepper-val {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .rm-textarea {
+            padding: 9px 12px;
+            border: 1.5px solid var(--color-border-strong, #d1d5db);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--color-text-primary);
+            background: var(--color-bg, #fff);
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            box-sizing: border-box;
+            resize: none;
+            line-height: 1.55;
+            transition: border-color 0.15s;
+        }
+
+        .rm-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .rm-section-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* fasilitas chips inside modal */
+        .room-facilities-grid-edit {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(144px, 1fr));
+            gap: 6px;
+        }
+
+        .facility-chip-edit {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 11px;
+            border: 1.5px solid var(--color-border-subtle);
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            color: var(--color-text-primary);
+            transition: border-color 0.15s, background 0.15s;
+            user-select: none;
+        }
+
+        .facility-chip-edit input {
+            display: none;
+        }
+
+        .facility-chip-edit i {
+            color: var(--color-primary);
+            font-size: 0.875rem;
+        }
+
+        .facility-chip-edit:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .facility-chip-edit.checked {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+            font-weight: 600;
+        }
+
+        .form-error-inline {
+            font-size: 0.8125rem;
+            color: #dc2626;
+            margin-top: 4px;
+            display: none;
+        }
+
         @media (max-width: 640px) {
 
             .form-row.cols-2,
@@ -866,6 +1388,19 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
 
             .status-options {
                 flex-direction: column;
+            }
+
+            .rm-top-row {
+                flex-direction: column;
+            }
+
+            .rm-foto-wrap {
+                width: 100%;
+                height: 140px;
+            }
+
+            .rm-field-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -921,13 +1456,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             <input type="hidden" name="id" value="<?= $listingId ?>" />
             <input type="hidden" name="host_id" value="<?= $hostId ?>" />
 
-            <!-- ══ 1. Informasi Dasar ══ -->
+            <!-- 1. Informasi Dasar -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-house"></i></div>
                     Informasi Dasar
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Judul Listing <span class="required">*</span></label>
                     <input type="text" name="judul" class="form-input"
@@ -935,7 +1469,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         value="<?= htmlspecialchars($listing['judul'] ?? '') ?>" required />
                     <p class="form-hint">Buat judul yang menarik dan deskriptif.</p>
                 </div>
-
                 <div class="form-row cols-2">
                     <div class="form-group">
                         <label class="form-label">Tipe Properti <span class="required">*</span></label>
@@ -956,7 +1489,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                             value="<?= htmlspecialchars($listing['lokasi'] ?? '') ?>" required />
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Deskripsi <span class="required">*</span></label>
                     <textarea name="deskripsi" class="form-textarea"
@@ -965,7 +1497,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
             </div>
 
-            <!-- ══ 2. Kapasitas ══ -->
+            <!-- 2. Kapasitas -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-users"></i></div>
@@ -1020,13 +1552,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
             </div>
 
-            <!-- ══ 3. Harga ══ -->
+            <!-- 3. Harga -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-currency-circle-dollar"></i></div>
                     Harga
                 </div>
-
                 <div class="form-row cols-2">
                     <div class="form-group">
                         <label class="form-label">Harga per Malam <span class="required">*</span></label>
@@ -1046,7 +1577,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         </div>
                     </div>
                 </div>
-
                 <div class="form-row cols-2">
                     <div class="form-group">
                         <label class="form-label">Min. Malam</label>
@@ -1077,14 +1607,13 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         </select>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Kebijakan Pembatalan</label>
                     <select name="kebijakan_pembatalan" class="form-select">
                         <?php
                         $kebijakanOpts = [
-                            'fleksibel' => 'Fleksibel — refund penuh jika dibatalkan ≥24 jam sebelum check-in',
-                            'moderat' => 'Moderat — refund 50% jika dibatalkan ≥5 hari sebelum check-in',
+                            'fleksibel' => 'Fleksibel — refund penuh jika dibatalkan 24 jam sebelum check-in',
+                            'moderat' => 'Moderat — refund 50% jika dibatalkan 5 hari sebelum check-in',
                             'ketat' => 'Ketat — tidak ada refund setelah konfirmasi',
                         ];
                         $selKebijakan = $listing['kebijakan_pembatalan'] ?? 'fleksibel';
@@ -1097,11 +1626,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
             </div>
 
-            <!-- ══ 4. Jadwal ══ -->
+            <!-- 4. Jadwal -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-clock"></i></div>
-                    Jadwal Check-in & Check-out
+                    Jadwal Check-in &amp; Check-out
                 </div>
                 <div class="form-row cols-2">
                     <div class="form-group">
@@ -1117,7 +1646,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
             </div>
 
-            <!-- ══ 5. Amenitas ══ -->
+            <!-- 5. Amenitas -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-wifi-high"></i></div>
@@ -1130,31 +1659,33 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                         ?>
                         <label class="facility-check <?= $selClass ?>" data-val="<?= htmlspecialchars($nama) ?>">
                             <input type="checkbox" name="amenitas[]" value="<?= htmlspecialchars($nama) ?>" <?= $checked ? 'checked' : '' ?> />
-                            <span class="check-icon"><?= $checked ? '✓' : '' ?></span>
+                            <span class="check-icon"><?= $checked ? '&#10003;' : '' ?></span>
                             <?= htmlspecialchars($nama) ?>
                         </label>
                     <?php endforeach; ?>
                 </div>
             </div>
 
-            <!-- ══ 6. Foto ══ -->
+            <!-- 6. Foto -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-images"></i></div>
                     Foto Properti
                 </div>
-
                 <?php if (!empty($photos)): ?>
                     <p style="font-size:0.875rem;color:var(--color-text-secondary);margin-bottom:12px;">
-                        Foto tersimpan — klik × untuk hapus
+                        Foto tersimpan &mdash; hover lalu klik &times; untuk hapus
                     </p>
                     <div class="photo-preview-grid" id="existingPhotos">
                         <?php foreach ($photos as $p):
-                            $src = '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($p['nama_file']);
+                            $namaFile = $p['nama_file'];
+                            $src = (str_starts_with($namaFile, 'http://') || str_starts_with($namaFile, 'https://'))
+                                ? $namaFile
+                                : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($namaFile) . '?v=' . time();
                             ?>
                             <div class="photo-preview-item <?= $p['adalah_cover'] ? 'is-cover' : '' ?>"
                                 data-photo-id="<?= $p['id'] ?>">
-                                <img src="<?= $src ?>" alt="Foto" />
+                                <img src="<?= $src ?>" alt="Foto" loading="lazy" />
                                 <?php if ($p['adalah_cover']): ?>
                                     <span class="photo-cover-badge">Cover</span>
                                 <?php endif; ?>
@@ -1167,85 +1698,125 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                     </div>
                     <hr style="border:none;border-top:1px solid var(--color-border-subtle);margin:20px 0" />
                 <?php endif; ?>
-
                 <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
                     <i class="ph-bold ph-cloud-arrow-up"></i>
-                    <p><strong>Klik untuk upload foto</strong> atau drag & drop</p>
-                    <p style="margin-top:4px;font-size:0.775rem;">JPG, PNG, WEBP — maks 5MB per foto</p>
+                    <p><strong>Klik untuk upload foto</strong> atau drag &amp; drop</p>
+                    <p style="margin-top:4px;font-size:0.775rem;">JPG, PNG, WEBP &mdash; maks 5MB per foto</p>
                 </div>
                 <input type="file" id="photoInput" name="new_photos[]" accept="image/*" multiple />
                 <div class="photo-preview-grid" id="newPhotoPreview"></div>
             </div>
 
-            <!-- ══ 7. Kebijakan Tambahan ══ -->
+            <!-- 7. Pilihan Kamar -->
+            <?php if ($isEdit): ?>
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="section-icon"><i class="ph-bold ph-bed"></i></div>
+                        Pilihan Kamar
+                    </div>
+                    <div class="rooms-list-edit" id="roomsListEdit">
+                        <?php foreach ($existingRooms as $room):
+                            $fotoSrc = !empty($room['foto'])
+                                ? (str_starts_with($room['foto'], 'http')
+                                    ? $room['foto']
+                                    : '/teman_singgah/assets/uploads/rooms/' . htmlspecialchars($room['foto']) . '?v=' . time())
+                                : null;
+                            $metaParts = [];
+                            if (!empty($room['ukuran_m2']))
+                                $metaParts[] = $room['ukuran_m2'] . ' m&sup2;';
+                            $metaParts[] = $room['max_tamu'] . ' tamu';
+                            $metaParts[] = 'Rp ' . number_format((float) $room['harga_malam'], 0, ',', '.') . '/malam';
+                            ?>
+                            <div class="room-entry-edit" data-room-id="<?= $room['id'] ?>">
+                                <div class="room-entry-thumb">
+                                    <?php if ($fotoSrc): ?>
+                                        <img src="<?= $fotoSrc ?>" alt="<?= htmlspecialchars($room['nama']) ?>" loading="lazy" />
+                                    <?php else: ?>
+                                        <i class="ph-bold ph-bed"></i>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="room-entry-info-edit">
+                                    <span class="room-entry-name-edit"><?= htmlspecialchars($room['nama']) ?></span>
+                                    <span class="room-entry-meta-edit"><?= implode(' &middot; ', $metaParts) ?></span>
+                                </div>
+                                <div class="room-entry-btns">
+                                    <button type="button" class="room-edit-btn-small"
+                                        onclick="openRoomModal(<?= htmlspecialchars(json_encode($room), ENT_QUOTES) ?>)">
+                                        <i class="ph-bold ph-pencil-simple"></i> Edit
+                                    </button>
+                                    <button type="button" class="room-delete-btn-small" onclick="deleteRoom(<?= $room['id'] ?>)"
+                                        title="Hapus kamar">
+                                        <i class="ph-bold ph-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="button" class="add-room-btn-edit" id="btnTambahKamar">
+                        <i class="ph-bold ph-plus-circle"></i>
+                        Tambah Tipe Kamar
+                    </button>
+                </div>
+            <?php endif; ?>
+
+            <!-- 8. Kebijakan Tambahan -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-shield-check"></i></div>
                     Kebijakan Tambahan
                 </div>
-
                 <div class="form-row cols-3">
                     <?php
                     $boleh_hewan_val = (int) ($policies['boleh_hewan'] ?? 0);
                     $boleh_merokok_val = (int) ($policies['boleh_merokok'] ?? 0);
                     $boleh_anak_val = (int) ($policies['boleh_anak'] ?? 1);
                     ?>
-                    <!-- Hewan Peliharaan -->
                     <div class="form-group">
                         <label class="form-label">Hewan Peliharaan</label>
                         <div class="toggle-options">
                             <label class="toggle-opt <?= $boleh_hewan_val ? 'selected-yes' : '' ?>"
                                 data-group="boleh_hewan">
                                 <input type="radio" name="boleh_hewan" value="1" <?= $boleh_hewan_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-paw-print"></i>
-                                <span>Boleh</span>
+                                <i class="ph-bold ph-paw-print"></i><span>Boleh</span>
                             </label>
                             <label class="toggle-opt <?= !$boleh_hewan_val ? 'selected-no' : '' ?>"
                                 data-group="boleh_hewan">
                                 <input type="radio" name="boleh_hewan" value="0" <?= !$boleh_hewan_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-prohibit"></i>
-                                <span>Tidak</span>
+                                <i class="ph-bold ph-prohibit"></i><span>Tidak</span>
                             </label>
                         </div>
                     </div>
-                    <!-- Merokok -->
                     <div class="form-group">
                         <label class="form-label">Merokok</label>
                         <div class="toggle-options">
                             <label class="toggle-opt <?= $boleh_merokok_val ? 'selected-yes' : '' ?>"
                                 data-group="boleh_merokok">
                                 <input type="radio" name="boleh_merokok" value="1" <?= $boleh_merokok_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-cigarette"></i>
-                                <span>Boleh</span>
+                                <i class="ph-bold ph-cigarette"></i><span>Boleh</span>
                             </label>
                             <label class="toggle-opt <?= !$boleh_merokok_val ? 'selected-no' : '' ?>"
                                 data-group="boleh_merokok">
                                 <input type="radio" name="boleh_merokok" value="0" <?= !$boleh_merokok_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-cigarette-slash"></i>
-                                <span>Tidak</span>
+                                <i class="ph-bold ph-cigarette-slash"></i><span>Tidak</span>
                             </label>
                         </div>
                     </div>
-                    <!-- Anak-anak -->
                     <div class="form-group">
                         <label class="form-label">Anak-anak</label>
                         <div class="toggle-options">
                             <label class="toggle-opt <?= $boleh_anak_val ? 'selected-yes' : '' ?>"
                                 data-group="boleh_anak">
                                 <input type="radio" name="boleh_anak" value="1" <?= $boleh_anak_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-baby"></i>
-                                <span>Boleh</span>
+                                <i class="ph-bold ph-baby"></i><span>Boleh</span>
                             </label>
                             <label class="toggle-opt <?= !$boleh_anak_val ? 'selected-no' : '' ?>"
                                 data-group="boleh_anak">
                                 <input type="radio" name="boleh_anak" value="0" <?= !$boleh_anak_val ? 'checked' : '' ?> />
-                                <i class="ph-bold ph-prohibit"></i>
-                                <span>Tidak</span>
+                                <i class="ph-bold ph-prohibit"></i><span>Tidak</span>
                             </label>
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Catatan Tambahan</label>
                     <textarea name="catatan_tambahan" class="form-textarea" rows="3"
@@ -1253,7 +1824,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 </div>
             </div>
 
-            <!-- ══ 8. Status ══ -->
+            <!-- 9. Status -->
             <div class="form-section">
                 <div class="form-section-title">
                     <div class="section-icon"><i class="ph-bold ph-toggle-right"></i></div>
@@ -1299,6 +1870,101 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
 
     </main>
 
+    <!-- Room Modal -->
+    <?php if ($isEdit): ?>
+        <div class="room-modal-overlay" id="roomModalOverlay">
+            <div class="room-modal-box">
+                <div class="room-modal-header">
+                    <h3 id="roomModalTitle">Tambah Tipe Kamar</h3>
+                    <button class="room-modal-close" id="btnTutupRoomModal">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <div class="room-modal-body">
+                    <input type="hidden" id="modalRoomId" value="" />
+
+                    <div class="rm-top-row">
+                        <input type="file" id="modalRoomFotoInput" accept="image/jpeg,image/png,image/webp"
+                            style="display:none;" />
+                        <div class="rm-foto-wrap" id="modalRoomFotoArea"
+                            onclick="document.getElementById('modalRoomFotoInput').click()">
+                            <div class="rm-foto-placeholder" id="modalRoomFotoPlaceholder">
+                                <i class="ph-bold ph-camera"></i>
+                                <span>Pilih foto kamar</span>
+                            </div>
+                            <img id="modalRoomFotoImg" src="" alt="" style="display:none;" />
+                            <button type="button" id="modalRoomFotoRemove" class="rm-foto-remove"
+                                onclick="event.stopPropagation(); clearRoomFoto()">
+                                <i class="ph-bold ph-x"></i>
+                            </button>
+                        </div>
+
+                        <div class="rm-fields-right">
+                            <div class="rm-field-row">
+                                <div class="rm-field">
+                                    <label class="rm-label">Nama kamar <span style="color:#dc2626">*</span></label>
+                                    <input type="text" id="modalRoomNama" class="rm-input" placeholder="cth. Suite Deluxe"
+                                        maxlength="100" />
+                                </div>
+                                <div class="rm-field">
+                                    <label class="rm-label">Harga per malam <span style="color:#dc2626">*</span></label>
+                                    <div class="rm-prefix">
+                                        <span class="rm-prefix-text">Rp</span>
+                                        <input type="number" id="modalRoomHarga" class="rm-input" placeholder="850000"
+                                            min="0" step="1000" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rm-field-row">
+                                <div class="rm-field">
+                                    <label class="rm-label">Ukuran (m²)</label>
+                                    <input type="number" id="modalRoomUkuran" class="rm-input" placeholder="cth. 24"
+                                        min="1" />
+                                </div>
+                                <div class="rm-field">
+                                    <label class="rm-label">Kapasitas tamu</label>
+                                    <div class="rm-stepper">
+                                        <button type="button" class="rm-stepper-btn" id="modalTamuMin">−</button>
+                                        <span class="rm-stepper-val" id="modalTamuVal">2</span>
+                                        <input type="hidden" id="modalRoomMaxTamu" value="2" />
+                                        <button type="button" class="rm-stepper-btn" id="modalTamuPlus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rm-field">
+                        <label class="rm-label">Deskripsi singkat</label>
+                        <textarea id="modalRoomDeskripsi" class="rm-textarea" rows="2" maxlength="300"
+                            placeholder="cth. Kamar nyaman dengan kasur king size dan pemandangan taman..."></textarea>
+                    </div>
+
+                    <div>
+                        <span class="rm-section-label">Fasilitas kamar</span>
+                        <div class="room-facilities-grid-edit" id="modalFasilitasGrid">
+                            <?php foreach ($fasilitasKamarMaster as $nama => $icon): ?>
+                                <label class="facility-chip-edit">
+                                    <input type="checkbox" value="<?= htmlspecialchars($nama) ?>" />
+                                    <i class="ph-bold <?= $icon ?>"></i>
+                                    <?= htmlspecialchars($nama) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <p class="form-error-inline" id="modalRoomError"></p>
+                </div>
+                <div class="room-modal-footer">
+                    <button type="button" class="btn-outline" id="btnBatalRoomModal">Batal</button>
+                    <button type="button" class="btn-primary" id="btnSimpanRoom">
+                        <i class="ph-bold ph-floppy-disk"></i> Simpan Kamar
+                    </button>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-column">
@@ -1307,7 +1973,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             </div>
         </div>
         <div class="footer-bottom">
-            <p class="footer-copyright">© 2026 Teman Singgah — All rights reserved.</p>
+            <p class="footer-copyright">&copy; 2026 Teman Singgah &mdash; All rights reserved.</p>
         </div>
     </footer>
 
@@ -1316,7 +1982,8 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
     <script src="../../../components/navbar.js"></script>
     <script src="../../../popups/auth.js"></script>
     <script>
-        /* Stepper */
+        const LISTING_ID = <?= (int) $listingId ?>;
+
         document.querySelectorAll('.stepper-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const target = btn.dataset.target;
@@ -1331,18 +1998,16 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             });
         });
 
-        /* Amenitas toggle */
         document.querySelectorAll('.facility-check').forEach(label => {
             label.addEventListener('click', () => {
                 const cb = label.querySelector('input[type="checkbox"]');
                 const icon = label.querySelector('.check-icon');
                 cb.checked = !cb.checked;
                 label.classList.toggle('selected', cb.checked);
-                icon.textContent = cb.checked ? '✓' : '';
+                icon.innerHTML = cb.checked ? '&#10003;' : '';
             });
         });
 
-        /* Kebijakan toggle */
         document.querySelectorAll('.toggle-opt').forEach(opt => {
             opt.addEventListener('click', () => {
                 const group = opt.dataset.group;
@@ -1355,7 +2020,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             });
         });
 
-        /* Status radio */
         document.querySelectorAll('.status-opt').forEach(opt => {
             opt.addEventListener('click', () => {
                 document.querySelectorAll('.status-opt').forEach(o => o.className = 'status-opt');
@@ -1365,7 +2029,6 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             });
         });
 
-        /* Preview foto baru */
         document.getElementById('photoInput').addEventListener('change', function () {
             const grid = document.getElementById('newPhotoPreview');
             Array.from(this.files).forEach(file => {
@@ -1385,13 +2048,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             });
         });
 
-        /* Hapus foto existing */
         function removeExistingPhoto(photoId, btn) {
             const item = btn.closest('.photo-preview-item');
             const fd = new FormData();
             fd.append('_aksi', 'hapus_foto');
             fd.append('photo_id', photoId);
-            fd.append('id', '<?= $listingId ?>');
+            fd.append('id', LISTING_ID);
             fetch('', { method: 'POST', body: fd })
                 .then(r => r.json())
                 .then(d => {
@@ -1401,14 +2063,12 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 .catch(() => showToast('Gagal terhubung.', 'error'));
         }
 
-        /* Submit */
         document.getElementById('listingForm').addEventListener('submit', function () {
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="ph-bold ph-spinner" style="animation:spin 1s linear infinite"></i> Menyimpan...';
         });
 
-        /* Toast */
         function showToast(msg, type = '') {
             const el = document.getElementById('tsToast');
             el.textContent = msg;
@@ -1418,8 +2078,198 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
         }
 
         const style = document.createElement('style');
-        style.textContent = `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+        style.textContent = '@keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }';
         document.head.appendChild(style);
+
+        <?php if ($isEdit): ?>
+            let modalTamuCount = 2;
+            let modalFotoFile = null;
+            let modalFotoName = '';
+
+            const roomOverlay = document.getElementById('roomModalOverlay');
+            const roomModalTitle = document.getElementById('roomModalTitle');
+
+            function openRoomModal(room) {
+                document.getElementById('modalRoomId').value = room ? (room.id || '') : '';
+                roomModalTitle.textContent = room && room.id ? 'Edit Tipe Kamar' : 'Tambah Tipe Kamar';
+                document.getElementById('modalRoomNama').value = room ? (room.nama || '') : '';
+                document.getElementById('modalRoomHarga').value = room ? (room.harga_malam || '') : '';
+                document.getElementById('modalRoomUkuran').value = room ? (room.ukuran_m2 || '') : '';
+                document.getElementById('modalRoomDeskripsi').value = room ? (room.deskripsi || '') : '';
+
+                modalTamuCount = room ? (parseInt(room.max_tamu) || 2) : 2;
+                document.getElementById('modalTamuVal').textContent = modalTamuCount;
+                document.getElementById('modalRoomMaxTamu').value = modalTamuCount;
+
+                document.querySelectorAll('#modalFasilitasGrid .facility-chip-edit').forEach(chip => {
+                    const cb = chip.querySelector('input');
+                    let fasl = [];
+                    if (room && room.fasilitas) {
+                        try { fasl = typeof room.fasilitas === 'string' ? JSON.parse(room.fasilitas) : room.fasilitas; } catch (e) { }
+                    }
+                    cb.checked = Array.isArray(fasl) && fasl.includes(cb.value);
+                    chip.classList.toggle('checked', cb.checked);
+                });
+
+                clearRoomFoto();
+                if (room && room.foto) {
+                    modalFotoName = room.foto;
+                    const img = document.getElementById('modalRoomFotoImg');
+                    img.src = '/teman_singgah/assets/uploads/rooms/' + room.foto + '?v=' + Date.now();
+                    img.style.display = 'block';
+                    document.getElementById('modalRoomFotoPlaceholder').style.display = 'none';
+                    document.getElementById('modalRoomFotoRemove').style.display = 'flex';
+                }
+
+                document.getElementById('modalRoomError').style.display = 'none';
+                document.getElementById('modalRoomError').textContent = '';
+                roomOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeRoomModal() {
+                roomOverlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            function clearRoomFoto() {
+                modalFotoFile = null;
+                modalFotoName = '';
+                const img = document.getElementById('modalRoomFotoImg');
+                img.src = '';
+                img.style.display = 'none';
+                document.getElementById('modalRoomFotoPlaceholder').style.display = 'flex';
+                document.getElementById('modalRoomFotoRemove').style.display = 'none';
+                document.getElementById('modalRoomFotoInput').value = '';
+            }
+
+            document.getElementById('btnTambahKamar').addEventListener('click', () => openRoomModal(null));
+            document.getElementById('btnTutupRoomModal').addEventListener('click', closeRoomModal);
+            document.getElementById('btnBatalRoomModal').addEventListener('click', closeRoomModal);
+            roomOverlay.addEventListener('click', e => { if (e.target === roomOverlay) closeRoomModal(); });
+
+            document.getElementById('modalTamuMin').addEventListener('click', () => {
+                if (modalTamuCount > 1) {
+                    modalTamuCount--;
+                    document.getElementById('modalTamuVal').textContent = modalTamuCount;
+                    document.getElementById('modalRoomMaxTamu').value = modalTamuCount;
+                }
+            });
+
+            document.getElementById('modalTamuPlus').addEventListener('click', () => {
+                if (modalTamuCount < 20) {
+                    modalTamuCount++;
+                    document.getElementById('modalTamuVal').textContent = modalTamuCount;
+                    document.getElementById('modalRoomMaxTamu').value = modalTamuCount;
+                }
+            });
+
+            document.getElementById('modalRoomFotoInput').addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file) return;
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('Ukuran foto maksimal 2MB.', 'error');
+                    this.value = '';
+                    return;
+                }
+                modalFotoFile = file;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.getElementById('modalRoomFotoImg');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('modalRoomFotoPlaceholder').style.display = 'none';
+                    document.getElementById('modalRoomFotoRemove').style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.querySelectorAll('#modalFasilitasGrid .facility-chip-edit').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const cb = chip.querySelector('input');
+                    cb.checked = !cb.checked;
+                    chip.classList.toggle('checked', cb.checked);
+                });
+            });
+
+            document.getElementById('btnSimpanRoom').addEventListener('click', () => {
+                const nama = document.getElementById('modalRoomNama').value.trim();
+                const harga = parseFloat(document.getElementById('modalRoomHarga').value);
+                const errEl = document.getElementById('modalRoomError');
+
+                if (!nama) {
+                    errEl.textContent = 'Nama kamar wajib diisi.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                if (!harga || harga <= 0) {
+                    errEl.textContent = 'Harga per malam wajib diisi.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                errEl.style.display = 'none';
+
+                const roomId = document.getElementById('modalRoomId').value;
+                const fasilitas = [...document.querySelectorAll('#modalFasilitasGrid .facility-chip-edit input:checked')]
+                    .map(cb => cb.value);
+
+                const fd = new FormData();
+                fd.append('_aksi', 'simpan_room');
+                fd.append('id', LISTING_ID);
+                fd.append('room_id', roomId || 0);
+                fd.append('nama', nama);
+                fd.append('deskripsi', document.getElementById('modalRoomDeskripsi').value.trim());
+                fd.append('ukuran_m2', document.getElementById('modalRoomUkuran').value || '');
+                fd.append('max_tamu', modalTamuCount);
+                fd.append('harga_malam', harga);
+                fasilitas.forEach(f => fd.append('fasilitas[]', f));
+                if (modalFotoFile) fd.append('foto', modalFotoFile);
+
+                const btn = document.getElementById('btnSimpanRoom');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="ph-bold ph-spinner" style="animation:spin 1s linear infinite"></i> Menyimpan...';
+
+                fetch('', { method: 'POST', body: fd })
+                    .then(r => r.json())
+                    .then(d => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> Simpan Kamar';
+                        if (d.status === 'ok') {
+                            closeRoomModal();
+                            showToast('Kamar disimpan.', 'success');
+                            setTimeout(() => window.location.reload(), 900);
+                        } else {
+                            errEl.textContent = d.message || 'Terjadi kesalahan.';
+                            errEl.style.display = 'block';
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> Simpan Kamar';
+                        showToast('Gagal terhubung ke server.', 'error');
+                    });
+            });
+
+            function deleteRoom(roomId) {
+                if (!confirm('Hapus kamar ini? Tindakan tidak dapat dibatalkan.')) return;
+                const fd = new FormData();
+                fd.append('_aksi', 'hapus_room');
+                fd.append('id', LISTING_ID);
+                fd.append('room_id', roomId);
+                fetch('', { method: 'POST', body: fd })
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.status === 'ok') {
+                            const el = document.querySelector(`.room-entry-edit[data-room-id="${roomId}"]`);
+                            if (el) el.remove();
+                            showToast('Kamar dihapus.', 'success');
+                        } else {
+                            showToast('Gagal hapus kamar.', 'error');
+                        }
+                    })
+                    .catch(() => showToast('Gagal terhubung ke server.', 'error'));
+            }
+        <?php endif; ?>
     </script>
 </body>
 

@@ -152,7 +152,7 @@ function foto_url(?string $f): string
         <div class="nav-indicator"></div>
       </ul>
       <div class="nav-right">
-        <a href="/teman_singgah/host/onboarding/pages/about_place.html">
+        <a href="../../host/dashboard/pages/reservations.php">
           <button class="ghost-button">Ganti ke host</button>
         </a>
         <?php include '../../components/navbar_profile.php'; ?>

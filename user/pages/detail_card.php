@@ -255,7 +255,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         <div class="nav-indicator"></div>
       </ul>
       <div class="nav-right">
-        <a href="../../host/onboarding/pages/about_place.html">
+        <a href="../../host/dashboard/pages/reservations.php">
           <button class="ghost-button">Ganti ke host</button>
         </a>
         <div class="icon-buttons">
