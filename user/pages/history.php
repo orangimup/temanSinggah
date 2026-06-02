@@ -30,54 +30,6 @@ if (!empty($user['photo'])) {
   }
 }
 
-// ── Update booking selesai ────────────────────────────────────────────────────
-$stmt = mysqli_prepare($koneksi, "
-    UPDATE bookings
-    SET status = 'selesai'
-    WHERE status = 'dikonfirmasi'
-      AND checkout < CURDATE()
-      AND user_id = ?
-");
-mysqli_stmt_bind_param($stmt, 'i', $user['id']);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_close($stmt);
-
-// ── Auto-create payout untuk booking yang baru selesai ───────────────────────
-// Ambil booking selesai milik user ini yang belum punya payout
-$stmt = mysqli_prepare($koneksi, "
-    SELECT
-        b.id          AS booking_id,
-        b.total_harga,
-        b.checkout,
-        l.user_id     AS host_id
-    FROM bookings b
-    JOIN listings l ON l.id = b.listing_id
-    WHERE b.user_id    = ?
-      AND b.status     = 'selesai'
-      AND NOT EXISTS (
-          SELECT 1 FROM payouts p WHERE p.booking_id = b.id
-      )
-");
-mysqli_stmt_bind_param($stmt, 'i', $user['id']);
-mysqli_stmt_execute($stmt);
-$new_selesai = mysqli_stmt_get_result($stmt)->fetch_all(MYSQLI_ASSOC);
-mysqli_stmt_close($stmt);
-
-foreach ($new_selesai as $nb) {
-  // Jadwal pencairan 3 hari setelah checkout
-  $scheduled = date('Y-m-d', strtotime($nb['checkout'] . ' +3 days'));
-  $amount    = (int) $nb['total_harga'];
-
-  $ins = mysqli_prepare($koneksi, "
-      INSERT INTO payouts (host_id, booking_id, payout_amount, scheduled_date, status)
-      VALUES (?, ?, ?, ?, 'Dijadwalkan')
-  ");
-  mysqli_stmt_bind_param($ins, 'iiis', $nb['host_id'], $nb['booking_id'], $amount, $scheduled);
-  mysqli_stmt_execute($ins);
-  mysqli_stmt_close($ins);
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 $filter          = $_GET['filter'] ?? 'semua';
 $allowed_filters = ['semua', 'menunggu', 'berlangsung', 'mendatang', 'selesai', 'dibatalkan'];
 if (!in_array($filter, $allowed_filters)) $filter = 'semua';
@@ -100,6 +52,17 @@ switch ($filter) {
     $where_status = "AND b.status = 'dibatalkan'";
     break;
 }
+
+$stmt = mysqli_prepare($koneksi, "
+    UPDATE bookings 
+    SET status = 'selesai' 
+    WHERE status = 'dikonfirmasi' 
+      AND checkout < CURDATE()
+      AND user_id = ?
+");
+mysqli_stmt_bind_param($stmt, 'i', $user['id']);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 $sql = "
     SELECT

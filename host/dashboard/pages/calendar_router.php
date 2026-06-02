@@ -375,8 +375,6 @@ function fmt($n)
                         class="nav-link active">Kalender</a></li>
                 <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/listing.php"
                         class="nav-link">Listing</a></li>
-                <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/messages.php"
-                        class="nav-link">Pesan</a></li>
                 <div class="nav-indicator"></div>
             </ul>
             <div class="nav-right">

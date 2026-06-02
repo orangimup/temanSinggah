@@ -880,10 +880,6 @@ $netEarning = $r['total_harga'] - $serviceFee;
                     <p class="sidebar-title">Tindakan</p>
 
                     <?php if ($r['status_group'] === 'upcoming' || $r['status_group'] === 'ongoing'): ?>
-                        <a href="/teman_singgah/host/dashboard/pages/messages.php?to=<?= (int) $r['user_id'] ?>"
-                            class="btn-block btn-blue">
-                            <i class="ph-bold ph-chat-circle"></i> Hubungi Tamu
-                        </a>
                         <a href="/teman_singgah/host/dashboard/pages/calendar_router.php" class="btn-block btn-gray">
                             <i class="ph-bold ph-calendar-blank"></i> Lihat di Kalender
                         </a>
@@ -892,10 +888,6 @@ $netEarning = $r['total_harga'] - $serviceFee;
                         <button class="btn-block btn-blue">
                             <i class="ph-bold ph-star"></i> Beri Ulasan Tamu
                         </button>
-                        <a href="/teman_singgah/host/dashboard/pages/messages.php?to=<?= (int) $r['user_id'] ?>"
-                            class="btn-block btn-gray">
-                            <i class="ph-bold ph-chat-circle"></i> Hubungi Tamu
-                        </a>
 
                     <?php elseif ($r['status_group'] === 'cancelled'): ?>
                         <a href="/teman_singgah/host/dashboard/pages/listing.php" class="btn-block btn-gray">

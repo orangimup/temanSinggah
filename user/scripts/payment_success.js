@@ -73,7 +73,7 @@ function initCountdown() {
   const countdownEl = document.getElementById("countdown");
   if (!countdownEl) return;
 
-  let seconds = parseInt(countdownEl.textContent, 10) || 10;
+  let seconds = parseInt(countdownEl.textContent, 60) || 60;
 
   const interval = setInterval(() => {
     seconds--;

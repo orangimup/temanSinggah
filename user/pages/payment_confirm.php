@@ -119,7 +119,7 @@ $diskon_amt = $promo_valid ? $subtotal * ($diskon_persen / 100) : 0;
 $biaya_layanan = (int) round(($subtotal - $diskon_amt) * 0.05);
 $total_harga = $subtotal - $diskon_amt + $biaya_layanan;
 
-$dp_persen = 30;
+$dp_persen = 10;
 $dp_amount = (int) round($total_harga * $dp_persen / 100);
 $sisa_bayar = $total_harga - $dp_amount;
 
@@ -239,7 +239,7 @@ unset($_SESSION['booking_error']);
             <div class="expand-radio-row" data-select-pay="later">
               <div>
                 <div class="expand-radio-label">
-                  Bayar DP Rp<?= number_format($dp_amount, 0, ',', '.') ?> sekarang (30%)
+                  Bayar DP Rp<?= number_format($dp_amount, 0, ',', '.') ?> sekarang (<?= $dp_persen ?>%)
                 </div>
                 <div class="expand-radio-desc">
                   Sisa Rp<?= number_format($sisa_bayar, 0, ',', '.') ?> dibayar saat check-in.
@@ -250,7 +250,7 @@ unset($_SESSION['booking_error']);
             </div>
 
             <div class="dp-info-box" id="dpInfoBox" style="display:none;">
-              <strong>Info DP:</strong> Kamu membayar 30% sebagai jaminan reservasi.
+              <strong>Info DP:</strong> Kamu membayar <?= $dp_persen ?>% sebagai jaminan reservasi.
               Sisa <strong>Rp<?= number_format($sisa_bayar, 0, ',', '.') ?></strong> wajib
               dilunasi saat check-in. Jika dibatalkan setelah <strong><?= $batas_batal ?></strong>,
               DP tidak dapat dikembalikan.
@@ -451,7 +451,7 @@ unset($_SESSION['booking_error']);
                   background:#fffbf0; border:1px solid #f5d97a; border-radius:8px;
                   padding:10px 12px; color:#7a5a00; font-size:12.5px; line-height:1.7;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                  <span>Dibayar sekarang (DP 30%)</span>
+                  <span>Dibayar sekarang (DP <?= $dp_persen ?>%)</span>
                   <strong>Rp<?= number_format($dp_amount, 0, ',', '.') ?></strong>
                 </div>
                 <div style="display:flex; justify-content:space-between; color:#a07820;">

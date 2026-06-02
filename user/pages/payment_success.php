@@ -215,7 +215,7 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
       </div>
 
       <p class="success-countdown">
-        Mengalihkan otomatis dalam <strong id="countdown">10</strong> detik
+        Mengalihkan otomatis dalam <strong id="countdown">60</strong> detik
       </p>
 
     </section>
@@ -228,7 +228,7 @@ $metode_tampil = $metode_label[$booking['metode_bayar']] ?? ucfirst($booking['me
 
   <script>
     // Countdown redirect
-    let sisa = 10;
+    let sisa = 60;
     const el = document.getElementById('countdown');
     const timer = setInterval(function () {
       sisa--;

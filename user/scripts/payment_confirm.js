@@ -70,7 +70,7 @@ function applyPayTime(val) {
   if (paySub)
     paySub.textContent = val === "now"
       ? "Bayar penuh " + (window.totalFormatted || "") + " sekarang"
-      : "DP " + (window.dpFormatted || "") + " sekarang (30%)";
+      : "DP " + (window.dpFormatted || "") + " sekarang (10%)";
 
   if (btnLabel)
     btnLabel.textContent = val === "now"
