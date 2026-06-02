@@ -38,13 +38,17 @@ if ($data['status'] === 'Nonaktif') {
     exit;
 }
 
-// Simpan session — photo di-set di sini setelah $data tersedia
 $_SESSION['id']      = $data['id'];
 $_SESSION['user_id'] = $data['user_id'];
 $_SESSION['nama']    = $data['nama'];
 $_SESSION['email']   = $data['email'];
 $_SESSION['role']    = $data['role'];
 $_SESSION['photo']   = $data['photo'] ?? '';
+
+// Ganti bagian hosts dengan ini:
+if ($data['role'] === 'Host') {
+    $_SESSION['host_id'] = $data['id'];
+}
 
 // Redirect sesuai role
 if ($data['role'] === 'Admin') {

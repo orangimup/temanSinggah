@@ -97,7 +97,6 @@ try {
             <ul class="nav-menu">
                 <li class="nav-item"><a href="dashboard/pages/reservations.php" class="nav-link">Reservasi</a></li>
                 <li class="nav-item"><a href="dashboard/pages/listing.php" class="nav-link">Listing</a></li>
-                <li class="nav-item"><a href="dashboard/pages/messages.php" class="nav-link">Pesan</a></li>
                 <li class="nav-item"><a href="dashboard/pages/calendar_router.php" class="nav-link">Kalender</a></li>
                 <div class="nav-indicator"></div>
             </ul>
@@ -306,14 +305,6 @@ try {
                             </div>
                             <i class="ph-bold ph-caret-right qa-arrow"></i>
                         </a>
-                        <a href="dashboard/pages/messages.php" class="quick-action-card">
-                            <div class="qa-icon green"><i class="ph-bold ph-chats"></i></div>
-                            <div class="qa-text">
-                                <span class="qa-title">Pesan Masuk</span>
-                                <span class="qa-desc">Balas pertanyaan tamu</span>
-                            </div>
-                            <i class="ph-bold ph-caret-right qa-arrow"></i>
-                        </a>
                     </div>
 
                 </div><!-- /account-content -->
@@ -340,7 +331,6 @@ try {
                 <ul class="footer-links">
                     <li><a href="dashboard/pages/reservations.php" class="footer-link">Reservasi</a></li>
                     <li><a href="dashboard/pages/listing.php" class="footer-link">Listing</a></li>
-                    <li><a href="dashboard/pages/messages.php" class="footer-link">Pesan</a></li>
                     <li><a href="dashboard/pages/calendar_router.php" class="footer-link">Kalender</a></li>
                 </ul>
             </div>
