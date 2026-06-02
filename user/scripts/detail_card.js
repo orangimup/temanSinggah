@@ -1,15 +1,3 @@
-document.querySelectorAll(".header-button.save").forEach((saveButton) => {
-  saveButton.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const isActive = saveButton.classList.toggle("active");
-    saveButton.innerHTML = isActive
-      ? '<i class="ph-fill ph-heart"></i> Tersimpan!'
-      : '<i class="ph-bold ph-heart"></i> Simpan';
-  });
-});
-
 window.addEventListener("load", () => {
   const mapEl = document.getElementById("propertyMap");
   if (!mapEl) return;
@@ -68,13 +56,9 @@ document.querySelectorAll(".room-button").forEach((btn) => {
   btn.addEventListener("click", () => {
     const card = btn.closest(".room-card");
     if (!card) return;
-
-    document.querySelectorAll(".room-card").forEach((c) => {
-      c.style.outline = "none";
-    });
+    document.querySelectorAll(".room-card").forEach((c) => { c.style.outline = "none"; });
     card.style.outline = "2px solid var(--color-primary)";
     card.style.borderRadius = "var(--radius-3xl)";
-
     const price = parseInt(btn.dataset.price, 10);
     if (!isNaN(price)) {
       const priceAmountEl = document.querySelector(".booking-price-amount");
@@ -86,11 +70,7 @@ document.querySelectorAll(".room-button").forEach((btn) => {
       }
       updateNightsDisplay(price);
     }
-
-    document.querySelector(".booking-sidebar")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    document.querySelector(".booking-sidebar")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
@@ -108,7 +88,6 @@ function updateNightsDisplay(overridePrice) {
     const submitBtn = document.querySelector(".booking-submit");
     submitBtn?.parentNode.insertBefore(el, submitBtn);
   }
-
   if (nights > 0) {
     el.textContent = `${nights} malam dipilih`;
     el.style.display = "block";
@@ -168,13 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
     "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
 
-  function fmtDate(d) {
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  }
-
   function isSameDay(a, b) {
     return a && b &&
       a.getFullYear() === b.getFullYear() &&
@@ -197,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
     checkoutInput.value = rangeEnd ? fmtDisplay(rangeEnd) : "";
     checkinInput.dataset.value = rangeStart ? fmtValue(rangeStart) : "";
     checkoutInput.dataset.value = rangeEnd ? fmtValue(rangeEnd) : "";
-
     if (rangeStart && rangeEnd) {
       const diff = Math.round((rangeEnd - rangeStart) / (1000 * 60 * 60 * 24));
       nights = diff > 0 ? diff : 0;
@@ -258,11 +229,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const date = new Date(y, m - 1, d);
       const cls = ["calendar-day"];
       if (el.classList.contains("today")) cls.push("today");
-
       const pStart = phase === "selecting" && rangeStart && hoverDate &&
         !isSameDay(hoverDate, rangeStart) && hoverDate > rangeStart ? rangeStart : null;
       const pEnd = pStart ? hoverDate : null;
-
       if (phase === "idle" && rangeStart && rangeEnd) {
         const s = rangeStart < rangeEnd ? rangeStart : rangeEnd;
         const e = rangeStart < rangeEnd ? rangeEnd : rangeStart;
@@ -287,14 +256,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderMonth(container, year, month) {
-    container.querySelector(".calendar-month-name").textContent =
-      `${MONTH_NAMES[month]} ${year}`;
+    container.querySelector(".calendar-month-name").textContent = `${MONTH_NAMES[month]} ${year}`;
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const body = container.querySelector(".calendar-body");
     body.innerHTML = "";
     body.addEventListener("mouseleave", onBodyLeave);
-
     for (let i = 0; i < firstDay; i++) {
       const el = document.createElement("div");
       el.className = "calendar-day empty";
@@ -358,7 +325,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ─── FIX: inject calendar HTML directly instead of fetch ─── */
   function loadBookingCalendar() {
     calendarDropdown.innerHTML = `
       <div class="calendar-card">
@@ -397,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
     attachCalendarArrows();
     renderCalendar();
   }
-  /* ─────────────────────────────────────────────────────────── */
 
   function toggleCalendarDropdown() {
     if (!calendarLoaded) return;
@@ -427,7 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadBookingCalendar();
 
-  /* ─────────────────── GUEST COUNTER ──────────────────────── */
   const guestInput = document.getElementById("guestInput");
   const guestDropdown = document.getElementById("bookingGuestDropdown");
   const guestField = document.querySelector(".booking-field:has(#guestInput)");
@@ -443,7 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const anak = getValue("anak");
     const bayi = getValue("bayi");
     const hewan = getValue("hewan");
-
     const parts = [];
     if (dewasa > 0) parts.push(`${dewasa} Pengunjung`);
     if (anak > 0) parts.push(`${anak} Anak`);
@@ -456,7 +419,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const counterItems = guestDropdown.querySelectorAll(".counter-row");
     const dewasaRow = guestDropdown.querySelector('[data-group="dewasa"]');
     const anakRow = guestDropdown.querySelector('[data-group="anak"]');
-
     counterItems.forEach((item) => {
       const minusBtn = item.querySelector(".minus");
       const plusBtn = item.querySelector(".plus");
@@ -472,8 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function updateSiblings() {
         counterItems.forEach((other) => {
-          if (other !== item &&
-            (other.dataset.group === "dewasa" || other.dataset.group === "anak")) {
+          if (other !== item && (other.dataset.group === "dewasa" || other.dataset.group === "anak")) {
             const ov = parseInt(other.querySelector(".counter-value").textContent);
             const om = parseInt(other.dataset.max);
             other.querySelector(".plus").classList.toggle("disabled", ov >= om || getTotal() >= (window.MAX_TAMU || 16));
@@ -512,7 +473,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // SESUDAH
   function loadBookingGuestEager() {
     const maxTamu = window.MAX_TAMU || 16;
     const bolehHewan = window.BOLEH_HEWAN !== false;
@@ -520,7 +480,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const hewanDisabledStyle = !bolehHewan
       ? 'style="opacity:0.4;pointer-events:none;" title="Hewan peliharaan tidak diperbolehkan"'
       : '';
-
     guestDropdown.innerHTML = `
       <div class="counter-list">
         <div class="counter-row" data-min="1" data-max="${maxTamu}" data-group="dewasa">
@@ -545,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-       <div class="counter-row" data-min="0" data-max="5" data-group="bayi">
+        <div class="counter-row" data-min="0" data-max="5" data-group="bayi">
           <div class="counter-info">
             <h3 class="counter-label">Bayi</h3>
             <h4 class="counter-desc">2 Tahun ke Bawah</h4>
@@ -556,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="counter-button plus">+</button>
           </div>
         </div>
-          <div class="counter-row" data-min="0" data-max="${bolehHewan ? 5 : 0}" data-group="hewan" ${hewanDisabledAttr} ${hewanDisabledStyle}>
+        <div class="counter-row" data-min="0" data-max="${bolehHewan ? 5 : 0}" data-group="hewan" ${hewanDisabledAttr} ${hewanDisabledStyle}>
           <div class="counter-info">
             <h3 class="counter-label">Hewan Peliharaan</h3>
             ${!bolehHewan ? '<h4 class="counter-desc" style="color:#c0392b;">Tidak diperbolehkan</h4>' : ''}
@@ -573,6 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadBookingGuestEager();
+
   function toggleGuestDropdown() {
     calendarDropdown?.classList.remove("open");
     if (guestDropdown.classList.contains("open")) {

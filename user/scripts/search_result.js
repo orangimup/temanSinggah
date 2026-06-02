@@ -201,21 +201,6 @@ window.addEventListener("load", () => {
       card.addEventListener(evt, (e) => e.stopPropagation(), { passive: true });
     });
 
-    const saveBtn = card.querySelector(".map-card-button.wishlist");
-    if (saveBtn) {
-      const saveImg = saveBtn.querySelector("img");
-      saveBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isActive = saveBtn.classList.toggle("active");
-        if (saveImg) {
-          saveImg.src = isActive
-            ? "../../assets/icons/save_fill.svg"
-            : "../../assets/icons/save.svg";
-        }
-      });
-    }
-
     const listCard = document.querySelector(`.hotel-card[data-id="${id}"]`);
     if (listCard) {
       listCard.addEventListener("mouseenter", () => {
@@ -225,17 +210,6 @@ window.addEventListener("load", () => {
   });
 
   map.on("click", closeAllCards);
-
-  document.querySelectorAll(".save-button").forEach((saveItem) => {
-    saveItem.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const isActive = saveItem.classList.toggle("active");
-      saveItem.src = isActive
-        ? "../../assets/icons/save_fill.svg"
-        : "../../assets/icons/save.svg";
-    });
-  });
 
   document.getElementById("zoomIn")?.addEventListener("click", () => map.zoomIn());
   document.getElementById("zoomOut")?.addEventListener("click", () => map.zoomOut());
@@ -309,8 +283,8 @@ window.addEventListener("load", () => {
       return v >= 1000000
         ? (v / 1000000).toFixed(1).replace(".0", "") + "jt"
         : v >= 1000
-        ? Math.round(v / 1000) + "rb"
-        : v;
+          ? Math.round(v / 1000) + "rb"
+          : v;
     };
     if (!min && !max) {
       el.textContent = "Semua harga";
@@ -320,8 +294,8 @@ window.addEventListener("load", () => {
         min && max
           ? `Rp ${fmt(min)} – ${fmt(max)}`
           : min
-          ? `Rp ${fmt(min)}+`
-          : `s/d Rp ${fmt(max)}`;
+            ? `Rp ${fmt(min)}+`
+            : `s/d Rp ${fmt(max)}`;
       el.className = "filter-segment-value";
     }
     filterCheckReset();

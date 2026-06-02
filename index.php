@@ -36,7 +36,9 @@ function renderHotelCard($row)
         <a href=\"user/pages/detail_card.php?id={$id}\" class=\"hotel-card\">
           <div class=\"card-image-wrapper\">
             <img src=\"{$foto}\" alt=\"{$judul}\" class=\"card-image\" />
-            <img src=\"assets/icons/save.svg\" alt=\"wishlist\" class=\"save-button\" />
+            <button type=\"button\" class=\"save-button\" aria-label=\"Simpan ke wishlist\" data-listing-id=\"{$id}\">
+              <img src=\"/teman_singgah/assets/icons/save.svg\" alt=\"\" class=\"save-icon\" />
+            </button>
           </div>
           <div class=\"card-content\">
             <div class=\"card-top\">
@@ -428,6 +430,7 @@ $favorit_rows = fetchAll($q_favorit);
   </script>
   <script src="components/navbar.js"></script>
   <script src="components/search_bar.js"></script>
+  <script src="user/scripts/wishlist.js"></script>
 
   <!-- ── Geolocation → Penginapan di Dekat Anda ──────────────────────────── -->
   <script>

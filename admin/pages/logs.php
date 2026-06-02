@@ -78,10 +78,6 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
             <i class="ph-bold ph-star"></i>
             Ulasan
           </a>
-          <a href="reports.php" class="nav-item">
-            <i class="ph-bold ph-flag"></i>
-            Laporan
-          </a>
         </div>
 
         <div class="nav-section">

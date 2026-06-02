@@ -209,7 +209,7 @@ async function loadMessages() {
       const clone = bubbleImageTemplate.content.cloneNode(true);
       const bubble = clone.querySelector(".bubble");
       const grid = clone.querySelector(".bubble-image-grid");
-      bubble.classList.add(msg.is_me ? "you" : "me");
+      bubble.classList.add(msg.is_me ? "me" : "you");
       msg.images.forEach((src) => {
         const img = document.createElement("img");
         img.src = src;

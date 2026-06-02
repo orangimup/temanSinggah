@@ -683,8 +683,6 @@ $promos = $koneksi->query("
                     <div class="nav-section-title">Moderasi</div>
                     <a class="nav-item" href="/teman_singgah/admin/pages/reviews.php"><i
                             class="ph-bold ph-star"></i>Ulasan</a>
-                    <a class="nav-item" href="/teman_singgah/admin/pages/reports.php"><i
-                            class="ph-bold ph-flag"></i>Laporan</a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Keuangan</div>
@@ -773,7 +771,8 @@ $promos = $koneksi->query("
                                             <?php endif; ?>
                                         </td>
                                         <td style="font-weight:700;color:var(--color-primary);font-size:15px;">
-                                            <?= $p['diskon_persen'] ?>%</td>
+                                            <?= $p['diskon_persen'] ?>%
+                                        </td>
                                         <td><?= $p['min_malam'] ?> malam</td>
                                         <td style="max-width:90px;">
                                             <div class="validity-cell"><?= $tgl_dari ?></div>

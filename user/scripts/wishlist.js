@@ -1,160 +1,159 @@
-document.querySelectorAll(".save-button").forEach((saveItem) => {
-  saveItem.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const isActive = saveItem.classList.toggle("active");
-    saveItem.src = isActive
-      ? "/assets/icons/save.svg"
-      : "/assets/icons/save_fill.svg";
-  });
-});
+(function () {
+  'use strict';
 
-window.addEventListener("load", () => {
-  const map = L.map("propertyMap", {
-    center: [-8.5069, 115.2625],
-    zoom: 15,
-    scrollWheelZoom: false,
-    zoomControl: false,
-  });
+  const WISHLIST_URL = '/teman_singgah/user/pages/wishlist.php';
+  const ICON_SAVED = '/teman_singgah/assets/icons/save_fill.svg';
+  const ICON_UNSAVED = '/teman_singgah/assets/icons/save.svg';
 
-  L.tileLayer(
-    "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
-    {
-      attribution: "© MapTiler © OpenStreetMap",
-      tileSize: 512,
-      zoomOffset: -1,
-      maxZoom: 20,
-    },
-  ).addTo(map);
-
-  const properties = [
-    { id: "1", latlng: [-8.5069, 115.2625], price: "Rp 850.000" },
-    { id: "2", latlng: [-8.508, 115.264], price: "Rp 650.000" },
-  ];
-
-  const CardLayer = L.Layer.extend({
-    initialize(latlng, card, options) {
-      this._latlng = latlng;
-      this._card = card;
-      L.setOptions(this, options);
-    },
-
-    onAdd(map) {
-      this._map = map;
-      map.getPane("overlayPane").appendChild(this._card);
-      map.on("zoom move zoomend moveend", this._update, this);
-      this._update();
-    },
-
-    onRemove(map) {
-      map.off("zoom move zoomend moveend", this._update, this);
-    },
-
-    _update() {
-      if (!this._map || !this._card) return;
-      const pos = this._map.latLngToLayerPoint(this._latlng);
-      const cardW = this._card.offsetWidth || 260;
-      const cardH = this._card.offsetHeight || 220;
-      L.DomUtil.setPosition(
-        this._card,
-        L.point(pos.x - cardW / 2, pos.y - cardH - 28),
-      );
-    },
-  });
-
-  function closeAllCards() {
-    document.querySelectorAll(".map-property-card.open").forEach((c) => {
-      c.classList.remove("open");
-    });
+  function extractIdFromHref(href) {
+    if (!href) return null;
+    const match = href.match(/[?&]id=(\d+)/);
+    return match ? parseInt(match[1]) : null;
   }
 
-  properties.forEach(({ id, latlng, price }) => {
-    const latLng = L.latLng(...latlng);
+  function getListingId(btn) {
+    if (btn.dataset.listingId) return parseInt(btn.dataset.listingId);
+    const card = btn.closest('a[href*="id="], [data-id]');
+    if (!card) return null;
+    return card.dataset.id
+      ? parseInt(card.dataset.id)
+      : extractIdFromHref(card.getAttribute('href'));
+  }
 
-    const icon = L.divIcon({
-      html: `<i class="ph-fill ph-map-pin" style="font-size:32px;color:#8b2500;display:block;"></i>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      className: "",
-    });
+  function setSaved(btn, saved) {
+    if (btn.id === 'btnSave') {
+      btn.classList.toggle('active', saved);
+      btn.innerHTML = saved
+        ? '<i class="ph-fill ph-heart"></i> Tersimpan'
+        : '<i class="ph-bold ph-heart"></i> Simpan';
+      return;
+    }
+    if (btn.tagName === 'BUTTON') {
+      const img = btn.querySelector('img');
+      if (img) img.src = saved ? ICON_SAVED : ICON_UNSAVED;
+      btn.classList.toggle('active', saved);
+    } else if (btn.tagName === 'IMG') {
+      btn.src = saved ? ICON_SAVED : ICON_UNSAVED;
+      btn.classList.toggle('active', saved);
+    } else {
+      const img = btn.querySelector('img');
+      if (img) img.src = saved ? ICON_SAVED : ICON_UNSAVED;
+      btn.classList.toggle('active', saved);
+    }
+  }
 
-    const marker = L.marker(latLng, { icon }).addTo(map);
+  function isSaved(btn) {
+    return btn.classList.contains('active');
+  }
 
-    const card = document.querySelector(
-      `.map-property-card[data-marker-id="${id}"]`,
-    );
-    if (!card) return;
+  async function syncStatus() {
+    try {
+      const res = await fetch(WISHLIST_URL + '?action=status');
+      const data = await res.json();
+      if (data.status !== 'ok') return;
 
-    const cardLayer = new CardLayer(latLng, card);
-    cardLayer.addTo(map);
+      const savedSet = new Set(data.saved_ids);
 
-    function openCard() {
-      closeAllCards();
-      card.classList.add("open");
-      cardLayer._update();
+      document.querySelectorAll('.save-button').forEach(btn => {
+        const id = getListingId(btn);
+        if (id) setSaved(btn, savedSet.has(id));
+      });
+
+      document.querySelectorAll('.map-card-button.wishlist').forEach(btn => {
+        const card = btn.closest('.map-property-card[data-marker-id]');
+        if (!card) return;
+        const id = parseInt(card.dataset.markerId);
+        if (id) setSaved(btn, savedSet.has(id));
+      });
+
+      const btnSave = document.getElementById('btnSave');
+      if (btnSave) {
+        const id = parseInt(btnSave.dataset.listingId);
+        if (id) setSaved(btnSave, savedSet.has(id));
+      }
+    } catch (_) { }
+  }
+
+  async function handleToggle(e, btn, listingId) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      const overlay = document.getElementById('authOverlay');
+      if (overlay) {
+        overlay.classList.add('active');
+        document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('authStepPilih')?.classList.add('active');
+      }
+      return;
     }
 
-    function closeCard() {
-      card.classList.remove("open");
+    const wasSaved = isSaved(btn);
+    setSaved(btn, !wasSaved);
+
+    try {
+      const fd = new FormData();
+      fd.append('action', 'toggle');
+      fd.append('listing_id', listingId);
+      const res = await fetch(WISHLIST_URL, { method: 'POST', body: fd });
+      const data = await res.json();
+
+      if (data.status === 'ok') {
+        setSaved(btn, data.saved);
+        syncSameListingButtons(listingId, data.saved);
+      } else {
+        setSaved(btn, wasSaved);
+        if (data.message === 'login_required') {
+          document.getElementById('authOverlay')?.classList.add('active');
+        }
+      }
+    } catch (_) {
+      setSaved(btn, wasSaved);
     }
+  }
 
-    marker.on("click", (e) => {
-      L.DomEvent.stopPropagation(e);
-      card.classList.contains("open") ? closeCard() : openCard();
+  function syncSameListingButtons(listingId, saved) {
+    document.querySelectorAll('.save-button').forEach(btn => {
+      if (getListingId(btn) === listingId) setSaved(btn, saved);
     });
+    document.querySelectorAll('.map-card-button.wishlist').forEach(btn => {
+      const card = btn.closest('.map-property-card[data-marker-id]');
+      if (card && parseInt(card.dataset.markerId) === listingId) setSaved(btn, saved);
+    });
+    const btnSave = document.getElementById('btnSave');
+    if (btnSave && parseInt(btnSave.dataset.listingId) === listingId) {
+      setSaved(btnSave, saved);
+    }
+  }
 
-    card.querySelector(".map-card-close")?.addEventListener("click", (e) => {
+  document.addEventListener('click', function (e) {
+    const saveBtn = e.target.closest('.save-button');
+    if (saveBtn) {
       e.preventDefault();
       e.stopPropagation();
-      closeCard();
-    });
+      const id = getListingId(saveBtn);
+      if (id) handleToggle(e, saveBtn, id);
+      return;
+    }
 
-    card.addEventListener("mouseenter", () => {
-      map.dragging.disable();
-      map.scrollWheelZoom.disable();
-      map.doubleClickZoom.disable();
-      map.touchZoom.disable();
-      map.boxZoom.disable();
-      map.keyboard.disable();
-    });
+    const mapWishlist = e.target.closest('.map-card-button.wishlist');
+    if (mapWishlist) {
+      const card = mapWishlist.closest('.map-property-card[data-marker-id]');
+      if (card) handleToggle(e, mapWishlist, parseInt(card.dataset.markerId));
+      return;
+    }
 
-    card.addEventListener("mouseleave", () => {
-      map.dragging.enable();
-      map.doubleClickZoom.enable();
-      map.touchZoom.enable();
-      map.boxZoom.enable();
-      map.keyboard.enable();
-    });
-
-    ["click", "dblclick", "mousedown"].forEach((evt) => {
-      card.addEventListener(evt, (e) => e.stopPropagation());
-    });
-    ["touchstart", "touchmove", "wheel"].forEach((evt) => {
-      card.addEventListener(evt, (e) => e.stopPropagation(), { passive: true });
-    });
-
-    const saveBtn = card.querySelector(".map-card-button.wishlist");
-    if (saveBtn) {
-      const saveImg = saveBtn.querySelector("img");
-      saveBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const isActive = saveBtn.classList.toggle("active");
-        if (saveImg) {
-          saveImg.src = isActive
-            ? "/assets/icons/save.svg"
-            : "/assets/icons/save_fill.svg";
-        }
-      });
+    const btnSave = e.target.closest('#btnSave');
+    if (btnSave) {
+      const id = parseInt(btnSave.dataset.listingId);
+      if (id) handleToggle(e, btnSave, id);
     }
   });
 
-  map.on("click", closeAllCards);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncStatus);
+  } else {
+    syncStatus();
+  }
 
-  document
-    .getElementById("zoomIn")
-    ?.addEventListener("click", () => map.zoomIn());
-  document
-    .getElementById("zoomOut")
-    ?.addEventListener("click", () => map.zoomOut());
-});
+})();

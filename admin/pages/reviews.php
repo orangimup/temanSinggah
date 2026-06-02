@@ -460,7 +460,6 @@ function potong_teks(string $teks, int $maks = 80): string
           <div class="nav-section-title">Moderasi</div>
           <a href="/teman_singgah/admin/pages/reviews.php" class="nav-item active"><i class="ph-bold ph-star"></i>
             Ulasan</a>
-          <a href="/teman_singgah/admin/pages/reports.php" class="nav-item"><i class="ph-bold ph-flag"></i> Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>

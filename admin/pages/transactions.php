@@ -642,7 +642,6 @@ function initials(string $name): string
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
           <a href="../pages/reviews.php" class="nav-item"><i class="ph-bold ph-star"></i>Ulasan</a>
-          <a href="../pages/reports.php" class="nav-item"><i class="ph-bold ph-flag"></i>Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>

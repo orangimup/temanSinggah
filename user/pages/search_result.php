@@ -2,50 +2,65 @@
 session_start();
 include "../../koneksi.php";
 
-$isLoggedIn  = isset($_SESSION['nama']);
+$isLoggedIn = isset($_SESSION['nama']);
 $userInitial = $isLoggedIn ? strtoupper(mb_substr($_SESSION['nama'], 0, 1)) : '';
-$userName    = $isLoggedIn ? $_SESSION['nama'] : '';
-$userPhoto   = '';
+$userName = $isLoggedIn ? $_SESSION['nama'] : '';
+$userPhoto = '';
 if (!empty($_SESSION['photo']) && file_exists("../../assets/uploads/photos/" . $_SESSION['photo'])) {
   $userPhoto = "/teman_singgah/assets/uploads/photos/" . htmlspecialchars($_SESSION['photo']);
 }
 
-$keyword   = trim($_GET['q']        ?? '');
-$checkin   = trim($_GET['checkin']  ?? '');
-$checkout  = trim($_GET['checkout'] ?? '');
-$tamu      = (int)($_GET['tamu']      ?? 0);
-$harga_min = (int)($_GET['harga_min'] ?? 0);
-$harga_max = (int)($_GET['harga_max'] ?? 0);
-$sort      = $_GET['sort'] ?? 'relevan';
+$keyword = trim($_GET['q'] ?? '');
+$checkin = trim($_GET['checkin'] ?? '');
+$checkout = trim($_GET['checkout'] ?? '');
+$tamu = (int) ($_GET['tamu'] ?? 0);
+$harga_min = (int) ($_GET['harga_min'] ?? 0);
+$harga_max = (int) ($_GET['harga_max'] ?? 0);
+$sort = $_GET['sort'] ?? 'relevan';
 
-$where  = ["l.status = 'aktif'"];
+$where = ["l.status = 'aktif'"];
 $params = [];
-$types  = '';
+$types = '';
 
 if ($keyword !== '') {
-  $where[]  = "(l.judul LIKE ? OR l.lokasi LIKE ? OR l.deskripsi LIKE ?)";
-  $like     = "%{$keyword}%";
-  $params[] = $like; $params[] = $like; $params[] = $like;
-  $types   .= 'sss';
+  $where[] = "(l.judul LIKE ? OR l.lokasi LIKE ? OR l.deskripsi LIKE ?)";
+  $like = "%{$keyword}%";
+  $params[] = $like;
+  $params[] = $like;
+  $params[] = $like;
+  $types .= 'sss';
 }
-if ($harga_min > 0) { $where[] = "l.harga_malam >= ?"; $params[] = $harga_min; $types .= 'i'; }
-if ($harga_max > 0) { $where[] = "l.harga_malam <= ?"; $params[] = $harga_max; $types .= 'i'; }
-if ($tamu > 0)      { $where[] = "l.max_tamu >= ?";    $params[] = $tamu;      $types .= 'i'; }
+if ($harga_min > 0) {
+  $where[] = "l.harga_malam >= ?";
+  $params[] = $harga_min;
+  $types .= 'i';
+}
+if ($harga_max > 0) {
+  $where[] = "l.harga_malam <= ?";
+  $params[] = $harga_max;
+  $types .= 'i';
+}
+if ($tamu > 0) {
+  $where[] = "l.max_tamu >= ?";
+  $params[] = $tamu;
+  $types .= 'i';
+}
 if ($checkin !== '' && $checkout !== '') {
-  $where[]  = "l.id NOT IN (
+  $where[] = "l.id NOT IN (
       SELECT b.listing_id FROM bookings b
       WHERE b.status NOT IN ('dibatalkan','ditolak')
       AND NOT (b.checkout <= ? OR b.checkin >= ?))";
-  $params[] = $checkin; $params[] = $checkout;
-  $types   .= 'ss';
+  $params[] = $checkin;
+  $params[] = $checkout;
+  $types .= 'ss';
 }
 
 $where_sql = implode(' AND ', $where);
 $order_sql = match ($sort) {
-  'harga_asc'  => 'l.harga_malam ASC',
+  'harga_asc' => 'l.harga_malam ASC',
   'harga_desc' => 'l.harga_malam DESC',
-  'rating'     => 'rating_avg DESC',
-  default      => 'l.dibuat_pada DESC',
+  'rating' => 'rating_avg DESC',
+  default => 'l.dibuat_pada DESC',
 };
 
 $sql = "
@@ -68,14 +83,17 @@ $sql = "
 $listings = [];
 $stmt = mysqli_prepare($koneksi, $sql);
 if ($stmt) {
-  if ($types) mysqli_stmt_bind_param($stmt, $types, ...$params);
+  if ($types)
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
   mysqli_stmt_execute($stmt);
   $res = mysqli_stmt_get_result($stmt);
-  while ($row = mysqli_fetch_assoc($res)) $listings[] = $row;
+  while ($row = mysqli_fetch_assoc($res))
+    $listings[] = $row;
 }
 ?>
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -89,7 +107,9 @@ if ($stmt) {
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 </head>
@@ -117,7 +137,8 @@ if ($stmt) {
           <?php if ($isLoggedIn): ?>
             <button class="icon-button profile" aria-label="Profile" <?= $userPhoto ? 'style="padding:0;overflow:hidden;"' : '' ?>>
               <?php if ($userPhoto): ?>
-                <img src="<?= $userPhoto ?>" alt="Foto Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                <img src="<?= $userPhoto ?>" alt="Foto Profil"
+                  style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
               <?php else: ?>
                 <?= htmlspecialchars($userInitial) ?>
               <?php endif; ?>
@@ -147,10 +168,14 @@ if ($stmt) {
           <div class="filter-dropdown" id="ddDest" onclick="event.stopPropagation()">
             <p class="filter-dropdown-title">Populer</p>
             <div class="filter-dest-item" onclick="filterPickDest('Bali')"><i class="ph-bold ph-map-pin"></i>Bali</div>
-            <div class="filter-dest-item" onclick="filterPickDest('Bandung')"><i class="ph-bold ph-map-pin"></i>Bandung</div>
-            <div class="filter-dest-item" onclick="filterPickDest('Yogyakarta')"><i class="ph-bold ph-map-pin"></i>Yogyakarta</div>
-            <div class="filter-dest-item" onclick="filterPickDest('Jakarta')"><i class="ph-bold ph-map-pin"></i>Jakarta</div>
-            <div class="filter-dest-item" onclick="filterPickDest('Lombok')"><i class="ph-bold ph-map-pin"></i>Lombok</div>
+            <div class="filter-dest-item" onclick="filterPickDest('Bandung')"><i class="ph-bold ph-map-pin"></i>Bandung
+            </div>
+            <div class="filter-dest-item" onclick="filterPickDest('Yogyakarta')"><i
+                class="ph-bold ph-map-pin"></i>Yogyakarta</div>
+            <div class="filter-dest-item" onclick="filterPickDest('Jakarta')"><i class="ph-bold ph-map-pin"></i>Jakarta
+            </div>
+            <div class="filter-dest-item" onclick="filterPickDest('Lombok')"><i class="ph-bold ph-map-pin"></i>Lombok
+            </div>
           </div>
         </div>
 
@@ -165,24 +190,28 @@ if ($stmt) {
             <p class="filter-dropdown-title">Pilih rentang</p>
             <div class="filter-preset-grid">
               <div class="filter-preset-chip" data-min="0" data-max="300000" onclick="filterPickPreset(this)">
-                <p class="prange">s/d Rp 300rb</p><p class="ptag">Budget</p>
+                <p class="prange">s/d Rp 300rb</p>
+                <p class="ptag">Budget</p>
               </div>
               <div class="filter-preset-chip" data-min="300000" data-max="700000" onclick="filterPickPreset(this)">
-                <p class="prange">300rb – 700rb</p><p class="ptag">Standar</p>
+                <p class="prange">300rb – 700rb</p>
+                <p class="ptag">Standar</p>
               </div>
               <div class="filter-preset-chip" data-min="700000" data-max="1500000" onclick="filterPickPreset(this)">
-                <p class="prange">700rb – 1,5jt</p><p class="ptag">Premium</p>
+                <p class="prange">700rb – 1,5jt</p>
+                <p class="ptag">Premium</p>
               </div>
               <div class="filter-preset-chip" data-min="1500000" data-max="0" onclick="filterPickPreset(this)">
-                <p class="prange">Rp 1,5jt+</p><p class="ptag">Mewah</p>
+                <p class="prange">Rp 1,5jt+</p>
+                <p class="ptag">Mewah</p>
               </div>
             </div>
             <div class="filter-price-custom">
-              <input type="number" id="filterPMin" placeholder="Min" step="50000"
-                value="<?= $harga_min ?: '' ?>" oninput="filterSyncPrice()" />
+              <input type="number" id="filterPMin" placeholder="Min" step="50000" value="<?= $harga_min ?: '' ?>"
+                oninput="filterSyncPrice()" />
               <span class="filter-price-dash">—</span>
-              <input type="number" id="filterPMax" placeholder="Max" step="50000"
-                value="<?= $harga_max ?: '' ?>" oninput="filterSyncPrice()" />
+              <input type="number" id="filterPMax" placeholder="Max" step="50000" value="<?= $harga_max ?: '' ?>"
+                oninput="filterSyncPrice()" />
             </div>
           </div>
         </div>
@@ -192,24 +221,33 @@ if ($stmt) {
         <div class="filter-segment" id="segSort" onclick="filterToggleDD('ddSort',event)" style="flex:1">
           <span class="filter-segment-label">Urutkan</span>
           <span class="filter-segment-value" id="filterSortVal">
-            <?= match($sort) {
-              'rating'     => 'Rating tertinggi',
-              'harga_asc'  => 'Harga terendah',
+            <?= match ($sort) {
+              'rating' => 'Rating tertinggi',
+              'harga_asc' => 'Harga terendah',
               'harga_desc' => 'Harga tertinggi',
-              default      => 'Relevan'
+              default => 'Relevan'
             } ?>
           </span>
           <input type="hidden" name="sort" id="filterSortInput" value="<?= htmlspecialchars($sort) ?>" />
-          <div class="filter-dropdown" id="ddSort" style="min-width:200px;left:auto;right:0;" onclick="event.stopPropagation()">
+          <div class="filter-dropdown" id="ddSort" style="min-width:200px;left:auto;right:0;"
+            onclick="event.stopPropagation()">
             <p class="filter-dropdown-title">Tampilkan</p>
-            <div class="filter-sort-item <?= $sort==='relevan'?'on':'' ?>" onclick="filterPickSort('relevan','Relevan',this)">
-              <i class="ph-bold ph-list"></i>Relevan</div>
-            <div class="filter-sort-item <?= $sort==='rating'?'on':'' ?>" onclick="filterPickSort('rating','Rating tertinggi',this)">
-              <i class="ph-bold ph-star"></i>Rating tertinggi</div>
-            <div class="filter-sort-item <?= $sort==='harga_asc'?'on':'' ?>" onclick="filterPickSort('harga_asc','Harga terendah',this)">
-              <i class="ph-bold ph-sort-ascending"></i>Harga terendah</div>
-            <div class="filter-sort-item <?= $sort==='harga_desc'?'on':'' ?>" onclick="filterPickSort('harga_desc','Harga tertinggi',this)">
-              <i class="ph-bold ph-sort-descending"></i>Harga tertinggi</div>
+            <div class="filter-sort-item <?= $sort === 'relevan' ? 'on' : '' ?>"
+              onclick="filterPickSort('relevan','Relevan',this)">
+              <i class="ph-bold ph-list"></i>Relevan
+            </div>
+            <div class="filter-sort-item <?= $sort === 'rating' ? 'on' : '' ?>"
+              onclick="filterPickSort('rating','Rating tertinggi',this)">
+              <i class="ph-bold ph-star"></i>Rating tertinggi
+            </div>
+            <div class="filter-sort-item <?= $sort === 'harga_asc' ? 'on' : '' ?>"
+              onclick="filterPickSort('harga_asc','Harga terendah',this)">
+              <i class="ph-bold ph-sort-ascending"></i>Harga terendah
+            </div>
+            <div class="filter-sort-item <?= $sort === 'harga_desc' ? 'on' : '' ?>"
+              onclick="filterPickSort('harga_desc','Harga tertinggi',this)">
+              <i class="ph-bold ph-sort-descending"></i>Harga tertinggi
+            </div>
           </div>
         </div>
 
@@ -237,23 +275,25 @@ if ($stmt) {
             </div>
           <?php else: ?>
             <?php foreach ($listings as $row):
-              $foto   = !empty($row['foto_cover'])
+              $foto = !empty($row['foto_cover'])
                 ? (str_starts_with($row['foto_cover'], 'http')
-                    ? $row['foto_cover']
-                    : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
+                  ? $row['foto_cover']
+                  : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
                 : '/teman_singgah/assets/images/apurva_kempinski_bali.jpg';
-              $harga  = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
+              $harga = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
               $rating = isset($row['rating_avg']) && $row['rating_avg'] !== null ? $row['rating_avg'] : '–';
-              $judul  = htmlspecialchars($row['judul']);
-              $parts  = array_map('trim', explode(',', $row['lokasi']));
+              $judul = htmlspecialchars($row['judul']);
+              $parts = array_map('trim', explode(',', $row['lokasi']));
               $lokasi = htmlspecialchars(implode(', ', array_slice($parts, 0, 2)));
-              $id     = (int)$row['id'];
-              $ulasan = (int)$row['jumlah_review'];
-            ?>
+              $id = (int) $row['id'];
+              $ulasan = (int) $row['jumlah_review'];
+              ?>
               <a href="detail_card.php?id=<?= $id ?>" class="hotel-card" data-id="<?= $id ?>">
                 <div class="card-image-container">
                   <img src="<?= $foto ?>" alt="<?= $judul ?>" class="card-image" />
-                  <img src="../../assets/icons/save.svg" alt="wishlist" class="save-button" />
+                  <button type="button" class="save-button" aria-label="Simpan ke wishlist" data-listing-id="<?= $id ?>">
+                    <img src="../../assets/icons/save.svg" alt="" class="save-icon" />
+                  </button>
                 </div>
                 <div class="card-content">
                   <div class="card-top">
@@ -294,17 +334,18 @@ if ($stmt) {
           <?php foreach ($listings as $row):
             $fotoMap = !empty($row['foto_cover'])
               ? (str_starts_with($row['foto_cover'], 'http')
-                  ? $row['foto_cover']
-                  : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
+                ? $row['foto_cover']
+                : '/teman_singgah/assets/uploads/listings/' . htmlspecialchars($row['foto_cover']))
               : '/teman_singgah/assets/images/apurva_kempinski_bali.jpg';
-            $hargaMap  = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
+            $hargaMap = 'Rp ' . number_format($row['harga_malam'], 0, ',', '.');
             $ratingMap = $row['rating_avg'] ?: '–';
-            $judulMap  = htmlspecialchars($row['judul']);
-            $parts     = array_map('trim', explode(',', $row['lokasi']));
+            $judulMap = htmlspecialchars($row['judul']);
+            $parts = array_map('trim', explode(',', $row['lokasi']));
             $lokasiMap = htmlspecialchars(array_shift($parts) ?? '');
-            $idMap     = (int)$row['id'];
-            if (empty($row['latitude']) || empty($row['longitude'])) continue;
-          ?>
+            $idMap = (int) $row['id'];
+            if (empty($row['latitude']) || empty($row['longitude']))
+              continue;
+            ?>
             <a href="detail_card.php?id=<?= $idMap ?>" class="map-property-card" data-marker-id="<?= $idMap ?>">
               <div class="map-card-image-wrap">
                 <img src="<?= $fotoMap ?>" alt="<?= $judulMap ?>" class="map-card-image" />
@@ -340,7 +381,8 @@ if ($stmt) {
     <div class="footer-grid">
       <div class="footer-column">
         <span class="footer-brand">Teman Singgah</span>
-        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang
+          hingga homestay lokal.</p>
         <div class="footer-social">
           <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
           <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
@@ -385,11 +427,13 @@ if ($stmt) {
       <div class="auth-step active" id="authStepPilih">
         <div class="auth-header-section">
           <div class="empty-div"></div>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth"><i
+              class="ph-bold ph-x"></i></button>
         </div>
         <div class="auth-body-section">
           <div class="auth-logo-container">
-            <div class="auth-logo"><img class="auth-logo-image" src="../../assets/logo/logo_temansinggah.svg" alt="Teman Singgah" /></div>
+            <div class="auth-logo"><img class="auth-logo-image" src="../../assets/logo/logo_temansinggah.svg"
+                alt="Teman Singgah" /></div>
             <h2 class="auth-title center">Selamat datang</h2>
             <p class="auth-subtitle center">Masuk atau buat akun baru untuk mulai memesan.</p>
           </div>
@@ -402,16 +446,23 @@ if ($stmt) {
       <div class="auth-step" id="authStepLogin">
         <form action="/teman_singgah/auth/proses_login.php" method="POST" autocomplete="off">
           <div class="auth-header-section">
-            <button type="button" class="auth-nav-button" data-action="ke-pilih"><i class="ph-bold ph-caret-left"></i></button>
+            <button type="button" class="auth-nav-button" data-action="ke-pilih"><i
+                class="ph-bold ph-caret-left"></i></button>
             <button type="button" class="auth-nav-button" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
           </div>
           <div class="auth-body-section">
-            <div><h2 class="auth-title">Masuk</h2><p class="auth-subtitle">Masukkan email dan password kamu.</p></div>
+            <div>
+              <h2 class="auth-title">Masuk</h2>
+              <p class="auth-subtitle">Masukkan email dan password kamu.</p>
+            </div>
             <div class="auth-fields">
-              <fieldset class="auth-field"><legend class="auth-input-label">Email</legend>
-                <div class="auth-input-group"><input type="email" name="email" class="auth-input" placeholder="contoh@email.com" required /></div>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Email</legend>
+                <div class="auth-input-group"><input type="email" name="email" class="auth-input"
+                    placeholder="contoh@email.com" required /></div>
               </fieldset>
-              <fieldset class="auth-field"><legend class="auth-input-label">Password</legend>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
                   <input type="password" name="password" class="auth-input" placeholder="Masukkan password" required />
                   <button type="button" class="auth-toggle-password"><i class="ph-bold ph-eye"></i></button>
@@ -423,29 +474,41 @@ if ($stmt) {
           <div class="auth-footer-section">
             <div id="pesanLogin"></div>
             <button class="auth-submit-button" type="submit">Masuk</button>
-            <p class="auth-switch-text">Belum punya akun? <button type="button" class="auth-switch-link" id="btnSwitchKeDaftar">Daftar sekarang</button></p>
+            <p class="auth-switch-text">Belum punya akun? <button type="button" class="auth-switch-link"
+                id="btnSwitchKeDaftar">Daftar sekarang</button></p>
           </div>
         </form>
       </div>
       <div class="auth-step" id="authStepDaftar1">
         <form action="/teman_singgah/auth/proses_register.php" method="POST" autocomplete="off">
           <div class="auth-header-section">
-            <button type="button" class="auth-nav-button" data-action="ke-pilih"><i class="ph-bold ph-caret-left"></i></button>
+            <button type="button" class="auth-nav-button" data-action="ke-pilih"><i
+                class="ph-bold ph-caret-left"></i></button>
             <button type="button" class="auth-nav-button" data-action="close-auth"><i class="ph-bold ph-x"></i></button>
           </div>
           <div class="auth-body-section">
-            <div><h2 class="auth-title">Buat akun</h2><p class="auth-subtitle">Isi data di bawah untuk membuat akun baru.</p></div>
+            <div>
+              <h2 class="auth-title">Buat akun</h2>
+              <p class="auth-subtitle">Isi data di bawah untuk membuat akun baru.</p>
+            </div>
             <div class="auth-fields">
-              <fieldset class="auth-field"><legend class="auth-input-label">Nama</legend>
-                <div class="auth-input-group"><input type="text" name="nama" class="auth-input" placeholder="Masukkan namamu" required /></div>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Nama</legend>
+                <div class="auth-input-group"><input type="text" name="nama" class="auth-input"
+                    placeholder="Masukkan namamu" required /></div>
               </fieldset>
-              <fieldset class="auth-field"><legend class="auth-input-label">Email</legend>
-                <div class="auth-input-group"><input type="email" name="email" class="auth-input" placeholder="contoh@email.com" required /></div>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Email</legend>
+                <div class="auth-input-group"><input type="email" name="email" class="auth-input"
+                    placeholder="contoh@email.com" required /></div>
               </fieldset>
-              <fieldset class="auth-field"><legend class="auth-input-label">No. HP</legend>
-                <div class="auth-input-group"><input type="tel" name="no_hp" class="auth-input" placeholder="Masukkan nomormu" required /></div>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">No. HP</legend>
+                <div class="auth-input-group"><input type="tel" name="no_hp" class="auth-input"
+                    placeholder="Masukkan nomormu" required /></div>
               </fieldset>
-              <fieldset class="auth-field"><legend class="auth-input-label">Password</legend>
+              <fieldset class="auth-field">
+                <legend class="auth-input-label">Password</legend>
                 <div class="auth-input-group auth-password-group">
                   <input type="password" name="password" class="auth-input" placeholder="Minimal 8 karakter" required />
                   <button type="button" class="auth-toggle-password"><i class="ph-bold ph-eye"></i></button>
@@ -456,7 +519,8 @@ if ($stmt) {
           <div class="auth-footer-section">
             <div id="pesanDaftar"></div>
             <button class="auth-submit-button" type="submit">Buat akun</button>
-            <p class="auth-switch-text">Sudah punya akun? <button type="button" class="auth-switch-link" id="btnSwitchKeLogin">Masuk</button></p>
+            <p class="auth-switch-text">Sudah punya akun? <button type="button" class="auth-switch-link"
+                id="btnSwitchKeLogin">Masuk</button></p>
           </div>
         </form>
       </div>
@@ -465,10 +529,10 @@ if ($stmt) {
 
   <script>
     <?php if ($isLoggedIn): ?>
-      localStorage.setItem('isLoggedIn',  'true');
+      localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userInitial', '<?= htmlspecialchars($userInitial) ?>');
-      localStorage.setItem('userName',    '<?= htmlspecialchars($userName) ?>');
-      localStorage.setItem('userPhoto',   '<?= $userPhoto ?>');
+      localStorage.setItem('userName', '<?= htmlspecialchars($userName) ?>');
+      localStorage.setItem('userPhoto', '<?= $userPhoto ?>');
     <?php else: ?>
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userInitial');
@@ -479,14 +543,15 @@ if ($stmt) {
 
   <script>
     window.MAP_MARKERS = <?= json_encode(array_values(array_filter(
-      array_map(function($r) {
-        if (empty($r['latitude']) || empty($r['longitude'])) return null;
-        return [
-          'id'     => (int)$r['id'],
-          'latlng' => [(float)$r['latitude'], (float)$r['longitude']],
-          'price'  => 'Rp ' . number_format($r['harga_malam'], 0, ',', '.'),
-        ];
-      }, $listings)
+      array_map(function ($r) {
+      if (empty($r['latitude']) || empty($r['longitude']))
+        return null;
+      return [
+        'id' => (int) $r['id'],
+        'latlng' => [(float) $r['latitude'], (float) $r['longitude']],
+        'price' => 'Rp ' . number_format($r['harga_malam'], 0, ',', '.'),
+      ];
+    }, $listings)
     ))) ?>;
   </script>
 
@@ -494,5 +559,7 @@ if ($stmt) {
   <script src="../../components/navbar.js"></script>
   <script src="../../popups/auth.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="../scripts/wishlist.js"></script>
 </body>
+
 </html>

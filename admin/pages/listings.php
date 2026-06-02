@@ -880,7 +880,6 @@ while ($r = mysqli_fetch_assoc($am_result)) {
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
           <a class="nav-item" href="/teman_singgah/admin/pages/reviews.php"><i class="ph-bold ph-star"></i>Ulasan</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/reports.php"><i class="ph-bold ph-flag"></i>Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>

@@ -278,7 +278,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
         <button class="header-button share" id="btnShare">
           <i class="ph-bold ph-share"></i> Bagikan
         </button>
-        <button class="header-button save" id="btnSave">
+        <button class="header-button save" id="btnSave" data-listing-id="<?= $listing_id ?>">
           <i class="ph-bold ph-heart"></i> Simpan
         </button>
       </div>
@@ -829,32 +829,6 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
       }
     });
 
-    const SAVE_KEY = 'saved_listings';
-    const listingId = <?= $listing_id ?>;
-    const btnSave = document.getElementById('btnSave');
-
-    function getSaved() {
-      try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '[]'); } catch { return []; }
-    }
-    function updateSaveBtn() {
-      const saved = getSaved().includes(listingId);
-      btnSave.classList.toggle('active', saved);
-      btnSave.innerHTML = saved
-        ? '<i class="ph-fill ph-heart"></i> Tersimpan'
-        : '<i class="ph-bold ph-heart"></i> Simpan';
-    }
-
-    btnSave?.addEventListener('click', () => {
-      let saved = getSaved();
-      saved = saved.includes(listingId)
-        ? saved.filter(id => id !== listingId)
-        : [...saved, listingId];
-      localStorage.setItem(SAVE_KEY, JSON.stringify(saved));
-      updateSaveBtn();
-    });
-
-    updateSaveBtn();
-
     (function () {
       const BASE_PRICE = <?= (int) $listing['harga_malam'] ?>;
       const HAS_ROOMS = <?= !empty($rooms) ? 'true' : 'false' ?>;
@@ -877,13 +851,11 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
       function clearSelection() {
         selectedRoomId = null;
         roomIdInput.value = '';
-
         document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
         document.querySelectorAll('.room-book-btn').forEach(b => {
           b.classList.remove('is-selected');
           b.textContent = 'Pilih Kamar';
         });
-
         priceEl.textContent = formatRupiah(BASE_PRICE);
         selectedRoomEl.classList.remove('visible');
         selectedRoomName.textContent = '';
@@ -893,7 +865,6 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
       function selectRoom(roomId, roomName, roomPrice) {
         selectedRoomId = roomId;
         roomIdInput.value = roomId;
-
         document.querySelectorAll('.room-card').forEach(c => {
           c.classList.toggle('selected', c.dataset.roomId === roomId);
         });
@@ -902,14 +873,10 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           b.classList.toggle('is-selected', isThis);
           b.textContent = isThis ? '✓ Dipilih' : 'Pilih Kamar';
         });
-
         priceEl.textContent = formatRupiah(roomPrice);
-
         selectedRoomName.textContent = roomName;
         selectedRoomEl.classList.add('visible');
-
         if (noRoomWarning) noRoomWarning.classList.remove('visible');
-
         document.querySelector('.booking-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
@@ -918,12 +885,7 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           const roomId = btn.dataset.roomId;
           const roomName = btn.dataset.roomName;
           const roomPrice = btn.dataset.roomPrice;
-
-          if (selectedRoomId === roomId) {
-            clearSelection();
-            return;
-          }
-
+          if (selectedRoomId === roomId) { clearSelection(); return; }
           selectRoom(roomId, roomName, roomPrice);
         });
       });
@@ -938,23 +900,59 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
           }
           return;
         }
-
         const checkin = document.getElementById('checkinInput')?.dataset.value || '';
         const checkout = document.getElementById('checkoutInput')?.dataset.value || '';
         const promo = document.getElementById('promoInput')?.value || '';
         const guest = document.getElementById('guestInput')?.value || '';
-
         let url = `./payment_confirm.php?listing_id=${BASE_LISTING_ID}`;
         if (selectedRoomId) url += `&room_id=${encodeURIComponent(selectedRoomId)}`;
         if (checkin) url += `&checkin=${encodeURIComponent(checkin)}`;
         if (checkout) url += `&checkout=${encodeURIComponent(checkout)}`;
         if (guest) url += `&jumlah_tamu=${encodeURIComponent(guest)}`;
         if (promo) url += `&promo=${encodeURIComponent(promo)}`;
-
         window.location.href = url;
       });
     })();
   </script>
+
+  <script>
+    <?php if (isset($_SESSION['id'])): ?>
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userInitial', '<?= htmlspecialchars(strtoupper(mb_substr($_SESSION['nama'] ?? '', 0, 1))) ?>');
+      localStorage.setItem('userName', '<?= htmlspecialchars($_SESSION['nama'] ?? '') ?>');
+    <?php else: ?>
+      localStorage.removeItem('isLoggedIn');
+    <?php endif; ?>
+  </script>
+
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-form-card">
+      <div class="auth-step active" id="authStepPilih">
+        <div class="auth-header-section">
+          <div class="empty-div"></div>
+          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+        <div class="auth-body-section">
+          <div class="auth-logo-container">
+            <div class="auth-logo">
+              <img class="auth-logo-image" src="../../assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
+            </div>
+            <h2 class="auth-title center">Selamat datang</h2>
+            <p class="auth-subtitle center">Masuk atau buat akun baru untuk mulai memesan.</p>
+          </div>
+          <div class="auth-fields">
+            <button class="auth-submit-button" type="button" id="btnKeLogin">Masuk</button>
+            <button class="auth-submit-button outline" type="button" id="btnKeDaftar">Daftar akun baru</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../popups/auth.js"></script>
+  <script src="../scripts/wishlist.js"></script>
 </body>
 
 </html>

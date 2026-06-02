@@ -418,7 +418,6 @@ function build_url(array $overrides = []): string
         <div class="nav-section">
           <div class="nav-section-title">Moderasi</div>
           <a href="reviews.php" class="nav-item"><i class="ph-bold ph-star"></i>Ulasan</a>
-          <a href="reports.php" class="nav-item"><i class="ph-bold ph-flag"></i>Laporan</a>
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Keuangan</div>
