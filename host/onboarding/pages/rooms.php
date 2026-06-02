@@ -5,364 +5,389 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
 ?>
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pilihan Kamar | Teman Singgah</title>
-    <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
-    <link rel="stylesheet" href="../../../components/root.css" />
-    <link rel="stylesheet" href="../../../components/navbar.css" />
-    <link rel="stylesheet" href="../onboarding.css" />
-    <link rel="stylesheet" href="../rooms.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
-  </head>
 
-  <body class="onboarding-page">
-    <header class="navbar">
-      <nav class="navbar-container">
-        <a href="../../../index.php" class="logo-link"></a>
-        <div class="logo-section">
-          <img src="../../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
-          <img src="../../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
-        </div>
-        <div class="header-actions">
-          <a href="../../../user/pages/messages.html"><button class="ghost-button">Pertanyaan?</button></a>
-          <a href="../../../index.php"><button class="ghost-button">Simpan & keluar</button></a>
-        </div>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilihan Kamar | Teman Singgah</title>
+  <link rel="icon" href="../../../assets/logo/logo_temansinggah.svg" />
+  <link rel="stylesheet" href="../../../components/root.css" />
+  <link rel="stylesheet" href="../../../components/navbar.css" />
+  <link rel="stylesheet" href="../onboarding.css" />
+  <link rel="stylesheet" href="../rooms.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+</head>
 
-    <main class="main-content wide">
-      <div class="page-header">
-        <h2>Pilihan kamar yang tersedia</h2>
-        <p>Tambahkan tipe-tipe kamar yang bisa dipesan tamu. Minimal 1 kamar diperlukan.</p>
+<body class="onboarding-page">
+  <header class="navbar">
+    <nav class="navbar-container">
+      <a href="../../../index.php" class="logo-link"></a>
+      <div class="logo-section">
+        <img src="../../../assets/logo/logo_temansinggah.svg" alt="Logo Teman Singgah" class="logo-icon" />
+        <img src="../../../assets/logo/label_temansinggah.svg" alt="Brand Name Teman Singgah" class="logo-name" />
       </div>
+      <div class="header-actions">
+        <a href="../../../user/pages/messages.html"><button class="ghost-button">Pertanyaan?</button></a>
+        <a href="../../../index.php"><button class="ghost-button">Simpan & keluar</button></a>
+      </div>
+    </nav>
+  </header>
 
-      <div id="roomsList" class="rooms-list">
-        <?php if (!empty($saved_rooms)): ?>
-          <?php foreach ($saved_rooms as $i => $room): ?>
-            <div class="room-entry" data-index="<?= $i ?>">
-              <div class="room-entry-header">
-                <div class="room-entry-info">
-                  <span class="room-entry-name"><?= htmlspecialchars($room['nama']) ?></span>
-                  <span class="room-entry-meta">
-                    <?= $room['ukuran_m2'] ? $room['ukuran_m2'] . ' m² · ' : '' ?>
-                    <?= $room['max_tamu'] ?> tamu ·
-                    Rp <?= number_format($room['harga_malam'], 0, ',', '.') ?>/malam
-                  </span>
-                </div>
-                <div class="room-entry-actions">
-                  <button class="room-edit-btn" onclick="editRoom(<?= $i ?>)">
-                    <i class="ph-bold ph-pencil-simple"></i> Edit
-                  </button>
-                  <button class="room-delete-btn" onclick="deleteRoom(<?= $i ?>)">
-                    <i class="ph-bold ph-trash"></i>
-                  </button>
-                </div>
+  <main class="main-content wide">
+    <div class="page-header">
+      <h2>Pilihan kamar yang tersedia</h2>
+      <p>Tambahkan tipe-tipe kamar yang bisa dipesan tamu. Minimal 1 kamar diperlukan.</p>
+    </div>
+
+    <div id="roomsList" class="rooms-list">
+      <?php if (!empty($saved_rooms)): ?>
+        <?php foreach ($saved_rooms as $i => $room): ?>
+          <div class="room-entry" data-index="<?= $i ?>">
+            <div class="room-entry-header">
+              <div class="room-entry-info">
+                <span class="room-entry-name"><?= htmlspecialchars($room['nama']) ?></span>
+                <span class="room-entry-meta">
+                  <?= $room['ukuran_m2'] ? $room['ukuran_m2'] . ' m² · ' : '' ?>
+                  <?= $room['max_tamu'] ?> tamu ·
+                  Rp <?= number_format($room['harga_malam'], 0, ',', '.') ?>/malam
+                </span>
               </div>
-            </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </div>
-
-      <button class="add-room-btn" id="btnTambahKamar">
-        <i class="ph-bold ph-plus-circle"></i>
-        Tambah Tipe Kamar
-      </button>
-
-      <div id="roomFormCard" class="room-form-card" style="display:none;">
-        <div class="room-form-header">
-          <h3 id="roomFormTitle">Tambah Tipe Kamar</h3>
-          <button class="room-form-close" id="btnTutupForm">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-
-        <div class="room-form-body">
-          <input type="hidden" id="editIndex" value="-1" />
-
-          <div class="form-row two-col">
-            <div class="form-group">
-              <label for="roomNama">Nama Kamar <span class="required">*</span></label>
-              <input type="text" id="roomNama" placeholder="cth: Kamar Standar, Suite Deluxe..." maxlength="100" />
-            </div>
-            <div class="form-group">
-              <label for="roomHarga">Harga per Malam (Rp) <span class="required">*</span></label>
-              <input type="number" id="roomHarga" placeholder="cth: 850000" min="0" />
-            </div>
-          </div>
-
-          <div class="form-row two-col">
-            <div class="form-group">
-              <label for="roomUkuran">Ukuran Kamar (m²)</label>
-              <input type="number" id="roomUkuran" placeholder="cth: 24" min="1" />
-            </div>
-            <div class="form-group">
-              <label for="roomMaxTamu">Kapasitas Tamu <span class="required">*</span></label>
-              <div class="counter-input">
-                <button type="button" class="counter-btn" id="btnTamuMin">
-                  <i class="ph-bold ph-minus"></i>
+              <div class="room-entry-actions">
+                <button class="room-edit-btn" onclick="editRoom(<?= $i ?>)">
+                  <i class="ph-bold ph-pencil-simple"></i> Edit
                 </button>
-                <span id="tamuCount">2</span>
-                <button type="button" class="counter-btn" id="btnTamuPlus">
-                  <i class="ph-bold ph-plus"></i>
+                <button class="room-delete-btn" onclick="deleteRoom(<?= $i ?>)">
+                  <i class="ph-bold ph-trash"></i>
                 </button>
               </div>
             </div>
           </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
 
+    <button class="add-room-btn" id="btnTambahKamar">
+      <i class="ph-bold ph-plus-circle"></i>
+      Tambah Tipe Kamar
+    </button>
+
+    <div id="roomFormCard" class="room-form-card" style="display:none;">
+      <div class="room-form-header">
+        <h3 id="roomFormTitle">Tambah Tipe Kamar</h3>
+        <button class="room-form-close" id="btnTutupForm">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <div class="room-form-body">
+        <input type="hidden" id="editIndex" value="-1" />
+
+        <div class="form-row two-col">
           <div class="form-group">
-            <label for="roomDeskripsi">Deskripsi Singkat</label>
-            <textarea id="roomDeskripsi" rows="2" maxlength="300"
-              placeholder="cth: Kamar nyaman dengan kasur king size dan pemandangan taman..."></textarea>
+            <label for="roomNama">Nama Kamar <span class="required">*</span></label>
+            <input type="text" id="roomNama" placeholder="cth: Kamar Standar, Suite Deluxe..." maxlength="100" />
           </div>
-
           <div class="form-group">
-            <label>Foto Kamar</label>
-            <input type="file" id="roomFoto" accept="image/*" style="display:none;" />
-            <div class="foto-upload-area" id="fotoPreview" onclick="document.getElementById('roomFoto').click()">
-              <div class="foto-placeholder" id="fotoPlaceholder">
-                <i class="ph-bold ph-camera"></i>
-                <span>Pilih foto kamar</span>
-                <small>Format gambar apapun, maks. 2MB</small>
-              </div>
-              <img id="fotoImg" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" />
-              <button type="button" id="btnHapusFoto" style="display:none;" onclick="event.stopPropagation(); hapusFoto()">
-                <i class="ph-bold ph-x"></i>
+            <label for="roomHarga">Harga per Malam (Rp) <span class="required">*</span></label>
+            <input type="number" id="roomHarga" placeholder="cth: 850000" min="0" />
+          </div>
+        </div>
+
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="roomUkuran">Ukuran Kamar (m²)</label>
+            <input type="number" id="roomUkuran" placeholder="cth: 24" min="1" />
+          </div>
+          <div class="form-group">
+            <label for="roomMaxTamu">Kapasitas Tamu <span class="required">*</span></label>
+            <div class="counter-input">
+              <button type="button" class="counter-btn" id="btnTamuMin">
+                <i class="ph-bold ph-minus"></i>
+              </button>
+              <span id="tamuCount">2</span>
+              <button type="button" class="counter-btn" id="btnTamuPlus">
+                <i class="ph-bold ph-plus"></i>
               </button>
             </div>
           </div>
+        </div>
 
-          <div class="form-group">
-            <label>Fasilitas Kamar</label>
-            <div class="room-facilities-grid">
-              <?php
-              $fasilitas_kamar = [
-                'Kasur Twin'        => 'ph-bed',
-                'Kasur Double'      => 'ph-bed',
-                'Kasur Queen'       => 'ph-bed',
-                'Kasur King'        => 'ph-bed',
-                'Kamar Mandi Dalam' => 'ph-shower',
-                'Bathtub'           => 'ph-bathtub',
-                'TV LED'            => 'ph-television',
-                'Minibar'           => 'ph-wine',
-                'Balkon'            => 'ph-door-open',
-                'AC'                => 'ph-snowflake',
-                'Brankas'           => 'ph-lock-key',
-                'Meja Kerja'        => 'ph-desk',
-                'Sofa'              => 'ph-armchair',
-              ];
-              foreach ($fasilitas_kamar as $nama => $icon): ?>
-                <label class="facility-chip">
-                  <input type="checkbox" name="room_fasilitas[]" value="<?= $nama ?>" />
-                  <span><i class="ph-bold <?= $icon ?>"></i> <?= $nama ?></span>
-                </label>
-              <?php endforeach; ?>
-            </div>
-          </div>
-
-          <div id="roomFormError" class="form-error" style="display:none;"></div>
-
-          <div class="room-form-footer">
-            <button type="button" class="cancel-btn" id="btnBatalForm">Batal</button>
-            <button type="button" class="save-room-btn" id="btnSimpanKamar">
-              <i class="ph-bold ph-floppy-disk"></i> Simpan Kamar
+        <div class="form-group">
+          <label for="roomStok">Jumlah Kamar Tersedia <span class="required">*</span></label>
+          <div class="counter-input">
+            <button type="button" class="counter-btn" id="btnStokMin">
+              <i class="ph-bold ph-minus"></i>
+            </button>
+            <span id="stokCount">1</span>
+            <button type="button" class="counter-btn" id="btnStokPlus">
+              <i class="ph-bold ph-plus"></i>
             </button>
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="roomDeskripsi">Deskripsi Singkat</label>
+          <textarea id="roomDeskripsi" rows="2" maxlength="300"
+            placeholder="cth: Kamar nyaman dengan kasur king size dan pemandangan taman..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Foto Kamar</label>
+          <input type="file" id="roomFoto" accept="image/*" style="display:none;" />
+          <div class="foto-upload-area" id="fotoPreview" onclick="document.getElementById('roomFoto').click()">
+            <div class="foto-placeholder" id="fotoPlaceholder">
+              <i class="ph-bold ph-camera"></i>
+              <span>Pilih foto kamar</span>
+              <small>Format gambar apapun, maks. 2MB</small>
+            </div>
+            <img id="fotoImg" src="" alt=""
+              style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" />
+            <button type="button" id="btnHapusFoto" style="display:none;"
+              onclick="event.stopPropagation(); hapusFoto()">
+              <i class="ph-bold ph-x"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Fasilitas Kamar</label>
+          <div class="room-facilities-grid">
+            <?php
+            $fasilitas_kamar = [
+              'Kasur Twin' => 'ph-bed',
+              'Kasur Double' => 'ph-bed',
+              'Kasur Queen' => 'ph-bed',
+              'Kasur King' => 'ph-bed',
+              'Kamar Mandi Dalam' => 'ph-shower',
+              'Bathtub' => 'ph-bathtub',
+              'TV LED' => 'ph-television',
+              'Minibar' => 'ph-wine',
+              'Balkon' => 'ph-door-open',
+              'AC' => 'ph-snowflake',
+              'Brankas' => 'ph-lock-key',
+              'Meja Kerja' => 'ph-desk',
+              'Sofa' => 'ph-armchair',
+            ];
+            foreach ($fasilitas_kamar as $nama => $icon): ?>
+              <label class="facility-chip">
+                <input type="checkbox" name="room_fasilitas[]" value="<?= $nama ?>" />
+                <span><i class="ph-bold <?= $icon ?>"></i> <?= $nama ?></span>
+              </label>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div id="roomFormError" class="form-error" style="display:none;"></div>
+
+        <div class="room-form-footer">
+          <button type="button" class="cancel-btn" id="btnBatalForm">Batal</button>
+          <button type="button" class="save-room-btn" id="btnSimpanKamar">
+            <i class="ph-bold ph-floppy-disk"></i> Simpan Kamar
+          </button>
+        </div>
       </div>
+    </div>
 
-      <p id="roomsError" class="rooms-error" style="display:none;">
-        <i class="ph-bold ph-warning"></i> Tambahkan minimal 1 tipe kamar sebelum melanjutkan.
-      </p>
-    </main>
+    <p id="roomsError" class="rooms-error" style="display:none;">
+      <i class="ph-bold ph-warning"></i> Tambahkan minimal 1 tipe kamar sebelum melanjutkan.
+    </p>
+  </main>
 
-    <footer class="onboarding-footer">
-      <div class="progress-bar">
-        <div class="progress-segment completed"></div>
-        <div class="progress-segment completed"></div>
-        <div class="progress-segment"></div>
-      </div>
-      <div class="footer-actions">
-        <a href="amenities.php" class="back-button">Kembali</a>
-        <button class="next-button" id="btnSelanjutnya">Selanjutnya</button>
-      </div>
-    </footer>
+  <footer class="onboarding-footer">
+    <div class="progress-bar">
+      <div class="progress-segment completed"></div>
+      <div class="progress-segment completed"></div>
+      <div class="progress-segment"></div>
+    </div>
+    <div class="footer-actions">
+      <a href="amenities.php" class="back-button">Kembali</a>
+      <button class="next-button" id="btnSelanjutnya">Selanjutnya</button>
+    </div>
+  </footer>
 
-    <script>
-      let rooms = <?= json_encode($saved_rooms) ?>;
-      let tamuCount = 2;
-      let currentFotoFile = null;
-      let currentFotoName = '';
+  <script>
+    let rooms = <?= json_encode($saved_rooms) ?>;
+    let tamuCount = 2;
+    let currentFotoFile = null;
+    let currentFotoName = '';
+    let stokCount = 1;
 
-      document.getElementById('btnTamuMin').addEventListener('click', () => {
-        if (tamuCount > 1) { tamuCount--; updateTamuDisplay(); }
-      });
-      document.getElementById('btnTamuPlus').addEventListener('click', () => {
-        if (tamuCount < 20) { tamuCount++; updateTamuDisplay(); }
-      });
-      function updateTamuDisplay() {
-        document.getElementById('tamuCount').textContent = tamuCount;
+    document.getElementById('btnStokMin').addEventListener('click', () => {
+      if (stokCount > 1) { stokCount--; document.getElementById('stokCount').textContent = stokCount; }
+    });
+    document.getElementById('btnStokPlus').addEventListener('click', () => {
+      if (stokCount < 50) { stokCount++; document.getElementById('stokCount').textContent = stokCount; }
+    });
+
+    document.getElementById('btnTamuMin').addEventListener('click', () => {
+      if (tamuCount > 1) { tamuCount--; updateTamuDisplay(); }
+    });
+    document.getElementById('btnTamuPlus').addEventListener('click', () => {
+      if (tamuCount < 20) { tamuCount++; updateTamuDisplay(); }
+    });
+    function updateTamuDisplay() {
+      document.getElementById('tamuCount').textContent = tamuCount;
+    }
+
+    document.getElementById('roomFoto').addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('File harus berupa gambar.');
+        this.value = '';
+        return;
       }
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran foto maksimal 2MB.');
+        this.value = '';
+        return;
+      }
+      currentFotoFile = file;
+      currentFotoName = file.name;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('fotoImg').src = e.target.result;
+        document.getElementById('fotoImg').style.display = 'block';
+        document.getElementById('fotoPlaceholder').style.display = 'none';
+        document.getElementById('btnHapusFoto').style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    });
 
-      document.getElementById('roomFoto').addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) return;
-        if (!file.type.startsWith('image/')) {
-          alert('File harus berupa gambar.');
-          this.value = '';
-          return;
+    function hapusFoto() {
+      document.getElementById('fotoImg').src = '';
+      document.getElementById('fotoImg').style.display = 'none';
+      document.getElementById('fotoPlaceholder').style.display = 'flex';
+      document.getElementById('btnHapusFoto').style.display = 'none';
+      document.getElementById('roomFoto').value = '';
+      currentFotoFile = null;
+      currentFotoName = '';
+    }
+
+    document.getElementById('btnTambahKamar').addEventListener('click', () => openForm(-1));
+    document.getElementById('btnTutupForm').addEventListener('click', closeForm);
+    document.getElementById('btnBatalForm').addEventListener('click', closeForm);
+
+    function resetFotoPreview() {
+      document.getElementById('fotoImg').src = '';
+      document.getElementById('fotoImg').style.display = 'none';
+      document.getElementById('fotoPlaceholder').style.display = 'flex';
+      document.getElementById('btnHapusFoto').style.display = 'none';
+      document.getElementById('roomFoto').value = '';
+      currentFotoFile = null;
+      currentFotoName = '';
+    }
+
+    function openForm(index) {
+      document.getElementById('editIndex').value = index;
+      document.getElementById('roomFormTitle').textContent =
+        index === -1 ? 'Tambah Tipe Kamar' : 'Edit Tipe Kamar';
+      document.getElementById('roomFormError').style.display = 'none';
+
+      document.getElementById('roomNama').value = '';
+      document.getElementById('roomHarga').value = '';
+      document.getElementById('roomUkuran').value = '';
+      document.getElementById('roomDeskripsi').value = '';
+      tamuCount = 2;
+      updateTamuDisplay();
+      document.querySelectorAll('input[name="room_fasilitas[]"]').forEach(cb => cb.checked = false);
+      resetFotoPreview();
+
+      if (index >= 0 && rooms[index]) {
+        const r = rooms[index];
+        document.getElementById('roomNama').value = r.nama || '';
+        document.getElementById('roomHarga').value = r.harga_malam || '';
+        document.getElementById('roomUkuran').value = r.ukuran_m2 || '';
+        document.getElementById('roomDeskripsi').value = r.deskripsi || '';
+        tamuCount = r.max_tamu || 2;
+        updateTamuDisplay();
+        if (Array.isArray(r.fasilitas)) {
+          r.fasilitas.forEach(f => {
+            const cb = document.querySelector(`input[name="room_fasilitas[]"][value="${f}"]`);
+            if (cb) cb.checked = true;
+          });
         }
-        if (file.size > 2 * 1024 * 1024) {
-          alert('Ukuran foto maksimal 2MB.');
-          this.value = '';
-          return;
-        }
-        currentFotoFile = file;
-        currentFotoName = file.name;
-        const reader = new FileReader();
-        reader.onload = e => {
-          document.getElementById('fotoImg').src = e.target.result;
+        if (r.foto) {
+          currentFotoName = r.foto;
+          document.getElementById('fotoImg').src = `../../../uploads/rooms/${r.foto}`;
           document.getElementById('fotoImg').style.display = 'block';
           document.getElementById('fotoPlaceholder').style.display = 'none';
           document.getElementById('btnHapusFoto').style.display = 'flex';
-        };
-        reader.readAsDataURL(file);
-      });
-
-      function hapusFoto() {
-        document.getElementById('fotoImg').src = '';
-        document.getElementById('fotoImg').style.display = 'none';
-        document.getElementById('fotoPlaceholder').style.display = 'flex';
-        document.getElementById('btnHapusFoto').style.display = 'none';
-        document.getElementById('roomFoto').value = '';
-        currentFotoFile = null;
-        currentFotoName = '';
+        }
       }
 
-      document.getElementById('btnTambahKamar').addEventListener('click', () => openForm(-1));
-      document.getElementById('btnTutupForm').addEventListener('click', closeForm);
-      document.getElementById('btnBatalForm').addEventListener('click', closeForm);
+      document.getElementById('roomFormCard').style.display = 'block';
+      document.getElementById('roomFormCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
-      function resetFotoPreview() {
-        document.getElementById('fotoImg').src = '';
-        document.getElementById('fotoImg').style.display = 'none';
-        document.getElementById('fotoPlaceholder').style.display = 'flex';
-        document.getElementById('btnHapusFoto').style.display = 'none';
-        document.getElementById('roomFoto').value = '';
-        currentFotoFile = null;
-        currentFotoName = '';
+    function closeForm() {
+      document.getElementById('roomFormCard').style.display = 'none';
+    }
+
+    document.getElementById('btnSimpanKamar').addEventListener('click', () => {
+      const nama = document.getElementById('roomNama').value.trim();
+      const harga = parseFloat(document.getElementById('roomHarga').value);
+      const errEl = document.getElementById('roomFormError');
+
+      if (!nama) {
+        errEl.textContent = 'Nama kamar wajib diisi.';
+        errEl.style.display = 'flex';
+        return;
+      }
+      if (!harga || harga <= 0) {
+        errEl.textContent = 'Harga per malam wajib diisi.';
+        errEl.style.display = 'flex';
+        return;
+      }
+      errEl.style.display = 'none';
+
+      const fasilitas = [...document.querySelectorAll('input[name="room_fasilitas[]"]:checked')]
+        .map(cb => cb.value);
+
+      const room = {
+        nama: nama,
+        deskripsi: document.getElementById('roomDeskripsi').value.trim(),
+        ukuran_m2: parseInt(document.getElementById('roomUkuran').value) || null,
+        max_tamu: tamuCount,
+        stok: stokCount,
+        harga_malam: harga,
+        fasilitas: fasilitas,
+        foto: currentFotoName,
+        _fotoFile: currentFotoFile,
+      };
+
+      const idx = parseInt(document.getElementById('editIndex').value);
+      if (idx >= 0) {
+        rooms[idx] = room;
+      } else {
+        rooms.push(room);
       }
 
-      function openForm(index) {
-        document.getElementById('editIndex').value = index;
-        document.getElementById('roomFormTitle').textContent =
-          index === -1 ? 'Tambah Tipe Kamar' : 'Edit Tipe Kamar';
-        document.getElementById('roomFormError').style.display = 'none';
+      renderRooms();
+      closeForm();
+      document.getElementById('roomsError').style.display = 'none';
+    });
 
-        document.getElementById('roomNama').value      = '';
-        document.getElementById('roomHarga').value     = '';
-        document.getElementById('roomUkuran').value    = '';
-        document.getElementById('roomDeskripsi').value = '';
-        tamuCount = 2;
-        updateTamuDisplay();
-        document.querySelectorAll('input[name="room_fasilitas[]"]').forEach(cb => cb.checked = false);
-        resetFotoPreview();
-
-        if (index >= 0 && rooms[index]) {
-          const r = rooms[index];
-          document.getElementById('roomNama').value      = r.nama        || '';
-          document.getElementById('roomHarga').value     = r.harga_malam || '';
-          document.getElementById('roomUkuran').value    = r.ukuran_m2   || '';
-          document.getElementById('roomDeskripsi').value = r.deskripsi   || '';
-          tamuCount = r.max_tamu || 2;
-          updateTamuDisplay();
-          if (Array.isArray(r.fasilitas)) {
-            r.fasilitas.forEach(f => {
-              const cb = document.querySelector(`input[name="room_fasilitas[]"][value="${f}"]`);
-              if (cb) cb.checked = true;
-            });
-          }
-          if (r.foto) {
-            currentFotoName = r.foto;
-            document.getElementById('fotoImg').src = `../../../uploads/rooms/${r.foto}`;
-            document.getElementById('fotoImg').style.display = 'block';
-            document.getElementById('fotoPlaceholder').style.display = 'none';
-            document.getElementById('btnHapusFoto').style.display = 'flex';
-          }
-        }
-
-        document.getElementById('roomFormCard').style.display = 'block';
-        document.getElementById('roomFormCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      function closeForm() {
-        document.getElementById('roomFormCard').style.display = 'none';
-      }
-
-      document.getElementById('btnSimpanKamar').addEventListener('click', () => {
-        const nama  = document.getElementById('roomNama').value.trim();
-        const harga = parseFloat(document.getElementById('roomHarga').value);
-        const errEl = document.getElementById('roomFormError');
-
-        if (!nama) {
-          errEl.textContent = 'Nama kamar wajib diisi.';
-          errEl.style.display = 'flex';
-          return;
-        }
-        if (!harga || harga <= 0) {
-          errEl.textContent = 'Harga per malam wajib diisi.';
-          errEl.style.display = 'flex';
-          return;
-        }
-        errEl.style.display = 'none';
-
-        const fasilitas = [...document.querySelectorAll('input[name="room_fasilitas[]"]:checked')]
-          .map(cb => cb.value);
-
-        const room = {
-          nama:        nama,
-          deskripsi:   document.getElementById('roomDeskripsi').value.trim(),
-          ukuran_m2:   parseInt(document.getElementById('roomUkuran').value) || null,
-          max_tamu:    tamuCount,
-          harga_malam: harga,
-          fasilitas:   fasilitas,
-          foto:        currentFotoName,
-          _fotoFile:   currentFotoFile,
-        };
-
-        const idx = parseInt(document.getElementById('editIndex').value);
-        if (idx >= 0) {
-          rooms[idx] = room;
-        } else {
-          rooms.push(room);
-        }
-
+    function editRoom(index) { openForm(index); }
+    function deleteRoom(index) {
+      if (confirm('Hapus kamar ini?')) {
+        rooms.splice(index, 1);
         renderRooms();
-        closeForm();
-        document.getElementById('roomsError').style.display = 'none';
-      });
-
-      function editRoom(index)   { openForm(index); }
-      function deleteRoom(index) {
-        if (confirm('Hapus kamar ini?')) {
-          rooms.splice(index, 1);
-          renderRooms();
-        }
       }
+    }
 
-      function renderRooms() {
-        const list = document.getElementById('roomsList');
-        list.innerHTML = '';
-        rooms.forEach((r, i) => {
-          const meta = [
-            r.ukuran_m2 ? r.ukuran_m2 + ' m²' : null,
-            r.max_tamu + ' tamu',
-            'Rp ' + Number(r.harga_malam).toLocaleString('id-ID') + '/malam',
-          ].filter(Boolean).join(' · ');
+    function renderRooms() {
+      const list = document.getElementById('roomsList');
+      list.innerHTML = '';
+      rooms.forEach((r, i) => {
+        const meta = [
+          r.ukuran_m2 ? r.ukuran_m2 + ' m²' : null,
+          r.max_tamu + ' tamu',
+          'Rp ' + Number(r.harga_malam).toLocaleString('id-ID') + '/malam',
+        ].filter(Boolean).join(' · ');
 
-          list.innerHTML += `
+        list.innerHTML += `
             <div class="room-entry" data-index="${i}">
               <div class="room-entry-header">
                 <div class="room-entry-info">
@@ -379,32 +404,32 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
                 </div>
               </div>
             </div>`;
-        });
+      });
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    document.getElementById('btnSelanjutnya').addEventListener('click', () => {
+      if (rooms.length === 0) {
+        document.getElementById('roomsError').style.display = 'flex';
+        return;
       }
 
-      function escHtml(str) {
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      }
+      const formData = new FormData();
+      formData.append('rooms_json', JSON.stringify(rooms.map(r => {
+        const { _fotoFile, ...rest } = r;
+        return rest;
+      })));
+      rooms.forEach((r, i) => {
+        if (r._fotoFile) formData.append(`foto_${i}`, r._fotoFile);
+      });
 
-      document.getElementById('btnSelanjutnya').addEventListener('click', () => {
-        if (rooms.length === 0) {
-          document.getElementById('roomsError').style.display = 'flex';
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('rooms_json', JSON.stringify(rooms.map(r => {
-          const { _fotoFile, ...rest } = r;
-          return rest;
-        })));
-        rooms.forEach((r, i) => {
-          if (r._fotoFile) formData.append(`foto_${i}`, r._fotoFile);
-        });
-
-        fetch('save_rooms.php', {
-          method: 'POST',
-          body: formData
-        })
+      fetch('save_rooms.php', {
+        method: 'POST',
+        body: formData
+      })
         .then(res => res.json())
         .then(data => {
           if (data.status === 'ok') {
@@ -414,7 +439,8 @@ $saved_rooms = isset($_SESSION['onboarding']['rooms']) ? $_SESSION['onboarding']
           }
         })
         .catch(() => alert('Terjadi kesalahan jaringan.'));
-      });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

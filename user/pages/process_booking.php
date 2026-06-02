@@ -186,6 +186,11 @@ if ($stmt->execute()) {
     $booking_id = $koneksi->insert_id;
     $stmt->close();
 
+    if ($room_id) {
+        require_once 'check_room_stock.php';
+        syncRoomStock($koneksi, $listing_id, $room_id);
+    }
+
     $jumlah_trx = $dp_amount;
     $trx_no_hp = $no_hp ?: null;
     $trx_nama_kartu = $nama_kartu ?: null;

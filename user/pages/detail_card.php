@@ -142,6 +142,69 @@ if (!$policies) {
 
 $jam_checkin = substr($policies['jam_checkin'], 0, 5);
 $jam_checkout = substr($policies['jam_checkout'], 0, 5);
+
+// Ambil tanggal yang tidak tersedia
+$unavailable = [];
+
+// Booked dates
+$stmt = mysqli_prepare($koneksi, "SELECT checkin, checkout FROM bookings WHERE listing_id = ? AND status IN ('menunggu','dikonfirmasi')");
+mysqli_stmt_bind_param($stmt, 'i', $listing_id);
+mysqli_stmt_execute($stmt);
+$bookings_result = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+mysqli_stmt_close($stmt);
+
+foreach ($bookings_result as $b) {
+  $period = new DatePeriod(new DateTime($b['checkin']), new DateInterval('P1D'), new DateTime($b['checkout']));
+  foreach ($period as $d)
+    $unavailable[] = $d->format('Y-m-d');
+}
+
+// Blocked dates
+$stmt = mysqli_prepare($koneksi, "SELECT blocked_date FROM blocked_dates WHERE listing_id = ? AND unlocked_at IS NULL");
+mysqli_stmt_bind_param($stmt, 'i', $listing_id);
+mysqli_stmt_execute($stmt);
+$blocked_result = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+mysqli_stmt_close($stmt);
+
+// Auto-blocked dari stok kamar penuh (real-time)
+$r_total = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM listing_rooms WHERE listing_id = $listing_id");
+$total_rooms = $r_total ? (int) mysqli_fetch_assoc($r_total)['total'] : 0;
+
+if ($total_rooms > 0) {
+    $stmt_bk = mysqli_prepare($koneksi, "
+        SELECT checkin, checkout FROM bookings 
+        WHERE listing_id = ? AND status IN ('menunggu', 'dikonfirmasi')
+    ");
+    mysqli_stmt_bind_param($stmt_bk, 'i', $listing_id);
+    mysqli_stmt_execute($stmt_bk);
+    $all_bookings = mysqli_fetch_all(mysqli_stmt_get_result($stmt_bk), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt_bk);
+
+    $count_per_date = [];
+    foreach ($all_bookings as $bk) {
+        try {
+            $period = new DatePeriod(
+                new DateTime($bk['checkin']),
+                new DateInterval('P1D'),
+                new DateTime($bk['checkout'])
+            );
+            foreach ($period as $d) {
+                $ds = $d->format('Y-m-d');
+                $count_per_date[$ds] = ($count_per_date[$ds] ?? 0) + 1;
+            }
+        } catch (Exception $e) {}
+    }
+
+    foreach ($count_per_date as $date => $count) {
+        if ($count >= $total_rooms) {
+            $unavailable[] = $date;
+        }
+    }
+}
+
+foreach ($blocked_result as $b)
+  $unavailable[] = $b['blocked_date'];
+$unavailable = array_unique($unavailable);
 ?>
 <!doctype html>
 <html lang="id">
@@ -801,6 +864,9 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
 
   <script src="../../components/navbar.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    window.UNAVAILABLE_DATES = <?= json_encode(array_values($unavailable)) ?>;
+  </script>
   <script src="../scripts/detail_card.js"></script>
   <?php if ($can_review): ?>
     <script src="../../popups/review_popup.js"></script>

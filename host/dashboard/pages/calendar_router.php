@@ -34,13 +34,64 @@ function getManualBlockedDates($koneksi, $listing_id, $room_id = null)
 function getAutoBlockedDates($koneksi, $listing_id, $room_id = null)
 {
     $dates = [];
-    $sql = "SELECT blocked_date, reason FROM blocked_dates WHERE listing_id = $listing_id AND blocked_by = 'system' AND unlocked_at IS NULL";
+
+    // 1. Hitung total kamar aktif untuk listing ini
+    if ($room_id) {
+        // Kalau filter per room, stoknya ya 1 (kamar itu sendiri)
+        $total_rooms = 1;
+    } else {
+        $r = mysqli_query($koneksi, "
+            SELECT COUNT(*) AS total FROM listing_rooms 
+            WHERE listing_id = $listing_id
+        ");
+        $total_rooms = $r ? (int) mysqli_fetch_assoc($r)['total'] : 0;
+    }
+
+    // 2. Kalau tidak ada kamar terdaftar, fallback ke blocked_dates system seperti biasa
+    if ($total_rooms === 0) {
+        $sql = "SELECT blocked_date, reason FROM blocked_dates 
+                WHERE listing_id = $listing_id AND blocked_by = 'system' AND unlocked_at IS NULL";
+        $r = mysqli_query($koneksi, $sql);
+        if ($r)
+            while ($row = mysqli_fetch_assoc($r))
+                $dates[$row['blocked_date']] = $row['reason'];
+        return $dates;
+    }
+
+    // 3. Ambil semua booking aktif, hitung berapa room terpakai per tanggal
+    $sql = "SELECT checkin, checkout FROM bookings 
+            WHERE listing_id = $listing_id AND status IN ('menunggu', 'dikonfirmasi')";
     if ($room_id)
-        $sql .= " AND (room_id = $room_id OR room_id IS NULL)";
+        $sql .= " AND room_id = $room_id";
+
     $r = mysqli_query($koneksi, $sql);
-    if ($r)
-        while ($row = mysqli_fetch_assoc($r))
-            $dates[$row['blocked_date']] = $row['reason'];
+    $room_count_per_date = [];
+
+    if ($r) {
+        while ($row = mysqli_fetch_assoc($r)) {
+            try {
+                $period = new DatePeriod(
+                    new DateTime($row['checkin']),
+                    new DateInterval('P1D'),
+                    new DateTime($row['checkout'])
+                );
+                foreach ($period as $d) {
+                    $ds = $d->format('Y-m-d');
+                    $room_count_per_date[$ds] = ($room_count_per_date[$ds] ?? 0) + 1;
+                }
+            } catch (Exception $e) {
+                // Skip kalau format tanggal rusak
+            }
+        }
+    }
+
+    // 4. Tanggal yang jumlah booking-nya >= total kamar → auto blocked
+    foreach ($room_count_per_date as $date => $count) {
+        if ($count >= $total_rooms) {
+            $dates[$date] = 'Semua kamar sudah penuh';
+        }
+    }
+
     return $dates;
 }
 
@@ -103,20 +154,20 @@ if ($lr)
     $listing = mysqli_fetch_assoc($lr);
 
 $manualBlocked = getManualBlockedDates($koneksi, $listing_id, $room_id);
-$autoBlocked = getAutoBlockedDates($koneksi, $listing_id, $room_id);
-$bookedDates = getBookedDates($koneksi, $listing_id, $room_id);
-$customPrices = getCustomPrices($koneksi, $listing_id, $room_id);
-$hostListings = getHostListings($koneksi, $host_id);
+$autoBlocked   = getAutoBlockedDates($koneksi, $listing_id, $room_id);
+$bookedDates   = getBookedDates($koneksi, $listing_id, $room_id);
+$customPrices  = getCustomPrices($koneksi, $listing_id, $room_id);
+$hostListings  = getHostListings($koneksi, $host_id);
 
 $settings = [
-    'harga_malam' => $listing['harga_malam'] ?? 399344,
-    'harga_akhir_pekan' => $listing['harga_akhir_pekan'] ?? 423305,
-    'min_malam' => $listing['min_malam'] ?? 1,
-    'max_malam' => $listing['max_malam'] ?? 365,
-    'jam_checkin' => substr($listing['jam_checkin'] ?? '14:00:00', 0, 5),
-    'jam_checkout' => substr($listing['jam_checkout'] ?? '12:00:00', 0, 5),
-    'diskon_mingguan' => $listing['diskon_mingguan'] ?? 0,
-    'diskon_bulanan' => $listing['diskon_bulanan'] ?? 0,
+    'harga_malam'        => $listing['harga_malam'] ?? 399344,
+    'harga_akhir_pekan'  => $listing['harga_akhir_pekan'] ?? 423305,
+    'min_malam'          => $listing['min_malam'] ?? 1,
+    'max_malam'          => $listing['max_malam'] ?? 365,
+    'jam_checkin'        => substr($listing['jam_checkin'] ?? '14:00:00', 0, 5),
+    'jam_checkout'       => substr($listing['jam_checkout'] ?? '12:00:00', 0, 5),
+    'diskon_mingguan'    => $listing['diskon_mingguan'] ?? 0,
+    'diskon_bulanan'     => $listing['diskon_bulanan'] ?? 0,
 ];
 
 function fmt($n)
@@ -149,7 +200,7 @@ function fmt($n)
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 
     <style>
-        /* Tambahan status warna untuk blocked manual/auto — tidak ada di CSS asli */
+        /* ── Status warna blocked manual/auto ───────────── */
         .day-card.blocked-manual {
             background: #FEE2E2;
             border-color: #FCA5A5;
@@ -177,7 +228,7 @@ function fmt($n)
             color: #F59E0B;
         }
 
-        /* Tooltip */
+        /* ── Tooltip ─────────────────────────────────────── */
         .day-card {
             position: relative;
         }
@@ -198,7 +249,7 @@ function fmt($n)
             pointer-events: none;
         }
 
-        /* Date detail popup */
+        /* ── Date detail popup ───────────────────────────── */
         .date-detail-popup {
             position: fixed;
             background: #fff;
@@ -290,7 +341,7 @@ function fmt($n)
             color: #fff;
         }
 
-        /* Loading */
+        /* ── Loading overlay ─────────────────────────────── */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -320,7 +371,7 @@ function fmt($n)
             }
         }
 
-        /* Dropdown */
+        /* ── Dropdown ────────────────────────────────────── */
         .dropdown-popup {
             position: fixed;
             background: #fff;
@@ -578,7 +629,7 @@ function fmt($n)
             </div>
         </aside>
 
-        <!-- Listing sidebar: fixed, slide dari kiri — identik HTML asli -->
+        <!-- Listing sidebar -->
         <aside class="listing-sidebar" id="listingSidebar">
             <div class="listing-sidebar-header">
                 <span class="listing-sidebar-title">Listing</span>
@@ -601,7 +652,7 @@ function fmt($n)
             </div>
         </aside>
 
-        <!-- Templates — identik HTML asli -->
+        <!-- Templates -->
         <template id="weekdayHeaderTemplate">
             <div class="weekday-header">
                 <div class="weekday-label">Min</div>
@@ -653,7 +704,6 @@ function fmt($n)
         <div class="spinner"></div>
     </div>
 
-    <!-- Inject data dari PHP ke window.calendarData, lalu load JS external -->
     <script>
         window.calendarData = {
             listingId: <?php echo $listing_id; ?>,

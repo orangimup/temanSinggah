@@ -196,13 +196,31 @@ document.addEventListener("DOMContentLoaded", () => {
         hoverDate = null;
         phase = "selecting";
       } else {
-        rangeEnd = date;
-        hoverDate = null;
-        phase = "idle";
-        setTimeout(() => {
-          calendarDropdown.classList.remove("open");
-          activeAnchor = null;
-        }, 300);
+        // Cek apakah ada unavailable date dalam range
+        const unavailable = window.UNAVAILABLE_DATES || [];
+        let hasUnavailable = false;
+        const check = new Date(rangeStart);
+        check.setDate(check.getDate() + 1);
+        while (check <= date) {
+          const str = `${check.getFullYear()}-${String(check.getMonth() + 1).padStart(2, "0")}-${String(check.getDate()).padStart(2, "0")}`;
+          if (unavailable.includes(str)) { hasUnavailable = true; break; }
+          check.setDate(check.getDate() + 1);
+        }
+        if (hasUnavailable) {
+          // Reset dan mulai dari tanggal ini
+          rangeStart = date;
+          rangeEnd = null;
+          hoverDate = null;
+          phase = "selecting";
+        } else {
+          rangeEnd = date;
+          hoverDate = null;
+          phase = "idle";
+          setTimeout(() => {
+            calendarDropdown.classList.remove("open");
+            activeAnchor = null;
+          }, 300);
+        }
       }
     }
     updateCalendarInputs();
@@ -273,7 +291,10 @@ document.addEventListener("DOMContentLoaded", () => {
       dayEl.className = "calendar-day";
       dayEl.textContent = day;
       dayEl.dataset.date = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      if (date < today || date > maxDate) {
+      const unavailable = window.UNAVAILABLE_DATES || [];
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+      if (date < today || date > maxDate || unavailable.includes(dateStr)) {
         dayEl.classList.add("disabled");
       } else {
         if (isSameDay(date, today)) dayEl.classList.add("today");

@@ -12,7 +12,7 @@ $stmt = mysqli_prepare($koneksi, "SELECT * FROM users WHERE user_id = ?");
 mysqli_stmt_bind_param($stmt, "s", $_SESSION['user_id']);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$user   = mysqli_fetch_assoc($result);
+$user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 if (!$user) {
@@ -21,7 +21,7 @@ if (!$user) {
   exit;
 }
 
-$inisial   = strtoupper(mb_substr($user['nama'], 0, 1));
+$inisial = strtoupper(mb_substr($user['nama'], 0, 1));
 $photo_url = '';
 if (!empty($user['photo'])) {
   if (str_starts_with($user['photo'], 'http')) {
@@ -68,7 +68,7 @@ if (!$booking) {
 // Only menunggu or dikonfirmasi can be cancelled
 $cancellable = in_array($booking['status'], ['menunggu', 'dikonfirmasi']);
 
-$error   = '';
+$error = '';
 $success = '';
 
 // Handle form submission
@@ -78,13 +78,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $cancellable) {
   if (empty($alasan)) {
     $error = 'Mohon pilih alasan pembatalan.';
   } else {
-    // Update booking status to dibatalkan
-    $stmt = mysqli_prepare($koneksi,
+    $stmt = mysqli_prepare(
+      $koneksi,
       "UPDATE bookings SET status = 'dibatalkan', catatan_pembatalan = ?, dibatalkan_pada = NOW() WHERE id = ? AND user_id = ?"
     );
     mysqli_stmt_bind_param($stmt, "sii", $alasan, $booking_id, $user['id']);
     if (mysqli_stmt_execute($stmt)) {
       $success = true;
+
+      if (!empty($booking['room_id'])) {
+        require_once 'check_room_stock.php';
+        syncRoomStock($koneksi, (int) $booking['listing_id'], (int) $booking['room_id']);
+      }
+
     } else {
       $error = 'Terjadi kesalahan. Silakan coba lagi.';
     }
@@ -93,28 +99,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $cancellable) {
 }
 
 // Helpers
-function fmt_tanggal(string $date): string {
+function fmt_tanggal(string $date): string
+{
   return date('d M Y', strtotime($date));
 }
-function fmt_harga(float $harga): string {
+function fmt_harga(float $harga): string
+{
   return 'Rp ' . number_format($harga, 0, ',', '.');
 }
-function jumlah_malam(string $checkin, string $checkout): int {
+function jumlah_malam(string $checkin, string $checkout): int
+{
   return (new DateTime($checkin))->diff(new DateTime($checkout))->days;
 }
-function listing_img(array $b): string {
+function listing_img(array $b): string
+{
   $foto = $b['foto_cover'] ?? '';
-  if (empty($foto)) return '';
-  if (str_starts_with($foto, 'http')) return $foto;
+  if (empty($foto))
+    return '';
+  if (str_starts_with($foto, 'http'))
+    return $foto;
   return "/teman_singgah/assets/uploads/listings/" . htmlspecialchars($foto);
 }
 
-$malam  = jumlah_malam($booking['checkin'], $booking['checkout']);
-$img    = listing_img($booking);
+$malam = jumlah_malam($booking['checkin'], $booking['checkout']);
+$img = listing_img($booking);
 $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pad($booking['id'], 4, '0', STR_PAD_LEFT);
 ?>
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -127,7 +140,9 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
   <link rel="stylesheet" href="../styles/account.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   <style>
@@ -148,7 +163,10 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       margin-bottom: 1.5rem;
       transition: color 0.2s;
     }
-    .cancel-back:hover { color: var(--color-primary, #1a1a1a); }
+
+    .cancel-back:hover {
+      color: var(--color-primary, #1a1a1a);
+    }
 
     .cancel-heading {
       font-family: 'Inter', sans-serif;
@@ -156,6 +174,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       font-weight: 600;
       margin: 0 0 0.25rem;
     }
+
     .cancel-subheading {
       color: var(--color-muted, #6b7280);
       font-size: 0.9rem;
@@ -172,6 +191,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       padding: 1rem;
       margin-bottom: 2rem;
     }
+
     .booking-summary-img {
       width: 88px;
       height: 88px;
@@ -183,7 +203,12 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       align-items: center;
       justify-content: center;
     }
-    .booking-summary-body { flex: 1; min-width: 0; }
+
+    .booking-summary-body {
+      flex: 1;
+      min-width: 0;
+    }
+
     .booking-summary-name {
       font-weight: 600;
       font-size: 1rem;
@@ -192,20 +217,24 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .booking-summary-loc {
       font-size: 0.8rem;
       color: var(--color-muted, #6b7280);
       margin: 0 0 0.4rem;
     }
+
     .booking-summary-meta {
       font-size: 0.82rem;
       color: var(--color-muted, #6b7280);
     }
+
     .booking-summary-price {
       font-size: 0.95rem;
       font-weight: 600;
       margin-top: 0.4rem;
     }
+
     .booking-summary-id {
       font-size: 0.72rem;
       color: #aaa;
@@ -222,17 +251,31 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       margin-bottom: 2rem;
       align-items: flex-start;
     }
+
     .cancel-notice i {
       color: #f97316;
       font-size: 1.25rem;
       flex-shrink: 0;
       margin-top: 1px;
     }
-    .cancel-notice-text { font-size: 0.875rem; line-height: 1.55; color: #7c3a1e; }
-    .cancel-notice-text strong { display: block; margin-bottom: 0.2rem; }
+
+    .cancel-notice-text {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: #7c3a1e;
+    }
+
+    .cancel-notice-text strong {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
 
     /* Form */
-    .cancel-form { display: flex; flex-direction: column; gap: 1.25rem; }
+    .cancel-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
 
     .form-label {
       display: block;
@@ -241,7 +284,12 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       margin-bottom: 0.6rem;
     }
 
-    .reason-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .reason-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     .reason-option {
       display: flex;
       align-items: center;
@@ -253,17 +301,22 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       transition: border-color 0.18s, background 0.18s;
       font-size: 0.9rem;
     }
+
     .reason-option:has(input:checked) {
       border-color: var(--color-primary, #1a1a1a);
       background: #f5f5f5;
     }
-    .reason-option input[type="radio"] { accent-color: var(--color-primary, #1a1a1a); }
+
+    .reason-option input[type="radio"] {
+      accent-color: var(--color-primary, #1a1a1a);
+    }
 
     .form-actions {
       display: flex;
       gap: 0.75rem;
       margin-top: 0.5rem;
     }
+
     .btn-cancel-confirm {
       flex: 1;
       padding: 0.8rem 1.5rem;
@@ -276,8 +329,14 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       cursor: pointer;
       transition: background 0.18s, transform 0.1s;
     }
-    .btn-cancel-confirm:hover { background: #b91c1c; }
-    .btn-cancel-confirm:active { transform: scale(0.98); }
+
+    .btn-cancel-confirm:hover {
+      background: #b91c1c;
+    }
+
+    .btn-cancel-confirm:active {
+      transform: scale(0.98);
+    }
 
     .btn-back-secondary {
       flex: 1;
@@ -296,7 +355,11 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       align-items: center;
       justify-content: center;
     }
-    .btn-back-secondary:hover { background: #f3f4f6; border-color: #9ca3af; }
+
+    .btn-back-secondary:hover {
+      background: #f3f4f6;
+      border-color: #9ca3af;
+    }
 
     /* Error alert */
     .alert-error {
@@ -316,6 +379,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       text-align: center;
       padding: 3rem 1.5rem;
     }
+
     .success-icon {
       width: 72px;
       height: 72px;
@@ -328,17 +392,20 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       font-size: 2rem;
       color: #16a34a;
     }
+
     .success-title {
       font-family: 'Inter', sans-serif;
       font-size: 1.5rem;
       font-weight: 600;
       margin: 0 0 0.5rem;
     }
+
     .success-desc {
       color: var(--color-muted, #6b7280);
       font-size: 0.9rem;
       margin: 0 0 2rem;
     }
+
     .success-actions {
       display: flex;
       gap: 0.75rem;
@@ -351,6 +418,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
       text-align: center;
       padding: 3rem 1.5rem;
     }
+
     .not-cancellable-icon {
       width: 64px;
       height: 64px;
@@ -365,6 +433,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
     }
   </style>
 </head>
+
 <body>
 
   <!-- ── Navbar ── -->
@@ -425,7 +494,8 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
           </p>
           <div class="success-actions">
             <a href="./history.php" class="btn-back-secondary">Riwayat Perjalanan</a>
-            <a href="../../index.php" class="btn-cancel-confirm" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:unset;padding:0.8rem 2rem;">
+            <a href="../../index.php" class="btn-cancel-confirm"
+              style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:unset;padding:0.8rem 2rem;">
               Cari Penginapan Lain
             </a>
           </div>
@@ -468,7 +538,8 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
               <?= fmt_tanggal($booking['checkin']) ?> – <?= fmt_tanggal($booking['checkout']) ?>
               · <?= $malam ?> malam · <?= intval($booking['jumlah_tamu']) ?> tamu
             </p>
-            <p class="booking-summary-price"><?= fmt_harga($booking['total_harga']) ?> <span style="font-weight:400;font-size:0.82rem;color:#6b7280;">/ total</span></p>
+            <p class="booking-summary-price"><?= fmt_harga($booking['total_harga']) ?> <span
+                style="font-weight:400;font-size:0.82rem;color:#6b7280;">/ total</span></p>
             <p class="booking-summary-id"><?= $id_rsv ?></p>
           </div>
         </div>
@@ -478,7 +549,8 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
           <i class="ph-fill ph-warning-circle"></i>
           <div class="cancel-notice-text">
             <strong>Perhatikan kebijakan pembatalan</strong>
-            Pembatalan mungkin dikenakan biaya sesuai kebijakan host. Pengembalian dana akan diproses dalam 3–7 hari kerja setelah pembatalan dikonfirmasi.
+            Pembatalan mungkin dikenakan biaya sesuai kebijakan host. Pengembalian dana akan diproses dalam 3–7 hari kerja
+            setelah pembatalan dikonfirmasi.
           </div>
         </div>
 
@@ -506,8 +578,7 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
               ];
               foreach ($reasons as $r): ?>
                 <label class="reason-option">
-                  <input type="radio" name="alasan" value="<?= htmlspecialchars($r) ?>"
-                    <?= (($_POST['alasan'] ?? '') === $r) ? 'checked' : '' ?> />
+                  <input type="radio" name="alasan" value="<?= htmlspecialchars($r) ?>" <?= (($_POST['alasan'] ?? '') === $r) ? 'checked' : '' ?> />
                   <?= htmlspecialchars($r) ?>
                 </label>
               <?php endforeach; ?>
@@ -533,7 +604,8 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
     <div class="footer-grid">
       <div class="footer-column">
         <span class="footer-brand">Teman Singgah</span>
-        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang
+          hingga homestay lokal.</p>
         <div class="footer-social">
           <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
           <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>
@@ -576,4 +648,5 @@ $id_rsv = '#RSV-' . date('Y', strtotime($booking['dibuat_pada'])) . '-' . str_pa
   <script src="../../components/navbar.js"></script>
   <script src="../../popups/auth.js"></script>
 </body>
+
 </html>

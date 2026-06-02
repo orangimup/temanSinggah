@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
         $deskripsi = mysqli_real_escape_string($koneksi, trim($_POST['deskripsi'] ?? ''));
         $ukuran = ($_POST['ukuran_m2'] !== '') ? (int) $_POST['ukuran_m2'] : null;
         $maxTamu = max(1, (int) ($_POST['max_tamu'] ?? 1));
+        $stok = max(1, (int) ($_POST['stok'] ?? 1));
         $harga = (float) ($_POST['harga_malam'] ?? 0);
         $fasilitas = json_encode($_POST['fasilitas'] ?? []);
         $urutan = (int) ($_POST['urutan'] ?? 0);
@@ -113,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
                 deskripsi   = '$deskripsi',
                 ukuran_m2   = $ukuranSQL,
                 max_tamu    = $maxTamu,
+                stok        = $stok,
                 harga_malam = $harga,
                 fasilitas   = '$fasilitasSQL',
                 foto        = '$namaFotoSQL',
@@ -122,9 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['_aksi'])) {
         } else {
             $lid = $listingId;
             mysqli_query($koneksi, "INSERT INTO listing_rooms
-                (listing_id, nama, deskripsi, ukuran_m2, max_tamu, harga_malam, fasilitas, foto, urutan)
+                (listing_id, nama, deskripsi, ukuran_m2, max_tamu, stok, harga_malam, fasilitas, foto, urutan)
               VALUES
-                ($lid, '$nama', '$deskripsi', $ukuranSQL, $maxTamu, $harga, '$fasilitasSQL', '$namaFotoSQL', $urutan)");
+                ($lid, '$nama', '$deskripsi', $ukuranSQL, $maxTamu, $stok, $harga, '$fasilitasSQL', '$namaFotoSQL', $urutan)");
             $newId = (int) mysqli_insert_id($koneksi);
             echo json_encode(['status' => 'ok', 'room_id' => $newId, 'foto' => $namaFoto]);
         }
@@ -1883,6 +1885,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                     <input type="hidden" id="modalRoomId" value="" />
 
                     <div class="rm-top-row">
+                        <!-- foto -->
                         <input type="file" id="modalRoomFotoInput" accept="image/jpeg,image/png,image/webp"
                             style="display:none;" />
                         <div class="rm-foto-wrap" id="modalRoomFotoArea"
@@ -1898,6 +1901,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                             </button>
                         </div>
 
+                        <!-- fields kanan -->
                         <div class="rm-fields-right">
                             <div class="rm-field-row">
                                 <div class="rm-field">
@@ -1914,12 +1918,11 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                                     </div>
                                 </div>
                             </div>
-                            <div class="rm-field-row">
-                                <div class="rm-field">
-                                    <label class="rm-label">Ukuran (m²)</label>
-                                    <input type="number" id="modalRoomUkuran" class="rm-input" placeholder="cth. 24"
-                                        min="1" />
-                                </div>
+                            <div class="rm-field">
+                                <label class="rm-label">Ukuran (m²)</label>
+                                <input type="number" id="modalRoomUkuran" class="rm-input" placeholder="cth. 24" min="1" />
+                            </div>
+                            <div class="rm-field-row" style="align-items: flex-start;">
                                 <div class="rm-field">
                                     <label class="rm-label">Kapasitas tamu</label>
                                     <div class="rm-stepper">
@@ -1929,10 +1932,20 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                                         <button type="button" class="rm-stepper-btn" id="modalTamuPlus">+</button>
                                     </div>
                                 </div>
+                                <div class="rm-field">
+                                    <label class="rm-label">Jumlah kamar tersedia</label>
+                                    <div class="rm-stepper">
+                                        <button type="button" class="rm-stepper-btn" id="modalStokMin">−</button>
+                                        <span class="rm-stepper-val" id="modalStokVal">1</span>
+                                        <input type="hidden" id="modalRoomStok" value="1" />
+                                        <button type="button" class="rm-stepper-btn" id="modalStokPlus">+</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- INI DI LUAR rm-top-row -->
                     <div class="rm-field">
                         <label class="rm-label">Deskripsi singkat</label>
                         <textarea id="modalRoomDeskripsi" class="rm-textarea" rows="2" maxlength="300"
@@ -2084,6 +2097,22 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
             let modalTamuCount = 2;
             let modalFotoFile = null;
             let modalFotoName = '';
+            let modalStokCount = 1;
+
+            document.getElementById('modalStokMin').addEventListener('click', () => {
+                if (modalStokCount > 1) {
+                    modalStokCount--;
+                    document.getElementById('modalStokVal').textContent = modalStokCount;
+                    document.getElementById('modalRoomStok').value = modalStokCount;
+                }
+            });
+            document.getElementById('modalStokPlus').addEventListener('click', () => {
+                if (modalStokCount < 50) {
+                    modalStokCount++;
+                    document.getElementById('modalStokVal').textContent = modalStokCount;
+                    document.getElementById('modalRoomStok').value = modalStokCount;
+                }
+            });
 
             const roomOverlay = document.getElementById('roomModalOverlay');
             const roomModalTitle = document.getElementById('roomModalTitle');
@@ -2099,6 +2128,10 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 modalTamuCount = room ? (parseInt(room.max_tamu) || 2) : 2;
                 document.getElementById('modalTamuVal').textContent = modalTamuCount;
                 document.getElementById('modalRoomMaxTamu').value = modalTamuCount;
+
+                modalStokCount = room ? (parseInt(room.stok) || 1) : 1;
+                document.getElementById('modalStokVal').textContent = modalStokCount;
+                document.getElementById('modalRoomStok').value = modalStokCount;
 
                 document.querySelectorAll('#modalFasilitasGrid .facility-chip-edit').forEach(chip => {
                     const cb = chip.querySelector('input');
@@ -2220,6 +2253,7 @@ $pageTitle = $isEdit ? 'Edit Listing' : 'Tambah Listing';
                 fd.append('deskripsi', document.getElementById('modalRoomDeskripsi').value.trim());
                 fd.append('ukuran_m2', document.getElementById('modalRoomUkuran').value || '');
                 fd.append('max_tamu', modalTamuCount);
+                fd.append('stok', modalStokCount);
                 fd.append('harga_malam', harga);
                 fasilitas.forEach(f => fd.append('fasilitas[]', f));
                 if (modalFotoFile) fd.append('foto', modalFotoFile);
