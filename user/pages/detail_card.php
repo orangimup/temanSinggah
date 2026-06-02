@@ -630,11 +630,6 @@ $jam_checkout = substr($policies['jam_checkout'], 0, 5);
                 </div>
               </div>
             </div>
-            <a href="./messages.php?host=<?= (int) $listing['host_id'] ?>&listing=<?= $listing_id ?>">
-              <button class="host-chat-button">
-                <i class="ph-bold ph-chat-circle-text"></i> Hubungi Host
-              </button>
-            </a>
           </div>
         </section>
 

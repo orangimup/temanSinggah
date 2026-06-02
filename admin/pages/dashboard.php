@@ -6,8 +6,116 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
   header('Location: /teman_singgah/index.php?auth=login');
   exit;
 }
-?>
 
+// ── 1. Total Reservasi ────────────────────────────────────────────────────────
+$total_reservasi = 0;
+$r = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM bookings");
+if ($r)
+  $total_reservasi = mysqli_fetch_assoc($r)['total'];
+
+// ── 2. Total Pendapatan (hanya transaksi sukses) ───────────────────────────────
+$total_pendapatan = 0;
+$r = mysqli_query($koneksi, "SELECT COALESCE(SUM(jumlah), 0) AS total FROM transactions WHERE status = 'sukses'");
+if ($r)
+  $total_pendapatan = mysqli_fetch_assoc($r)['total'];
+
+// ── 3. Tingkat Hunian (%) ─────────────────────────────────────────────────────
+// Rumus: booking dikonfirmasi atau selesai / total booking * 100
+$tingkat_hunian = 0;
+$r = mysqli_query($koneksi, "
+    SELECT
+        COUNT(*) AS total,
+        SUM(status IN ('dikonfirmasi','selesai')) AS aktif
+    FROM bookings
+");
+if ($r) {
+  $row = mysqli_fetch_assoc($r);
+  if ($row['total'] > 0)
+    $tingkat_hunian = round(($row['aktif'] / $row['total']) * 100, 1);
+}
+
+// ── 4. Pengguna Aktif ─────────────────────────────────────────────────────────
+$pengguna_aktif = 0;
+$r = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM users WHERE role != 'Admin' AND status = 'Aktif'");
+if ($r)
+  $pengguna_aktif = mysqli_fetch_assoc($r)['total'];
+
+// ── 5. Chart: Pendapatan & Jumlah Transaksi per Bulan (tahun ini) ──────────────
+$tahun = date('Y');
+$chart_labels = [];
+$chart_pendapatan = [];
+$chart_reservasi = [];
+
+$nama_bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+// Inisialisasi semua bulan ke 0
+for ($i = 1; $i <= 12; $i++) {
+  $chart_labels[] = $nama_bulan[$i - 1];
+  $chart_pendapatan[] = 0;
+  $chart_reservasi[] = 0;
+}
+
+$r = mysqli_query($koneksi, "
+    SELECT
+        MONTH(dibayar_pada)     AS bulan,
+        COALESCE(SUM(jumlah),0) AS pendapatan,
+        COUNT(*)                AS jumlah_trx
+    FROM transactions
+    WHERE status = 'sukses'
+      AND YEAR(dibayar_pada) = $tahun
+    GROUP BY MONTH(dibayar_pada)
+    ORDER BY bulan ASC
+");
+if ($r) {
+  while ($row = mysqli_fetch_assoc($r)) {
+    $idx = (int) $row['bulan'] - 1;
+    $chart_pendapatan[$idx] = (float) $row['pendapatan'];
+    $chart_reservasi[$idx] = (int) $row['jumlah_trx'];
+  }
+}
+
+// ── 6. Reservasi Terbaru (8 data) ─────────────────────────────────────────────
+$reservasi_terbaru = [];
+$r = mysqli_query($koneksi, "
+    SELECT
+        b.id,
+        b.checkin,
+        b.total_harga,
+        b.status,
+        u.nama  AS nama_tamu,
+        l.judul AS nama_listing
+    FROM bookings b
+    JOIN users    u ON u.id = b.user_id
+    JOIN listings l ON l.id = b.listing_id
+    ORDER BY b.dibuat_pada DESC
+    LIMIT 8
+");
+if ($r) {
+  while ($row = mysqli_fetch_assoc($r)) {
+    $reservasi_terbaru[] = $row;
+  }
+}
+
+// ── Helper: format angka pendapatan ringkas (892,5 Jt / 1,2 M) ────────────────
+function format_pendapatan(float $n): string
+{
+  if ($n >= 1_000_000_000)
+    return number_format($n / 1_000_000_000, 1, ',', '.') . ' M';
+  if ($n >= 1_000_000)
+    return number_format($n / 1_000_000, 1, ',', '.') . ' Jt';
+  if ($n >= 1_000)
+    return number_format($n / 1_000, 1, ',', '.') . ' Rb';
+  return number_format($n, 0, ',', '.');
+}
+
+// Badge status reservasi
+$badge_map = [
+  'menunggu' => ['label' => 'Menunggu', 'class' => 'warning'],
+  'dikonfirmasi' => ['label' => 'Dikonfirmasi', 'class' => 'success'],
+  'dibatalkan' => ['label' => 'Dibatalkan', 'class' => 'error'],
+  'selesai' => ['label' => 'Selesai', 'class' => 'info'],
+];
+?>
 <!doctype html>
 <html lang="id">
 
@@ -69,8 +177,9 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
             <i class="ph-bold ph-currency-circle-dollar"></i>
             Transaksi
           </a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php"><i class="ph-bold ph-tag"></i>Promo &
-            Deals</a>
+          <a class="nav-item" href="/teman_singgah/admin/pages/promos.php">
+            <i class="ph-bold ph-tag"></i>Promo & Deals
+          </a>
         </div>
 
         <div class="nav-section">
@@ -109,8 +218,8 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
           <h1 class="page-title">Dashboard</h1>
         </div>
         <div class="topbar-right">
-          <span class="user-name">Admin utama</span>
-          <div class="user-avatar">A</div>
+          <span class="user-name"><?= htmlspecialchars($_SESSION['nama'] ?? 'Admin') ?></span>
+          <div class="user-avatar"><?= strtoupper(substr($_SESSION['nama'] ?? 'A', 0, 1)) ?></div>
         </div>
       </header>
 
@@ -121,7 +230,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
               <i class="ph-bold ph-calendar-check"></i>
             </div>
             <div class="metric-text">
-              <div class="metric-value">1.247</div>
+              <div class="metric-value"><?= number_format($total_reservasi, 0, ',', '.') ?></div>
               <div class="metric-label">Total Reservasi</div>
             </div>
           </div>
@@ -131,7 +240,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
               <i class="ph-bold ph-currency-circle-dollar"></i>
             </div>
             <div class="metric-text">
-              <div class="metric-value">892,5 Jt</div>
+              <div class="metric-value"><?= format_pendapatan($total_pendapatan) ?></div>
               <div class="metric-label">Total Pendapatan</div>
             </div>
           </div>
@@ -141,7 +250,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
               <i class="ph-bold ph-chart-pie"></i>
             </div>
             <div class="metric-text">
-              <div class="metric-value">78,4%</div>
+              <div class="metric-value"><?= $tingkat_hunian ?>%</div>
               <div class="metric-label">Tingkat Hunian</div>
             </div>
           </div>
@@ -151,7 +260,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
               <i class="ph-bold ph-user-check"></i>
             </div>
             <div class="metric-text">
-              <div class="metric-value">3.856</div>
+              <div class="metric-value"><?= number_format($pengguna_aktif, 0, ',', '.') ?></div>
               <div class="metric-label">Pengguna Aktif</div>
             </div>
           </div>
@@ -160,9 +269,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
         <section class="chart-section big">
           <div class="chart-card-header">
             <span class="chart-card-title">Pertumbuhan pendapatan</span>
-            <span class="chart-card-subtitle">
-              Pendapatan Tahun ini
-            </span>
+            <span class="chart-card-subtitle">Pendapatan Tahun <?= $tahun ?></span>
           </div>
           <div id="chartWrap">
             <canvas id="revenueTrendChart" role="img" aria-label="Grafik tren pendapatan dan reservasi"></canvas>
@@ -186,7 +293,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
         <section class="table-section">
           <div class="section-header">
             <h2 class="section-title">Reservasi Terbaru</h2>
-            <a href="../reservations.php" class="section-link">Lihat Semua</a>
+            <a href="../pages/reservations.php" class="section-link">Lihat Semua</a>
           </div>
           <div class="table-container">
             <table>
@@ -201,110 +308,32 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0042</span></td>
-                  <td>Budi Santoso</td>
-                  <td>Villa Sunset Tepi Pantai</td>
-                  <td>5 Mei 2026</td>
-                  <td>Rp2.450.000</td>
-                  <td>
-                    <span class="table-badge success">
-                      <span class="badge-dot"></span>
-                      Dikonfirmasi
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0041</span></td>
-                  <td>Siti Aminah</td>
-                  <td>Homestay Malioboro</td>
-                  <td>4 Mei 2026</td>
-                  <td>Rp850.000</td>
-                  <td>
-                    <span class="table-badge success">
-                      <span class="badge-dot"></span>
-                      Dikonfirmasi
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0040</span></td>
-                  <td>Agus Wijaya</td>
-                  <td>Villa Ubud Hijau</td>
-                  <td>3 Mei 2026</td>
-                  <td>Rp3.200.000</td>
-                  <td>
-                    <span class="table-badge warning">
-                      <span class="badge-dot"></span>
-                      Menunggu
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0039</span></td>
-                  <td>Dewi Kusuma</td>
-                  <td>Apartemen Jakarta Selatan</td>
-                  <td>2 Mei 2026</td>
-                  <td>Rp1.100.000</td>
-                  <td>
-                    <span class="table-badge error">
-                      <span class="badge-dot"></span>
-                      Dibatalkan
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0038</span></td>
-                  <td>Rudi Hartono</td>
-                  <td>Glamping Lembang</td>
-                  <td>1 Mei 2026</td>
-                  <td>Rp1.750.000</td>
-                  <td>
-                    <span class="table-badge info">
-                      <span class="badge-dot"></span>
-                      Selesai
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0037</span></td>
-                  <td>Nina Safitri</td>
-                  <td>Villa Sunset Tepi Pantai</td>
-                  <td>30 Apr 2026</td>
-                  <td>Rp2.450.000</td>
-                  <td>
-                    <span class="table-badge success">
-                      <span class="badge-dot"></span>
-                      Dikonfirmasi
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0036</span></td>
-                  <td>Ahmad Fauzi</td>
-                  <td>Rumah Kayu Bandung</td>
-                  <td>29 Apr 2026</td>
-                  <td>Rp980.000</td>
-                  <td>
-                    <span class="table-badge info">
-                      <span class="badge-dot"></span>
-                      Selesai
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><span class="id-code">#RSV-2026-0035</span></td>
-                  <td>Lestari Dewi</td>
-                  <td>Resort Bintan</td>
-                  <td>28 Apr 2026</td>
-                  <td>Rp4.500.000</td>
-                  <td>
-                    <span class="table-badge success">
-                      <span class="badge-dot"></span>
-                      Dikonfirmasi
-                    </span>
-                  </td>
-                </tr>
+                <?php if (empty($reservasi_terbaru)): ?>
+                  <tr>
+                    <td colspan="6" style="text-align:center;padding:32px;color:var(--color-text-hint);">
+                      Belum ada data reservasi.
+                    </td>
+                  </tr>
+                <?php else: ?>
+                  <?php foreach ($reservasi_terbaru as $b):
+                    $id_rsv = '#RSV-' . date('Y') . '-' . str_pad($b['id'], 4, '0', STR_PAD_LEFT);
+                    $badge = $badge_map[$b['status']] ?? ['label' => ucfirst($b['status']), 'class' => 'info'];
+                    ?>
+                    <tr>
+                      <td><span class="id-code"><?= htmlspecialchars($id_rsv) ?></span></td>
+                      <td><?= htmlspecialchars($b['nama_tamu']) ?></td>
+                      <td><?= htmlspecialchars($b['nama_listing']) ?></td>
+                      <td><?= date('d M Y', strtotime($b['checkin'])) ?></td>
+                      <td>Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></td>
+                      <td>
+                        <span class="table-badge <?= $badge['class'] ?>">
+                          <span class="badge-dot"></span>
+                          <?= $badge['label'] ?>
+                        </span>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>
@@ -313,6 +342,12 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'Admin') {
     </div>
   </div>
 
+  <script>
+    const chartLabels = <?= json_encode($chart_labels) ?>;
+    const chartPendapatan = <?= json_encode($chart_pendapatan) ?>;
+    const chartReservasi = <?= json_encode($chart_reservasi) ?>;
+    const tahunChart = <?= json_encode($tahun) ?>;
+  </script>
   <script src="../dashboard.js"></script>
 </body>
 

@@ -271,7 +271,6 @@ function badgeInfo(string $g): array
         <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/calendar_router.php"
             class="nav-link">Kalender</a></li>
         <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/listing.php" class="nav-link">Listing</a></li>
-        <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/messages.php" class="nav-link">Pesan</a></li>
         <div class="nav-indicator"></div>
       </ul>
       <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
@@ -367,7 +366,6 @@ function badgeInfo(string $g): array
                 </div>
                 <div class="card-actions">
                   <a href="reservation_detail.php?id=<?= $r['id'] ?>" class="card-button primary">Lihat detail</a>
-                  <a href="messages.php?to=<?= $r['user_id'] ?>" class="card-button secondary">💬 Hubungi tamu</a>
                 </div>
               </div>
               <div class="card-divider"></div>
