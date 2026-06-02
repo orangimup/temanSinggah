@@ -166,40 +166,43 @@ mysqli_stmt_execute($stmt);
 $blocked_result = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
 mysqli_stmt_close($stmt);
 
-// Auto-blocked dari stok kamar penuh (real-time)
-$r_total = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM listing_rooms WHERE listing_id = $listing_id");
+$r_total = mysqli_query($koneksi, "
+    SELECT COALESCE(SUM(stok), 0) AS total FROM listing_rooms 
+    WHERE listing_id = $listing_id
+");
 $total_rooms = $r_total ? (int) mysqli_fetch_assoc($r_total)['total'] : 0;
 
 if ($total_rooms > 0) {
-    $stmt_bk = mysqli_prepare($koneksi, "
+  $stmt_bk = mysqli_prepare($koneksi, "
         SELECT checkin, checkout FROM bookings 
         WHERE listing_id = ? AND status IN ('menunggu', 'dikonfirmasi')
     ");
-    mysqli_stmt_bind_param($stmt_bk, 'i', $listing_id);
-    mysqli_stmt_execute($stmt_bk);
-    $all_bookings = mysqli_fetch_all(mysqli_stmt_get_result($stmt_bk), MYSQLI_ASSOC);
-    mysqli_stmt_close($stmt_bk);
+  mysqli_stmt_bind_param($stmt_bk, 'i', $listing_id);
+  mysqli_stmt_execute($stmt_bk);
+  $all_bookings = mysqli_fetch_all(mysqli_stmt_get_result($stmt_bk), MYSQLI_ASSOC);
+  mysqli_stmt_close($stmt_bk);
 
-    $count_per_date = [];
-    foreach ($all_bookings as $bk) {
-        try {
-            $period = new DatePeriod(
-                new DateTime($bk['checkin']),
-                new DateInterval('P1D'),
-                new DateTime($bk['checkout'])
-            );
-            foreach ($period as $d) {
-                $ds = $d->format('Y-m-d');
-                $count_per_date[$ds] = ($count_per_date[$ds] ?? 0) + 1;
-            }
-        } catch (Exception $e) {}
+  $count_per_date = [];
+  foreach ($all_bookings as $bk) {
+    try {
+      $period = new DatePeriod(
+        new DateTime($bk['checkin']),
+        new DateInterval('P1D'),
+        new DateTime($bk['checkout'])
+      );
+      foreach ($period as $d) {
+        $ds = $d->format('Y-m-d');
+        $count_per_date[$ds] = ($count_per_date[$ds] ?? 0) + 1;
+      }
+    } catch (Exception $e) {
     }
+  }
 
-    foreach ($count_per_date as $date => $count) {
-        if ($count >= $total_rooms) {
-            $unavailable[] = $date;
-        }
+  foreach ($count_per_date as $date => $count) {
+    if ($count >= $total_rooms) {
+      $unavailable[] = $date;
     }
+  }
 }
 
 foreach ($blocked_result as $b)
@@ -459,7 +462,7 @@ $unavailable = array_unique($unavailable);
                 $fasilitas_kamar = json_decode($room['fasilitas'] ?? '[]', true) ?: [];
                 ?>
                 <!-- data-room-id ditambahkan untuk seleksi JS -->
-                <div class="room-card" data-room-id="<?= $room['id'] ?>">
+                <div class="room-card" data-room-id="<?= $room['id'] ?>" data-room-max-tamu="<?= (int) $room['max_tamu'] ?>">
 
                   <!-- Foto / Placeholder -->
                   <div class="room-card-photo">
@@ -516,7 +519,7 @@ $unavailable = array_unique($unavailable);
                       <!-- Tombol sekarang tidak redirect, tapi trigger seleksi -->
                       <button class="room-book-btn" data-room-id="<?= $room['id'] ?>"
                         data-room-name="<?= htmlspecialchars($room['nama'], ENT_QUOTES) ?>"
-                        data-room-price="<?= $room['harga_malam'] ?>">
+                        data-room-price="<?= $room['harga_malam'] ?>" data-room-max-tamu="<?= (int) $room['max_tamu'] ?>">
                         Pilih Kamar
                       </button>
                     </div>
@@ -860,6 +863,9 @@ $unavailable = array_unique($unavailable);
     window.LISTING_LOC = <?= json_encode($listing['lokasi']) ?>;
     window.MAX_TAMU = <?= (int) $listing['max_tamu'] ?>;
     window.BOLEH_HEWAN = <?= !empty($policies['boleh_hewan']) ? 'true' : 'false' ?>;
+    window.IS_LOGGED_IN = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+    window.BASE_LISTING_ID = <?= $listing_id ?>;
+    window.BASE_LISTING_PRICE = <?= (int) $listing['harga_malam'] ?>;
   </script>
 
   <script src="../../components/navbar.js"></script>
@@ -986,32 +992,7 @@ $unavailable = array_unique($unavailable);
     <?php endif; ?>
   </script>
 
-  <div id="authOverlay" class="auth-overlay">
-    <div class="auth-form-card">
-      <div class="auth-step active" id="authStepPilih">
-        <div class="auth-header-section">
-          <div class="empty-div"></div>
-          <button type="button" class="auth-nav-button" aria-label="Tutup" data-action="close-auth">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-        <div class="auth-body-section">
-          <div class="auth-logo-container">
-            <div class="auth-logo">
-              <img class="auth-logo-image" src="../../assets/logo/logo_temansinggah.svg" alt="Teman Singgah" />
-            </div>
-            <h2 class="auth-title center">Selamat datang</h2>
-            <p class="auth-subtitle center">Masuk atau buat akun baru untuk mulai memesan.</p>
-          </div>
-          <div class="auth-fields">
-            <button class="auth-submit-button" type="button" id="btnKeLogin">Masuk</button>
-            <button class="auth-submit-button outline" type="button" id="btnKeDaftar">Daftar akun baru</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <?php include '../../popups/auth_overlay.php'; ?>
   <script src="../../popups/auth.js"></script>
   <script src="../scripts/wishlist.js"></script>
 </body>

@@ -1,8 +1,22 @@
 <?php
-session_start();
-require_once '../../../koneksi.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/auth/guard_host.php';
 
-$host_id = $_SESSION['host_id'] ?? $_SESSION['id'] ?? 0;
+$host = 'localhost';
+$dbname = 'teman_singgah';
+$user = 'root';
+$pass = '';
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    die('Koneksi gagal: ' . $e->getMessage());
+}
+
+require_once '../../../koneksi.php'; 
+
+$host_id = $_SESSION['id'] ?? 0;  
 
 if ($host_id == 0) {
     header("Location: /teman_singgah/index.php");
@@ -41,9 +55,9 @@ function getAutoBlockedDates($koneksi, $listing_id, $room_id = null)
         $total_rooms = 1;
     } else {
         $r = mysqli_query($koneksi, "
-            SELECT COUNT(*) AS total FROM listing_rooms 
-            WHERE listing_id = $listing_id
-        ");
+    SELECT COALESCE(SUM(stok), 0) AS total FROM listing_rooms 
+    WHERE listing_id = $listing_id
+");
         $total_rooms = $r ? (int) mysqli_fetch_assoc($r)['total'] : 0;
     }
 
@@ -154,20 +168,20 @@ if ($lr)
     $listing = mysqli_fetch_assoc($lr);
 
 $manualBlocked = getManualBlockedDates($koneksi, $listing_id, $room_id);
-$autoBlocked   = getAutoBlockedDates($koneksi, $listing_id, $room_id);
-$bookedDates   = getBookedDates($koneksi, $listing_id, $room_id);
-$customPrices  = getCustomPrices($koneksi, $listing_id, $room_id);
-$hostListings  = getHostListings($koneksi, $host_id);
+$autoBlocked = getAutoBlockedDates($koneksi, $listing_id, $room_id);
+$bookedDates = getBookedDates($koneksi, $listing_id, $room_id);
+$customPrices = getCustomPrices($koneksi, $listing_id, $room_id);
+$hostListings = getHostListings($koneksi, $host_id);
 
 $settings = [
-    'harga_malam'        => $listing['harga_malam'] ?? 399344,
-    'harga_akhir_pekan'  => $listing['harga_akhir_pekan'] ?? 423305,
-    'min_malam'          => $listing['min_malam'] ?? 1,
-    'max_malam'          => $listing['max_malam'] ?? 365,
-    'jam_checkin'        => substr($listing['jam_checkin'] ?? '14:00:00', 0, 5),
-    'jam_checkout'       => substr($listing['jam_checkout'] ?? '12:00:00', 0, 5),
-    'diskon_mingguan'    => $listing['diskon_mingguan'] ?? 0,
-    'diskon_bulanan'     => $listing['diskon_bulanan'] ?? 0,
+    'harga_malam' => $listing['harga_malam'] ?? 399344,
+    'harga_akhir_pekan' => $listing['harga_akhir_pekan'] ?? 423305,
+    'min_malam' => $listing['min_malam'] ?? 1,
+    'max_malam' => $listing['max_malam'] ?? 365,
+    'jam_checkin' => substr($listing['jam_checkin'] ?? '14:00:00', 0, 5),
+    'jam_checkout' => substr($listing['jam_checkout'] ?? '12:00:00', 0, 5),
+    'diskon_mingguan' => $listing['diskon_mingguan'] ?? 0,
+    'diskon_bulanan' => $listing['diskon_bulanan'] ?? 0,
 ];
 
 function fmt($n)
@@ -200,7 +214,6 @@ function fmt($n)
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
 
     <style>
-        /* ── Status warna blocked manual/auto ───────────── */
         .day-card.blocked-manual {
             background: #FEE2E2;
             border-color: #FCA5A5;
@@ -228,7 +241,6 @@ function fmt($n)
             color: #F59E0B;
         }
 
-        /* ── Tooltip ─────────────────────────────────────── */
         .day-card {
             position: relative;
         }
@@ -249,7 +261,6 @@ function fmt($n)
             pointer-events: none;
         }
 
-        /* ── Date detail popup ───────────────────────────── */
         .date-detail-popup {
             position: fixed;
             background: #fff;
@@ -341,7 +352,6 @@ function fmt($n)
             color: #fff;
         }
 
-        /* ── Loading overlay ─────────────────────────────── */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -371,7 +381,6 @@ function fmt($n)
             }
         }
 
-        /* ── Dropdown ────────────────────────────────────── */
         .dropdown-popup {
             position: fixed;
             background: #fff;
@@ -426,19 +435,11 @@ function fmt($n)
                         class="nav-link active">Kalender</a></li>
                 <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/listing.php"
                         class="nav-link">Listing</a></li>
+                <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/earnings.php"
+                        class="nav-link">Pendapatan</a></li>
                 <div class="nav-indicator"></div>
             </ul>
-            <div class="nav-right">
-                <a href="/teman_singgah/index.php"><button class="ghost-button">Ganti ke pengunjung</button></a>
-                <div class="icon-buttons">
-                    <button class="icon-button profile" aria-label="Profile">A</button>
-                    <button class="icon-button hamburger" aria-label="Hamburger"><i
-                            class="ph-bold ph-list"></i></button>
-                </div>
-                <div id="hamburgerDropdown"></div>
-                <div id="languagePopup"></div>
-                <div id="authPopup"></div>
-            </div>
+           <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
         </nav>
     </header>
 

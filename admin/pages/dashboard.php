@@ -204,10 +204,6 @@ $badge_map = [
             <i class="ph-bold ph-gear"></i>
             Pengaturan
           </a>
-          <a href="../pages/logs.php" class="nav-item">
-            <i class="ph-bold ph-notepad"></i>
-            Aktivitas
-          </a>
         </div>
       </nav>
     </aside>

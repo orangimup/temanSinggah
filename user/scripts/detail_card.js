@@ -99,6 +99,13 @@ function updateNightsDisplay(overridePrice) {
 document.addEventListener("DOMContentLoaded", () => {
   updateNightsDisplay();
 
+  const isLoggedIn = window.IS_LOGGED_IN === true;
+
+  function openAuthPopup() {
+    const overlay = document.getElementById("authOverlay");
+    if (overlay) overlay.classList.add("active");
+  }
+
   let activeAnchor = null;
 
   function positionDropdown(dropdown, triggerEl) {
@@ -196,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
         hoverDate = null;
         phase = "selecting";
       } else {
-        // Cek apakah ada unavailable date dalam range
         const unavailable = window.UNAVAILABLE_DATES || [];
         let hasUnavailable = false;
         const check = new Date(rangeStart);
@@ -207,7 +213,6 @@ document.addEventListener("DOMContentLoaded", () => {
           check.setDate(check.getDate() + 1);
         }
         if (hasUnavailable) {
-          // Reset dan mulai dari tanggal ini
           rangeStart = date;
           rangeEnd = null;
           hoverDate = null;
@@ -385,26 +390,70 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   }
 
-  function toggleCalendarDropdown() {
+  // ── FIXED: checkin & checkout listeners ───────────────────────────────────
+
+  function openCalendarDropdown() {
     if (!calendarLoaded) return;
     guestDropdown?.classList.remove("open");
-    if (calendarDropdown.classList.contains("open")) {
-      calendarDropdown.classList.remove("open");
-      activeAnchor = null;
-    } else {
-      openDropdown(calendarDropdown, dateInputField);
-    }
+    openDropdown(calendarDropdown, dateInputField);
+    renderCalendar();
   }
 
-  checkinInput?.addEventListener("click", (e) => { e.stopPropagation(); toggleCalendarDropdown(); });
-  checkoutInput?.addEventListener("click", (e) => { e.stopPropagation(); toggleCalendarDropdown(); });
+  checkinInput?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (calendarDropdown.classList.contains("open") && phase === "idle" && !rangeStart) {
+      calendarDropdown.classList.remove("open");
+      activeAnchor = null;
+      return;
+    }
+    // Reset supaya user pilih check-in ulang dari awal
+    if (rangeStart || rangeEnd) {
+      rangeStart = null;
+      rangeEnd = null;
+      hoverDate = null;
+      phase = "idle";
+      updateCalendarInputs();
+    }
+    if (!calendarDropdown.classList.contains("open")) {
+      openCalendarDropdown();
+    } else {
+      renderCalendar();
+    }
+  });
+
+  checkoutInput?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    // Kalau check-in sudah ada tapi checkout belum, lanjut ke selecting
+    if (rangeStart && !rangeEnd) {
+      phase = "selecting";
+    }
+    if (!calendarDropdown.classList.contains("open")) {
+      openCalendarDropdown();
+    } else {
+      renderCalendar();
+    }
+  });
+
   checkinInput?.addEventListener("focus", (e) => {
     e.stopPropagation();
-    if (!calendarDropdown.classList.contains("open")) toggleCalendarDropdown();
+    if (!calendarDropdown.classList.contains("open")) {
+      if (rangeStart || rangeEnd) {
+        rangeStart = null;
+        rangeEnd = null;
+        hoverDate = null;
+        phase = "idle";
+        updateCalendarInputs();
+      }
+      openCalendarDropdown();
+    }
   });
+
   checkoutInput?.addEventListener("focus", (e) => {
     e.stopPropagation();
-    if (!calendarDropdown.classList.contains("open")) toggleCalendarDropdown();
+    if (!calendarDropdown.classList.contains("open")) {
+      if (rangeStart && !rangeEnd) phase = "selecting";
+      openCalendarDropdown();
+    }
   });
 
   document.addEventListener("click", () => { calendarDropdown?.classList.remove("open"); });
@@ -413,6 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadBookingCalendar();
 
+  // ── Guest dropdown ────────────────────────────────────────────────────────
   const guestInput = document.getElementById("guestInput");
   const guestDropdown = document.getElementById("bookingGuestDropdown");
   const guestField = document.querySelector(".booking-field:has(#guestInput)");
@@ -436,11 +486,55 @@ document.addEventListener("DOMContentLoaded", () => {
     guestInput.value = parts.length > 0 ? parts.join(", ") : "1 Pengunjung";
   }
 
+  // ── ADDED: sync max tamu ke guest counter saat kamar dipilih/clear ────────
+  function syncGuestToRoomMax(maxTamu) {
+    const dewasaRow = guestDropdown?.querySelector('[data-group="dewasa"]');
+    const anakRow = guestDropdown?.querySelector('[data-group="anak"]');
+    if (!dewasaRow || !anakRow) return;
+
+    // Update batas max di dataset
+    dewasaRow.dataset.max = maxTamu;
+    anakRow.dataset.max = maxTamu;
+
+    // Kalau nilai sekarang melebihi max baru, kurangi
+    const dewasaVal = dewasaRow.querySelector(".counter-value");
+    const anakVal = anakRow.querySelector(".counter-value");
+    const currentDewasa = parseInt(dewasaVal.textContent) || 1;
+    const currentAnak = parseInt(anakVal.textContent) || 0;
+    const total = currentDewasa + currentAnak;
+
+    if (total > maxTamu) {
+      // Kurangi anak dulu, baru dewasa kalau masih kurang
+      let lebih = total - maxTamu;
+      const newAnak = Math.max(0, currentAnak - lebih);
+      lebih -= (currentAnak - newAnak);
+      const newDewasa = Math.max(1, currentDewasa - lebih);
+      anakVal.textContent = newAnak;
+      dewasaVal.textContent = newDewasa;
+      updateGuestInput();
+    }
+
+    // Re-init counter supaya tombol plus/minus ikut batas baru
+    initGuestCounter();
+  }
+
   function initGuestCounter() {
     const counterItems = guestDropdown.querySelectorAll(".counter-row");
     const dewasaRow = guestDropdown.querySelector('[data-group="dewasa"]');
     const anakRow = guestDropdown.querySelector('[data-group="anak"]');
+
     counterItems.forEach((item) => {
+      // Clone node untuk hapus listener lama sebelum re-init
+      const newItem = item.cloneNode(true);
+      item.parentNode.replaceChild(newItem, item);
+    });
+
+    // Query ulang setelah clone
+    const freshItems = guestDropdown.querySelectorAll(".counter-row");
+    const freshDewasa = guestDropdown.querySelector('[data-group="dewasa"]');
+    const freshAnak = guestDropdown.querySelector('[data-group="anak"]');
+
+    freshItems.forEach((item) => {
       const minusBtn = item.querySelector(".minus");
       const plusBtn = item.querySelector(".plus");
       const counterValue = item.querySelector(".counter-value");
@@ -448,17 +542,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const max = parseInt(item.dataset.max) || 10;
       let value = parseInt(counterValue.textContent);
 
+      const activeMax = () => parseInt(item.dataset.max) || 10;
+
       function getTotal() {
-        return parseInt(dewasaRow.querySelector(".counter-value").textContent) +
-          parseInt(anakRow.querySelector(".counter-value").textContent);
+        return parseInt(freshDewasa.querySelector(".counter-value").textContent) +
+          parseInt(freshAnak.querySelector(".counter-value").textContent);
       }
 
       function updateSiblings() {
-        counterItems.forEach((other) => {
+        freshItems.forEach((other) => {
           if (other !== item && (other.dataset.group === "dewasa" || other.dataset.group === "anak")) {
             const ov = parseInt(other.querySelector(".counter-value").textContent);
-            const om = parseInt(other.dataset.max);
-            other.querySelector(".plus").classList.toggle("disabled", ov >= om || getTotal() >= (window.MAX_TAMU || 16));
+            const om = parseInt(other.dataset.max) || 10;
+            other.querySelector(".plus").classList.toggle(
+              "disabled", ov >= om || getTotal() >= (window.ACTIVE_MAX_TAMU || window.MAX_TAMU || 16)
+            );
           }
         });
       }
@@ -468,12 +566,16 @@ document.addEventListener("DOMContentLoaded", () => {
         minusBtn.classList.toggle("disabled", value <= min);
         const isOrang = item.dataset.group === "dewasa" || item.dataset.group === "anak";
         plusBtn.classList.toggle("disabled",
-          isOrang ? value >= max || getTotal() >= (window.MAX_TAMU || 16) : value >= max);
+          isOrang
+            ? value >= activeMax() || getTotal() >= (window.ACTIVE_MAX_TAMU || window.MAX_TAMU || 16)
+            : value >= activeMax()
+        );
       }
 
       plusBtn.addEventListener("click", () => {
         const isOrang = item.dataset.group === "dewasa" || item.dataset.group === "anak";
-        if (isOrang ? value < max && getTotal() < (window.MAX_TAMU || 16) : value < max) {
+        const limit = window.ACTIVE_MAX_TAMU || window.MAX_TAMU || 16;
+        if (isOrang ? value < activeMax() && getTotal() < limit : value < activeMax()) {
           value++;
           updateCounter();
           if (isOrang) updateSiblings();
@@ -549,6 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </div>`;
     guestLoaded = true;
+    window.ACTIVE_MAX_TAMU = maxTamu; // init ke max listing
     initGuestCounter();
   }
 
@@ -574,4 +677,123 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", () => { guestDropdown?.classList.remove("open"); });
   window.addEventListener("resize", () => { guestDropdown?.classList.remove("open"); });
   guestDropdown?.addEventListener("click", (e) => e.stopPropagation());
+
+  // ── Room selection ────────────────────────────────────────────────────────
+  // State dikelola di luar forEach supaya semua button share satu selectedRoomId
+  let selectedRoomId = null;
+
+  const priceEl = document.getElementById("bookingPriceAmount");
+  const selectedRoomEl = document.getElementById("bookingSelectedRoom");
+  const selectedRoomNameEl = document.getElementById("bookingSelectedRoomName");
+  const clearRoomBtn = document.getElementById("clearRoomBtn");
+  const roomIdInput = document.getElementById("selectedRoomIdInput");
+  const noRoomWarning = document.getElementById("bookingNoRoomWarning");
+  const BASE_PRICE = window.BASE_LISTING_PRICE || 0;
+
+  function fmtRupiah(num) {
+    return "Rp " + parseInt(num).toLocaleString("id-ID");
+  }
+
+  function clearSelection() {
+    selectedRoomId = null;
+    if (roomIdInput) roomIdInput.value = "";
+    document.querySelectorAll(".room-card").forEach((c) => c.classList.remove("selected"));
+    document.querySelectorAll(".room-book-btn").forEach((b) => {
+      b.classList.remove("is-selected");
+      b.textContent = "Pilih Kamar";
+    });
+    if (priceEl) priceEl.textContent = fmtRupiah(BASE_PRICE);
+    if (selectedRoomEl) selectedRoomEl.classList.remove("visible");
+    if (selectedRoomNameEl) selectedRoomNameEl.textContent = "";
+    if (noRoomWarning) noRoomWarning.classList.remove("visible");
+
+    // ADDED: kembalikan max tamu ke batas listing saat kamar di-clear
+    window.ACTIVE_MAX_TAMU = window.MAX_TAMU || 16;
+    syncGuestToRoomMax(window.ACTIVE_MAX_TAMU);
+  }
+
+  function selectRoom(roomId, roomName, roomPrice, roomMaxTamu) {
+    selectedRoomId = roomId;
+    if (roomIdInput) roomIdInput.value = roomId;
+    document.querySelectorAll(".room-card").forEach((c) => {
+      c.classList.toggle("selected", c.dataset.roomId === roomId);
+    });
+    document.querySelectorAll(".room-book-btn").forEach((b) => {
+      const isThis = b.dataset.roomId === roomId;
+      b.classList.toggle("is-selected", isThis);
+      b.textContent = isThis ? "✓ Dipilih" : "Pilih Kamar";
+    });
+    if (priceEl) priceEl.textContent = fmtRupiah(roomPrice);
+    if (selectedRoomNameEl) selectedRoomNameEl.textContent = roomName;
+    if (selectedRoomEl) selectedRoomEl.classList.add("visible");
+    if (noRoomWarning) noRoomWarning.classList.remove("visible");
+
+    // ADDED: update max tamu sesuai kamar yang dipilih
+    const effectiveMax = roomMaxTamu && roomMaxTamu > 0
+      ? Math.min(roomMaxTamu, window.MAX_TAMU || 16)
+      : (window.MAX_TAMU || 16);
+    window.ACTIVE_MAX_TAMU = effectiveMax;
+    syncGuestToRoomMax(effectiveMax);
+
+    document.querySelector(".booking-card")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  document.querySelectorAll(".room-book-btn").forEach((btn) => {
+    if (!isLoggedIn) {
+      btn.disabled = true;
+      btn.title = "Masuk untuk memilih kamar";
+      btn.style.opacity = "0.5";
+      btn.style.cursor = "not-allowed";
+      return;
+    }
+
+    btn.addEventListener("click", () => {
+      const roomId = btn.dataset.roomId;
+      const roomName = btn.dataset.roomName;
+      const roomPrice = btn.dataset.roomPrice;
+      const roomMaxTamu = parseInt(btn.dataset.roomMaxTamu) || 0; // ADDED: baca dari data attribute
+      if (selectedRoomId === roomId) { clearSelection(); return; }
+      selectRoom(roomId, roomName, roomPrice, roomMaxTamu);
+    });
+  });
+
+  clearRoomBtn?.addEventListener("click", clearSelection);
+
+  // ── Booking submit ────────────────────────────────────────────────────────
+  const submitBtn = document.getElementById("bookingSubmitBtn");
+  submitBtn?.addEventListener("click", () => {
+    if (!isLoggedIn) {
+      if (noRoomWarning) {
+        noRoomWarning.textContent = "Silahkan daftar atau masuk terlebih dahulu untuk memesan.";
+        noRoomWarning.classList.add("visible");
+      }
+      openAuthPopup();
+      return;
+    }
+
+    const HAS_ROOMS = document.querySelectorAll(".room-book-btn").length > 0;
+    const currentRoomId = roomIdInput?.value || "";
+
+    if (HAS_ROOMS && !currentRoomId) {
+      if (noRoomWarning) {
+        noRoomWarning.classList.add("visible");
+        document.querySelector(".rooms-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+
+    const checkin = document.getElementById("checkinInput")?.dataset.value || "";
+    const checkout = document.getElementById("checkoutInput")?.dataset.value || "";
+    const promo = document.getElementById("promoInput")?.value || "";
+    const guest = document.getElementById("guestInput")?.value || "";
+    const BASE_LISTING_ID = window.BASE_LISTING_ID || 0;
+
+    let url = `./payment_confirm.php?listing_id=${BASE_LISTING_ID}`;
+    if (currentRoomId) url += `&room_id=${encodeURIComponent(currentRoomId)}`;
+    if (checkin) url += `&checkin=${encodeURIComponent(checkin)}`;
+    if (checkout) url += `&checkout=${encodeURIComponent(checkout)}`;
+    if (guest) url += `&jumlah_tamu=${encodeURIComponent(guest)}`;
+    if (promo) url += `&promo=${encodeURIComponent(promo)}`;
+    window.location.href = url;
+  });
 });

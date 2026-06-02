@@ -57,14 +57,14 @@ function getDateStatus(day, month, year) {
     if (isToday) {
         return { status: 'today', label: 'Hari ini', price: null, tooltip: 'Hari ini' };
     }
-    if (calendarData.bookedDates[dateStr]) {
-        return { status: 'booked', label: 'Dipesan', price: null, tooltip: 'Sudah dipesan' };
-    }
     if (calendarData.manualBlocked[dateStr]) {
         return { status: 'manual-blocked', label: 'Diblokir', price: null, tooltip: 'Diblokir manual' };
     }
     if (calendarData.autoBlocked[dateStr]) {
         return { status: 'auto-blocked', label: 'Penuh', price: null, tooltip: 'Terkunci otomatis karena kuota penuh' };
+    }
+    if (calendarData.bookedDates[dateStr]) {
+        return { status: 'booked', label: 'Dipesan', price: null, tooltip: 'Sudah dipesan' };
     }
 
     const customPrice = calendarData.customPrices[dateStr];

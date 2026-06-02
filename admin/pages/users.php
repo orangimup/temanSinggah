@@ -430,7 +430,6 @@ $result = mysqli_query($koneksi, "SELECT * FROM users WHERE role != 'Admin' ORDE
           <div class="nav-section-title">Sistem</div>
           <a class="nav-item" href="/teman_singgah/admin/pages/settings.php"><i
               class="ph-bold ph-gear"></i>Pengaturan</a>
-          <a class="nav-item" href="/teman_singgah/admin/pages/logs.php"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
     </aside>

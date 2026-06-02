@@ -631,7 +631,7 @@ function initials(string $name): string
         </div>
         <div class="nav-section">
           <div class="nav-section-title">Manajemen</div>
-          <a href="../../pages/users.php" class="nav-item"><i class="ph-bold ph-users"></i>Pengguna</a>
+          <a href="../pages/users.php" class="nav-item"><i class="ph-bold ph-users"></i>Pengguna</a>
           <a href="../pages/listings.php" class="nav-item"><i class="ph-bold ph-house"></i>Properti</a>
           <a href="../pages/reservations.php" class="nav-item"><i class="ph-bold ph-calendar-check"></i>Reservasi</a>
           <a href="../pages/transactions.php" class="nav-item active"><i
@@ -650,7 +650,6 @@ function initials(string $name): string
         <div class="nav-section">
           <div class="nav-section-title">Sistem</div>
           <a href="../pages/settings.php" class="nav-item"><i class="ph-bold ph-gear"></i>Pengaturan</a>
-          <a href="../pages/logs.php" class="nav-item"><i class="ph-bold ph-notepad"></i>Aktivitas</a>
         </div>
       </nav>
     </aside>

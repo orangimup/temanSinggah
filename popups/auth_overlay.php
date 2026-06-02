@@ -87,12 +87,11 @@
                         <span class="auth-divider-line"></span>
                     </div>
                     <div class="auth-social-icons">
-                        <button type="button" class="auth-social-icon" aria-label="Google"><img
-                                src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
+                        <button type="button" class="auth-social-icon" aria-label="Google"><img src="/teman_singgah/assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
                         <button type="button" class="auth-social-icon" aria-label="Apple"><img
-                                src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
+                                src="/teman_singgah/assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
                         <button type="button" class="auth-social-icon" aria-label="Facebook"><img
-                                src="assets/icons/facebook.svg" alt="Facebook"
+                                src="/teman_singgah/assets/icons/facebook.svg" alt="Facebook"
                                 style="width:22px;height:22px;" /></button>
                     </div>
                     <p class="auth-switch-text">Belum punya akun? <button type="button" class="auth-switch-link"
@@ -161,11 +160,11 @@
                     </div>
                     <div class="auth-social-icons">
                         <button type="button" class="auth-social-icon" aria-label="Google"><img
-                                src="assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
+                                src="/teman_singgah/assets/icons/google.svg" alt="Google" style="width:22px;height:22px;" /></button>
                         <button type="button" class="auth-social-icon" aria-label="Apple"><img
-                                src="assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
+                                src="/teman_singgah/assets/icons/apple.svg" alt="Apple" style="width:22px;height:22px;" /></button>
                         <button type="button" class="auth-social-icon" aria-label="Facebook"><img
-                                src="assets/icons/facebook.svg" alt="Facebook"
+                                src="/teman_singgah/assets/icons/facebook.svg" alt="Facebook"
                                 style="width:22px;height:22px;" /></button>
                     </div>
                     <p class="auth-switch-text">Sudah punya akun? <button type="button" class="auth-switch-link"

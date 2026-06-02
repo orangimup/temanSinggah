@@ -312,6 +312,7 @@ function statusInfo(string $s): array
         <li class="nav-item"><a href="reservations.php" class="nav-link">Reservasi</a></li>
         <li class="nav-item"><a href="calendar_router.php" class="nav-link">Kalender</a></li>
         <li class="nav-item"><a href="listing.php" class="nav-link active">Listing</a></li>
+        <li class="nav-item"><a href="/teman_singgah/host/dashboard/pages/earnings.php" class="nav-link">Pendapatan</a></li>
         <div class="nav-indicator"></div>
       </ul>
       <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>

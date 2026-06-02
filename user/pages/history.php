@@ -11,7 +11,7 @@ $stmt = mysqli_prepare($koneksi, "SELECT * FROM users WHERE user_id = ?");
 mysqli_stmt_bind_param($stmt, "s", $_SESSION['user_id']);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$user   = mysqli_fetch_assoc($result);
+$user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
 if (!$user) {
@@ -20,7 +20,7 @@ if (!$user) {
   exit;
 }
 
-$inisial   = strtoupper(mb_substr($user['nama'], 0, 1));
+$inisial = strtoupper(mb_substr($user['nama'], 0, 1));
 $photo_url = '';
 if (!empty($user['photo'])) {
   if (str_starts_with($user['photo'], 'http')) {
@@ -30,9 +30,26 @@ if (!empty($user['photo'])) {
   }
 }
 
-$filter          = $_GET['filter'] ?? 'semua';
+// ── Update booking selesai ────────────────────────────────────────────────────
+try {
+    $stmt = mysqli_prepare($koneksi, "
+        UPDATE bookings
+        SET status = 'selesai'
+        WHERE status = 'dikonfirmasi'
+          AND checkout < CURDATE()
+          AND user_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt, 'i', $user['id']);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+} catch (mysqli_sql_exception $e) {
+}
+// 
+
+$filter = $_GET['filter'] ?? 'semua';
 $allowed_filters = ['semua', 'menunggu', 'berlangsung', 'mendatang', 'selesai', 'dibatalkan'];
-if (!in_array($filter, $allowed_filters)) $filter = 'semua';
+if (!in_array($filter, $allowed_filters))
+  $filter = 'semua';
 
 $where_status = '';
 switch ($filter) {
@@ -52,17 +69,6 @@ switch ($filter) {
     $where_status = "AND b.status = 'dibatalkan'";
     break;
 }
-
-$stmt = mysqli_prepare($koneksi, "
-    UPDATE bookings 
-    SET status = 'selesai' 
-    WHERE status = 'dikonfirmasi' 
-      AND checkout < CURDATE()
-      AND user_id = ?
-");
-mysqli_stmt_bind_param($stmt, 'i', $user['id']);
-mysqli_stmt_execute($stmt);
-mysqli_stmt_close($stmt);
 
 $sql = "
     SELECT
@@ -93,7 +99,7 @@ $sql = "
     ORDER BY b.dibuat_pada DESC
 ";
 
-$stmt     = mysqli_prepare($koneksi, $sql);
+$stmt = mysqli_prepare($koneksi, $sql);
 mysqli_stmt_bind_param($stmt, 'i', $user['id']);
 mysqli_stmt_execute($stmt);
 $bookings = mysqli_stmt_get_result($stmt)->fetch_all(MYSQLI_ASSOC);
@@ -101,23 +107,23 @@ mysqli_stmt_close($stmt);
 
 function get_badge(string $status, string $checkin, string $checkout): array
 {
-  $today    = date('Y-m-d');
-  $checkin  = substr($checkin,  0, 10);
+  $today = date('Y-m-d');
+  $checkin = substr($checkin, 0, 10);
   $checkout = substr($checkout, 0, 10);
 
   if ($status === 'menunggu')
-    return ['label' => 'Menunggu',     'class' => 'pending'];
+    return ['label' => 'Menunggu', 'class' => 'pending'];
 
   if ($status === 'dikonfirmasi') {
     if ($checkin <= $today && $checkout >= $today)
       return ['label' => 'Berlangsung', 'class' => 'ongoing'];
     if ($checkin > $today)
-      return ['label' => 'Mendatang',   'class' => 'upcoming'];
-    return   ['label' => 'Dikonfirmasi','class' => 'upcoming'];
+      return ['label' => 'Mendatang', 'class' => 'upcoming'];
+    return ['label' => 'Dikonfirmasi', 'class' => 'upcoming'];
   }
 
   if ($status === 'selesai')
-    return ['label' => 'Selesai',    'class' => 'completed'];
+    return ['label' => 'Selesai', 'class' => 'completed'];
   if ($status === 'dibatalkan')
     return ['label' => 'Dibatalkan', 'class' => 'cancelled'];
 
@@ -142,8 +148,10 @@ function fmt_harga(float $harga): string
 function listing_img(array $b): string
 {
   $foto = $b['foto_cover'] ?? '';
-  if (empty($foto)) return '';
-  if (str_starts_with($foto, 'http')) return $foto;
+  if (empty($foto))
+    return '';
+  if (str_starts_with($foto, 'http'))
+    return $foto;
   return "/teman_singgah/assets/uploads/listings/" . htmlspecialchars($foto);
 }
 ?>
@@ -162,15 +170,27 @@ function listing_img(array $b): string
   <link rel="stylesheet" href="../styles/account.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   <style>
-    .badge-dot.pending   { background-color: #f59e0b; }
-    .badge-dot.ongoing   { background-color: #16a34a; }
-    .badge-dot.upcoming  { background-color: #2563eb; }
-    .badge-dot.completed { background-color: #6b7280; }
-    .badge-dot.cancelled { background-color: #dc2626; }
+    .badge-dot.pending {
+      background-color: #f59e0b;
+    }
+    .badge-dot.ongoing {
+      background-color: #16a34a;
+    }
+    .badge-dot.upcoming {
+      background-color: #2563eb;
+    }
+    .badge-dot.completed {
+      background-color: #6b7280;
+    }
+    .badge-dot.cancelled {
+      background-color: #dc2626;
+    }
   </style>
 </head>
 
@@ -298,13 +318,13 @@ function listing_img(array $b): string
           <?php else: ?>
             <div class="trips-list">
               <?php foreach ($bookings as $b):
-                $badge   = get_badge($b['status'], $b['checkin'], $b['checkout']);
-                $malam   = jumlah_malam($b['checkin'], $b['checkout']);
-                $id_rsv  = '#RSV-' . date('Y', strtotime($b['dibuat_pada'])) . '-' . str_pad($b['id'], 4, '0', STR_PAD_LEFT);
-                $img     = listing_img($b);
-                $lokasi  = htmlspecialchars($b['lokasi'] ?? '');
-                $nama    = htmlspecialchars($b['nama_listing']);
-                $kamar   = $b['nama_kamar'] ? ' · ' . htmlspecialchars($b['nama_kamar']) : '';
+                $badge  = get_badge($b['status'], $b['checkin'], $b['checkout']);
+                $malam  = jumlah_malam($b['checkin'], $b['checkout']);
+                $id_rsv = '#RSV-' . date('Y', strtotime($b['dibuat_pada'])) . '-' . str_pad($b['id'], 4, '0', STR_PAD_LEFT);
+                $img    = listing_img($b);
+                $lokasi = htmlspecialchars($b['lokasi'] ?? '');
+                $nama   = htmlspecialchars($b['nama_listing']);
+                $kamar  = $b['nama_kamar'] ? ' · ' . htmlspecialchars($b['nama_kamar']) : '';
                 ?>
                 <div class="trip-card">
                   <div class="trip-image-container">
@@ -378,7 +398,8 @@ function listing_img(array $b): string
     <div class="footer-grid">
       <div class="footer-column">
         <span class="footer-brand">Teman Singgah</span>
-        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang hingga homestay lokal.</p>
+        <p class="footer-description">Platform booking penginapan terpercaya di seluruh Indonesia, dari hotel berbintang
+          hingga homestay lokal.</p>
         <div class="footer-social">
           <a href="" class="social-link"><i class="ri-instagram-line"></i></a>
           <a href="" class="social-link"><i class="ri-facebook-circle-line"></i></a>

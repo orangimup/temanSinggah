@@ -470,8 +470,6 @@ function potong_teks(string $teks, int $maks = 80): string
           <div class="nav-section-title">Sistem</div>
           <a href="/teman_singgah/admin/pages/settings.php" class="nav-item"><i class="ph-bold ph-gear"></i>
             Pengaturan</a>
-          <a href="/teman_singgah/admin/pages/logs.php" class="nav-item"><i class="ph-bold ph-notepad"></i>
-            Aktivitas</a>
         </div>
       </nav>
     </aside>
