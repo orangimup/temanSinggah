@@ -378,7 +378,6 @@ function build_url(array $overrides = []): string
       cursor: not-allowed;
     }
 
-    /* Badge Berlangsung */
     .table-badge.primary {
       background: #eff6ff;
       color: #1d4ed8;

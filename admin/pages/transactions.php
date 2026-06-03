@@ -719,7 +719,7 @@ function initials(string $name): string
             <table class="managed-table" id="transactionTable">
               <thead>
                 <tr>
-                  <th class="col-num">No.</th>
+                  <th>No.</th>
                   <th>ID Transaksi</th>
                   <th>User</th>
                   <th>Jumlah</th>

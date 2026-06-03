@@ -72,7 +72,6 @@ function potong_teks(string $teks, int $maks = 80): string
   <script type="module" src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
   <style>
-    /* ── Toolbar ── */
     .toolbar-row {
       display: flex;
       align-items: center;
@@ -130,7 +129,6 @@ function potong_teks(string $teks, int $maks = 80): string
       font-weight: var(--font-regular);
     }
 
-    /* ── Sort dropdown ── */
     .sort-dropdown {
       position: relative;
       display: inline-block;
@@ -185,7 +183,6 @@ function potong_teks(string $teks, int $maks = 80): string
       margin: 4px 0;
     }
 
-    /* ── Review photo ── */
     .review-photo {
       width: 36px;
       height: 36px;
@@ -194,7 +191,6 @@ function potong_teks(string $teks, int $maks = 80): string
       display: block;
     }
 
-    /* ── Confirm overlay ── */
     .confirm-overlay {
       display: none;
       position: fixed;
@@ -292,7 +288,6 @@ function potong_teks(string $teks, int $maks = 80): string
       transform: scale(0.99);
     }
 
-    /* ── Detail panel ── */
     .detail-panel {
       position: fixed;
       top: 0;
@@ -525,7 +520,7 @@ function potong_teks(string $teks, int $maks = 80): string
             <table class="managed-table" id="reviewTable">
               <thead>
                 <tr>
-                  <th class="col-num">No.</th>
+                  <th>No.</th>
                   <th>Nama Tamu</th>
                   <th>Listing</th>
                   <th>Rating</th>

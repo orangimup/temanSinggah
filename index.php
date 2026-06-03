@@ -12,7 +12,6 @@ if (!empty($_SESSION['photo']) && file_exists("assets/uploads/photos/" . $_SESSI
 
 include "koneksi.php";
 
-// ── Helper functions ─────────────────────────────────────────────────────────
 function fetchAll($result)
 {
   $rows = [];

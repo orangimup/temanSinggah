@@ -223,7 +223,7 @@ function foto_url(?string $f): string
 
     <!-- KODE VOCER -->
     <section class="voucher-section">
-      <h2 class="section-title">Kode Vocer</h2>
+      <h2 class="section-title">Kode Voucher</h2>
       <div class="voucher-grid">
         <?php if (empty($global_promos)): ?>
           <div class="empty-state" style="grid-column:1/-1"><i class="ph-bold ph-tag"></i>Belum ada kode promo aktif saat

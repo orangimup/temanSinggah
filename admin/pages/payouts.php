@@ -747,7 +747,7 @@ function initials(string $nama): string
             <table id="payoutTable">
               <thead>
                 <tr>
-                  <th class="col-num">No.</th>
+                  <th>No.</th>
                   <th>Nama Host</th>
                   <th>Jumlah Payout</th>
                   <th>Bank Tujuan</th>
