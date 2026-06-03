@@ -14,9 +14,9 @@ try {
     die('Koneksi gagal: ' . $e->getMessage());
 }
 
-require_once '../../../koneksi.php'; 
+require_once '../../../koneksi.php';
 
-$host_id = $_SESSION['id'] ?? 0;  
+$host_id = $_SESSION['id'] ?? 0;
 
 if ($host_id == 0) {
     header("Location: /teman_singgah/index.php");
@@ -439,7 +439,7 @@ function fmt($n)
                         class="nav-link">Pendapatan</a></li>
                 <div class="nav-indicator"></div>
             </ul>
-           <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
+            <?php include $_SERVER['DOCUMENT_ROOT'] . '/teman_singgah/components/navbar_profile_host.php'; ?>
         </nav>
     </header>
 
@@ -620,7 +620,10 @@ function fmt($n)
                             <div class="legend-swatch booked"></div><span>Sudah dipesan</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-swatch blocked"></div><span>Diblokir</span>
+                            <div class="legend-swatch blocked-manual"></div><span>Diblokir</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-swatch blocked-auto"></div><span>Penuh</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-swatch today"></div><span>Hari ini</span>

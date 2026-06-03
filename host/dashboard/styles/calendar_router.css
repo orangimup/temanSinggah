@@ -652,19 +652,29 @@ body {
 }
 
 .legend-swatch.booked {
-    background: var(--color-primary-light);
-    border-color: var(--color-primary-light-active);
+    background: #dbeafe;
+    border-color: #3b82f6;
 }
 
 .legend-swatch.blocked {
-    background: var(--color-bg-section);
-    border-color: var(--color-border);
+    background: #fee2e2;
+    border-color: #ef4444;
 }
 
 .legend-swatch.today {
     background: var(--color-bg-card);
     border-color: var(--color-primary);
     border-width: 2px;
+}
+
+.legend-swatch.blocked-manual {
+    background: #FEE2E2;
+    border-color: #FCA5A5;
+}
+
+.legend-swatch.blocked-auto {
+    background: #FEF3C7;
+    border-color: #FCD34D;
 }
 
 .listing-sidebar {
@@ -817,12 +827,12 @@ body {
 }
 
 .day-card.today {
-    border-color: #10b981;
+    border-color: var(--color-primary);
     border-width: 2px;
 }
 
 .day-card.today .day-number {
-    color: #10b981;
+    color: var(--color-primary);
     font-weight: bold;
 }
 

@@ -462,7 +462,8 @@ $unavailable = array_unique($unavailable);
                 $fasilitas_kamar = json_decode($room['fasilitas'] ?? '[]', true) ?: [];
                 ?>
                 <!-- data-room-id ditambahkan untuk seleksi JS -->
-                <div class="room-card" data-room-id="<?= $room['id'] ?>" data-room-max-tamu="<?= (int) $room['max_tamu'] ?>">
+                <div class="room-card" data-room-id="<?= $room['id'] ?>"
+                  data-room-max-tamu="<?= (int) $room['max_tamu'] ?>">
 
                   <!-- Foto / Placeholder -->
                   <div class="room-card-photo">
@@ -995,6 +996,7 @@ $unavailable = array_unique($unavailable);
   <?php include '../../popups/auth_overlay.php'; ?>
   <script src="../../popups/auth.js"></script>
   <script src="../scripts/wishlist.js"></script>
+  <script src="../scripts/room_availability.js"></script>
 </body>
 
 </html>
