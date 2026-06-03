@@ -399,57 +399,65 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   }
 
+  calendarDropdown?.addEventListener("click", (e) => e.stopPropagation());
+
+  loadBookingCalendar();
+
+  const guestInput = document.getElementById("guestInput");
+  const guestDropdown = document.getElementById("bookingGuestDropdown");
+  const guestField = document.querySelector(".booking-field:has(#guestInput)");
+
+  let guestLoaded = false;
+  let calendarOpenedByClick = false;
+
   checkinInput?.addEventListener("click", (e) => {
     e.stopPropagation();
+    calendarOpenedByClick = true;
+
     if (calendarDropdown.classList.contains("open") && phase === "idle" && !rangeStart) {
       calendarDropdown.classList.remove("open");
       activeAnchor = null;
       return;
     }
-    // Reset supaya user pilih check-in ulang dari awal
-    if (rangeStart || rangeEnd) {
+
+    if (rangeStart && rangeEnd) {
       rangeStart = null;
       rangeEnd = null;
       hoverDate = null;
       phase = "idle";
       updateCalendarInputs();
     }
-    if (!calendarDropdown.classList.contains("open")) {
-      openCalendarDropdown();
-    } else {
-      renderCalendar();
-    }
+
+    openCalendarDropdown();
   });
 
   checkoutInput?.addEventListener("click", (e) => {
     e.stopPropagation();
-    // Kalau check-in sudah ada tapi checkout belum, lanjut ke selecting
+    calendarOpenedByClick = true;
+
     if (rangeStart && !rangeEnd) {
       phase = "selecting";
     }
-    if (!calendarDropdown.classList.contains("open")) {
-      openCalendarDropdown();
-    } else {
-      renderCalendar();
+    
+    if (rangeStart && rangeEnd) {
+      rangeEnd = null;
+      hoverDate = null;
+      phase = "selecting";
+      updateCalendarInputs();
     }
+
+    openCalendarDropdown();
   });
 
   checkinInput?.addEventListener("focus", (e) => {
-    e.stopPropagation();
+    if (calendarOpenedByClick) { calendarOpenedByClick = false; return; }
     if (!calendarDropdown.classList.contains("open")) {
-      if (rangeStart || rangeEnd) {
-        rangeStart = null;
-        rangeEnd = null;
-        hoverDate = null;
-        phase = "idle";
-        updateCalendarInputs();
-      }
       openCalendarDropdown();
     }
   });
 
   checkoutInput?.addEventListener("focus", (e) => {
-    e.stopPropagation();
+    if (calendarOpenedByClick) { calendarOpenedByClick = false; return; }
     if (!calendarDropdown.classList.contains("open")) {
       if (rangeStart && !rangeEnd) phase = "selecting";
       openCalendarDropdown();
@@ -458,17 +466,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("click", () => { calendarDropdown?.classList.remove("open"); });
   window.addEventListener("resize", () => { calendarDropdown?.classList.remove("open"); });
-  calendarDropdown?.addEventListener("click", (e) => e.stopPropagation());
-
-  loadBookingCalendar();
-
-  // ── Guest dropdown ────────────────────────────────────────────────────────
-  const guestInput = document.getElementById("guestInput");
-  const guestDropdown = document.getElementById("bookingGuestDropdown");
-  const guestField = document.querySelector(".booking-field:has(#guestInput)");
-
-  let guestLoaded = false;
-
   function updateGuestInput() {
     const getValue = (group) => {
       const row = guestDropdown.querySelector(`[data-group="${group}"]`);
