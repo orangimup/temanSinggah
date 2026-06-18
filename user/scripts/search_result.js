@@ -89,7 +89,7 @@ window.addEventListener("load", () => {
   });
 
   L.tileLayer(
-    "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=zXLv2UJENN51Ss9xxDAM",
+    "https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}@2x.png?key=PBFnHRklSQlvVTijrhUb",
     {
       attribution: "© MapTiler © OpenStreetMap",
       tileSize: 512,
